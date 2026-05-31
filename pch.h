@@ -8,6 +8,14 @@
 #define PCH_H
 
 // add headers that you want to pre-compile here
-#include "framework.h"
+#include "Engine/framework.h"
+
+#include <iostream>
+#include <vector>
+#include <string>
+#include <algorithm>
+#include <memory>
+#include <unordered_map>
+#include <map>
 
 #endif //PCH_H

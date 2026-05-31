@@ -8,7 +8,11 @@
 #define PCH_H
 
 // add headers that you want to pre-compile here
-#include "Engine/framework.h"
+#if defined (_WIN64) || (_WIN32)
+#define WIN32_LEAN_AND_MEAN
+#define NOMINMAX
+#include <Windows.h>
+#endif
 
 #include <iostream>
 #include <vector>

@@ -1,5 +1,7 @@
 #pragma once
 
+
+
 #ifdef _DEBUG
 
 #define ERROR_MESSAGE_W(_c_str) \

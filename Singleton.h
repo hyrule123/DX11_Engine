@@ -9,8 +9,8 @@
 		} \
  \
 	private: \
-		_class_() = default; \
-		~_class_() = default; \
+		_class_(); \
+		~_class_(); \
  \
 		_class_(const _class_&) = delete; \
-		_class_(_class_&&) = delete; \
+		_class_(_class_&&) = delete;

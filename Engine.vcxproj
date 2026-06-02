@@ -81,12 +81,12 @@
     <IntDir>$(SolutionDir)BinObj\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)Proj;</IncludePath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)..;</IncludePath>
     <OutDir>$(SolutionDir)BinLib\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)BinObj\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)Proj;</IncludePath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)..;</IncludePath>
     <OutDir>$(SolutionDir)BinLib\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)BinObj\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
   </PropertyGroup>

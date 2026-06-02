@@ -14,6 +14,7 @@
 #include <Windows.h>
 #endif
 
+// Standard library headers
 #include <iostream>
 #include <vector>
 #include <string>
@@ -21,5 +22,8 @@
 #include <memory>
 #include <unordered_map>
 #include <map>
+
+// GPU 관련 헤더
+#include <wrl.h>
 
 #endif //PCH_H

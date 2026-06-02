@@ -1,8 +1,11 @@
+
 #include "Engine/pch.h"
 #include "EngineMain.h"
 
 #include <Engine/resource.h>
 #include <Engine/Constant.h>
+
+#include <Engine/Manager/GameEngine.h>
 
 namespace
 {
@@ -69,7 +72,7 @@ namespace engine
         bool result = static_cast<bool>(RegisterClassExW(&wcex));
         if (!result)
         {
-            ASSERT_MESSAGE_RELEASE(false, "Failed to register window class!");
+            ASSERT_RELEASE_MESSAGE(false, "Failed to register window class!");
             return false;
         }
 
@@ -79,12 +82,19 @@ namespace engine
 			CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, nullptr, nullptr, hInstance, nullptr);
         if (!h_wnd_)
         {
-			ASSERT_MESSAGE_RELEASE(false, "Failed to create HWND!");
+			ASSERT_RELEASE_MESSAGE(false, "Failed to create HWND!");
             return false;
         }
 
         ShowWindow(h_wnd_, SW_SHOW);
         UpdateWindow(h_wnd_);
+
+        result = GameEngine::GetInst().Init();
+        if (false == result)
+        {
+            ASSERT_RELEASE_MESSAGE(result, "Failed to initialize game engine!");
+            return false;
+        }
 
         return true;
 	}
@@ -114,8 +124,8 @@ namespace engine
             }
             else
             {
-                //게임 메인 루프는 여기서 돌아감.
-                is_running = TRUE;
+                //게임 메인 루프
+                is_running = GameEngine::GetInst().Run();
             }
         }
 

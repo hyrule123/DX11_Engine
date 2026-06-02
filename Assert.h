@@ -15,7 +15,7 @@
 	} \
 	while (false)
 
-#define ASSERT_MESSAGE_RELEASE(_expression, _c_str) ASSERT_MESSAGE(_expression, _c_str)
+#define ASSERT_RELEASE_MESSAGE(_expression, _c_str) ASSERT_MESSAGE(_expression, _c_str)
 
 #else //RELEASE
 
@@ -34,7 +34,7 @@
 	}\
 	while(false)
 
-#define ASSERT_MESSAGE_RELEASE(_expression, _c_str) \
+#define ASSERT_RELEASE_MESSAGE(_expression, _c_str) \
 	do \
 	{ \
 		if(!(_expression)) \

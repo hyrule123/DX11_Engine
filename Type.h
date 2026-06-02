@@ -1,9 +1,12 @@
 #pragma once
 
 #include <cstdint>
+#include <memory>
+#include <wrl.h>
 
 namespace engine
 {
+	/* Standard integer types */
 	using int8 = std::int8_t;
 	using int16 = std::int16_t;
 	using int32 = std::int32_t;
@@ -12,4 +15,15 @@ namespace engine
 	using uint16 = std::uint16_t;
 	using uint32 = std::uint32_t;
 	using uint64 = std::uint64_t;
+
+
+	/* Smart pointer types */
+	template <typename T>
+	using u_ptr = std::unique_ptr<T>;
+	template <typename T>
+	using s_ptr = std::shared_ptr<T>;
+	template <typename T>
+	using w_ptr = std::weak_ptr<T>;
+
+	using Microsoft::WRL::ComPtr;
 }

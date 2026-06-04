@@ -45,3 +45,10 @@
 
 #define SAFE_DELETE(_ptr) if (_ptr) { delete _ptr; _ptr = nullptr; }
 #define SAFE_DELETE_ARRAY(_ptr_arr) if (_ptr_arr) { delete[] _ptr_arr; _ptr_arr = nullptr; }
+
+// #include <system_error> 필요
+#define HRESULT_ERROR_MESSAGE(_hresult) \
+	do { \
+		std::string err = std::system_category().message(_hresult); \
+		ERROR_MESSAGE_A(err.c_str()); \
+	} while(false)

@@ -2,8 +2,6 @@
 
 #include <Engine/Type.h>
 
-#include <string>
-
 namespace engine
 {
 	constexpr const wchar_t* kDefaultTitleW = L"DX11_Engine";

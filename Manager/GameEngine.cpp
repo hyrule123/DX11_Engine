@@ -24,6 +24,8 @@ namespace engine
 
 	bool GameEngine::Run()
 	{
+		GraphicsDevice::GetInst().Render();
+
 		return true;
 	}
 }

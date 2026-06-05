@@ -182,6 +182,7 @@
     <ClInclude Include="Assert.h" />
     <ClInclude Include="Constant.h" />
     <ClInclude Include="EngineMain.h" />
+    <ClInclude Include="Entity.h" />
     <ClInclude Include="Manager\GameEngine.h" />
     <ClInclude Include="Manager\GraphicsDevice.h" />
     <ClInclude Include="Macro.h" />
@@ -193,6 +194,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EngineMain.cpp" />
+    <ClCompile Include="Entity.cpp" />
     <ClCompile Include="Manager\GameEngine.cpp" />
     <ClCompile Include="Manager\GraphicsDevice.cpp" />
     <ClCompile Include="pch.cpp">

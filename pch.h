@@ -22,6 +22,8 @@
 #include <memory>
 #include <unordered_map>
 #include <map>
+#include <filesystem>
+namespace stdfs = std::filesystem;
 
 // GPU 관련 헤더
 #include <wrl.h>

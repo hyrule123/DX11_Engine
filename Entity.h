@@ -10,7 +10,7 @@ namespace engine
 	{
 	public:
 		Entity(const std::string_view class_name);
-		~Entity();
+		virtual ~Entity();
 
 		void SetName(const std::string_view name) { name_ = name; }
 		const std::string& GetName() const { return name_; }
@@ -20,6 +20,6 @@ namespace engine
 		uint64 id_;
 		static inline uint64 next_id_ = 0;
 		std::string name_ = {};
-	}
+	};
 }
 

@@ -3,6 +3,7 @@
 #include <cstdint>
 #include <memory>
 #include <wrl.h>
+#include <Engine/Math/SimpleMath.h>
 
 namespace engine
 {
@@ -16,6 +17,11 @@ namespace engine
 	using uint32 = std::uint32_t;
 	using uint64 = std::uint64_t;
 
+	// Type aliases for compatibility with HLSL types
+	using float2 = Vector2;
+	using float3 = Vector3;
+	using float4 = Vector4;
+	using MATRIX = Matrix;
 
 	/* Smart pointer types */
 	template <typename T>

@@ -186,6 +186,7 @@
     <ClInclude Include="Manager\GameEngine.h" />
     <ClInclude Include="Manager\GraphicsDevice.h" />
     <ClInclude Include="Macro.h" />
+    <ClInclude Include="Math\SimpleMath.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Manager\ResourceManager.h" />
@@ -199,6 +200,7 @@
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="Manager\GameEngine.cpp" />
     <ClCompile Include="Manager\GraphicsDevice.cpp" />
+    <ClCompile Include="Math\SimpleMath.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -213,6 +215,9 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="icon1.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Math\SimpleMath.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

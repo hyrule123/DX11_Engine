@@ -194,6 +194,7 @@
     <ClInclude Include="Singleton.h" />
     <ClInclude Include="Common.h" />
     <ClInclude Include="Type.h" />
+    <ClInclude Include="Resource\VertexBuffer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EngineMain.cpp" />
@@ -209,6 +210,7 @@
     </ClCompile>
     <ClCompile Include="Manager\ResourceManager.cpp" />
     <ClCompile Include="Resource\Resource.cpp" />
+    <ClCompile Include="Resource\VertexBuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Engine.rc" />

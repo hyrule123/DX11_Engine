@@ -17,8 +17,10 @@ namespace engine
 		friend class GameEngine;
 
 	public:
-		bool SetResolution(uint32 resolution_width, uint32 resolution_height);
+		ComPtr<ID3D11Device> GetDevice() const { return device_; }
+		ComPtr<ID3D11DeviceContext> GetContext() const { return context_; }
 
+		bool SetResolution(uint32 resolution_width, uint32 resolution_height);
 		void Render();
 
 	private:

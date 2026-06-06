@@ -15,13 +15,15 @@ namespace engine
 		friend class GameEngine;
 
 	public:
+		s_ptr<Resource> Find(const stdfs::path& path);
+
 		template <typename T>
 		s_ptr<T> Find(const stdfs::path& path)
 		{
-			auto iter = resources_.find(path);
-			if (iter != resources_.end())
+			s_ptr<Resource> result = Find(path);
+			if (result)
 			{
-				return std::dynamic_pointer_cast<T>(iter->second);
+				return std::dynamic_pointer_cast<T>(result);
 			}
 			return nullptr;
 		}

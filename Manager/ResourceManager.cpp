@@ -21,6 +21,17 @@ namespace engine
 
 		return true;
 	}
+	s_ptr<Resource> ResourceManager::Find(const stdfs::path& path)
+	{
+		auto iter = resources_.find(path);
+
+		if (iter != resources_.end())
+		{
+			return iter->second;
+		}
+
+		return nullptr;
+	}
 	bool ResourceManager::AddResource(const stdfs::path& path, s_ptr<Resource> resource)
 	{
 		auto iter = resources_.find(path);

@@ -14,10 +14,7 @@ namespace engine
 		friend class GameEngine;
 
 	public:
-		void SetNextScene(s_ptr<Scene> scene)
-		{
-			next_scene_ = scene;
-		}
+		void ChangeScene(s_ptr<Scene> scene);
 
 	private:
 		bool Init();

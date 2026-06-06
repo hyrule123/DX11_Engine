@@ -1,0 +1,4 @@
+#ifndef HLSL_REGISTER
+#define HLSL_REGISTER
+
+#endif//HLSL_REGISTER

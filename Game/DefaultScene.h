@@ -4,6 +4,7 @@
 
 namespace engine
 {
+
 	class DefaultScene
 		: public Scene
 	{
@@ -11,7 +12,11 @@ namespace engine
 		DefaultScene();
 		virtual ~DefaultScene() override;
 
-	private:
+		virtual void Init() override;
+		
+		virtual void Render() override;
 
+	private:
+		s_ptr<class Mesh> test_mesh_;
 	};
 }

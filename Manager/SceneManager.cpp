@@ -1,6 +1,7 @@
 #include "Engine/pch.h"
 #include "SceneManager.h"
 
+#include <Engine/Game/Scene.h>
 #include <Engine/Game/DefaultScene.h>
 
 namespace engine
@@ -14,14 +15,25 @@ namespace engine
 	{
 
 	}
+	void SceneManager::ChangeScene(s_ptr<Scene> scene)
+	{
+		next_scene_ = scene;
+		if (next_scene_) { next_scene_->Init(); }
+	}
 	bool SceneManager::Init()
 	{
-		cur_scene_ = std::make_shared<DefaultScene>();
+		ChangeScene(std::make_shared<DefaultScene>());
 
 		return true;
 	}
 	void SceneManager::Update()
 	{
+		if (next_scene_)
+		{
+			cur_scene_ = next_scene_;
+			next_scene_ = nullptr;
+		}
+
 		if (cur_scene_)
 		{
 			cur_scene_->Update();

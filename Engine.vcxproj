@@ -74,21 +74,25 @@
     <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)Proj;</IncludePath>
     <OutDir>$(SolutionDir)BinLib\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)BinObj\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <MultiProcFXC>true</MultiProcFXC>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)Proj;</IncludePath>
     <OutDir>$(SolutionDir)BinLib\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)BinObj\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <MultiProcFXC>true</MultiProcFXC>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)..;</IncludePath>
     <OutDir>$(SolutionDir)BinLib\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)BinObj\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <MultiProcFXC>true</MultiProcFXC>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)..;</IncludePath>
     <OutDir>$(SolutionDir)BinLib\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)BinObj\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <MultiProcFXC>true</MultiProcFXC>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -110,6 +114,12 @@
     <Manifest>
       <EnableSegmentHeap>true</EnableSegmentHeap>
     </Manifest>
+    <FxCompile>
+      <ShaderModel>5.0</ShaderModel>
+      <AdditionalIncludeDirectories>$(ProjectDir)..</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>__HLSL</PreprocessorDefinitions>
+      <ObjectFileOutput>$(ProjectDir)..\..\Res\Shader\%(Filename).cso</ObjectFileOutput>
+    </FxCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -133,6 +143,12 @@
     <Manifest>
       <EnableSegmentHeap>true</EnableSegmentHeap>
     </Manifest>
+    <FxCompile>
+      <ShaderModel>5.0</ShaderModel>
+      <AdditionalIncludeDirectories>$(ProjectDir)..</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>__HLSL</PreprocessorDefinitions>
+      <ObjectFileOutput>$(ProjectDir)..\..\Res\Shader\%(Filename).cso</ObjectFileOutput>
+    </FxCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -154,6 +170,12 @@
     <Manifest>
       <EnableSegmentHeap>true</EnableSegmentHeap>
     </Manifest>
+    <FxCompile>
+      <ShaderModel>5.0</ShaderModel>
+      <AdditionalIncludeDirectories>$(ProjectDir)..</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>__HLSL</PreprocessorDefinitions>
+      <ObjectFileOutput>$(ProjectDir)..\..\Res\Shader\%(Filename).cso</ObjectFileOutput>
+    </FxCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -177,12 +199,19 @@
     <Manifest>
       <EnableSegmentHeap>true</EnableSegmentHeap>
     </Manifest>
+    <FxCompile>
+      <ShaderModel>5.0</ShaderModel>
+      <AdditionalIncludeDirectories>$(ProjectDir)..</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>__HLSL</PreprocessorDefinitions>
+      <ObjectFileOutput>$(ProjectDir)..\..\Res\Shader\%(Filename).cso</ObjectFileOutput>
+    </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Assert.h" />
     <ClInclude Include="Constant.h" />
     <ClInclude Include="EngineMain.h" />
     <ClInclude Include="Entity.h" />
+    <ClInclude Include="Game\DefaultScene.h" />
     <ClInclude Include="Game\Scene.h" />
     <ClInclude Include="Manager\SceneManager.h" />
     <ClInclude Include="Resource\Mesh\DefaultMesh.h" />
@@ -197,6 +226,7 @@
     <ClInclude Include="Resource\Mesh\Mesh.h" />
     <ClInclude Include="Resource\Mesh\Vertex.h" />
     <ClInclude Include="Resource\Resource.h" />
+    <ClInclude Include="Resource\Shader\Shader.h" />
     <ClInclude Include="Singleton.h" />
     <ClInclude Include="Common.h" />
     <ClInclude Include="Type.h" />
@@ -205,6 +235,7 @@
   <ItemGroup>
     <ClCompile Include="EngineMain.cpp" />
     <ClCompile Include="Entity.cpp" />
+    <ClCompile Include="Game\DefaultScene.cpp" />
     <ClCompile Include="Game\Scene.cpp" />
     <ClCompile Include="Manager\SceneManager.cpp" />
     <ClCompile Include="Resource\Mesh\DefaultMesh.cpp" />
@@ -222,6 +253,7 @@
     <ClCompile Include="Resource\Mesh\Mesh.cpp" />
     <ClCompile Include="Resource\Resource.cpp" />
     <ClCompile Include="Resource\Mesh\VertexBuffer.cpp" />
+    <ClCompile Include="Resource\Shader\Shader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Engine.rc" />
@@ -230,7 +262,24 @@
     <Image Include="icon1.ico" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="HLSL\Common.hlsli" />
+    <None Include="HLSL\Debug\Debug.hlsli" />
+    <None Include="HLSL\Register.hlsli" />
     <None Include="Math\SimpleMath.inl" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="HLSL\Debug\Debug_PS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="HLSL\Debug\Debug_VS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+    </FxCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

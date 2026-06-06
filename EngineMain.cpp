@@ -44,13 +44,15 @@ namespace
 
 namespace engine
 {
-	EngineMain::EngineMain()
-	{
+    EngineMain::EngineMain()
+    {
+
     }
-	EngineMain::~EngineMain()
-	{
-        
+    EngineMain::~EngineMain()
+    {
+
     }
+
 	bool EngineMain::Init(HINSTANCE hInstance)
 	{
         WNDCLASSEXW wcex;

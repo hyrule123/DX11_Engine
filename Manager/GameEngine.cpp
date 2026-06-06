@@ -2,14 +2,16 @@
 #include "GameEngine.h"
 
 #include <Engine/Manager/GraphicsDevice.h>
+#include <Engine/Manager/ResourceManager.h>
 
 namespace engine
 {
 	GameEngine::GameEngine()
-	{}
-
+	{
+	}
 	GameEngine::~GameEngine()
-	{}
+	{
+	}
 
 	bool GameEngine::Init()
 	{

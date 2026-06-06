@@ -4,19 +4,17 @@
 #include <Engine/EngineMain.h>
 #include <Engine/Constant.h>
 
-#include <d3d11.h>
-#include <d3dcompiler.h>
-#pragma comment (lib, "d3d11.lib")
-#pragma comment (lib, "d3dcompiler.lib")
-
 #include <system_error>
 
 namespace engine
 {
 	GraphicsDevice::GraphicsDevice()
-	{}
+	{
+	}
+
 	GraphicsDevice::~GraphicsDevice()
-	{}
+	{
+	}
 
 	bool GraphicsDevice::Init()
 	{

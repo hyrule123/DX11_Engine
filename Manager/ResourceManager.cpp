@@ -3,10 +3,8 @@
 
 namespace engine
 {
-	ResourceManager::ResourceManager()
-	{}
-	ResourceManager::~ResourceManager()
-	{}
+
+
 	bool ResourceManager::AddResource(const stdfs::path& path, s_ptr<Resource> resource)
 	{
 		auto iter = resources_.find(path);

@@ -25,6 +25,12 @@
 #include <filesystem>
 namespace stdfs = std::filesystem;
 
+//DirectX
+#include <d3d11.h>
+#include <d3dcompiler.h>
+#pragma comment (lib, "d3d11.lib")
+#pragma comment (lib, "d3dcompiler.lib")
+
 // GPU 관련 헤더
 #include <wrl.h>
 

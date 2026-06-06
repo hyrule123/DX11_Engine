@@ -183,6 +183,7 @@
     <ClInclude Include="Constant.h" />
     <ClInclude Include="EngineMain.h" />
     <ClInclude Include="Entity.h" />
+    <ClInclude Include="Resource\Mesh\IndexBuffer.h" />
     <ClInclude Include="Manager\GameEngine.h" />
     <ClInclude Include="Manager\GraphicsDevice.h" />
     <ClInclude Include="Macro.h" />
@@ -190,15 +191,18 @@
     <ClInclude Include="pch.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Manager\ResourceManager.h" />
+    <ClInclude Include="Resource\Mesh\Mesh.h" />
+    <ClInclude Include="Resource\Mesh\Vertex.h" />
     <ClInclude Include="Resource\Resource.h" />
     <ClInclude Include="Singleton.h" />
     <ClInclude Include="Common.h" />
     <ClInclude Include="Type.h" />
-    <ClInclude Include="Resource\VertexBuffer.h" />
+    <ClInclude Include="Resource\Mesh\VertexBuffer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EngineMain.cpp" />
     <ClCompile Include="Entity.cpp" />
+    <ClCompile Include="Resource\Mesh\IndexBuffer.cpp" />
     <ClCompile Include="Manager\GameEngine.cpp" />
     <ClCompile Include="Manager\GraphicsDevice.cpp" />
     <ClCompile Include="Math\SimpleMath.cpp" />
@@ -209,8 +213,9 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Manager\ResourceManager.cpp" />
+    <ClCompile Include="Resource\Mesh\Mesh.cpp" />
     <ClCompile Include="Resource\Resource.cpp" />
-    <ClCompile Include="Resource\VertexBuffer.cpp" />
+    <ClCompile Include="Resource\Mesh\VertexBuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Engine.rc" />

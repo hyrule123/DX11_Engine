@@ -3,6 +3,7 @@
 
 #include <Engine/Manager/GraphicsDevice.h>
 #include <Engine/Manager/ResourceManager.h>
+#include <Engine/Manager/SceneManager.h>
 
 namespace engine
 {
@@ -21,11 +22,20 @@ namespace engine
 			return false;
 		}
 
+		ResourceManager::GetInst();
+
+		SceneManager::GetInst().Init();
+
 		return true;
 	}
 
 	bool GameEngine::Run()
 	{
+		SceneManager& scene_mgr = SceneManager::GetInst();
+
+		scene_mgr.Update();
+		scene_mgr.Render();
+
 		GraphicsDevice::GetInst().Render();
 
 		return true;

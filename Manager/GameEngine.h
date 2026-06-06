@@ -8,7 +8,9 @@ namespace engine
 	{
 		DECLARE_SINGLETON(GameEngine)
 
-	public:
+		friend class EngineMain;
+
+	private:
 		bool Init();
 
 		bool Run();

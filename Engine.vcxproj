@@ -183,6 +183,9 @@
     <ClInclude Include="Constant.h" />
     <ClInclude Include="EngineMain.h" />
     <ClInclude Include="Entity.h" />
+    <ClInclude Include="Game\DefaultScene.h" />
+    <ClInclude Include="Game\Scene.h" />
+    <ClInclude Include="Manager\SceneManager.h" />
     <ClInclude Include="Resource\Mesh\IndexBuffer.h" />
     <ClInclude Include="Manager\GameEngine.h" />
     <ClInclude Include="Manager\GraphicsDevice.h" />
@@ -202,6 +205,9 @@
   <ItemGroup>
     <ClCompile Include="EngineMain.cpp" />
     <ClCompile Include="Entity.cpp" />
+    <ClCompile Include="Game\DefaultScene.cpp" />
+    <ClCompile Include="Game\Scene.cpp" />
+    <ClCompile Include="Manager\SceneManager.cpp" />
     <ClCompile Include="Resource\Mesh\IndexBuffer.cpp" />
     <ClCompile Include="Manager\GameEngine.cpp" />
     <ClCompile Include="Manager\GraphicsDevice.cpp" />

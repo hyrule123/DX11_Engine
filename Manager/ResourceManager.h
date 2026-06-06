@@ -10,6 +10,8 @@ namespace engine
 	{
 		DECLARE_SINGLETON(ResourceManager)
 
+		friend class GameEngine;
+
 	public:
 		template <typename T>
 		s_ptr<T> Find(const stdfs::path& path)
@@ -39,6 +41,9 @@ namespace engine
 		}
 
 		bool AddResource(const stdfs::path& path, s_ptr<Resource> resource);
+
+	private:
+		bool Init();
 
 
 	private:

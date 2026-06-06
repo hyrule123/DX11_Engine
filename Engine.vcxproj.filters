@@ -78,7 +78,7 @@
     <ClInclude Include="Game\Scene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Game\DefaultScene.h">
+    <ClInclude Include="Resource\Mesh\DefaultMesh.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -122,7 +122,7 @@
     <ClCompile Include="Game\Scene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Game\DefaultScene.cpp">
+    <ClCompile Include="Resource\Mesh\DefaultMesh.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

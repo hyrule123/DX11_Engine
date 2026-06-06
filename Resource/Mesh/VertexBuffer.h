@@ -15,6 +15,11 @@ namespace engine
 		virtual ~VertexBuffer() override;
 
 		bool Create(const void* data, UINT data_stride, UINT data_count);
+        template <typename T>
+        bool Create(const std::vector<T>& vertices)
+        {
+            return Create(vertices.data(), (UINT)sizeof(T), (UINT)vertices.size());
+        }
 
 		virtual bool LoadFromFile(const stdfs::path& path) override;
 

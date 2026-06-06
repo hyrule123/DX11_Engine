@@ -1,6 +1,8 @@
 #include "Engine/pch.h"
 #include "ResourceManager.h"
 
+#include <Engine/Resource/Mesh/DefaultMesh.h>
+
 namespace engine
 {
 	ResourceManager::ResourceManager()
@@ -15,7 +17,7 @@ namespace engine
 
 	bool ResourceManager::Init()
 	{
-
+		DefaultMesh::LoadDefaultMesh();
 
 		return true;
 	}

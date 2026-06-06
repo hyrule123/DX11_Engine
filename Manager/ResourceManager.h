@@ -3,6 +3,8 @@
 #include <Engine/Common.h>
 #include <Engine/Singleton.h>
 
+#include <unordered_set>
+
 namespace engine
 {
 	class Resource;
@@ -42,12 +44,19 @@ namespace engine
 
 		bool AddResource(const stdfs::path& path, s_ptr<Resource> resource);
 
+		void SetDefaultResource(s_ptr<Resource> resource)
+		{
+			default_resources_.insert(resource);
+		}
+
 	private:
 		bool Init();
 
 
 	private:
 		std::unordered_map <stdfs::path, s_ptr<Resource>> resources_;
+
+		std::unordered_set<s_ptr<Resource>> default_resources_;
 	};
 }
 

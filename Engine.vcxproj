@@ -231,6 +231,7 @@
     <ClInclude Include="Common.h" />
     <ClInclude Include="Type.h" />
     <ClInclude Include="Resource\Mesh\VertexBuffer.h" />
+    <ClInclude Include="Util\FileSystem.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EngineMain.cpp" />
@@ -254,6 +255,7 @@
     <ClCompile Include="Resource\Resource.cpp" />
     <ClCompile Include="Resource\Mesh\VertexBuffer.cpp" />
     <ClCompile Include="Resource\Shader\Shader.cpp" />
+    <ClCompile Include="Util\FileSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Engine.rc" />

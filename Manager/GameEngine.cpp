@@ -22,9 +22,10 @@ namespace engine
 			return false;
 		}
 
-		ResourceManager::GetInst();
+		ResourceManager::GetInst().Init();
 
 		SceneManager::GetInst().Init();
+
 
 		return true;
 	}

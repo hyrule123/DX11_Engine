@@ -4,8 +4,8 @@
 // However, files listed here are ALL re-compiled if any one of them is updated between builds.
 // Do not add files here that you will be updating frequently as this negates the performance advantage.
 
-#ifndef PCH_H
-#define PCH_H
+#ifndef PCH_ENGINE
+#define PCH_ENGINE
 
 // add headers that you want to pre-compile here
 #if defined (_WIN64) || (_WIN32)
@@ -18,6 +18,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <string_view>
 #include <algorithm>
 #include <memory>
 #include <unordered_map>
@@ -34,4 +35,4 @@ namespace stdfs = std::filesystem;
 // GPU 관련 헤더
 #include <wrl.h>
 
-#endif //PCH_H
+#endif //PCH_ENGINE

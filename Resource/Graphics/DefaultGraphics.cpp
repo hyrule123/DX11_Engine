@@ -32,7 +32,7 @@ namespace engine
 
 			std::vector<D3D11_INPUT_ELEMENT_DESC> descs;
 			
-			desc.InputSlot = 
+			//desc.InputSlot = 
 		}
 	}
 }

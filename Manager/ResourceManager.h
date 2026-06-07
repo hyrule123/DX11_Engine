@@ -51,14 +51,19 @@ namespace engine
 			default_resources_.insert(resource);
 		}
 
+		const stdfs::path& GetProgramPath() const { return program_path_; }
+		const stdfs::path& GetResourceDir() const { return resource_dir_; }
+
 	private:
 		bool Init();
 
 
 	private:
 		std::unordered_map <stdfs::path, s_ptr<Resource>> resources_;
-
 		std::unordered_set<s_ptr<Resource>> default_resources_;
+
+		stdfs::path program_path_ = {};
+		stdfs::path resource_dir_ = {};
 	};
 }
 

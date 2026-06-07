@@ -11,6 +11,7 @@ namespace engine
 
         std::vector<uint8_t> buffer;
         if (false == file.is_open()) {
+            ERROR_MESSAGE("파일 열기 실패!!");
             return buffer;
         }
 

@@ -213,6 +213,9 @@
     <ClInclude Include="Entity.h" />
     <ClInclude Include="Game\DefaultScene.h" />
     <ClInclude Include="Game\Scene.h" />
+    <ClInclude Include="Resource\Graphics\DefaultGraphics.h" />
+    <ClInclude Include="Resource\Graphics\PixelShader.h" />
+    <ClInclude Include="Resource\Graphics\InputLayout.h" />
     <ClInclude Include="Manager\SceneManager.h" />
     <ClInclude Include="Resource\Mesh\DefaultMesh.h" />
     <ClInclude Include="Resource\Mesh\IndexBuffer.h" />
@@ -226,18 +229,22 @@
     <ClInclude Include="Resource\Mesh\Mesh.h" />
     <ClInclude Include="Resource\Mesh\Vertex.h" />
     <ClInclude Include="Resource\Resource.h" />
-    <ClInclude Include="Resource\Shader\Shader.h" />
+    <ClInclude Include="Resource\Graphics\Shader.h" />
     <ClInclude Include="Singleton.h" />
     <ClInclude Include="Common.h" />
     <ClInclude Include="Type.h" />
     <ClInclude Include="Resource\Mesh\VertexBuffer.h" />
     <ClInclude Include="Util\FileSystem.h" />
+    <ClInclude Include="Resource\Graphics\VertexShader.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EngineMain.cpp" />
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="Game\DefaultScene.cpp" />
     <ClCompile Include="Game\Scene.cpp" />
+    <ClCompile Include="Resource\Graphics\DefaultGraphics.cpp" />
+    <ClCompile Include="Resource\Graphics\PixelShader.cpp" />
+    <ClCompile Include="Resource\Graphics\InputLayout.cpp" />
     <ClCompile Include="Manager\SceneManager.cpp" />
     <ClCompile Include="Resource\Mesh\DefaultMesh.cpp" />
     <ClCompile Include="Resource\Mesh\IndexBuffer.cpp" />
@@ -254,8 +261,9 @@
     <ClCompile Include="Resource\Mesh\Mesh.cpp" />
     <ClCompile Include="Resource\Resource.cpp" />
     <ClCompile Include="Resource\Mesh\VertexBuffer.cpp" />
-    <ClCompile Include="Resource\Shader\Shader.cpp" />
+    <ClCompile Include="Resource\Graphics\Shader.cpp" />
     <ClCompile Include="Util\FileSystem.cpp" />
+    <ClCompile Include="Resource\Graphics\VertexShader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Engine.rc" />

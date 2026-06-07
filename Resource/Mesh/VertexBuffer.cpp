@@ -26,7 +26,7 @@ namespace engine
 
 		D3D11_BUFFER_DESC desc = {};
 		// 버텍스 버퍼
-		desc.ByteWidth = data_stride_ * data_count_;
+		desc.ByteWidth = data_stride * data_count;
 		desc.BindFlags = D3D11_BIND_FLAG::D3D11_BIND_VERTEX_BUFFER;
 		desc.Usage = D3D11_USAGE::D3D11_USAGE_DEFAULT;
 		desc.CPUAccessFlags = 0;

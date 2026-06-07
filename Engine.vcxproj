@@ -213,11 +213,11 @@
     <ClInclude Include="Entity.h" />
     <ClInclude Include="Game\DefaultScene.h" />
     <ClInclude Include="Game\Scene.h" />
-    <ClInclude Include="Resource\Graphics\DefaultGraphics.h" />
+    <ClInclude Include="Resource\Graphics\DefaultGraphicsRes.h" />
     <ClInclude Include="Resource\Graphics\PixelShader.h" />
     <ClInclude Include="Resource\Graphics\InputLayout.h" />
     <ClInclude Include="Manager\SceneManager.h" />
-    <ClInclude Include="Resource\Mesh\DefaultMesh.h" />
+    <ClInclude Include="Resource\Mesh\DefaultMeshRes.h" />
     <ClInclude Include="Resource\Mesh\IndexBuffer.h" />
     <ClInclude Include="Manager\GameEngine.h" />
     <ClInclude Include="Manager\GraphicsDevice.h" />
@@ -242,11 +242,11 @@
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="Game\DefaultScene.cpp" />
     <ClCompile Include="Game\Scene.cpp" />
-    <ClCompile Include="Resource\Graphics\DefaultGraphics.cpp" />
+    <ClCompile Include="Resource\Graphics\DefaultGraphicsRes.cpp" />
     <ClCompile Include="Resource\Graphics\PixelShader.cpp" />
     <ClCompile Include="Resource\Graphics\InputLayout.cpp" />
     <ClCompile Include="Manager\SceneManager.cpp" />
-    <ClCompile Include="Resource\Mesh\DefaultMesh.cpp" />
+    <ClCompile Include="Resource\Mesh\DefaultMeshRes.cpp" />
     <ClCompile Include="Resource\Mesh\IndexBuffer.cpp" />
     <ClCompile Include="Manager\GameEngine.cpp" />
     <ClCompile Include="Manager\GraphicsDevice.cpp" />

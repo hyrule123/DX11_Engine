@@ -15,12 +15,12 @@ namespace engine
 		friend class GameEngine;
 
 	public:
-		s_ptr<Resource> Find(const stdfs::path& path);
+		s_ptr<Resource> Find(const stdfs::path& res_relative_path);
 
 		template <typename T>
-		s_ptr<T> Find(const stdfs::path& path)
+		s_ptr<T> Find(const stdfs::path& res_relative_path)
 		{
-			s_ptr<Resource> result = Find(path);
+			s_ptr<Resource> result = Find(res_relative_path);
 			if (result)
 			{
 				return std::dynamic_pointer_cast<T>(result);
@@ -29,22 +29,22 @@ namespace engine
 		}
 
 		template <typename T>
-		s_ptr<T> LoadFromFile(const stdfs::path& path)
+		s_ptr<T> LoadFromFile(const stdfs::path& res_relative_path)
 		{
-			s_ptr<T> resource = Find<T>(path);
+			s_ptr<T> resource = Find<T>(res_relative_path);
 			if (resource) { return resource; }
 
 			resource = std::make_shared<T>();
-			if (false == resource->LoadFromFile(path))
+			if (false == resource->LoadFromFile(resource_dir_ / res_relative_path))
 			{ 
 				return nullptr; 
 			}
 				
-			resources_[path] = resource;
+			resources_[res_relative_path] = resource;
 			return resource;
 		}
 
-		bool AddResource(const stdfs::path& path, s_ptr<Resource> resource);
+		bool AddResource(const stdfs::path& res_relative_path, s_ptr<Resource> resource);
 
 		void SetDefaultResource(s_ptr<Resource> resource)
 		{

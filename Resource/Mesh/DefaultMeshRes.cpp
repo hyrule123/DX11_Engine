@@ -1,5 +1,5 @@
 #include "Engine/pch.h"
-#include "DefaultMesh.h"
+#include "DefaultMeshRes.h"
 
 #include <Engine/Manager/ResourceManager.h>
 
@@ -10,7 +10,7 @@
 
 namespace engine
 {
-	void DefaultMesh::LoadDefaultMesh()
+	void DefaultMeshRes::Load()
 	{
 		auto vb = std::make_shared<VertexBuffer>();
 

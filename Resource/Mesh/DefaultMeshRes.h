@@ -6,14 +6,14 @@ namespace engine
 {
 	class Resource;
 
-	class DefaultMesh
+	class DefaultMeshRes
 	{
 		friend class ResourceManager;
 
 	private:
-		DefaultMesh() = delete;
-		~DefaultMesh() = delete;
+		DefaultMeshRes() = delete;
+		~DefaultMeshRes() = delete;
 
-		static void LoadDefaultMesh();
+		static void Load();
 	};
 }

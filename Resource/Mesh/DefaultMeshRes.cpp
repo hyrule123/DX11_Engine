@@ -16,10 +16,10 @@ namespace engine
 
 		std::vector<VertexDebug> vertices;
 		vertices.resize(4);
-		vertices[0].position = {-0.5f, 0.5f, 0.f, 1.f};
-		vertices[1].position = { 0.5f, 0.5f, 0.f, 1.f };
-		vertices[2].position = { 0.5f, -0.5f, 0.f, 1.f };
-		vertices[3].position = {-0.5f, -0.5f, 0.f, 1.f};
+		vertices[0].position = {-0.5f, 0.5f, 0.5f, 1.f};
+		vertices[1].position = { 0.5f, 0.5f, 0.5f, 1.f };
+		vertices[2].position = { 0.5f, -0.5f, 0.5f, 1.f };
+		vertices[3].position = {-0.5f, -0.5f, 0.5f, 1.f};
 		vb->Create(vertices);
 
 		std::vector<UINT> indices;

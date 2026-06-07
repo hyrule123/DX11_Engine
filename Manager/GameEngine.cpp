@@ -35,10 +35,11 @@ namespace engine
 		SceneManager& scene_mgr = SceneManager::GetInst();
 
 		scene_mgr.Update();
+
+		GraphicsDevice::GetInst().BindSwapChainRTV();
 		scene_mgr.Render();
 
 		GraphicsDevice::GetInst().Render();
-
 		return true;
 	}
 }

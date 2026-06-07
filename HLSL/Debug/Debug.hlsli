@@ -3,6 +3,7 @@
 
 #ifdef __HLSL
 
+#include <Engine/HLSL/Common.hlsli>
 struct VS_IN
 {
 	float4 pos : POSITION;

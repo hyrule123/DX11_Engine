@@ -59,4 +59,11 @@ namespace engine
 		//아직은... 미구현(차후 fbx 임포트 시 구현 예정)
 		return false;
 	}
+
+	void VertexBuffer::Bind(const ComPtr<ID3D11DeviceContext>& context)
+	{
+		uint32_t offset = 0;
+		// 0번 슬롯에 1개의 버퍼를 바인딩합니다.
+		context->IASetVertexBuffers(0, 1, buffer_.GetAddressOf(), &data_stride_, &offset);
+	}
 }

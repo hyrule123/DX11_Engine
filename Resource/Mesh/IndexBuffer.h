@@ -16,6 +16,10 @@ namespace engine
 
         bool Create(const std::vector<UINT>& indices, D3D11_PRIMITIVE_TOPOLOGY topology);
 
+        void Bind(const ComPtr<ID3D11DeviceContext>& context);
+
+        UINT GetIndexCount() const { return (UINT)indices_.size(); }
+
     private:
         std::vector<UINT> indices_ = {};
         D3D11_PRIMITIVE_TOPOLOGY topology_ = {};

@@ -12,6 +12,7 @@ namespace engine
 	{
 		auto& resmgr = ResourceManager::GetInst();
 		auto vs = resmgr.LoadFromFile<VertexShader>("Shader/Debug_VS.cso");
+		resmgr.SetDefaultResource(vs);
 
 		{
 			D3D11_INPUT_ELEMENT_DESC desc = {};
@@ -43,7 +44,13 @@ namespace engine
 			
 			auto il = std::make_shared<InputLayout>();
 			il->Create(descs, vs);
+
+			resmgr.AddResource("Debug_IL", il);
+			resmgr.SetDefaultResource(il);
 		}
+
+		auto ps = resmgr.LoadFromFile<PixelShader>("Shader/Debug_PS.cso");
+		resmgr.SetDefaultResource(ps);
 	}
 }
 

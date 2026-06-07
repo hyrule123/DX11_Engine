@@ -122,12 +122,15 @@ namespace engine
 		return true;
 	}
 
-	void GraphicsDevice::Render()
+	void GraphicsDevice::BindSwapChainRTV()
 	{
 		// 3. 파이프라인의 출력 병합기(Output Merger) 단계에 렌더 타겟을 바인딩합니다.
 		// 아직 깊이/스텐실 버퍼(Depth/Stencil)가 없다면 두 번째 인자는 nullptr로 둡니다.
 		context_->OMSetRenderTargets(1, swap_chain_RTV.GetAddressOf(), nullptr);
+	}
 
+	void GraphicsDevice::Render()
+	{ 
 		swap_chain_->Present(1, 0);
 	}
 

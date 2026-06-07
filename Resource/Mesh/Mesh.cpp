@@ -1,6 +1,9 @@
 #include "Engine/pch.h"
 #include "Mesh.h"
 
+#include <Engine/Manager/GraphicsDevice.h>
+#include <Engine/Resource/Mesh/VertexBuffer.h>
+#include <Engine/Resource/Mesh/IndexBuffer.h>
 
 namespace engine
 {
@@ -9,6 +12,23 @@ namespace engine
 	{}
 	Mesh::~Mesh()
 	{}
+
+	void Mesh::Render()
+	{
+		if (!(vertex_buffer_ && index_buffer_))
+		{
+			ERROR_MESSAGE("뭔가 부족함");
+			return;
+		}
+
+		auto context = GraphicsDevice::GetInst().GetContext();
+
+		vertex_buffer_->Bind(context);
+		index_buffer_->Bind(context);
+
+
+		context->DrawIndexed(index_buffer_->GetIndexCount(), 0, 0);
+	}
 
 	bool Mesh::LoadFromFile(const stdfs::path& path)
 	{

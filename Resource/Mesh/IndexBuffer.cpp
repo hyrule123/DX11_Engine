@@ -21,7 +21,7 @@ namespace engine
 
 		D3D11_BUFFER_DESC desc = {};
 		desc.ByteWidth = (UINT)(sizeof(UINT) * indices.size());
-		desc.BindFlags = D3D11_BIND_FLAG::D3D11_BIND_VERTEX_BUFFER;
+		desc.BindFlags = D3D11_BIND_FLAG::D3D11_BIND_INDEX_BUFFER;
 		desc.Usage = D3D11_USAGE::D3D11_USAGE_DEFAULT;
 		desc.CPUAccessFlags = 0;
 
@@ -43,5 +43,10 @@ namespace engine
 		topology_ = topology;
 
 		return true;
+	}
+	void IndexBuffer::Bind(const ComPtr<ID3D11DeviceContext>& context)
+	{
+		context->IASetPrimitiveTopology(topology_);
+		context->IASetIndexBuffer(index_buffer_.Get(), DXGI_FORMAT_R32_UINT, 0);
 	}
 }

@@ -15,6 +15,8 @@ namespace engine
 		Mesh();
 		virtual ~Mesh() override;
 
+		void Render();
+
 		virtual bool LoadFromFile(const stdfs::path& path) override;
 
 		inline void SetVertexBuffer(s_ptr<VertexBuffer> vertex_buffer) 

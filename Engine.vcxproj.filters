@@ -21,25 +21,25 @@
     <ClInclude Include="resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Singleton.h">
+    <ClInclude Include="Header\Singleton.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Common.h">
+    <ClInclude Include="Header\Common.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Type.h">
+    <ClInclude Include="Header\Type.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Assert.h">
+    <ClInclude Include="Header\Assert.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Macro.h">
+    <ClInclude Include="Header\Macro.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="EngineMain.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Constant.h">
+    <ClInclude Include="Header\Constant.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Manager\GraphicsDevice.h">
@@ -57,7 +57,7 @@
     <ClInclude Include="Manager\ResourceManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Math\SimpleMath.h">
+    <ClInclude Include="Util\SimpleMath.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Resource\Mesh\VertexBuffer.h">
@@ -125,7 +125,7 @@
     <ClCompile Include="Manager\ResourceManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Math\SimpleMath.cpp">
+    <ClCompile Include="Util\SimpleMath.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Resource\Mesh\VertexBuffer.cpp">
@@ -179,7 +179,7 @@
     </Image>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Math\SimpleMath.inl">
+    <None Include="Util\SimpleMath.inl">
       <Filter>Header Files</Filter>
     </None>
     <None Include="HLSL\Debug\Debug.hlsli" />

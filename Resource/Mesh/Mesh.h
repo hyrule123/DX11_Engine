@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Engine/Math/SimpleMath.h>
+#include <Engine/Util/SimpleMath.h>
 #include <Engine/Resource/Resource.h>
 
 namespace engine

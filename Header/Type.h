@@ -3,7 +3,7 @@
 #include <cstdint>
 #include <memory>
 #include <wrl.h>
-#include <Engine/Math/SimpleMath.h>
+#include <Engine/Util/SimpleMath.h>
 
 namespace engine
 {

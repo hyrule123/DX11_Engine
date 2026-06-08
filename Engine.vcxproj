@@ -207,8 +207,8 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Assert.h" />
-    <ClInclude Include="Constant.h" />
+    <ClInclude Include="Header\Assert.h" />
+    <ClInclude Include="Header\Constant.h" />
     <ClInclude Include="EngineMain.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="Game\DefaultScene.h" />
@@ -221,8 +221,8 @@
     <ClInclude Include="Resource\Mesh\IndexBuffer.h" />
     <ClInclude Include="Manager\GameEngine.h" />
     <ClInclude Include="Manager\GraphicsDevice.h" />
-    <ClInclude Include="Macro.h" />
-    <ClInclude Include="Math\SimpleMath.h" />
+    <ClInclude Include="Header\Macro.h" />
+    <ClInclude Include="Util\SimpleMath.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Manager\ResourceManager.h" />
@@ -230,9 +230,9 @@
     <ClInclude Include="Resource\Mesh\Vertex.h" />
     <ClInclude Include="Resource\Resource.h" />
     <ClInclude Include="Resource\Graphics\Shader.h" />
-    <ClInclude Include="Singleton.h" />
-    <ClInclude Include="Common.h" />
-    <ClInclude Include="Type.h" />
+    <ClInclude Include="Header\Singleton.h" />
+    <ClInclude Include="Header\Common.h" />
+    <ClInclude Include="Header\Type.h" />
     <ClInclude Include="Resource\Mesh\VertexBuffer.h" />
     <ClInclude Include="Util\FileSystem.h" />
     <ClInclude Include="Resource\Graphics\VertexShader.h" />
@@ -250,7 +250,7 @@
     <ClCompile Include="Resource\Mesh\IndexBuffer.cpp" />
     <ClCompile Include="Manager\GameEngine.cpp" />
     <ClCompile Include="Manager\GraphicsDevice.cpp" />
-    <ClCompile Include="Math\SimpleMath.cpp" />
+    <ClCompile Include="Util\SimpleMath.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -275,7 +275,7 @@
     <None Include="HLSL\Common.hlsli" />
     <None Include="HLSL\Debug\Debug.hlsli" />
     <None Include="HLSL\Register.hlsli" />
-    <None Include="Math\SimpleMath.inl" />
+    <None Include="Util\SimpleMath.inl" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="HLSL\Debug\Debug_PS.hlsl">

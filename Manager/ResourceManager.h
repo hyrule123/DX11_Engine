@@ -39,7 +39,8 @@ namespace engine
 			{ 
 				return nullptr; 
 			}
-				
+			
+			resource->SetPath(res_relative_path);
 			resources_[res_relative_path] = resource;
 			return resource;
 		}

@@ -13,6 +13,7 @@ namespace engine
 
 		virtual bool LoadFromFile(const stdfs::path& path);
 
+		inline void SetPath(const stdfs::path& path) { res_path_ = path; }
 		inline const stdfs::path& GetPath() const { return res_path_; }
 
 	private:

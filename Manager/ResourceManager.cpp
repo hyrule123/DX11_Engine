@@ -1,6 +1,7 @@
 #include "Engine/pch.h"
 #include "ResourceManager.h"
 
+#include <Engine/Resource/Resource.h>
 #include <Engine/Resource/Mesh/DefaultMeshRes.h>
 #include <Engine/Resource/Graphics/DefaultGraphicsRes.h>
 
@@ -53,6 +54,7 @@ namespace engine
 			return false;
 		}
 
+		resource->SetPath(path);
 		resources_[path] = resource;
 		return true;
 	}

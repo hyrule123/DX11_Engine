@@ -87,7 +87,7 @@
     <ClInclude Include="Resource\GraphicsPipeline\Shader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Util\FileSystem.h">
+    <ClInclude Include="Util\file_system.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Resource\GraphicsPipeline\VertexShader.h">
@@ -152,7 +152,7 @@
     <ClCompile Include="Resource\GraphicsPipeline\Shader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Util\FileSystem.cpp">
+    <ClCompile Include="Util\file_system.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Resource\GraphicsPipeline\VertexShader.cpp">

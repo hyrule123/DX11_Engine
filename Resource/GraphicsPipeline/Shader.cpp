@@ -2,7 +2,7 @@
 #include "Shader.h"
 
 #include <Engine/Manager/GraphicsDevice.h>
-#include <Engine/Util/FileSystem.h>
+#include <Engine/Util/file_system.h>
 
 namespace engine
 {
@@ -13,7 +13,7 @@ namespace engine
 	{}
 	bool Shader::LoadFromFile(const stdfs::path & path)
 	{
-		std::vector<uint8> bytecode = FileSystem::ReadAllBytes(path);
+		std::vector<uint8> bytecode = file_system::ReadAllBytes(path);
 
 		if (bytecode.empty())
 		{

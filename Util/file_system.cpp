@@ -1,11 +1,11 @@
 #include "Engine/Core/pch.h"
-#include "FileSystem.h"
+#include "file_system.h"
 
 #include <fstream>
 
-namespace engine
+namespace engine::file_system
 {
-	std::vector<uint8> FileSystem::ReadAllBytes(const stdfs::path& file_path)
+	std::vector<uint8> ReadAllBytes(const stdfs::path& file_path)
 	{
         std::ifstream file(file_path, std::ios::binary | std::ios::ate);
 

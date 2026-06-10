@@ -234,7 +234,7 @@
     <ClInclude Include="Core\Common.h" />
     <ClInclude Include="Core\Type.h" />
     <ClInclude Include="Resource\Mesh\VertexBuffer.h" />
-    <ClInclude Include="Util\FileSystem.h" />
+    <ClInclude Include="Util\file_system.h" />
     <ClInclude Include="Resource\GraphicsPipeline\VertexShader.h" />
   </ItemGroup>
   <ItemGroup>
@@ -262,7 +262,7 @@
     <ClCompile Include="Resource\Resource.cpp" />
     <ClCompile Include="Resource\Mesh\VertexBuffer.cpp" />
     <ClCompile Include="Resource\GraphicsPipeline\Shader.cpp" />
-    <ClCompile Include="Util\FileSystem.cpp" />
+    <ClCompile Include="Util\file_system.cpp" />
     <ClCompile Include="Resource\GraphicsPipeline\VertexShader.cpp" />
   </ItemGroup>
   <ItemGroup>

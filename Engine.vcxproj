@@ -102,7 +102,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile>Engine/Core/pch.h</PrecompiledHeaderFile>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
@@ -131,7 +131,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile>Engine/Core/pch.h</PrecompiledHeaderFile>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
@@ -158,7 +158,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <PrecompiledHeaderFile>Engine/pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile>Engine/Core/pch.h</PrecompiledHeaderFile>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
@@ -187,7 +187,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <PrecompiledHeaderFile>Engine/pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile>Engine/Core/pch.h</PrecompiledHeaderFile>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
@@ -207,51 +207,51 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Header\Assert.h" />
-    <ClInclude Include="Header\Constant.h" />
-    <ClInclude Include="EngineMain.h" />
-    <ClInclude Include="Entity.h" />
+    <ClInclude Include="Core\Assert.h" />
+    <ClInclude Include="Core\Constant.h" />
+    <ClInclude Include="Core\EngineMain.h" />
+    <ClInclude Include="Core\Entity.h" />
     <ClInclude Include="Game\DefaultScene.h" />
     <ClInclude Include="Game\Scene.h" />
-    <ClInclude Include="Resource\Graphics\DefaultGraphicsRes.h" />
-    <ClInclude Include="Resource\Graphics\PixelShader.h" />
-    <ClInclude Include="Resource\Graphics\InputLayout.h" />
+    <ClInclude Include="Resource\GraphicsPipeline\DefaultGraphicsPipelineRes.h" />
+    <ClInclude Include="Resource\GraphicsPipeline\PixelShader.h" />
+    <ClInclude Include="Resource\GraphicsPipeline\InputLayout.h" />
     <ClInclude Include="Manager\SceneManager.h" />
     <ClInclude Include="Resource\Mesh\DefaultMeshRes.h" />
     <ClInclude Include="Resource\Mesh\IndexBuffer.h" />
     <ClInclude Include="Manager\GameEngine.h" />
     <ClInclude Include="Manager\GraphicsDevice.h" />
-    <ClInclude Include="Header\Macro.h" />
+    <ClInclude Include="Core\Macro.h" />
     <ClInclude Include="Util\SimpleMath.h" />
-    <ClInclude Include="pch.h" />
+    <ClInclude Include="Core\pch.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Manager\ResourceManager.h" />
     <ClInclude Include="Resource\Mesh\Mesh.h" />
     <ClInclude Include="Resource\Mesh\Vertex.h" />
     <ClInclude Include="Resource\Resource.h" />
-    <ClInclude Include="Resource\Graphics\Shader.h" />
-    <ClInclude Include="Header\Singleton.h" />
-    <ClInclude Include="Header\Common.h" />
-    <ClInclude Include="Header\Type.h" />
+    <ClInclude Include="Resource\GraphicsPipeline\Shader.h" />
+    <ClInclude Include="Core\Singleton.h" />
+    <ClInclude Include="Core\Common.h" />
+    <ClInclude Include="Core\Type.h" />
     <ClInclude Include="Resource\Mesh\VertexBuffer.h" />
     <ClInclude Include="Util\FileSystem.h" />
-    <ClInclude Include="Resource\Graphics\VertexShader.h" />
+    <ClInclude Include="Resource\GraphicsPipeline\VertexShader.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="EngineMain.cpp" />
-    <ClCompile Include="Entity.cpp" />
+    <ClCompile Include="Core\EngineMain.cpp" />
+    <ClCompile Include="Core\Entity.cpp" />
     <ClCompile Include="Game\DefaultScene.cpp" />
     <ClCompile Include="Game\Scene.cpp" />
-    <ClCompile Include="Resource\Graphics\DefaultGraphicsRes.cpp" />
-    <ClCompile Include="Resource\Graphics\PixelShader.cpp" />
-    <ClCompile Include="Resource\Graphics\InputLayout.cpp" />
+    <ClCompile Include="Resource\GraphicsPipeline\DefaultGraphicsPipelineRes.cpp" />
+    <ClCompile Include="Resource\GraphicsPipeline\PixelShader.cpp" />
+    <ClCompile Include="Resource\GraphicsPipeline\InputLayout.cpp" />
     <ClCompile Include="Manager\SceneManager.cpp" />
     <ClCompile Include="Resource\Mesh\DefaultMeshRes.cpp" />
     <ClCompile Include="Resource\Mesh\IndexBuffer.cpp" />
     <ClCompile Include="Manager\GameEngine.cpp" />
     <ClCompile Include="Manager\GraphicsDevice.cpp" />
     <ClCompile Include="Util\SimpleMath.cpp" />
-    <ClCompile Include="pch.cpp">
+    <ClCompile Include="Core\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
@@ -261,9 +261,9 @@
     <ClCompile Include="Resource\Mesh\Mesh.cpp" />
     <ClCompile Include="Resource\Resource.cpp" />
     <ClCompile Include="Resource\Mesh\VertexBuffer.cpp" />
-    <ClCompile Include="Resource\Graphics\Shader.cpp" />
+    <ClCompile Include="Resource\GraphicsPipeline\Shader.cpp" />
     <ClCompile Include="Util\FileSystem.cpp" />
-    <ClCompile Include="Resource\Graphics\VertexShader.cpp" />
+    <ClCompile Include="Resource\GraphicsPipeline\VertexShader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Engine.rc" />

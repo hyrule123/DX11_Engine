@@ -1,7 +1,7 @@
 #pragma once
 
-#include <Engine/Header/Common.h>
-#include <Engine/Header/Singleton.h>
+#include <Engine/Core/Common.h>
+#include <Engine/Core/Singleton.h>
 
 #include <unordered_set>
 

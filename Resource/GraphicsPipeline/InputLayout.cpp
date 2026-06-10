@@ -1,8 +1,8 @@
-#include "Engine/pch.h"
+#include "Engine/Core/pch.h"
 #include "InputLayout.h"
 
 #include <Engine/Manager/GraphicsDevice.h>
-#include <Engine/Resource/Graphics/VertexShader.h>
+#include <Engine/Resource/GraphicsPipeline/VertexShader.h>
 
 namespace engine
 {

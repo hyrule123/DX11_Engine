@@ -3,7 +3,7 @@
 #include <d3d11.h>
 #include <wrl/client.h>
 #include <vector>
-#include <Engine/Header/Type.h>
+#include <Engine/Core/Type.h>
 
 namespace engine
 {

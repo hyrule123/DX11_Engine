@@ -1,9 +1,9 @@
-#include "Engine/pch.h"
+#include "Engine/Core/pch.h"
 #include "ResourceManager.h"
 
 #include <Engine/Resource/Resource.h>
 #include <Engine/Resource/Mesh/DefaultMeshRes.h>
-#include <Engine/Resource/Graphics/DefaultGraphicsRes.h>
+#include <Engine/Resource/GraphicsPipeline/DefaultGraphicsPipelineRes.h>
 
 namespace engine
 {
@@ -31,7 +31,7 @@ namespace engine
 		resource_dir_ = stdfs::weakly_canonical(program_path_.remove_filename() / ".." / ".." / ".." / "Res");
 
 		DefaultMeshRes::Load();
-		DefaultGraphicsRes::Load();
+		DefaultGraphicsPipelineRes::Load();
 
 		return true;
 	}

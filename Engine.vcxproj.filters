@@ -15,31 +15,31 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="pch.h">
+    <ClInclude Include="Core\pch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Header\Singleton.h">
+    <ClInclude Include="Core\Singleton.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Header\Common.h">
+    <ClInclude Include="Core\Common.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Header\Type.h">
+    <ClInclude Include="Core\Type.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Header\Assert.h">
+    <ClInclude Include="Core\Assert.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Header\Macro.h">
+    <ClInclude Include="Core\Macro.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="EngineMain.h">
+    <ClInclude Include="Core\EngineMain.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Header\Constant.h">
+    <ClInclude Include="Core\Constant.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Manager\GraphicsDevice.h">
@@ -48,7 +48,7 @@
     <ClInclude Include="Manager\GameEngine.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Entity.h">
+    <ClInclude Include="Core\Entity.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Resource\Resource.h">
@@ -84,30 +84,30 @@
     <ClInclude Include="Game\DefaultScene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Resource\Graphics\Shader.h">
+    <ClInclude Include="Resource\GraphicsPipeline\Shader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Util\FileSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Resource\Graphics\VertexShader.h">
+    <ClInclude Include="Resource\GraphicsPipeline\VertexShader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Resource\Graphics\InputLayout.h">
+    <ClInclude Include="Resource\GraphicsPipeline\InputLayout.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Resource\Graphics\PixelShader.h">
+    <ClInclude Include="Resource\GraphicsPipeline\PixelShader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Resource\Graphics\DefaultGraphicsRes.h">
+    <ClInclude Include="Resource\GraphicsPipeline\DefaultGraphicsPipelineRes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="pch.cpp">
+    <ClCompile Include="Core\pch.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="EngineMain.cpp">
+    <ClCompile Include="Core\EngineMain.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Manager\GraphicsDevice.cpp">
@@ -116,7 +116,7 @@
     <ClCompile Include="Manager\GameEngine.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Entity.cpp">
+    <ClCompile Include="Core\Entity.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Resource\Resource.cpp">
@@ -149,22 +149,22 @@
     <ClCompile Include="Game\DefaultScene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Resource\Graphics\Shader.cpp">
+    <ClCompile Include="Resource\GraphicsPipeline\Shader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Util\FileSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Resource\Graphics\VertexShader.cpp">
+    <ClCompile Include="Resource\GraphicsPipeline\VertexShader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Resource\Graphics\InputLayout.cpp">
+    <ClCompile Include="Resource\GraphicsPipeline\InputLayout.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Resource\Graphics\PixelShader.cpp">
+    <ClCompile Include="Resource\GraphicsPipeline\PixelShader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Resource\Graphics\DefaultGraphicsRes.cpp">
+    <ClCompile Include="Resource\GraphicsPipeline\DefaultGraphicsPipelineRes.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

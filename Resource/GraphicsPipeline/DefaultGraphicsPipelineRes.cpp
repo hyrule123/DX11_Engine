@@ -1,14 +1,14 @@
-#include "Engine/pch.h"
-#include "DefaultGraphicsRes.h"
+#include "Engine/Core/pch.h"
+#include "DefaultGraphicsPipelineRes.h"
 
 #include <Engine/Manager/ResourceManager.h>
-#include <Engine/Resource/Graphics/InputLayout.h>
-#include <Engine/Resource/Graphics/VertexShader.h>
-#include <Engine/Resource/Graphics/PixelShader.h>
+#include <Engine/Resource/GraphicsPipeline/InputLayout.h>
+#include <Engine/Resource/GraphicsPipeline/VertexShader.h>
+#include <Engine/Resource/GraphicsPipeline/PixelShader.h>
 
 namespace engine
 {
-	void DefaultGraphicsRes::Load()
+	void DefaultGraphicsPipelineRes::Load()
 	{
 		auto& resmgr = ResourceManager::GetInst();
 		auto vs = resmgr.LoadFromFile<VertexShader>("Shader/Debug_VS.cso");

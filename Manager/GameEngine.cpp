@@ -40,6 +40,8 @@ namespace engine
 		scene_mgr.Render();
 
 		GraphicsDevice::GetInst().Render();
+
+		scene_mgr.ChangeScene();
 		return true;
 	}
 }

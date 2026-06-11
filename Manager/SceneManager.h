@@ -14,13 +14,15 @@ namespace engine
 		friend class GameEngine;
 
 	public:
-		void ChangeScene(s_ptr<Scene> scene);
+		void ChangeScene(s_ptr<Scene> scene) { next_scene_ = scene; };
 
 	private:
 		bool Init();
 
 		void Update();
 		void Render();
+
+		void ChangeScene();
 
 	private:
 		s_ptr<Scene> cur_scene_;

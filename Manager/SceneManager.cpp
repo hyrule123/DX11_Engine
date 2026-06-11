@@ -15,11 +15,7 @@ namespace engine
 	{
 
 	}
-	void SceneManager::ChangeScene(s_ptr<Scene> scene)
-	{
-		next_scene_ = scene;
-		if (next_scene_) { next_scene_->Init(); }
-	}
+
 	bool SceneManager::Init()
 	{
 		ChangeScene(std::make_shared<DefaultScene>());
@@ -28,12 +24,6 @@ namespace engine
 	}
 	void SceneManager::Update()
 	{
-		if (next_scene_)
-		{
-			cur_scene_ = next_scene_;
-			next_scene_ = nullptr;
-		}
-
 		if (cur_scene_)
 		{
 			cur_scene_->Update();
@@ -44,6 +34,15 @@ namespace engine
 		if (cur_scene_)
 		{
 			cur_scene_->Render();
+		}
+	}
+	void SceneManager::ChangeScene()
+	{
+		if (next_scene_)
+		{
+			next_scene_->Init();
+			cur_scene_ = next_scene_;
+			next_scene_ = nullptr;
 		}
 	}
 }

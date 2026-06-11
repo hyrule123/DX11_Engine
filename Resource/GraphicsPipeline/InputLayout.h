@@ -17,7 +17,6 @@ namespace engine
 
     private:
         ComPtr<ID3D11InputLayout> input_layout_ = {};
-        
         w_ptr<VertexShader> vs_ = {};
     };
 }

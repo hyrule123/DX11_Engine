@@ -33,6 +33,7 @@ namespace engine
 	bool GameEngine::Run()
 	{
 		SceneManager& scene_mgr = SceneManager::GetInst();
+		scene_mgr.FrameStart();
 
 		scene_mgr.Update();
 

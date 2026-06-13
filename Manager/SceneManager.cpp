@@ -32,9 +32,15 @@ namespace engine
 			}
 		}
 	}
-
 	void SceneManager::Init()
 	{
+	}
+	void SceneManager::FrameStart()
+	{
+		if (cur_scene_)
+		{
+			cur_scene_->FrameStart();
+		}
 	}
 	void SceneManager::Update()
 	{
@@ -54,7 +60,6 @@ namespace engine
 	{
 		if (next_scene_)
 		{
-			next_scene_->Init();
 			cur_scene_ = next_scene_;
 			next_scene_ = nullptr;
 		}

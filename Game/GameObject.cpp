@@ -2,10 +2,7 @@
 #include "GameObject.h"
 
 #include <Engine/Game/Component/Transform.h>
-#include <Engine/Game/Component/Script.h>
 #include <Engine/Game/Component/ComponentCategory.h>
-
-
 
 namespace engine
 {
@@ -19,31 +16,17 @@ namespace engine
 
 	s_ptr<Component> GameObject::AddComponent(s_ptr<Component> component)
 	{
-		if (!component) { return nullptr; }
-
-		ComponentCategory cat = component->GetComponentCategory();
-
-		if (cat < ComponentCategory::kOthers)
+		if (component)
 		{
-			if (fixed_order_components_[(size_t)cat])
+			pending_add_components_.push_back(component);
+			
+			component->SetOwner(std::static_pointer_cast<GameObject>(shared_from_this()));
+			if (!component->HasInitialzed())
 			{
-				DEBUG_LOG("컴포넌트 중복 추가됨. 확인 필요.");
+				component->Init();
 			}
-
-			fixed_order_components_[(size_t)cat] = component;
-		}
-		else
-		{
-			other_components_.push_back(component);
 		}
 
-		s_ptr<GameObject> ths = std::static_pointer_cast<GameObject>(shared_from_this());
-		component->SetOwner(ths);
-
-		if (!component->HasInitialzed())
-		{
-			component->Init();
-		}
 		return component;
 	}
 
@@ -70,6 +53,37 @@ namespace engine
 		}
 
 		return nullptr;
+	}
+
+	void GameObject::FrameStart()
+	{
+		for (const auto& com : pending_add_components_)
+		{
+			AddComponentInternal(com);
+		}
+
+		pending_add_components_.clear();
+	}
+
+	void GameObject::AddComponentInternal(const s_ptr<Component>& component)
+	{
+		//넣을 때 null 체크 했으므로 무조건 있다고 가정
+
+		ComponentCategory cat = component->GetComponentCategory();
+
+		if (cat < ComponentCategory::kOthers)
+		{
+			if (fixed_order_components_[(size_t)cat])
+			{
+				DEBUG_LOG("컴포넌트 중복 추가됨. 확인 필요.");
+			}
+
+			fixed_order_components_[(size_t)cat] = component;
+		}
+		else
+		{
+			other_components_.push_back(component);
+		}
 	}
 }
 

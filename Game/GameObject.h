@@ -12,6 +12,7 @@
 namespace engine
 {
 	class Component;
+	class Scene;
 
 	class GameObject final :
 		public Entity
@@ -39,11 +40,24 @@ namespace engine
 		void SetName(const std::string_view name) { name_ = name; }
 		const std::string& GetName() const { return name_; }
 
-	private:
-		std::array<s_ptr<Component>, (size_t)ComponentCategory::kEnd> fixed_order_components_;
-		std::vector<s_ptr<Component>> other_components_;
+		void SetOwner(s_ptr<Scene> owner) { owner_ = std::move(owner); }
+		const w_ptr<Scene>& GetOwner() const { return owner_; }
 
-		std::string name_;
+		void FrameStart();
+
+	private:
+		void AddComponentInternal(const s_ptr<Component>& component);
+
+		w_ptr<Scene> owner_ = {};
+
+		std::array<s_ptr<Component>, (size_t)ComponentCategory::kEnd> fixed_order_components_ = {};
+		std::vector<s_ptr<Component>> other_components_ = {};
+
+		std::string name_ = {};
+
+		std::vector<s_ptr<Component>> pending_add_components_ = {};
+
+
 	};
 
 	template <typename T>

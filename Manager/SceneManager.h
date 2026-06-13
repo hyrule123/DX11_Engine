@@ -18,6 +18,8 @@ namespace engine
 
 	private:
 		void Init();
+
+		void FrameStart();
 		void Update();
 		void Render();
 

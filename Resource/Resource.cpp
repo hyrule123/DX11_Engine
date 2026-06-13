@@ -3,8 +3,8 @@
 
 namespace engine
 {
-	Resource::Resource(const std::string_view class_name)
-		: Entity(class_name)
+	Resource::Resource(const std::string_view concrete_class_name)
+		: Entity(concrete_class_name)
 	{}
 	Resource::~Resource()
 	{}

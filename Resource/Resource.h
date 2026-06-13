@@ -8,7 +8,7 @@ namespace engine
 	class Resource : public Entity
 	{
 	public:
-		Resource(const std::string_view class_name);
+		Resource(const std::string_view concrete_class_name);
 		virtual ~Resource() override;
 
 		virtual bool LoadFromFile(const stdfs::path& path);

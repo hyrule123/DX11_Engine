@@ -6,8 +6,8 @@
 
 namespace engine
 {
-	Shader::Shader(const std::string_view class_name)
-		: Resource(class_name)
+	Shader::Shader(const std::string_view concrete_class_name)
+		: Resource(concrete_class_name)
 	{}
 	Shader::~Shader()
 	{}

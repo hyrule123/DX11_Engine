@@ -7,7 +7,7 @@ namespace engine
         public Resource
     {
     public:
-        Shader(const std::string_view class_name);
+        Shader(const std::string_view concrete_class_name);
         virtual ~Shader() override;
 
         virtual bool LoadFromFile(const stdfs::path& path) final;

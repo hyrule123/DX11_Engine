@@ -8,4 +8,8 @@ namespace engine
 	{}
 	Scene::~Scene()
 	{}
+	void Scene::Init()
+	{
+		has_initialized_ = true;
+	}
 }

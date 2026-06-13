@@ -10,5 +10,10 @@ namespace engine
 
 	Component::~Component()
 	{}
+
+	void Component::Init()
+	{
+		has_initialized_ = true;
+	}
 }
 

@@ -41,7 +41,7 @@ namespace engine
 
 		GraphicsDevice::GetInst().Render();
 
-		scene_mgr.ChangeScene();
+		scene_mgr.ChangeSceneNow();
 		return true;
 	}
 }

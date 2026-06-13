@@ -12,12 +12,6 @@ namespace engine
 	GameObject::GameObject()
 		: Super(CLASS_TO_STRING(GameObject))
 	{
-		//임시 코드(Transform 등록)
-		s_ptr<Transform> tf = std::make_shared<Transform>();
-		fixed_order_components_[(size_t)ComponentCategory::kTransform] = tf;
-
-		s_ptr<Script> sc = std::make_shared<Script>();
-		other_components_.push_back(sc);
 	}
 
 	GameObject::~GameObject()
@@ -45,7 +39,11 @@ namespace engine
 
 		s_ptr<GameObject> ths = std::static_pointer_cast<GameObject>(shared_from_this());
 		component->SetOwner(ths);
-		component->Init();
+
+		if (!component->HasInitialzed())
+		{
+			component->Init();
+		}
 		return component;
 	}
 

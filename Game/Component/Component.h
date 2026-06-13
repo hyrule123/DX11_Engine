@@ -27,10 +27,14 @@ namespace engine
         void SetOwner(s_ptr<GameObject> owner) { owner_ = owner; }
         w_ptr<GameObject> GetOwner() const { return owner_; }
 
+        bool HasInitialzed() const { return has_initialized_; }
+
     private:
         ComponentCategory category_ = {};
 
         w_ptr<GameObject> owner_ = {};
+
+        bool has_initialized_ = false;
     };
 }
 

@@ -2,7 +2,6 @@
 #include "SceneManager.h"
 
 #include <Engine/Game/Scene.h>
-#include <Engine/Game/DefaultScene.h>
 
 namespace engine
 {
@@ -16,11 +15,26 @@ namespace engine
 
 	}
 
-	bool SceneManager::Init()
+	void SceneManager::ChangeScene(s_ptr<Scene> scene)
 	{
-		ChangeScene(std::make_shared<DefaultScene>());
+		next_scene_ = scene;
 
-		return true;
+		if (next_scene_)
+		{
+			if (!next_scene_->HasInitialized())
+			{
+				next_scene_->Init();
+			}
+
+			if (!cur_scene_)
+			{
+				ChangeSceneNow();
+			}
+		}
+	}
+
+	void SceneManager::Init()
+	{
 	}
 	void SceneManager::Update()
 	{
@@ -36,7 +50,7 @@ namespace engine
 			cur_scene_->Render();
 		}
 	}
-	void SceneManager::ChangeScene()
+	void SceneManager::ChangeSceneNow()
 	{
 		if (next_scene_)
 		{

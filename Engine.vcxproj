@@ -208,7 +208,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Game\Component\Component.h" />
-    <ClInclude Include="Core\Assert.h" />
     <ClInclude Include="Core\Constant.h" />
     <ClInclude Include="Core\EngineMain.h" />
     <ClInclude Include="Core\Entity.h" />
@@ -224,7 +223,7 @@
     <ClInclude Include="Resource\Mesh\IndexBuffer.h" />
     <ClInclude Include="Manager\GameEngine.h" />
     <ClInclude Include="Manager\GraphicsDevice.h" />
-    <ClInclude Include="Core\Macro.h" />
+    <ClInclude Include="Core\Debug.h" />
     <ClInclude Include="Game\Component\Transform.h" />
     <ClInclude Include="Game\Component\Script.h" />
     <ClInclude Include="Util\SimpleMath.h" />

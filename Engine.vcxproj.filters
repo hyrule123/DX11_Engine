@@ -30,10 +30,7 @@
     <ClInclude Include="Core\Type.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Core\Assert.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\Macro.h">
+    <ClInclude Include="Core\Debug.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Core\EngineMain.h">

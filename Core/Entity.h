@@ -10,7 +10,7 @@ namespace engine
 		: public std::enable_shared_from_this<Entity>
 	{
 	public:
-		Entity(const std::string_view class_name);
+		Entity(const std::string_view concrete_class_name);
 		virtual ~Entity();
 
 		const std::string_view GetConcreteClassName() const { return concrete_class_name_; }

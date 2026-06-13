@@ -18,6 +18,8 @@ namespace
             // Parse the menu selections:
             switch (wmId)
             {
+            case WM_CLOSE:
+                break;
             default:
                 return DefWindowProc(hWnd, message, wParam, lParam);
             }

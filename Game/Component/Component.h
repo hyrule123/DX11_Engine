@@ -21,6 +21,7 @@ namespace engine
         virtual ~Component() override;
 
         virtual void Init() = 0;
+        virtual void Awake();
 
         ComponentCategory GetComponentCategory() const { return category_; }
 
@@ -28,6 +29,7 @@ namespace engine
         w_ptr<GameObject> GetOwner() const { return owner_; }
 
         bool HasInitialzed() const { return has_initialized_; }
+        bool HasAwaken() const { return has_awaken_; }
 
     private:
         ComponentCategory category_ = {};
@@ -35,6 +37,7 @@ namespace engine
         w_ptr<GameObject> owner_ = {};
 
         bool has_initialized_ = false;
+        bool has_awaken_ = false;
     };
 }
 

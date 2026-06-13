@@ -13,5 +13,16 @@ namespace engine
 	void Transform::Init()
 	{
 		Super::Init();
+
+		DEBUG_LOG("Transform Init 호출!!");
 	}
+
+	void Transform::Awake()
+	{
+		Super::Awake();
+
+		DEBUG_LOG("Transform Awake 호출!!");
+	}
+
+
 }

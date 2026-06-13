@@ -16,6 +16,7 @@ namespace engine
 		virtual ~Transform() override;
 		
 		virtual void Init() override;
+		virtual void Awake() override;
 	};
 }
 

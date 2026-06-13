@@ -55,11 +55,22 @@ namespace engine
 		return nullptr;
 	}
 
+
 	void GameObject::FrameStart()
 	{
+		//먼저 싹 다 넣고
 		for (const auto& com : pending_add_components_)
 		{
 			AddComponentInternal(com);
+		}
+
+		//Awake 호출(다른 컴포넌트 탐색 보장)
+		for (const auto& com : pending_add_components_)
+		{
+			if (!(com->HasAwaken()))
+			{
+				com->Awake();
+			}
 		}
 
 		pending_add_components_.clear();
@@ -75,7 +86,7 @@ namespace engine
 		{
 			if (fixed_order_components_[(size_t)cat])
 			{
-				DEBUG_LOG("컴포넌트 중복 추가됨. 확인 필요.");
+				ERROR_MESSAGE("컴포넌트 중복 추가됨. 확인 필요.");
 			}
 
 			fixed_order_components_[(size_t)cat] = component;

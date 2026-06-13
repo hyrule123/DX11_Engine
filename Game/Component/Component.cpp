@@ -15,5 +15,9 @@ namespace engine
 	{
 		has_initialized_ = true;
 	}
+	void Component::Awake()
+	{
+		has_awaken_ = true;
+	}
 }
 

@@ -56,8 +56,6 @@ namespace engine
 		std::string name_ = {};
 
 		std::vector<s_ptr<Component>> pending_add_components_ = {};
-
-
 	};
 
 	template <typename T>

@@ -8,6 +8,7 @@ namespace engine
 	class DefaultScene
 		: public Scene
 	{
+		CLASS_INFO(DefaultScene, Scene)
 	public:
 		DefaultScene();
 		virtual ~DefaultScene() override;

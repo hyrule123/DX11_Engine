@@ -1,11 +1,14 @@
 #pragma once
 #include <Engine/Resource/Resource.h>
 
+#include <Engine/Core/ClassMacro.h>
+
 namespace engine 
 {
     class Shader :
         public Resource
     {
+        CLASS_INFO(Shader, Resource)
     public:
         Shader(const std::string_view concrete_class_name);
         virtual ~Shader() override;

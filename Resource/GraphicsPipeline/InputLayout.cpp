@@ -7,7 +7,7 @@
 namespace engine
 {
 	InputLayout::InputLayout()
-		: Resource("InputLayout")
+		: Resource(CLASS_TO_STRING(InputLayout))
 	{
 	}
 	InputLayout::~InputLayout()

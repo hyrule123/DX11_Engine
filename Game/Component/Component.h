@@ -3,6 +3,8 @@
 
 #include <Engine/Game/Component/ComponentCategory.h>
 
+#include <Engine/Core/ClassMacro.h>
+
 namespace engine
 {
     class GameObject;
@@ -10,6 +12,7 @@ namespace engine
     class Component :
         public Entity
     {
+        CLASS_INFO(Component, Entity)
     public:
         Component(
             const std::string_view concrete_class_name, 

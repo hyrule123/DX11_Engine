@@ -8,6 +8,7 @@ namespace engine
     class InputLayout final 
         : public Resource
     {
+        CLASS_INFO(InputLayout, Resource)
     public:
         InputLayout();
         virtual ~InputLayout() final;

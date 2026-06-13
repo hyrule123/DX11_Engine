@@ -8,7 +8,7 @@
 namespace engine
 {
 	Mesh::Mesh()
-		: Resource("Mesh")
+		: Resource(CLASS_TO_STRING(Mesh))
 	{}
 	Mesh::~Mesh()
 	{}

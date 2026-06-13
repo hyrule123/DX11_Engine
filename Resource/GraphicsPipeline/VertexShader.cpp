@@ -4,7 +4,7 @@
 namespace engine
 {
 	VertexShader::VertexShader()
-		: Shader("VertexShader")
+		: Shader(CLASS_TO_STRING(VertexShader))
 	{
 
 	}

@@ -10,7 +10,7 @@
 namespace engine
 {
 	GameObject::GameObject()
-		: Entity("GameObject")
+		: Super(CLASS_TO_STRING(GameObject))
 	{
 		//임시 코드(Transform 등록)
 		s_ptr<Transform> tf = std::make_shared<Transform>();

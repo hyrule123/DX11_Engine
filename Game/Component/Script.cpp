@@ -4,7 +4,7 @@
 namespace engine
 {
 	Script::Script()
-		: Component("Script", Script::kComponentCategory)
+		: Super(CLASS_TO_STRING(Script), Script::kComponentCategory)
 	{}
 	Script::~Script()
 	{}

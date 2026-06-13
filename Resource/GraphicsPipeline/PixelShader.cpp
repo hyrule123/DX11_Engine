@@ -4,7 +4,7 @@
 namespace engine
 {
 	PixelShader::PixelShader()
-		: Shader("PixelShader")
+		: Shader(CLASS_TO_STRING(PixelShader))
 	{
 	}
 

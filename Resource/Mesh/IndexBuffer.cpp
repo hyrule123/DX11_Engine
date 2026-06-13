@@ -6,7 +6,7 @@
 namespace engine
 {
 	IndexBuffer::IndexBuffer()
-		: Resource("IndexBuffer")
+		: Resource(CLASS_TO_STRING(IndexBuffer))
 	{
 	}
 	IndexBuffer::~IndexBuffer()

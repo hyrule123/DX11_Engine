@@ -9,7 +9,7 @@
 namespace engine
 {
 	VertexBuffer::VertexBuffer()
-		: Resource("VertexBuffer")
+		: Resource(CLASS_TO_STRING(VertexBuffer))
 	{
 	}
 	VertexBuffer::~VertexBuffer()

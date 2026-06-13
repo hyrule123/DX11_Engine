@@ -5,8 +5,10 @@
 
 namespace engine
 {
-	class Resource : public Entity
+	class Resource 
+		: public Entity
 	{
+		CLASS_INFO(Resource, Entity)
 	public:
 		Resource(const std::string_view concrete_class_name);
 		virtual ~Resource() override;

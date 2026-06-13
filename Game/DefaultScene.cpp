@@ -7,7 +7,7 @@
 namespace engine
 {
 	DefaultScene::DefaultScene()
-		: Scene("DefaultScene")
+		: Super(CLASS_TO_STRING(DefaultScene))
 	{
 	}
 	DefaultScene::~DefaultScene()
@@ -15,7 +15,7 @@ namespace engine
 	}
 	void DefaultScene::Init()
 	{
-		Scene::Init();
+		Super::Init();
 
 		test_mesh_ = ResourceManager::GetInst().Find<Mesh>("DebugMesh");
 	}

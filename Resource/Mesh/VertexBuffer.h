@@ -10,6 +10,7 @@ namespace engine
     class VertexBuffer :
         public Resource
     {
+        CLASS_INFO(VertexBuffer, Resource)
 	public:
 		VertexBuffer();
 		virtual ~VertexBuffer() override;

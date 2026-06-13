@@ -207,6 +207,7 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Core\ClassMacro.h" />
     <ClInclude Include="Game\Component\Component.h" />
     <ClInclude Include="Core\Constant.h" />
     <ClInclude Include="Core\EngineMain.h" />

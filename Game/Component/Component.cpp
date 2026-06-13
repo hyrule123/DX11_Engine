@@ -4,7 +4,7 @@
 namespace engine
 {
 	Component::Component(const std::string_view concrete_class_name, ComponentCategory category)
-		: Entity(concrete_class_name)
+		: Super(concrete_class_name)
 		, category_(category)
 	{}
 

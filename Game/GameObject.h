@@ -3,6 +3,7 @@
 
 #include <Engine/Game/Component/ComponentCategory.h>
 #include <Engine/Core/Type.h>
+#include <Engine/Core/ClassMacro.h>
 #include <array>
 #include <vector>
 #include <string>
@@ -12,9 +13,10 @@ namespace engine
 {
 	class Component;
 
-	class GameObject :
+	class GameObject final :
 		public Entity
 	{
+		CLASS_INFO(GameObject, Entity)
 	public:
 		GameObject();
 		virtual ~GameObject() override;

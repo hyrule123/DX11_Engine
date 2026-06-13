@@ -4,7 +4,7 @@
 namespace engine
 {
 	Transform::Transform()
-		: Component("Transform", ComponentCategory::kTransform)
+		: Super(CLASS_TO_STRING(Transform), ComponentCategory::kTransform)
 	{
 	}
 	Transform::~Transform()
@@ -12,5 +12,6 @@ namespace engine
 	}
 	void Transform::Init()
 	{
+		Super::Init();
 	}
 }

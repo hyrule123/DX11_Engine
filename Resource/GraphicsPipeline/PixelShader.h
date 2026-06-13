@@ -1,15 +1,20 @@
 #pragma once
 #include "Shader.h"
+
+#include <Engine/Core/Type.h>
+#include <Engine/Core/ClassMacro.h>
+
 #include <d3d11.h>
 #include <wrl/client.h>
+
 #include <vector>
-#include <Engine/Core/Type.h>
 
 namespace engine
 {
     class PixelShader final 
         : public Shader
     {
+        CLASS_INFO(PixelShader, Shader)
     public:
         PixelShader();
         virtual ~PixelShader() final;

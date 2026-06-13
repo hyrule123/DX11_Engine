@@ -1,11 +1,14 @@
 #pragma once
 #include "Shader.h"
 
+#include <Engine/Core/ClassMacro.h>
+
 namespace engine
 {
 	class VertexShader final
 		: public Shader
 	{
+		CLASS_INFO(VertexShader, Shader)
 	public:
 		VertexShader();
 		virtual ~VertexShader() final;

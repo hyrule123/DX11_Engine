@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Engine/Core/Common.h>
+#include <Engine/Core/ClassMacro.h>
 
 namespace engine
 {
@@ -20,7 +21,7 @@ namespace engine
 
 	private:
 		std::string_view concrete_class_name_ = {};
-		uint64 id_;
+		uint64 id_ = {};
 		static inline uint64 next_id_ = 0;
 		std::string name_ = {};
 	};

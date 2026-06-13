@@ -8,6 +8,7 @@ namespace engine
     class Script :
         public Component
     {
+        CLASS_INFO(Script, Component)
         COMPONENT_CATEGORY(ComponentCategory::kOthers)
     public:
         Script();

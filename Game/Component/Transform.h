@@ -2,7 +2,7 @@
 #include <Engine/Game/Component/Component.h>
 
 #include <Engine/Game/Component/ComponentCategory.h>
-#include <Engine/Core/ClassMacro.h>
+#include <Engine/Core/UtilMacro.h>
 
 namespace engine
 {

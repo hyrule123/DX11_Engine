@@ -1,8 +1,10 @@
 #pragma once
 
-#include <Engine/Core/Common.h>
 #include <Engine/Core/Singleton.h>
 
+#include <Engine/Core/Type.h>
+
+#include <unordered_map>
 #include <unordered_set>
 
 namespace engine

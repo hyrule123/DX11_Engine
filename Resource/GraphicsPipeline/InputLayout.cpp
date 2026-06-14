@@ -4,10 +4,12 @@
 #include <Engine/Manager/GraphicsDevice.h>
 #include <Engine/Resource/GraphicsPipeline/VertexShader.h>
 
+#include <Engine/Core/Debug.h>
+
 namespace engine
 {
 	InputLayout::InputLayout()
-		: Resource(CLASS_TO_STRING(InputLayout))
+		: Resource(STRINGIFY(InputLayout))
 	{
 	}
 	InputLayout::~InputLayout()

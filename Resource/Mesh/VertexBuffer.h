@@ -1,7 +1,7 @@
 #pragma once
 #include <Engine/Resource/Resource.h>
 
-#include <Engine/Core/Common.h>
+#include <Engine/Core/Type.h>
 
 struct ID3D11Buffer;
 

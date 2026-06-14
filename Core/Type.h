@@ -1,9 +1,12 @@
 #pragma once
 
+#include <Engine/Util/SimpleMath.h>
+
+#include <wrl.h>
+
 #include <cstdint>
 #include <memory>
-#include <wrl.h>
-#include <Engine/Util/SimpleMath.h>
+#include <filesystem>
 
 namespace engine
 {
@@ -30,6 +33,9 @@ namespace engine
 	using s_ptr = std::shared_ptr<T>;
 	template <typename T>
 	using w_ptr = std::weak_ptr<T>;
+	
+	namespace stdfs = std::filesystem;
 
+	// GPU 스마트포인터
 	using Microsoft::WRL::ComPtr;
 }

@@ -5,6 +5,8 @@
 #include <Engine/Manager/ResourceManager.h>
 #include <Engine/Manager/SceneManager.h>
 
+#include <Engine/Core/Debug.h>
+
 namespace engine
 {
 	GameEngine::GameEngine()

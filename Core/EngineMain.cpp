@@ -6,6 +6,8 @@
 
 #include <Engine/Manager/GameEngine.h>
 
+#include <Engine/Core/Debug.h>
+
 namespace
 {
     LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)

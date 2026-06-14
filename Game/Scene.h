@@ -2,7 +2,7 @@
 
 #include <Engine/Core/Entity.h>
 
-#include <Engine/Core/ClassMacro.h>
+#include <Engine/Core/UtilMacro.h>
 
 #include <vector>
 

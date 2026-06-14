@@ -1,6 +1,11 @@
 #pragma once
 #include <Engine/Resource/Resource.h>
 
+#include <Engine/Core/DX11.h>
+#include <Engine/Core/Type.h>
+
+#include <vector>
+
 namespace engine
 {
     class VertexShader;

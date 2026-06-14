@@ -1,7 +1,8 @@
 #pragma once
 
-#include <Engine/Core/Common.h>
 #include <Engine/Core/Singleton.h>
+
+#include <Engine/Core/Type.h>
 
 struct ID3D11Device;
 struct ID3D11DeviceContext;

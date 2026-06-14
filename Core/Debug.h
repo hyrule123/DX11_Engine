@@ -1,4 +1,6 @@
 #pragma once
+#include <Engine/Core/Windows.h>
+#include <cassert>
 
 #define ASSERT(_expression) assert(_expression)
 

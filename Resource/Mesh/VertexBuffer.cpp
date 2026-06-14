@@ -4,12 +4,12 @@
 
 #include <Engine/Manager/GraphicsDevice.h>
 
-#include <D3D11.h>
+#include <Engine/Core/Debug.h>
 
 namespace engine
 {
 	VertexBuffer::VertexBuffer()
-		: Resource(CLASS_TO_STRING(VertexBuffer))
+		: Resource(STRINGIFY(VertexBuffer))
 	{
 	}
 	VertexBuffer::~VertexBuffer()

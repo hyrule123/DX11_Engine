@@ -4,10 +4,12 @@
 #include <Engine/Game/Component/Transform.h>
 #include <Engine/Game/Component/ComponentCategory.h>
 
+#include <Engine/Core/Debug.h>
+
 namespace engine
 {
 	GameObject::GameObject()
-		: Super(CLASS_TO_STRING(GameObject))
+		: Super(STRINGIFY(GameObject))
 	{
 	}
 

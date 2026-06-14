@@ -2,7 +2,7 @@
 #include "Shader.h"
 
 #include <Engine/Core/Type.h>
-#include <Engine/Core/ClassMacro.h>
+#include <Engine/Core/UtilMacro.h>
 
 #include <d3d11.h>
 #include <wrl/client.h>

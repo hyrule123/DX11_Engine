@@ -1,10 +1,12 @@
 #include "Engine/Core/pch.h"
 #include "VertexShader.h"
 
+#include <Engine/Core/Debug.h>
+
 namespace engine
 {
 	VertexShader::VertexShader()
-		: Shader(CLASS_TO_STRING(VertexShader))
+		: Shader(STRINGIFY(VertexShader))
 	{
 
 	}

@@ -207,7 +207,9 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Core\ClassMacro.h" />
+    <ClInclude Include="Core\DX11.h" />
+    <ClInclude Include="Core\UtilMacro.h" />
+    <ClInclude Include="Core\Windows.h" />
     <ClInclude Include="Game\Component\Component.h" />
     <ClInclude Include="Core\Constant.h" />
     <ClInclude Include="Core\EngineMain.h" />
@@ -235,7 +237,6 @@
     <ClInclude Include="Resource\Resource.h" />
     <ClInclude Include="Resource\GraphicsPipeline\Shader.h" />
     <ClInclude Include="Core\Singleton.h" />
-    <ClInclude Include="Core\Common.h" />
     <ClInclude Include="Core\Type.h" />
     <ClInclude Include="Resource\Mesh\VertexBuffer.h" />
     <ClInclude Include="Util\file_system.h" />

@@ -1,6 +1,9 @@
 #include "Engine/Core/pch.h"
 #include "file_system.h"
 
+#include <Engine/Core/Type.h>
+#include <Engine/Core/Debug.h>
+
 #include <fstream>
 
 namespace engine::file_system

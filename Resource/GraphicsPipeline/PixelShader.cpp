@@ -1,10 +1,12 @@
 #include "Engine/Core/pch.h"
 #include "PixelShader.h"
 
+#include <Engine/Core/Debug.h>
+
 namespace engine
 {
 	PixelShader::PixelShader()
-		: Shader(CLASS_TO_STRING(PixelShader))
+		: Shader(STRINGIFY(PixelShader))
 	{
 	}
 

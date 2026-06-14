@@ -5,10 +5,12 @@
 #include <Engine/Resource/Mesh/VertexBuffer.h>
 #include <Engine/Resource/Mesh/IndexBuffer.h>
 
+#include <Engine/Core/Debug.h>
+
 namespace engine
 {
 	Mesh::Mesh()
-		: Resource(CLASS_TO_STRING(Mesh))
+		: Resource(STRINGIFY(Mesh))
 	{}
 	Mesh::~Mesh()
 	{}

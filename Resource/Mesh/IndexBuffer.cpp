@@ -3,10 +3,12 @@
 
 #include <Engine/Manager/GraphicsDevice.h>
 
+#include <Engine/Core/Debug.h>
+
 namespace engine
 {
 	IndexBuffer::IndexBuffer()
-		: Resource(CLASS_TO_STRING(IndexBuffer))
+		: Resource(STRINGIFY(IndexBuffer))
 	{
 	}
 	IndexBuffer::~IndexBuffer()

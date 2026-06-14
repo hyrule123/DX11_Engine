@@ -24,9 +24,6 @@
     <ClInclude Include="Core\Singleton.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Core\Common.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Core\Type.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -111,7 +108,13 @@
     <ClInclude Include="Game\Component\Script.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Core\ClassMacro.h">
+    <ClInclude Include="Core\UtilMacro.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Windows.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\DX11.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

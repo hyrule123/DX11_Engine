@@ -1,7 +1,7 @@
 #pragma once
 #include "Shader.h"
 
-#include <Engine/Core/ClassMacro.h>
+#include <Engine/Core/UtilMacro.h>
 
 namespace engine
 {

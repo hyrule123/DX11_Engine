@@ -24,7 +24,6 @@
 #include <unordered_map>
 #include <map>
 #include <filesystem>
-namespace stdfs = std::filesystem;
 
 //DirectX
 #include <d3d11.h>

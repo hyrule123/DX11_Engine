@@ -1,7 +1,5 @@
 #pragma once
 
-#include <Engine/Core/Common.h>
-
 namespace engine
 {
 	class DefaultGraphicsPipelineRes

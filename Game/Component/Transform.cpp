@@ -1,10 +1,12 @@
 #include "Engine/Core/pch.h"
 #include "Transform.h"
 
+#include <Engine/Core/Debug.h>
+
 namespace engine
 {
 	Transform::Transform()
-		: Super(CLASS_TO_STRING(Transform), ComponentCategory::kTransform)
+		: Super(STRINGIFY(Transform), ComponentCategory::kTransform)
 	{
 	}
 	Transform::~Transform()

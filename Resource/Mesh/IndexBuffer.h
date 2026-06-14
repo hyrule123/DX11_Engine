@@ -1,9 +1,10 @@
 #pragma once
 #include <Engine/Resource/Resource.h>
 
-#include <Engine/Core/Common.h>
+#include <Engine/Core/Type.h>
+#include <Engine/Core/DX11.h>
 
-#include <d3d11.h>
+#include <vector>
 
 namespace engine
 {

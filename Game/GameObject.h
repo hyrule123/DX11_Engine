@@ -3,7 +3,7 @@
 
 #include <Engine/Game/Component/ComponentCategory.h>
 #include <Engine/Core/Type.h>
-#include <Engine/Core/ClassMacro.h>
+#include <Engine/Core/UtilMacro.h>
 #include <array>
 #include <vector>
 #include <string>

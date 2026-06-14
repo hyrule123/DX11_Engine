@@ -5,6 +5,9 @@
 #include <Engine/Resource/GraphicsPipeline/InputLayout.h>
 #include <Engine/Resource/GraphicsPipeline/VertexShader.h>
 #include <Engine/Resource/GraphicsPipeline/PixelShader.h>
+#include <Engine/Resource/GraphicsPipeline/GraphicsPipeline.h>
+
+#include <Engine/Resource/Material/Material.h>
 
 namespace engine
 {
@@ -14,6 +17,7 @@ namespace engine
 		auto vs = resmgr.LoadFromFile<VertexShader>("Shader/Debug_VS.cso");
 		resmgr.SetDefaultResource(vs);
 
+		auto il = std::make_shared<InputLayout>();
 		{
 			D3D11_INPUT_ELEMENT_DESC desc = {};
 
@@ -42,15 +46,29 @@ namespace engine
 			std::vector<D3D11_INPUT_ELEMENT_DESC> descs;
 			descs.push_back(desc);
 			
-			auto il = std::make_shared<InputLayout>();
 			il->Create(descs, vs);
 
-			resmgr.AddResource("Debug_IL", il);
+			resmgr.AddResource("Debug_InputLayout", il);
 			resmgr.SetDefaultResource(il);
 		}
 
 		auto ps = resmgr.LoadFromFile<PixelShader>("Shader/Debug_PS.cso");
 		resmgr.SetDefaultResource(ps);
+
+		s_ptr<GraphicsPipeline> pipeline = std::make_shared<GraphicsPipeline>();
+
+		pipeline->SetInputLayout(il);
+		pipeline->SetVertexShader(vs);
+		pipeline->SetPixelShader(ps);
+		resmgr.AddResource("Debug_GraphicsPipeline", pipeline);
+		resmgr.SetDefaultResource(pipeline);
+
+
+		s_ptr<Material> material = std::make_shared<Material>();
+
+		material->SetGraphicsPipeline(pipeline);
+		resmgr.AddResource("Debug_Material", material);
+		resmgr.SetDefaultResource(material);
 	}
 }
 

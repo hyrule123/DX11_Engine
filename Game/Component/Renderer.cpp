@@ -5,6 +5,8 @@
 #include <Engine/Manager/GraphicsDevice.h>
 
 #include <Engine/Resource/Mesh/Mesh.h>
+#include <Engine/Resource/Material/Material.h>
+
 #include <Engine/Resource/GraphicsPipeline/InputLayout.h>
 #include <Engine/Resource/GraphicsPipeline/VertexShader.h>
 #include <Engine/Resource/GraphicsPipeline/PixelShader.h>
@@ -27,31 +29,23 @@ namespace engine
 	void Renderer::Init()
 	{
 		Super::Init();
-
-		auto& resmgr = ResourceManager::GetInst();
-
-		input_layout_ = resmgr.Find<InputLayout>("Debug_IL");
-		vs_ = resmgr.Find<VertexShader>("Shader/Debug_VS.cso");
-		ps_ = resmgr.Find<PixelShader>("Shader/Debug_PS.cso");
-
-		if (!(input_layout_ && vs_ && ps_))
-		{
-			ERROR_MESSAGE("뭔가 로딩 안됨");
-		}
 	}
 	void Renderer::Render()
 	{
 		Super::Render();
 
-		if (mesh_ && input_layout_ && vs_ && ps_)
+		if (mesh_ && material_)
 		{
 			auto context = GraphicsDevice::GetInst().GetContext();
 
-			input_layout_->Bind(context);
-			vs_->Bind(context);
-			ps_->Bind(context);
+			//
+			material_->Bind();
 
 			mesh_->Render();
+		}
+		else
+		{
+			DEBUG_LOG("Mesh 혹은 Material이 없어 렌더링 실패");
 		}
 	}
 }

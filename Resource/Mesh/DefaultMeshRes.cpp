@@ -36,7 +36,7 @@ namespace engine
 
 		msh->SetBuffers(vb, ib);
 
-		ResourceManager::GetInst().AddResource("DebugMesh", msh);	
+		ResourceManager::GetInst().AddResource("Debug_Mesh", msh);	
 		ResourceManager::GetInst().SetDefaultResource(msh);
 	}
 }

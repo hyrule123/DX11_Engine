@@ -7,6 +7,7 @@
 
 namespace engine
 {
+    class Material;
     class Mesh;
 
     class Renderer 
@@ -21,13 +22,11 @@ namespace engine
         virtual void Init() override;
         virtual void Render() override;
 
+        void SetMaterial(s_ptr<Material> material) { material_ = std::move(material); }
         void SetMesh(s_ptr<Mesh> mesh) { mesh_ = std::move(mesh); }
 
     private:
-        s_ptr<class InputLayout> input_layout_ = {};
-        s_ptr<class VertexShader> vs_ = {};
-        s_ptr<class PixelShader> ps_ = {};
-
+        s_ptr<Material> material_ = {};
         s_ptr<Mesh> mesh_ = {};
     };
 }

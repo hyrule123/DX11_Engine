@@ -218,6 +218,8 @@
     <ClInclude Include="Game\GameObject.h" />
     <ClInclude Include="Game\Scene.h" />
     <ClInclude Include="Game\Component\Renderer.h" />
+    <ClInclude Include="Resource\GraphicsPipeline\GraphicsPipeline.h" />
+    <ClInclude Include="Resource\Material\Material.h" />
     <ClInclude Include="Resource\GraphicsPipeline\DefaultGraphicsPipelineRes.h" />
     <ClInclude Include="Resource\GraphicsPipeline\PixelShader.h" />
     <ClInclude Include="Resource\GraphicsPipeline\InputLayout.h" />
@@ -250,6 +252,8 @@
     <ClCompile Include="Game\GameObject.cpp" />
     <ClCompile Include="Game\Scene.cpp" />
     <ClCompile Include="Game\Component\Renderer.cpp" />
+    <ClCompile Include="Resource\GraphicsPipeline\GraphicsPipeline.cpp" />
+    <ClCompile Include="Resource\Material\Material.cpp" />
     <ClCompile Include="Resource\GraphicsPipeline\DefaultGraphicsPipelineRes.cpp" />
     <ClCompile Include="Resource\GraphicsPipeline\PixelShader.cpp" />
     <ClCompile Include="Resource\GraphicsPipeline\InputLayout.cpp" />

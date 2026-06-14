@@ -33,6 +33,39 @@ namespace engine
 		}
 	}
 
+	void Scene::Update()
+	{
+		for (const auto& obj : game_objects_)
+		{
+			if(obj) 
+			{ 
+				obj->Update();
+			}
+		}
+	}
+
+	void Scene::Render()
+	{
+		for (const auto& obj : game_objects_)
+		{
+			if (obj)
+			{
+				obj->Render();
+			}
+		}
+	}
+
+	void Scene::FrameEnd()
+	{
+		for (const auto& obj : game_objects_)
+		{
+			if (obj)
+			{
+				obj->FrameEnd();
+			}
+		}
+	}
+
 	void Scene::AddGameObject(s_ptr<GameObject> obj)
 	{
 		if (obj)

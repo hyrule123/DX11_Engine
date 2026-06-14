@@ -23,6 +23,9 @@ namespace engine
         virtual void Init() = 0;
         virtual void Awake();
 
+        virtual void Update() {}
+        virtual void Render() {}
+
         ComponentCategory GetComponentCategory() const { return category_; }
 
         void SetOwner(s_ptr<GameObject> owner) { owner_ = owner; }

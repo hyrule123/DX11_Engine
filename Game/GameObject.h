@@ -14,7 +14,7 @@ namespace engine
 	class Component;
 	class Scene;
 
-	class GameObject final :
+	class GameObject :
 		public Entity
 	{
 		CLASS_INFO(GameObject, Entity)
@@ -43,7 +43,12 @@ namespace engine
 		void SetOwner(s_ptr<Scene> owner) { owner_ = std::move(owner); }
 		const w_ptr<Scene>& GetOwner() const { return owner_; }
 
-		void FrameStart();
+		virtual void Init();
+
+		virtual void FrameStart();
+		virtual void Update();
+		virtual void Render();
+		virtual void FrameEnd();
 
 	private:
 		void AddComponentInternal(const s_ptr<Component>& component);
@@ -56,6 +61,8 @@ namespace engine
 		std::string name_ = {};
 
 		std::vector<s_ptr<Component>> pending_add_components_ = {};
+
+		bool has_initialized_ = false;
 	};
 
 	template <typename T>

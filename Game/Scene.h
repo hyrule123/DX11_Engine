@@ -3,7 +3,9 @@
 #include <Engine/Core/Entity.h>
 
 #include <Engine/Core/UtilMacro.h>
+#include <Engine/Core/Type.h>
 
+#include <string_view>
 #include <vector>
 
 namespace engine
@@ -19,8 +21,9 @@ namespace engine
 
 		virtual void Init() = 0;
 		virtual void FrameStart();
-		virtual void Update() {}
-		virtual void Render() {}
+		virtual void Update();
+		virtual void Render();
+		virtual void FrameEnd();
 
 		bool HasInitialized() const { return has_initialized_; }
 

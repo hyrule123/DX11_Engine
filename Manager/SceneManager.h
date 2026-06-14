@@ -20,6 +20,7 @@ namespace engine
 		void Init();
 		void FrameStart();
 		void Update();
+		void LateUpdate();
 		void Render();
 
 		void ChangeSceneNow();

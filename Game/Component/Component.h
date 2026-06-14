@@ -24,6 +24,7 @@ namespace engine
         virtual void Awake();
 
         virtual void Update() {}
+        virtual void LateUpdate() {}
         virtual void Render() {}
 
         ComponentCategory GetComponentCategory() const { return category_; }

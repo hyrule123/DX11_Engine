@@ -39,6 +39,8 @@ namespace engine
 
 		scene_mgr.Update();
 
+		scene_mgr.LateUpdate();
+
 		GraphicsDevice::GetInst().BindSwapChainRTV();
 		scene_mgr.Render();
 

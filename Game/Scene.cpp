@@ -44,6 +44,17 @@ namespace engine
 		}
 	}
 
+	void Scene::LateUpdate()
+	{
+		for (const auto& obj : game_objects_)
+		{
+			if (obj)
+			{
+				obj->LateUpdate();
+			}
+		}
+	}
+
 	void Scene::Render()
 	{
 		for (const auto& obj : game_objects_)

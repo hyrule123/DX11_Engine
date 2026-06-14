@@ -47,6 +47,7 @@ namespace engine
 
 		virtual void FrameStart();
 		virtual void Update();
+		virtual void LateUpdate();
 		virtual void Render();
 		virtual void FrameEnd();
 

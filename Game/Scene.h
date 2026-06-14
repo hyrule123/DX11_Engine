@@ -22,6 +22,7 @@ namespace engine
 		virtual void Init() = 0;
 		virtual void FrameStart();
 		virtual void Update();
+		virtual void LateUpdate();
 		virtual void Render();
 		virtual void FrameEnd();
 

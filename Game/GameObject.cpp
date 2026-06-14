@@ -84,7 +84,7 @@ namespace engine
 
 	void GameObject::Update()
 	{
-		DEBUG_LOG("Update 돌고 있습니다");
+		//DEBUG_LOG("Update 돌고 있습니다");
 		for (const auto& com : fixed_order_components_)
 		{
 			if (com)
@@ -102,9 +102,28 @@ namespace engine
 		}
 	}
 
+	void GameObject::LateUpdate()
+	{
+		for (const auto& com : fixed_order_components_)
+		{
+			if (com)
+			{
+				com->LateUpdate();
+			}
+		}
+			
+		for (const auto& com : other_components_)
+		{
+			if (com)
+			{
+				com->LateUpdate();
+			}
+		}
+	}
+
 	void GameObject::Render()
 	{
-		DEBUG_LOG("Render 돌고 있습니다");
+		//DEBUG_LOG("Render 돌고 있습니다");
 		for (const auto& com : fixed_order_components_)
 		{
 			if (com)

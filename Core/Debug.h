@@ -28,8 +28,8 @@
 #define DEBUG_MESSAGE_A(_c_str) \
 	do { MessageBoxW(nullptr, _c_str, nullptr, MB_OK | MB_ICONINFORMATION); __debugbreak(); } while(false)
 
-#define DEBUG_LOG_A(_str) OutputDebugStringA(_str "\n")
-#define DEBUG_LOG_W(_wStr) OutputDebugStringW(_wStr "\n")
+#define DEBUG_LOG_A(_str) OutputDebugStringA(_str); OutputDebugStringA("\n");
+#define DEBUG_LOG_W(_wStr) OutputDebugStringW(_wStr); OutputDebugStringW(L"\n");
 #define DEBUG_LOG(_str) DEBUG_LOG_W(L ## _str)
 
 #define DEBUG_BREAK ::__debugbreak()

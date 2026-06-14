@@ -19,5 +19,9 @@ namespace engine
 	{
 		has_awaken_ = true;
 	}
+	void Component::Start()
+	{
+		has_started_ = true;
+	}
 }
 

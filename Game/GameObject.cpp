@@ -89,6 +89,11 @@ namespace engine
 		{
 			if (com)
 			{
+				if (!(com->HasStarted()))
+				{
+					com->Start();
+				}
+
 				com->Update();
 			}
 		}

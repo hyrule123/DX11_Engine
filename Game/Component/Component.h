@@ -22,7 +22,8 @@ namespace engine
 
         virtual void Init() = 0;
         virtual void Awake();
-
+        virtual void Start();
+        
         virtual void Update() {}
         virtual void LateUpdate() {}
         virtual void Render() {}
@@ -34,6 +35,7 @@ namespace engine
 
         bool HasInitialzed() const { return has_initialized_; }
         bool HasAwaken() const { return has_awaken_; }
+        bool HasStarted() const { return has_started_; }
 
     private:
         ComponentCategory category_ = {};
@@ -42,6 +44,7 @@ namespace engine
 
         bool has_initialized_ = false;
         bool has_awaken_ = false;
+        bool has_started_ = false;
     };
 }
 

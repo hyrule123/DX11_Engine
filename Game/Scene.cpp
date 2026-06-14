@@ -82,6 +82,10 @@ namespace engine
 		if (obj)
 		{
 			obj->SetOwner(std::static_pointer_cast<Scene>(shared_from_this()));
+			if (!(obj->HasInitialized()))
+			{
+				obj->Init();
+			}
 			pending_add_objects_.push_back(obj);
 		}
 	}

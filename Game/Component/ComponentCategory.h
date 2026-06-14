@@ -15,7 +15,6 @@ namespace engine
         kTransform,
         kRenderer,
 
-
         kOthers,
         kEnd = kOthers
     };

@@ -20,7 +20,16 @@ namespace engine
 		CLASS_INFO(GameObject, Entity)
 	public:
 		GameObject();
+		GameObject(const std::string_view name);
 		virtual ~GameObject() override;
+
+		virtual void Init();
+
+		virtual void FrameStart();
+		virtual void Update();
+		virtual void LateUpdate();
+		virtual void Render();
+		virtual void FrameEnd();
 
 		s_ptr<Component> AddComponent(s_ptr<Component> component);
 
@@ -43,13 +52,7 @@ namespace engine
 		void SetOwner(s_ptr<Scene> owner) { owner_ = std::move(owner); }
 		const w_ptr<Scene>& GetOwner() const { return owner_; }
 
-		virtual void Init();
-
-		virtual void FrameStart();
-		virtual void Update();
-		virtual void LateUpdate();
-		virtual void Render();
-		virtual void FrameEnd();
+		bool HasInitialized() const { return has_initialized_; }
 
 	private:
 		void AddComponentInternal(const s_ptr<Component>& component);

@@ -13,49 +13,14 @@ namespace engine
 	{
 	}
 
+	GameObject::GameObject(const std::string_view name)
+		: GameObject()
+	{
+		SetName(name);
+	}
+
 	GameObject::~GameObject()
 	{}
-
-	s_ptr<Component> GameObject::AddComponent(s_ptr<Component> component)
-	{
-		if (component)
-		{
-			pending_add_components_.push_back(component);
-			
-			component->SetOwner(std::static_pointer_cast<GameObject>(shared_from_this()));
-			if (!component->HasInitialzed())
-			{
-				component->Init();
-			}
-		}
-
-		return component;
-	}
-
-	s_ptr<Component> GameObject::GetComponent(const std::string_view concrete_class_name) const
-	{
-		for (size_t i = 0; i < fixed_order_components_.size(); ++i)
-		{
-			if (fixed_order_components_[i] 
-				&&
-				fixed_order_components_[i]->GetConcreteClassName() == concrete_class_name)
-			{
-				return fixed_order_components_[i];
-			}
-		}
-
-		for (size_t i = 0; i < other_components_.size(); ++i)
-		{
-			if (other_components_[i]
-				&&
-				other_components_[i]->GetConcreteClassName() == concrete_class_name)
-			{
-				return other_components_[i];
-			}
-		}
-
-		return nullptr;
-	}
 
 	void GameObject::Init()
 	{
@@ -149,6 +114,47 @@ namespace engine
 	void GameObject::FrameEnd()
 	{
 		//컴포넌트 제거 프로세스
+	}
+
+	s_ptr<Component> GameObject::AddComponent(s_ptr<Component> component)
+	{
+		if (component)
+		{
+			pending_add_components_.push_back(component);
+
+			component->SetOwner(std::static_pointer_cast<GameObject>(shared_from_this()));
+			if (!component->HasInitialzed())
+			{
+				component->Init();
+			}
+		}
+
+		return component;
+	}
+
+	s_ptr<Component> GameObject::GetComponent(const std::string_view concrete_class_name) const
+	{
+		for (size_t i = 0; i < fixed_order_components_.size(); ++i)
+		{
+			if (fixed_order_components_[i]
+				&&
+				fixed_order_components_[i]->GetConcreteClassName() == concrete_class_name)
+			{
+				return fixed_order_components_[i];
+			}
+		}
+
+		for (size_t i = 0; i < other_components_.size(); ++i)
+		{
+			if (other_components_[i]
+				&&
+				other_components_[i]->GetConcreteClassName() == concrete_class_name)
+			{
+				return other_components_[i];
+			}
+		}
+
+		return nullptr;
 	}
 
 	void GameObject::AddComponentInternal(const s_ptr<Component>& component)

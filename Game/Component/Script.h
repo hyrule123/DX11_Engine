@@ -11,7 +11,7 @@ namespace engine
         CLASS_INFO(Script, Component)
         COMPONENT_CATEGORY(ComponentCategory::kOthers)
     public:
-        Script();
+        Script(const std::string_view class_name);
         virtual ~Script() override;
 
         virtual void Init() override {}

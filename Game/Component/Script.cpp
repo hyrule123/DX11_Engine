@@ -3,8 +3,8 @@
 
 namespace engine
 {
-	Script::Script()
-		: Super(STRINGIFY(Script), Script::kComponentCategory)
+	Script::Script(const std::string_view class_name)
+		: Super(class_name, Script::kComponentCategory)
 	{}
 	Script::~Script()
 	{}

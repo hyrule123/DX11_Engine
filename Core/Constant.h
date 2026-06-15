@@ -9,4 +9,6 @@ namespace engine
 
 	constexpr const uint32 kDefaultWidth = 1280;
 	constexpr const uint32 kDefaultHeight = 720;
+
+	constexpr const float kDeltaTimeCap = 0.1f;
 }

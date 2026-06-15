@@ -4,6 +4,7 @@
 #include <Engine/Manager/GraphicsDevice.h>
 #include <Engine/Manager/ResourceManager.h>
 #include <Engine/Manager/SceneManager.h>
+#include <Engine/Manager/TimeManager.h>
 
 #include <Engine/Core/Debug.h>
 
@@ -34,6 +35,8 @@ namespace engine
 
 	bool GameEngine::Run()
 	{
+		TimeManager::GetInst().Update();
+
 		SceneManager& scene_mgr = SceneManager::GetInst();
 		scene_mgr.FrameStart();
 

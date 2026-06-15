@@ -231,6 +231,7 @@
     <ClInclude Include="Core\Debug.h" />
     <ClInclude Include="Game\Component\Transform.h" />
     <ClInclude Include="Game\Component\Script.h" />
+    <ClInclude Include="Manager\TimeManager.h" />
     <ClInclude Include="Util\SimpleMath.h" />
     <ClInclude Include="Core\pch.h" />
     <ClInclude Include="resource.h" />
@@ -264,6 +265,7 @@
     <ClCompile Include="Manager\GraphicsDevice.cpp" />
     <ClCompile Include="Game\Component\Transform.cpp" />
     <ClCompile Include="Game\Component\Script.cpp" />
+    <ClCompile Include="Manager\TimeManager.cpp" />
     <ClCompile Include="Util\SimpleMath.cpp" />
     <ClCompile Include="Core\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

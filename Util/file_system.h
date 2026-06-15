@@ -1,9 +1,6 @@
 #pragma once
 
-#include <Engine/Core/Type.h>
-
-#include <filesystem>
-#include <vector>
+#include <Engine/Core/CoreMinimal.h>
 
 namespace engine
 {

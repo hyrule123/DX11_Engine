@@ -3,7 +3,7 @@
 #include <Engine/Core/Entity.h>
 
 #include <Engine/Core/UtilMacro.h>
-#include <Engine/Core/Type.h>
+#include <Engine/Core/CoreMinimal.h>
 
 #include <string_view>
 #include <vector>

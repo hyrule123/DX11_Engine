@@ -17,8 +17,6 @@ namespace engine
 	}
 	bool VertexBuffer::Create(const void* data, UINT data_stride, UINT	data_count)
 	{
-		using namespace DirectX;
-
 		if (nullptr == data)
 		{
 			return false;

@@ -2,7 +2,7 @@
 
 #include <Engine/Core/Singleton.h>
 
-#include <Engine/Core/Type.h>
+#include <Engine/Core/CoreMinimal.h>
 
 #include <unordered_map>
 #include <unordered_set>

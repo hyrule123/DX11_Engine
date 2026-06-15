@@ -3,7 +3,7 @@
 #include <Engine/Game/Component/Component.h>
 
 #include <Engine/Core/UtilMacro.h>
-#include <Engine/Core/Type.h>
+#include <Engine/Core/CoreMinimal.h>
 
 namespace engine
 {

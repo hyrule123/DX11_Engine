@@ -1,7 +1,7 @@
 #pragma once
 #include "Shader.h"
 
-#include <Engine/Core/Type.h>
+#include <Engine/Core/CoreMinimal.h>
 #include <Engine/Core/UtilMacro.h>
 
 #include <d3d11.h>

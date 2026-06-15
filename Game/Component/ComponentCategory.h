@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Engine/Core/Type.h>
+#include <Engine/Core/CoreMinimal.h>
 
 #include <type_traits>
 

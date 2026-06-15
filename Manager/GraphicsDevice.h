@@ -2,7 +2,7 @@
 
 #include <Engine/Core/Singleton.h>
 
-#include <Engine/Core/Type.h>
+#include <Engine/Core/CoreMinimal.h>
 
 struct ID3D11Device;
 struct ID3D11DeviceContext;

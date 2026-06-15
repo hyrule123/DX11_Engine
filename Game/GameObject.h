@@ -2,7 +2,7 @@
 #include <Engine/Core/Entity.h>
 
 #include <Engine/Game/Component/ComponentCategory.h>
-#include <Engine/Core/Type.h>
+#include <Engine/Core/CoreMinimal.h>
 #include <Engine/Core/UtilMacro.h>
 #include <array>
 #include <vector>

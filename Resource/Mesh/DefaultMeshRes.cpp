@@ -8,6 +8,8 @@
 #include <Engine/Resource/Mesh/IndexBuffer.h>
 #include <Engine/Resource/Mesh/Vertex.h>
 
+#include <Engine/Core/Math.h>
+
 namespace engine
 {
 	void DefaultMeshRes::Load()

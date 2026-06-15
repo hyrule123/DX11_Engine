@@ -2,7 +2,7 @@
 #include <Engine/Resource/Resource.h>
 
 #include <Engine/Core/DX11.h>
-#include <Engine/Core/Type.h>
+#include <Engine/Core/CoreMinimal.h>
 
 #include <vector>
 

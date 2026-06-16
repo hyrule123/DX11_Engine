@@ -5,6 +5,7 @@
 #include <Engine/Core/Constant.h>
 
 #include <Engine/Manager/GameEngine.h>
+#include <Engine/Manager/InputManager.h>
 
 #include <Engine/Core/Debug.h>
 
@@ -38,6 +39,30 @@ namespace
         case WM_DESTROY:
             PostQuitMessage(0);
             break;
+
+        // 1. 포커스 관리
+        case WM_KILLFOCUS:
+            // 창이 비활성화될 때 누르고 있던 모든 키를 해제
+            engine::InputManager::GetInst().ClearCurKey();
+            break;
+
+            // ==========================================
+            // 2. 키보드 처리
+            // ==========================================
+        case WM_KEYDOWN: [[fallthrough]];
+        case WM_SYSKEYDOWN: // Alt 키 조합 등 시스템 키도 처리
+            // lParam의 30번째 비트(0x40000000)는 이전 프레임의 키 상태를 나타냄
+            // 이 값이 0일 때만 (즉, 방금 막 눌렸을 때만) 처리하여 OS의 연속 반복 입력을 무시
+            if ((lParam & 0x40000000) == 0) {
+                engine::InputManager::GetInst().SetCurKey(wParam, true);
+            }
+            break;
+
+        case WM_KEYUP: [[fallthrough]];
+        case WM_SYSKEYUP:
+            engine::InputManager::GetInst().SetCurKey(wParam, false);
+            break;
+
         default:
             return DefWindowProc(hWnd, message, wParam, lParam);
         }

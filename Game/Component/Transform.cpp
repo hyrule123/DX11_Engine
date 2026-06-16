@@ -42,12 +42,15 @@ namespace engine
 
 		world_mat_ = scale_mat * rot_mat * pos_mat;
 
+//#define TF_DEBUG
+#ifdef TF_DEBUG
 		std::string msg = "LOCAL SCALE: " + std::to_string(local_scale_.x) + std::to_string(local_scale_.y) + std::to_string(local_scale_.z) + "\n";
 
 		msg += "LOCAL ROTATION: " + std::to_string(local_rot_.x) + std::to_string(local_rot_.y) + std::to_string(local_rot_.z) + std::to_string(local_rot_.w) + "\n";
 
 		msg += "LOCAL POS: " + std::to_string(local_pos_.x) + std::to_string(local_pos_.y) + std::to_string(local_pos_.z) + "\n\n";
 		DEBUG_LOG_A(msg.c_str());
+#endif
 	}
 
 

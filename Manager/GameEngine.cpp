@@ -5,6 +5,7 @@
 #include <Engine/Manager/ResourceManager.h>
 #include <Engine/Manager/SceneManager.h>
 #include <Engine/Manager/TimeManager.h>
+#include <Engine/Manager/InputManager.h>
 
 #include <Engine/Core/Debug.h>
 
@@ -29,6 +30,7 @@ namespace engine
 
 		SceneManager::GetInst().Init();
 
+		InputManager::GetInst();
 
 		return true;
 	}
@@ -39,6 +41,8 @@ namespace engine
 
 		SceneManager& scene_mgr = SceneManager::GetInst();
 		scene_mgr.FrameStart();
+
+		InputManager::GetInst().Update();
 
 		scene_mgr.Update();
 

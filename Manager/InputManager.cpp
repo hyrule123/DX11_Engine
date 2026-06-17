@@ -17,9 +17,6 @@ namespace engine
 	{
 		//전에는 안눌렸고, 지금은 눌렸음
 		down_keys_ = (~prev_keys_) & (cur_keys_);
-
-		//전에도 눌렸고, 지금도 눌렸음
-		pressed_keys_ = (prev_keys_) & (cur_keys_);
 		
 		//전에는 눌렸는데, 지금은 안눌렸음
 		up_keys_ = (prev_keys_) & (~cur_keys_);

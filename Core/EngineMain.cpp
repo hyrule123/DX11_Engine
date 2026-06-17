@@ -9,6 +9,8 @@
 
 #include <Engine/Core/Debug.h>
 
+#include <windowsx.h>
+
 namespace
 {
     LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
@@ -43,7 +45,7 @@ namespace
         // 1. 포커스 관리
         case WM_KILLFOCUS:
             // 창이 비활성화될 때 누르고 있던 모든 키를 해제
-            engine::InputManager::GetInst().ClearCurKey();
+            engine::InputManager::GetInst().ClearKeys();
             break;
 
             // ==========================================
@@ -54,13 +56,46 @@ namespace
             // lParam의 30번째 비트(0x40000000)는 이전 프레임의 키 상태를 나타냄
             // 이 값이 0일 때만 (즉, 방금 막 눌렸을 때만) 처리하여 OS의 연속 반복 입력을 무시
             if ((lParam & 0x40000000) == 0) {
-                engine::InputManager::GetInst().SetCurKey(wParam, true);
+                engine::InputManager::GetInst().SetKey(wParam, true);
             }
             break;
 
         case WM_KEYUP: [[fallthrough]];
         case WM_SYSKEYUP:
-            engine::InputManager::GetInst().SetCurKey(wParam, false);
+            engine::InputManager::GetInst().SetKey(wParam, false);
+            break;
+
+        // ==========================================
+        // 3. 마우스 처리
+        // ==========================================
+        case WM_MOUSEMOVE: {
+            // LOWORD, HIWORD 대신 GET_X_LPARAM을 사용해야 다중 모니터의 음수 좌표를 안전하게 처리함
+            int x = GET_X_LPARAM(lParam);
+            int y = GET_Y_LPARAM(lParam);
+            engine::InputManager::GetInst().SetMousePos(x, y);
+            break;
+        }
+
+                         // 마우스 버튼은 가상 키 코드(VK_*)를 그대로 활용하여 키보드 배열에 합치는 것이 관리하기 편함
+        case WM_LBUTTONDOWN:
+            engine::InputManager::GetInst().SetKey(VK_LBUTTON, true);
+            break;
+        case WM_LBUTTONUP:
+            engine::InputManager::GetInst().SetKey(VK_LBUTTON, false);
+            break;
+
+        case WM_RBUTTONDOWN:
+            engine::InputManager::GetInst().SetKey(VK_RBUTTON, true);
+            break;
+        case WM_RBUTTONUP:
+            engine::InputManager::GetInst().SetKey(VK_RBUTTON, false);
+            break;
+
+        case WM_MBUTTONDOWN:
+            engine::InputManager::GetInst().SetKey(VK_MBUTTON, true);
+            break;
+        case WM_MBUTTONUP:
+            engine::InputManager::GetInst().SetKey(VK_MBUTTON, false);
             break;
 
         default:

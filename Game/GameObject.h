@@ -50,7 +50,7 @@ namespace engine
 		const std::string& GetName() const { return name_; }
 
 		void SetOwner(s_ptr<Scene> owner) { owner_ = std::move(owner); }
-		const w_ptr<Scene>& GetOwner() const { return owner_; }
+		s_ptr<Scene> GetOwner() const { return owner_.lock(); }
 
 		bool HasInitialized() const { return has_initialized_; }
 

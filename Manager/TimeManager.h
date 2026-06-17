@@ -13,7 +13,7 @@ namespace engine
 		DECLARE_SINGLETON(TimeManager)
 
 	public:
-		inline float DeltaTime() const { return delta_time_; }
+		float DeltaTime() const { return delta_time_; }
 
 		void Update();
 

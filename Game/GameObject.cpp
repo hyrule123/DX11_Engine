@@ -25,6 +25,8 @@ namespace engine
 	void GameObject::Init()
 	{
 		has_initialized_ = true;
+
+		AddComponent<Transform>();
 	}
 
 	void GameObject::FrameStart()

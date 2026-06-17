@@ -76,7 +76,7 @@ namespace
             break;
         }
 
-                         // 마우스 버튼은 가상 키 코드(VK_*)를 그대로 활용하여 키보드 배열에 합치는 것이 관리하기 편함
+        // 마우스 버튼은 가상 키 코드(VK_*)를 그대로 활용하여 키보드 배열에 합치는 것이 관리하기 편함
         case WM_LBUTTONDOWN:
             engine::InputManager::GetInst().SetKey(VK_LBUTTON, true);
             break;

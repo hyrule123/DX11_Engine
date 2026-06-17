@@ -19,16 +19,13 @@ namespace engine
 
 		virtual bool LoadFromFile(const stdfs::path& path) override;
 
-		inline void SetVertexBuffer(s_ptr<VertexBuffer> vertex_buffer) 
-		{
+		void SetVertexBuffer(s_ptr<VertexBuffer> vertex_buffer) {
 			vertex_buffer_ = vertex_buffer;
 		}
-		inline void SetIndexBuffer(s_ptr<IndexBuffer> index_buffer)
-		{
+		void SetIndexBuffer(s_ptr<IndexBuffer> index_buffer) {
 			index_buffer_ = index_buffer;
 		}
-		inline void SetBuffers(s_ptr<VertexBuffer> vertex_buffer, s_ptr<IndexBuffer> index_buffer)
-		{
+		void SetBuffers(s_ptr<VertexBuffer> vertex_buffer, s_ptr<IndexBuffer> index_buffer) {
 			SetVertexBuffer(vertex_buffer);
 			SetIndexBuffer(index_buffer);
 		}

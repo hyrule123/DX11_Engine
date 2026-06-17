@@ -1,14 +1,14 @@
 #pragma once
 #include <Engine/Core/Entity.h>
 
+#include <Engine/Game/GameObject.h>
+
 #include <Engine/Game/Component/ComponentCategory.h>
 
 #include <Engine/Core/UtilMacro.h>
 
 namespace engine
 {
-    class GameObject;
-
     class Component :
         public Entity
     {
@@ -31,7 +31,16 @@ namespace engine
         ComponentCategory GetComponentCategory() const { return category_; }
 
         void SetOwner(s_ptr<GameObject> owner) { owner_ = owner; }
-        w_ptr<GameObject> GetOwner() const { return owner_; }
+        s_ptr<GameObject> GetOwner() const { return owner_.lock(); }
+        s_ptr<GameObject> GetGameObject() const { return GetOwner(); }
+        
+        template <typename T>
+        s_ptr<T> GetComponent() {
+            if (!(owner_.expired())) {
+                return owner_.lock()->GetComponent<T>();
+            }
+            return nullptr;
+        }
 
         bool HasInitialzed() const { return has_initialized_; }
         bool HasAwaken() const { return has_awaken_; }

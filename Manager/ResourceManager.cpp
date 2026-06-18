@@ -2,8 +2,8 @@
 #include "ResourceManager.h"
 
 #include <Engine/Resource/Resource.h>
-#include <Engine/Resource/Mesh/DefaultMeshRes.h>
-#include <Engine/Resource/GraphicsPipeline/DefaultGraphicsPipelineRes.h>
+
+#include <Engine/Resource/DefaultRes/DefaultRes.h>
 
 namespace engine
 {
@@ -26,12 +26,13 @@ namespace engine
 		// 첫 번째 인자가 nullptr이면 현재 프로세스의 모듈을 의미합니다.
 		GetModuleFileNameW(nullptr, buffer, MAX_PATH);
 
+		//path로 받아오고, weakly_canonical을 통해 절대 주소 만들기
 		program_path_ = buffer;
-		
 		resource_dir_ = stdfs::weakly_canonical(program_path_.remove_filename() / ".." / ".." / ".." / "Res");
 
-		DefaultMeshRes::Load();
-		DefaultGraphicsPipelineRes::Load();
+
+		// ============ 기본 리소스 로드 ===============
+		DefaultRes::LoadDebugRenderObjects();
 
 		return true;
 	}

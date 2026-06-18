@@ -44,6 +44,7 @@ namespace engine
         }
 
         const std::bitset<kKeyCountMax>& GetDownKeys() const { return down_keys_; }
+        const std::bitset<kKeyCountMax>& GetKeys() const { return cur_keys_; }
         const std::bitset<kKeyCountMax>& GetUpKeys() const { return up_keys_; }
 
         //클라이언트 좌상단 기준, 마우스 상대 좌표를 반환 

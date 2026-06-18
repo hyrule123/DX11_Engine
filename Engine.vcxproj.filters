@@ -72,9 +72,6 @@
     <ClInclude Include="Game\Scene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Resource\Mesh\DefaultMeshRes.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Resource\GraphicsPipeline\Shader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -88,9 +85,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Resource\GraphicsPipeline\PixelShader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Resource\GraphicsPipeline\DefaultGraphicsPipelineRes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Game\GameObject.h">
@@ -144,6 +138,9 @@
     <ClInclude Include="Core\KeyCode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Resource\DefaultRes\DefaultRes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Core\pch.cpp">
@@ -185,9 +182,6 @@
     <ClCompile Include="Game\Scene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Resource\Mesh\DefaultMeshRes.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Resource\GraphicsPipeline\Shader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -201,9 +195,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Resource\GraphicsPipeline\PixelShader.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Resource\GraphicsPipeline\DefaultGraphicsPipelineRes.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Game\GameObject.cpp">
@@ -233,6 +224,9 @@
     <ClCompile Include="Manager\InputManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Resource\DefaultRes\DebugRenderObjects.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Engine.rc">
@@ -249,8 +243,11 @@
       <Filter>Header Files</Filter>
     </None>
     <None Include="HLSL\Debug\Debug.hlsli" />
-    <None Include="HLSL\Common.hlsli" />
-    <None Include="HLSL\Register.hlsli" />
+    <None Include="HLSL\CppShared\Type.hlsli" />
+    <None Include="HLSL\CppShared\Register.hlsli" />
+    <None Include="HLSL\CppShared\Struct.hlsli" />
+    <None Include="HLSL\CppShared\CoreMinimal.hlsli" />
+    <None Include="HLSL\CppShared\Config.hlsli" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="HLSL\Debug\Debug_PS.hlsl" />

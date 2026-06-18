@@ -2,6 +2,8 @@
 
 #include <Engine/Core/Singleton.h>
 
+#include <Engine/Core/Windows.h>
+
 namespace engine
 {
 	class EngineMain

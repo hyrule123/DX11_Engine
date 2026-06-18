@@ -4,15 +4,7 @@ VS_OUT main(VS_IN inpos)
 {
 	VS_OUT outpos;
 	
-	const MATRIX mymat =
-	{
-		1.f, 0.f, 0.f, 0.f,
-		0.f, 1.f, 0.f, 0.f,
-		0.f, 0.f, 1.f, 0.f,
-		0.f, 0.f, 0.f, 1.f
-	};
-	
-	outpos.pos = mul(inpos.pos, mymat);
+	outpos.pos = mul(float4(inpos.pos, 1.0f), wvp.world);
 	
 	return outpos;
 }

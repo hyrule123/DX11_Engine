@@ -119,6 +119,7 @@
       <AdditionalIncludeDirectories>$(ProjectDir)..</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>__HLSL</PreprocessorDefinitions>
       <ObjectFileOutput>$(ProjectDir)..\..\Res\Shader\%(Filename).cso</ObjectFileOutput>
+      <AdditionalOptions>/Zpr %(AdditionalOptions)</AdditionalOptions>
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -148,6 +149,7 @@
       <AdditionalIncludeDirectories>$(ProjectDir)..</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>__HLSL</PreprocessorDefinitions>
       <ObjectFileOutput>$(ProjectDir)..\..\Res\Shader\%(Filename).cso</ObjectFileOutput>
+      <AdditionalOptions>/Zpr %(AdditionalOptions)</AdditionalOptions>
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -175,6 +177,7 @@
       <AdditionalIncludeDirectories>$(ProjectDir)..</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>__HLSL</PreprocessorDefinitions>
       <ObjectFileOutput>$(ProjectDir)..\..\Res\Shader\%(Filename).cso</ObjectFileOutput>
+      <AdditionalOptions>/Zpr %(AdditionalOptions)</AdditionalOptions>
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -204,6 +207,7 @@
       <AdditionalIncludeDirectories>$(ProjectDir)..</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>__HLSL</PreprocessorDefinitions>
       <ObjectFileOutput>$(ProjectDir)..\..\Res\Shader\%(Filename).cso</ObjectFileOutput>
+      <AdditionalOptions>/Zpr %(AdditionalOptions)</AdditionalOptions>
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -223,13 +227,12 @@
     <ClInclude Include="Game\Scene.h" />
     <ClInclude Include="Game\Component\Renderer.h" />
     <ClInclude Include="Manager\InputManager.h" />
+    <ClInclude Include="Resource\DefaultRes\DefaultRes.h" />
     <ClInclude Include="Resource\GraphicsPipeline\GraphicsPipeline.h" />
     <ClInclude Include="Resource\Material\Material.h" />
-    <ClInclude Include="Resource\GraphicsPipeline\DefaultGraphicsPipelineRes.h" />
     <ClInclude Include="Resource\GraphicsPipeline\PixelShader.h" />
     <ClInclude Include="Resource\GraphicsPipeline\InputLayout.h" />
     <ClInclude Include="Manager\SceneManager.h" />
-    <ClInclude Include="Resource\Mesh\DefaultMeshRes.h" />
     <ClInclude Include="Resource\Mesh\IndexBuffer.h" />
     <ClInclude Include="Manager\GameEngine.h" />
     <ClInclude Include="Manager\GraphicsDevice.h" />
@@ -259,13 +262,12 @@
     <ClCompile Include="Game\Scene.cpp" />
     <ClCompile Include="Game\Component\Renderer.cpp" />
     <ClCompile Include="Manager\InputManager.cpp" />
+    <ClCompile Include="Resource\DefaultRes\DebugRenderObjects.cpp" />
     <ClCompile Include="Resource\GraphicsPipeline\GraphicsPipeline.cpp" />
     <ClCompile Include="Resource\Material\Material.cpp" />
-    <ClCompile Include="Resource\GraphicsPipeline\DefaultGraphicsPipelineRes.cpp" />
     <ClCompile Include="Resource\GraphicsPipeline\PixelShader.cpp" />
     <ClCompile Include="Resource\GraphicsPipeline\InputLayout.cpp" />
     <ClCompile Include="Manager\SceneManager.cpp" />
-    <ClCompile Include="Resource\Mesh\DefaultMeshRes.cpp" />
     <ClCompile Include="Resource\Mesh\IndexBuffer.cpp" />
     <ClCompile Include="Manager\GameEngine.cpp" />
     <ClCompile Include="Manager\GraphicsDevice.cpp" />
@@ -294,9 +296,12 @@
     <Image Include="icon1.ico" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="HLSL\Common.hlsli" />
+    <None Include="HLSL\CppShared\Config.hlsli" />
+    <None Include="HLSL\CppShared\CoreMinimal.hlsli" />
+    <None Include="HLSL\CppShared\Struct.hlsli" />
+    <None Include="HLSL\CppShared\Type.hlsli" />
     <None Include="HLSL\Debug\Debug.hlsli" />
-    <None Include="HLSL\Register.hlsli" />
+    <None Include="HLSL\CppShared\Register.hlsli" />
     <None Include="ThirdParty\SimpleMath.inl" />
   </ItemGroup>
   <ItemGroup>

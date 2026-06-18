@@ -14,4 +14,19 @@ namespace engine
 	using uint64 = std::uint64_t;
 
 	struct int32_2 { int32 x, y; };
+
+	//enum wrapping을 위한 namespace
+	namespace ShaderStage
+	{
+		enum ShaderStageBitMask : uint32
+		{
+			kVS = 1 << 0,
+			kGS = 1 << 1,
+			kPS = 1 << 2,
+			kCS = 1 << 3,
+
+			kAllGraphics = kVS | kGS | kPS
+		};
+	}
+	using ShaderStageFlag = uint32;
 }

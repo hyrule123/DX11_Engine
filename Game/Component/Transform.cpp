@@ -10,7 +10,7 @@ namespace engine
 		, local_scale_(float3::One)
 		, local_rot_(Quaternion::Identity)
 		, local_pos_(float3::Zero)
-		, world_mat_(MATRIX::Identity)
+		, world_mat_(matrix::Identity)
 	{
 	}
 	Transform::~Transform()
@@ -34,11 +34,11 @@ namespace engine
 	{
 		Super::LateUpdate();
 
-		MATRIX scale_mat = MATRIX::CreateScale(local_scale_);
+		matrix scale_mat = matrix::CreateScale(local_scale_);
 
-		MATRIX rot_mat = MATRIX::CreateFromQuaternion(local_rot_);
+		matrix rot_mat = matrix::CreateFromQuaternion(local_rot_);
 
-		MATRIX pos_mat = MATRIX::CreateTranslation(local_pos_);
+		matrix pos_mat = matrix::CreateTranslation(local_pos_);
 
 		world_mat_ = scale_mat * rot_mat * pos_mat;
 

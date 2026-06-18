@@ -8,5 +8,5 @@ namespace engine
 	using float2 = Vector2;
 	using float3 = Vector3;
 	using float4 = Vector4;
-	using MATRIX = Matrix;
+	using matrix = Matrix;
 }

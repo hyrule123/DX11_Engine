@@ -4,8 +4,9 @@
 #define BOOL int
 #define TRUE 1
 #define FALSE 0
-#define MATRIX row_major matrix
 
+#ifdef __HLSL
 #define alignas(_Num)
+#endif//__HLSL
 
 #endif//HLSL_COMMON

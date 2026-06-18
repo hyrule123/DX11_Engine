@@ -40,14 +40,14 @@ namespace engine
 		void SetLocalPosition(float3 local_pos) { local_pos_ = local_pos; }
 		float3 GetLocalPosition() const { return local_pos_; }
 
-		const MATRIX& GetWorldMatrix() const { return world_mat_; }
+		const matrix& GetWorldMatrix() const { return world_mat_; }
 		
 	private:
 		float3 local_scale_;
 		Quaternion local_rot_;
 		float3 local_pos_;
 
-		MATRIX world_mat_;
+		matrix world_mat_;
 	};
 }
 

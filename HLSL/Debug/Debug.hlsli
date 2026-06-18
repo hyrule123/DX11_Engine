@@ -6,7 +6,7 @@
 
 #ifdef __HLSL
 
-cbuffer wvp_cbuffer : register(SLOT_C_WVP)
+cbuffer wvp_cbuffer : register(SLOT_B_WVP)
 { 
 	WVP wvp; 
 };

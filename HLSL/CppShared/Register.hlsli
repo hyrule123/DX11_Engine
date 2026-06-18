@@ -6,14 +6,14 @@
 #ifdef __HLSL
 
 #define REG_T(slot_num) t##slot_num
-#define REG_C(slot_num) c##slot_num
+#define REG_B(slot_num) b##slot_num
 
 #endif //__HLSL
 
 #ifdef __cplusplus
 
 #define REG_T(slot_num) slot_num
-#define REG_C(slot_num) slot_num
+#define REG_B(slot_num) slot_num
 
 #endif //__cplusplus
 
@@ -30,8 +30,8 @@
 
 // ==========================================
 
-// =============== C BUFFER =================
-#define SLOT_C_WVP REG_C(0)
+// =============== B BUFFER =================
+#define SLOT_B_WVP REG_B(0)
 
 // ==========================================
 

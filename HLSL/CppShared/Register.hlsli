@@ -31,7 +31,8 @@
 // ==========================================
 
 // =============== B BUFFER =================
-#define SLOT_B_WVP REG_B(0)
+#define SLOT_B_CAMERA REG_B(0)
+#define SLOT_B_WORLD REG_B(1) // TEMP
 
 // ==========================================
 

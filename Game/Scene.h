@@ -8,6 +8,8 @@
 #include <string_view>
 #include <vector>
 
+#include <type_traits>
+
 namespace engine
 {
 	class GameObject;
@@ -30,6 +32,12 @@ namespace engine
 
 		//추가 예약, 실제 추가는 FrameStart() 타이밍
 		void AddGameObject(s_ptr<GameObject> obj);
+		template <typename T> requires std::is_base_of_v<GameObject, T>
+		s_ptr<T> AddGameObject() {
+			s_ptr<T> new_gameobj = std::make_shared<T>();
+			AddGameObject(new_gameobj);
+			return new_gameobj;
+		}
 
 	private:
 		std::vector<s_ptr<GameObject>> game_objects_ = {};

@@ -141,7 +141,10 @@
     <ClInclude Include="Resource\DefaultRes\DefaultRes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Resource\GPUBuffer\ConstBuffer.h">
+    <ClInclude Include="Resource\GPUBuffer\ConstantBuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Component\Camera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -230,7 +233,10 @@
     <ClCompile Include="Resource\DefaultRes\DebugRenderObjects.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Resource\GPUBuffer\ConstBuffer.cpp">
+    <ClCompile Include="Resource\GPUBuffer\ConstantBuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Component\Camera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

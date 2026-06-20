@@ -1,5 +1,5 @@
 #include "Engine/Core/pch.h"
-#include "ConstBuffer.h"
+#include "ConstantBuffer.h"
 
 #include <Engine/Manager/GraphicsDevice.h>
 
@@ -47,7 +47,7 @@ namespace engine
 		return true;
 	}
 
-	void ConstantBuffer::UpdateData(const void* ptr, size_t size)
+	void ConstantBuffer::Upload(ID3D11DeviceContext* context, const void* ptr, size_t size)
 	{
 		if (!ptr) 
 		{
@@ -64,8 +64,6 @@ namespace engine
 			DEBUG_LOG("Size unmatched!!!!!");
 			return;
 		}
-
-		auto context = GraphicsDevice::GetInst().GetContext();
 
 		D3D11_MAPPED_SUBRESOURCE mapped{};
 
@@ -87,7 +85,7 @@ namespace engine
 		context->Unmap(buffer_.Get(), 0);
 	}
 
-	void ConstantBuffer::Bind(ComPtr<ID3D11DeviceContext> context, ShaderStageFlag flag, UINT slot)
+	void ConstantBuffer::Bind(ID3D11DeviceContext* context, ShaderStageFlag flag, UINT slot)
 	{
 		if (flag & ShaderStage::kVS)
 		{

@@ -6,10 +6,15 @@
 
 #ifdef __HLSL
 
-cbuffer wvp_cbuffer : register(SLOT_B_WVP)
+cbuffer cbuffer_camera : register(SLOT_B_CAMERA)
 { 
-	WVP wvp; 
-};
+	CameraData camera; 
+}
+
+cbuffer cbuffer_world : register(SLOT_B_WORLD)
+{
+	matrix world_mat;
+}
 
 struct VS_IN
 {

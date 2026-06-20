@@ -7,6 +7,7 @@
 
 namespace engine
 {
+    class Transform;
     class Material;
     class Mesh;
 
@@ -20,12 +21,15 @@ namespace engine
         virtual ~Renderer() override;
 
         virtual void Init() override;
+        virtual void Awake() override;
         virtual void Render() override;
 
         void SetMaterial(s_ptr<Material> material) { material_ = std::move(material); }
         void SetMesh(s_ptr<Mesh> mesh) { mesh_ = std::move(mesh); }
 
     private:
+        s_ptr<Transform> my_transform_ = {};
+
         s_ptr<Material> material_ = {};
         s_ptr<Mesh> mesh_ = {};
     };

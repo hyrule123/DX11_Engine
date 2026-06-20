@@ -13,6 +13,7 @@ namespace engine
     enum class ComponentCategory : size_t
     {
         kTransform,
+        kCamera,
         kRenderer,
 
         kOthers,

@@ -25,11 +25,11 @@ namespace engine
 
 		virtual void Init();
 
-		virtual void FrameStart();
-		virtual void Update();
-		virtual void LateUpdate();
-		virtual void Render();
-		virtual void FrameEnd();
+		void FrameStart();
+		void Update();
+		void LateUpdate();
+		void Render();
+		void FrameEnd();
 
 		s_ptr<Component> AddComponent(s_ptr<Component> component);
 

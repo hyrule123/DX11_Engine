@@ -22,6 +22,8 @@ namespace engine
 		ComPtr<ID3D11DeviceContext> GetContext() const { return context_; }
 
 		bool SetResolution(uint32 resolution_width, uint32 resolution_height);
+		uint32 GetResolutionWidth() const { return resolution_width_; }
+		uint32 GetResolutionHeight() const { return resolution_height_; }
 
 		void BindSwapChainRTV();
 		void Render();

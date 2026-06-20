@@ -119,6 +119,9 @@ namespace engine
 		viewport.MaxDepth = 1.0f;
 		context_->RSSetViewports(1, &viewport);
 
+		resolution_width_ = resolution_width;
+		resolution_height_ = resolution_height;
+
 		return true;
 	}
 

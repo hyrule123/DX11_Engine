@@ -11,6 +11,8 @@
 #include <Engine/Resource/GraphicsPipeline/VertexShader.h>
 #include <Engine/Resource/GraphicsPipeline/PixelShader.h>
 
+#include <Engine/Game/Component/Transform.h>
+
 #include <Engine/Core/UtilMacro.h>
 #include <Engine/Core/Debug.h>
 
@@ -30,6 +32,12 @@ namespace engine
 	{
 		Super::Init();
 	}
+	void Renderer::Awake()
+	{
+		Super::Awake();
+
+		my_transform_ = GetComponent<Transform>();
+	}
 	void Renderer::Render()
 	{
 		Super::Render();
@@ -38,7 +46,6 @@ namespace engine
 		{
 			auto context = GraphicsDevice::GetInst().GetContext();
 
-			//
 			material_->Bind();
 
 			mesh_->Render();

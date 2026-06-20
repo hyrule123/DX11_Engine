@@ -3,11 +3,14 @@
 
 #include <Engine/Game/Component/ComponentCategory.h>
 
-#include <Engine/Core/Math.h>
 #include <Engine/Core/CoreMinimal.h>
+#include <Engine/Core/Math.h>
+
 
 namespace engine
 {
+	class ConstantBuffer;
+
 	class Transform final 
 		: public Component
 	{
@@ -41,6 +44,8 @@ namespace engine
 		float3 GetLocalPosition() const { return local_pos_; }
 
 		const matrix& GetWorldMatrix() const { return world_mat_; }
+
+		void UploadAndBindConstBuffer();
 		
 	private:
 		float3 local_scale_;
@@ -48,6 +53,8 @@ namespace engine
 		float3 local_pos_;
 
 		matrix world_mat_;
+
+		s_ptr<ConstantBuffer> const_buffer_ = {};
 	};
 }
 

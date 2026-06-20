@@ -18,7 +18,7 @@ namespace engine
             pipeline_ = std::move(pipeline);
         }
 
-        void Bind();
+        void Bind(ID3D11DeviceContext* context);
 
     private:
         s_ptr<GraphicsPipeline> pipeline_ = {};

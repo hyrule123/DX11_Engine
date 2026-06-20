@@ -46,9 +46,9 @@ namespace engine
 		{
 			auto context = GraphicsDevice::GetInst().GetContext();
 
-			material_->Bind();
+			material_->Bind(context.Get());
 
-			mesh_->Render();
+			mesh_->Render(context.Get());
 		}
 		else
 		{

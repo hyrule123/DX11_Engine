@@ -2,6 +2,8 @@
 
 #include <Engine/Resource/Resource.h>
 
+struct ID3D11DeviceContext;
+
 namespace engine
 {
 	class VertexBuffer;
@@ -15,7 +17,7 @@ namespace engine
 		Mesh();
 		virtual ~Mesh() override;
 
-		void Render();
+		void Render(ID3D11DeviceContext* context);
 
 		virtual bool LoadFromFile(const stdfs::path& path) override;
 

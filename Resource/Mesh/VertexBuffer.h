@@ -3,6 +3,7 @@
 
 #include <Engine/Core/CoreMinimal.h>
 
+struct ID3D11DeviceContext;
 struct ID3D11Buffer;
 
 namespace engine
@@ -24,7 +25,7 @@ namespace engine
 
 		virtual bool LoadFromFile(const stdfs::path& path) override;
 
-        void Bind(const ComPtr<ID3D11DeviceContext>& context);
+        void Bind(ID3D11DeviceContext* context);
 
 	private:
         //Vertex 구조체는 언제든지 달라질수 있음 -> 통합 저장을 위해 uint8(byte) 형태로 저장.

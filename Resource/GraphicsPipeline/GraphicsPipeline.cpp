@@ -17,10 +17,8 @@ namespace engine
 	GraphicsPipeline::~GraphicsPipeline()
 	{
 	}
-	void GraphicsPipeline::Bind()
+	void GraphicsPipeline::Bind(ID3D11DeviceContext* context)
 	{
-		auto context = GraphicsDevice::GetInst().GetContext();
-
 		if (input_layout_)
 		{
 			input_layout_->Bind(context);

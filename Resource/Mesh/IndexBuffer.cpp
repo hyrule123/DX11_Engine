@@ -46,7 +46,8 @@ namespace engine
 
 		return true;
 	}
-	void IndexBuffer::Bind(const ComPtr<ID3D11DeviceContext>& context)
+
+	void IndexBuffer::Bind(ID3D11DeviceContext* context)
 	{
 		context->IASetPrimitiveTopology(topology_);
 		context->IASetIndexBuffer(index_buffer_.Get(), DXGI_FORMAT_R32_UINT, 0);

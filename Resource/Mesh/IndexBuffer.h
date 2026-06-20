@@ -6,6 +6,8 @@
 
 #include <vector>
 
+struct ID3D11DeviceContext;
+
 namespace engine
 {
     class IndexBuffer :
@@ -18,7 +20,7 @@ namespace engine
 
         bool Create(const std::vector<UINT>& indices, D3D11_PRIMITIVE_TOPOLOGY topology);
 
-        void Bind(const ComPtr<ID3D11DeviceContext>& context);
+        void Bind(ID3D11DeviceContext* context);
 
         UINT GetIndexCount() const { return (UINT)indices_.size(); }
 

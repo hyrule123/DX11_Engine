@@ -58,7 +58,7 @@ namespace engine
 		return false;
 	}
 
-	void VertexBuffer::Bind(const ComPtr<ID3D11DeviceContext>& context)
+	void VertexBuffer::Bind(ID3D11DeviceContext* context)
 	{
 		uint32_t offset = 0;
 		// 0번 슬롯에 1개의 버퍼를 바인딩합니다.

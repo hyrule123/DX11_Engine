@@ -15,7 +15,7 @@ namespace engine
 	Mesh::~Mesh()
 	{}
 
-	void Mesh::Render()
+	void Mesh::Render(ID3D11DeviceContext* context)
 	{
 		if (!(vertex_buffer_ && index_buffer_))
 		{
@@ -23,11 +23,8 @@ namespace engine
 			return;
 		}
 
-		auto context = GraphicsDevice::GetInst().GetContext();
-
 		vertex_buffer_->Bind(context);
 		index_buffer_->Bind(context);
-
 
 		context->DrawIndexed(index_buffer_->GetIndexCount(), 0, 0);
 	}

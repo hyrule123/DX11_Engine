@@ -1,6 +1,8 @@
 #pragma once
 #include <Engine/Resource/Resource.h>
 
+struct ID3D11DeviceContext;
+
 namespace engine
 {
     class InputLayout;
@@ -27,7 +29,7 @@ namespace engine
             ps_ = std::move(pixel_shader);
         }
 
-        void Bind();
+        void Bind(ID3D11DeviceContext* context);
 
     private:
         s_ptr<InputLayout> input_layout_ = {};

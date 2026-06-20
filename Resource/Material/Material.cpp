@@ -13,11 +13,11 @@ namespace engine
 	Material::~Material()
 	{
 	}
-	void Material::Bind()
+	void Material::Bind(ID3D11DeviceContext* context)
 	{
 		if (pipeline_)
 		{
-			pipeline_->Bind();
+			pipeline_->Bind(context);
 		}
 	}
 }

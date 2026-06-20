@@ -137,6 +137,16 @@ namespace engine
 		swap_chain_->Present(1, 0);
 	}
 
+	void GraphicsDevice::FrameEnd()
+	{
+		// 1. 렌더 타겟 배경색으로 지우기
+		const float clearColor[4] = { 0.1f, 0.1f, 0.1f, 1.0f };
+		context_->ClearRenderTargetView(swap_chain_RTV.Get(), clearColor);
+
+		// 2. 깊이/스텐실 버퍼 초기화
+		//context_->ClearDepthStencilView(m_DepthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+	}
+
 	ComPtr<IDXGISwapChain> GraphicsDevice::CreateSwapChain(HWND hwnd, uint32 width, uint32 height)
 	{
 		if (nullptr == device_ || NULL == hwnd)

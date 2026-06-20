@@ -53,6 +53,8 @@ namespace engine
 
 		GraphicsDevice::GetInst().Render();
 
+		GraphicsDevice::GetInst().FrameEnd();
+
 		scene_mgr.ChangeSceneNow();
 		return true;
 	}

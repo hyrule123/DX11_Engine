@@ -27,6 +27,7 @@ namespace engine
 
 		void BindSwapChainRTV();
 		void Render();
+		void FrameEnd();
 
 	private:
 		bool Init();

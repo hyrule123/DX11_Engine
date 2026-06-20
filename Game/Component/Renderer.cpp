@@ -46,6 +46,8 @@ namespace engine
 		{
 			auto context = GraphicsDevice::GetInst().GetContext();
 
+			my_transform_->UploadAndBindConstBuffer();
+
 			material_->Bind(context.Get());
 
 			mesh_->Render(context.Get());

@@ -150,6 +150,12 @@
     <ClInclude Include="Manager\RenderManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Resource\Texture2D.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Util\string_utils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Core\pch.cpp">
@@ -245,6 +251,12 @@
     <ClCompile Include="Manager\RenderManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Resource\Texture2D.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Util\string_utils.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Engine.rc">
@@ -267,9 +279,12 @@
     <None Include="HLSL\CppShared\CoreMinimal.hlsli" />
     <None Include="HLSL\CppShared\Config.hlsli" />
     <None Include="HLSL\CommonConstBuffer.hlsli" />
+    <None Include="HLSL\Sprite\Sprite.hlsli" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="HLSL\Debug\Debug_PS.hlsl" />
     <FxCompile Include="HLSL\Debug\Debug_VS.hlsl" />
+    <FxCompile Include="HLSL\Sprite\Sprite_VS.hlsl" />
+    <FxCompile Include="HLSL\Sprite\Sprite_PS.hlsl" />
   </ItemGroup>
 </Project>

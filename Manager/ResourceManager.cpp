@@ -33,6 +33,7 @@ namespace engine
 
 		// ============ 기본 리소스 로드 ===============
 		DefaultRes::LoadDebugRenderObjects();
+		DefaultRes::LoadSpriteRenderObjects();
 
 		return true;
 	}

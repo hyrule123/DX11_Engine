@@ -7,6 +7,7 @@ namespace engine
 		friend class ResourceManager;
 	private:
 		static void LoadDebugRenderObjects();
+		static void LoadSpriteRenderObjects();
 
 	private:
 		~DefaultRes() = delete;

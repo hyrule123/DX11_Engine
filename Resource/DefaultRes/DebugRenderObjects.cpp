@@ -38,7 +38,7 @@ namespace engine
 			desc.SemanticIndex = 0;
 
 			//데이터 포맷
-			desc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+			desc.Format = DXGI_FORMAT_R32G32B32_FLOAT;
 
 			//InputSlot: 0번 정점 버퍼 슬롯을 사용합니다.
 			desc.InputSlot = 0;
@@ -82,10 +82,10 @@ namespace engine
 		auto vb = std::make_shared<VertexBuffer>();
 		std::vector<VertexDebug> vertices;
 		vertices.resize(4);
-		vertices[0].position = { -0.5f, 0.5f, 0.5f, 1.f };
-		vertices[1].position = { 0.5f, 0.5f, 0.5f, 1.f };
-		vertices[2].position = { 0.5f, -0.5f, 0.5f, 1.f };
-		vertices[3].position = { -0.5f, -0.5f, 0.5f, 1.f };
+		vertices[0].position = { -0.5f, 0.5f, 0.0f };
+		vertices[1].position = { 0.5f, 0.5f, 0.0f };
+		vertices[2].position = { 0.5f, -0.5f, 0.0f };
+		vertices[3].position = { -0.5f, -0.5f, 0.0f };
 		vb->Create(vertices);
 
 		//INDEX BUFFER
@@ -106,6 +106,90 @@ namespace engine
 		resmgr.AddResource("Debug_Material", material);
 		resmgr.AddResource("Debug_Mesh", msh);
 		
+		resmgr.SetDefaultResource(material);
+		resmgr.SetDefaultResource(msh);
+	}
+	void DefaultRes::LoadSpriteRenderObjects()
+	{
+		auto& resmgr = ResourceManager::GetInst();
+
+		//VERTEX SHADER
+		auto vs = resmgr.LoadFromFile<VertexShader>("Shader/Sprite_VS.cso");
+		resmgr.SetDefaultResource(vs);
+
+		//INPUT LAYOUT
+		auto il = std::make_shared<InputLayout>();
+		{
+			std::vector<D3D11_INPUT_ELEMENT_DESC> descs;
+			D3D11_INPUT_ELEMENT_DESC desc = {};
+			desc.SemanticName = "POSITION";
+			desc.SemanticIndex = 0;
+			desc.Format = DXGI_FORMAT_R32G32B32_FLOAT;
+			desc.InputSlot = 0;
+			desc.AlignedByteOffset = 0;
+			desc.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
+			desc.InstanceDataStepRate = 0;
+			descs.push_back(desc);
+
+			desc.SemanticName = "TEXCOORD";
+			desc.SemanticIndex = 0;
+			desc.Format = DXGI_FORMAT_R32G32_FLOAT;
+			desc.InputSlot = 0;
+			desc.AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
+			desc.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
+			desc.InstanceDataStepRate = 0;
+			descs.push_back(desc);
+
+			il->Create(descs, vs);
+
+			resmgr.AddResource("SpriteInputLayout", il);
+			resmgr.SetDefaultResource(il);
+		}
+
+		//PIXEL SHADER
+		auto ps = resmgr.LoadFromFile<PixelShader>("Shader/Sprite_PS.cso");
+		resmgr.SetDefaultResource(ps);
+
+		//GRAPHICS PIPELINE
+		s_ptr<GraphicsPipeline> pipeline = std::make_shared<GraphicsPipeline>();
+		pipeline->SetInputLayout(il);
+		pipeline->SetVertexShader(vs);
+		pipeline->SetPixelShader(ps);
+		resmgr.AddResource("SpriteGraphicsPipeline", pipeline);
+		resmgr.SetDefaultResource(pipeline);
+
+		//MATERIAL
+		s_ptr<Material> material = std::make_shared<Material>();
+		material->SetGraphicsPipeline(pipeline);
+
+		//VERTEX BUFFER
+		auto vb = std::make_shared<VertexBuffer>();
+		std::vector<Vertex2D> vertices;
+		vertices.resize(4);
+		vertices[0].position = { -0.5f, 0.5f, 0.0f };
+		vertices[1].position = { 0.5f, 0.5f, 0.0f };
+		vertices[2].position = { 0.5f, -0.5f, 0.0f };
+		vertices[3].position = { -0.5f, -0.5f, 0.0f };
+		vb->Create(vertices);
+
+		vertices[0].UV = { 0.0f, 0.0f };
+		vertices[1].UV = { 1.0f, 0.0f };
+		vertices[2].UV = { 1.0f, 1.0f };
+		vertices[3].UV = { 0.0f, 1.0f };
+
+		//INDEX BUFFER
+		auto ib = std::make_shared<IndexBuffer>();
+		std::vector<UINT> indices = { 0, 1, 2, 0, 2, 3 };
+		ib->Create(indices, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+		//MESH
+		auto msh = std::make_shared<Mesh>();
+		msh->SetBuffers(vb, ib);
+
+		//최종 등록
+		resmgr.AddResource("SpriteMaterial", material);
+		resmgr.AddResource("SpriteMesh", msh);
+
 		resmgr.SetDefaultResource(material);
 		resmgr.SetDefaultResource(msh);
 	}

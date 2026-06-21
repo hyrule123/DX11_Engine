@@ -75,24 +75,32 @@
     <OutDir>$(SolutionDir)BinLib\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)BinObj\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
     <MultiProcFXC>true</MultiProcFXC>
+    <ExternalIncludePath>$(SolutionDir)External;$(ExternalIncludePath)</ExternalIncludePath>
+    <LibraryPath>$(SolutionDir)External\$(Platform)\$(Configuration);$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)Proj;</IncludePath>
     <OutDir>$(SolutionDir)BinLib\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)BinObj\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
     <MultiProcFXC>true</MultiProcFXC>
+    <ExternalIncludePath>$(SolutionDir)External;$(ExternalIncludePath)</ExternalIncludePath>
+    <LibraryPath>$(SolutionDir)External\$(Platform)\$(Configuration);$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)..;</IncludePath>
     <OutDir>$(SolutionDir)BinLib\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)BinObj\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
     <MultiProcFXC>true</MultiProcFXC>
+    <ExternalIncludePath>$(SolutionDir)External;$(ExternalIncludePath)</ExternalIncludePath>
+    <LibraryPath>$(SolutionDir)External\$(Platform)\$(Configuration);$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)..;</IncludePath>
     <OutDir>$(SolutionDir)BinLib\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)BinObj\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
     <MultiProcFXC>true</MultiProcFXC>
+    <ExternalIncludePath>$(SolutionDir)External;$(ExternalIncludePath)</ExternalIncludePath>
+    <LibraryPath>$(SolutionDir)External\$(Platform)\$(Configuration);$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -243,6 +251,8 @@
     <ClInclude Include="Game\Component\Transform.h" />
     <ClInclude Include="Game\Component\Script.h" />
     <ClInclude Include="Manager\TimeManager.h" />
+    <ClInclude Include="Resource\Texture2D.h" />
+    <ClInclude Include="Util\string_utils.h" />
     <ClInclude Include="ThirdParty\SimpleMath.h" />
     <ClInclude Include="Core\pch.h" />
     <ClInclude Include="resource.h" />
@@ -280,6 +290,8 @@
     <ClCompile Include="Game\Component\Transform.cpp" />
     <ClCompile Include="Game\Component\Script.cpp" />
     <ClCompile Include="Manager\TimeManager.cpp" />
+    <ClCompile Include="Resource\Texture2D.cpp" />
+    <ClCompile Include="Util\string_utils.cpp" />
     <ClCompile Include="ThirdParty\SimpleMath.cpp" />
     <ClCompile Include="Core\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -309,6 +321,7 @@
     <None Include="HLSL\Debug\Debug.hlsli" />
     <None Include="HLSL\CppShared\Register.hlsli" />
     <None Include="HLSL\CommonConstBuffer.hlsli" />
+    <None Include="HLSL\Sprite\Sprite.hlsli" />
     <None Include="ThirdParty\SimpleMath.inl" />
   </ItemGroup>
   <ItemGroup>
@@ -322,6 +335,18 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+    </FxCompile>
+    <FxCompile Include="HLSL\Sprite\Sprite_PS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="HLSL\Sprite\Sprite_VS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
     </FxCompile>
   </ItemGroup>

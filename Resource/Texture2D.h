@@ -2,8 +2,13 @@
 #include <Engine/Resource/Resource.h>
 
 #include <Engine/Core/CoreMinimal.h>
+#include <Engine/Core/Constant.h>
 
-#include <d3d11.h>
+#include <array>
+
+struct ID3D11Texture2D;
+struct ID3D11DeviceContext;
+struct ID3D11ShaderResourceView;
 
 namespace engine
 {
@@ -16,6 +21,20 @@ namespace engine
         virtual ~Texture2D() override;
 
         virtual bool LoadFromFile(const stdfs::path& path) override;
+
+        void Bind(
+            ID3D11DeviceContext* context, 
+            UINT slot, 
+            ShaderStageFlag stageflag = ShaderStage::kPS
+        );
+
+        static void BindTextures(
+            ID3D11DeviceContext* context,
+            const std::array<ID3D11ShaderResourceView*, kTextureMaxCount>& texture_srvs,
+            ShaderStageFlag stageflag = ShaderStage::kPS
+        );
+
+        ID3D11ShaderResourceView* GetSRV() const { return SRV_.Get(); }
 
     private:
         ComPtr<ID3D11Texture2D>					tex2D_res_ = {};

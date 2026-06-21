@@ -24,4 +24,3 @@ namespace engine
 		has_started_ = true;
 	}
 }
-

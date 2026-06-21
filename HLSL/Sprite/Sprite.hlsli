@@ -4,6 +4,9 @@
 #include <Engine/HLSL/CppShared/CoreMinimal.hlsli>
 #include <Engine/HLSL/CommonConstBuffer.hlsli>
 
+Texture2D base_color : register(SLOT_T_BASE_COLOR);
+SamplerState default_sampler : register(s0);
+
 struct VS_IN
 {
 	float3 pos : POSITION;

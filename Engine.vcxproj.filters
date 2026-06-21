@@ -239,7 +239,7 @@
     <ClCompile Include="Manager\InputManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Resource\DefaultRes\DebugRenderObjects.cpp">
+    <ClCompile Include="Resource\DefaultRes\RenderObjects.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Resource\GPUBuffer\ConstantBuffer.cpp">

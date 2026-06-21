@@ -48,8 +48,6 @@ namespace engine
 		if (upper_ext == L".DDS")
 		{
 			hr = LoadFromDDSFile(path.wstring().c_str(), DirectX::DDS_FLAGS::DDS_FLAGS_NONE, nullptr, img);
-
-
 		}
 		else if (upper_ext == L".TGA")
 		{
@@ -66,13 +64,12 @@ namespace engine
 			return false;
 		}
 
-		// 3. 메타데이터 저장 (클래스 멤버 변수로 선언되어 있다고 가정)
+		// 메타데이터 저장 (클래스 멤버 변수로 선언되어 있다고 가정)
 		const DirectX::TexMetadata& meta = img.GetMetadata();
 		width_ = static_cast<UINT>(meta.width);
 		height_ = static_cast<UINT>(meta.height);
 
 		//  리소스 및 SRV(Shader Resource View) 생성
-		// m_SRV는 Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> 타입으로 가정합니다.
 		hr = DirectX::CreateShaderResourceView(
 			GraphicsDevice::GetInst().GetDevice().Get(),
 			img.GetImages(),

@@ -10,9 +10,15 @@ namespace engine
 {
 #endif//__cplusplus
 
-struct alignas(16) CameraData
+struct alignas(16)  PerObj
 {
-	matrix view_mat, proj_mat;
+	matrix world_mat;
+};
+
+struct alignas(16) PerPass
+{
+	matrix view_mat;
+	matrix proj_mat;
 };
 
 #ifdef __cplusplus

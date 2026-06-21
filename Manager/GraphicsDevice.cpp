@@ -132,7 +132,7 @@ namespace engine
 		context_->OMSetRenderTargets(1, swap_chain_RTV.GetAddressOf(), nullptr);
 	}
 
-	void GraphicsDevice::Render()
+	void GraphicsDevice::Present()
 	{ 
 		swap_chain_->Present(1, 0);
 	}

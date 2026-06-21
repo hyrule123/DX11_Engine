@@ -3,6 +3,7 @@
 
 #include <Engine/Manager/GraphicsDevice.h>
 #include <Engine/Manager/ResourceManager.h>
+#include <Engine/Manager/RenderManager.h>
 
 #include <Engine/Game/Component/Transform.h>
 
@@ -26,10 +27,10 @@ namespace engine
 	{
 		Super::Init();
 
-		cam_constant_buffer_ = ResourceManager::GetInst().Find<ConstantBuffer>("CameraConstantBuffer");
-		if (!cam_constant_buffer_)
+		if (!RenderManager::GetInst().GetMainCamera())
 		{
-			CreateCameraConstantBuffer();
+			s_ptr<Camera> ths = std::static_pointer_cast<Camera>(shared_from_this());
+			RenderManager::GetInst().SetMainCamera(ths);
 		}
 	}
 	void Camera::Awake()
@@ -47,29 +48,8 @@ namespace engine
 		float width = (float)GraphicsDevice::GetInst().GetResolutionWidth();
 		float height = (float)GraphicsDevice::GetInst().GetResolutionHeight();
 		CreateProjMatrix(width, height);
-		
-		auto context = GraphicsDevice::GetInst().GetContext();
+	}
 
-		UploadToBuffer(context.Get());
-		BindToBuffer(context.Get());
-	}
-	void Camera::UploadToBuffer(ID3D11DeviceContext* context)
-	{
-		cam_constant_buffer_->Upload(context, cam_data_);
-	}
-	void Camera::BindToBuffer(ID3D11DeviceContext* context)
-	{
-		cam_constant_buffer_->Bind(context, ShaderStage::kAllGraphics, SLOT_B_CAMERA);
-	}
-	void Camera::CreateCameraConstantBuffer()
-	{
-		cam_constant_buffer_ = std::make_shared<ConstantBuffer>();
-		ResourceManager::GetInst().AddResource("CameraConstantBuffer", cam_constant_buffer_);
-		ResourceManager::GetInst().SetDefaultResource(cam_constant_buffer_);
-
-		bool result = cam_constant_buffer_->Create<CameraData>();
-		ASSERT(result);
-	}
 	void Camera::CreateViewMatrix()
 	{
 		//World = S * R * T
@@ -83,11 +63,11 @@ namespace engine
 		Quaternion inverse_rot = my_transform_->GetLocalRotation();
 		inverse_rot.Conjugate();
 
-		cam_data_.view_mat = matrix::CreateTranslation(inverse_pos) * matrix::CreateFromQuaternion(inverse_rot);
+		view_mat_ = matrix::CreateTranslation(inverse_pos) * matrix::CreateFromQuaternion(inverse_rot);
 	}
 	void Camera::CreateProjMatrix(float width, float height)
 	{
-		cam_data_.proj_mat = matrix::CreatePerspectiveLH(width, height, 1.0f, 100.0f);
+		proj_mat_ = matrix::CreatePerspectiveLH(width, height, 1.0f, 100.0f);
 	}
 }
 

@@ -1,15 +1,11 @@
 #include "Engine/Core/pch.h"
 #include "Renderer.h"
 
-#include <Engine/Manager/ResourceManager.h>
 #include <Engine/Manager/GraphicsDevice.h>
+#include <Engine/Manager/RenderManager.h>
 
 #include <Engine/Resource/Mesh/Mesh.h>
 #include <Engine/Resource/Material/Material.h>
-
-#include <Engine/Resource/GraphicsPipeline/InputLayout.h>
-#include <Engine/Resource/GraphicsPipeline/VertexShader.h>
-#include <Engine/Resource/GraphicsPipeline/PixelShader.h>
 
 #include <Engine/Game/Component/Transform.h>
 
@@ -38,24 +34,12 @@ namespace engine
 
 		my_transform_ = GetComponent<Transform>();
 	}
-	void Renderer::Render()
+	void Renderer::LateUpdate()
 	{
-		Super::Render();
+		Super::LateUpdate();
 
-		if (mesh_ && material_)
-		{
-			auto context = GraphicsDevice::GetInst().GetContext();
-
-			my_transform_->UploadAndBindConstBuffer();
-
-			material_->Bind(context.Get());
-
-			mesh_->Render(context.Get());
-		}
-		else
-		{
-			DEBUG_LOG("Mesh 혹은 Material이 없어 렌더링 실패");
-		}
+		s_ptr<Renderer> me = std::static_pointer_cast<Renderer>(shared_from_this());
+		RenderManager::GetInst().AddRenderQueue(me);
 	}
 }
 

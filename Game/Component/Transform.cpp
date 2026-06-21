@@ -23,21 +23,10 @@ namespace engine
 	Transform::~Transform()
 	{
 	}
+
 	void Transform::Init()
 	{
 		Super::Init();
-
-		auto& resmgr = ResourceManager::GetInst();
-		const_buffer_ = resmgr.Find<ConstantBuffer>("TransformConstBuffer");
-
-		if (!const_buffer_)
-		{
-			const_buffer_ = std::make_shared<ConstantBuffer>();
-			bool result = const_buffer_->Create<matrix>();
-			resmgr.AddResource("TransformConstBuffer", const_buffer_);
-			resmgr.SetDefaultResource(const_buffer_);
-			ASSERT(result);
-		}
 	}
 
 	void Transform::Awake()
@@ -68,12 +57,5 @@ namespace engine
 		msg += "LOCAL POS: " + std::to_string(local_pos_.x) + std::to_string(local_pos_.y) + std::to_string(local_pos_.z) + "\n\n";
 		DEBUG_LOG_A(msg.c_str());
 #endif
-	}
-
-	void Transform::UploadAndBindConstBuffer()
-	{
-		auto context = GraphicsDevice::GetInst().GetContext();
-		const_buffer_->Upload(context.Get(), world_mat_);
-		const_buffer_->Bind(context.Get(), ShaderStage::kAllGraphics, SLOT_B_WORLD);
 	}
 }

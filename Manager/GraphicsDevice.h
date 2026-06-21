@@ -26,7 +26,7 @@ namespace engine
 		uint32 GetResolutionHeight() const { return resolution_height_; }
 
 		void BindSwapChainRTV();
-		void Render();
+		void Present();
 		void FrameEnd();
 
 	private:

@@ -6,6 +6,7 @@
 #include <Engine/Manager/SceneManager.h>
 #include <Engine/Manager/TimeManager.h>
 #include <Engine/Manager/InputManager.h>
+#include <Engine/Manager/RenderManager.h>
 
 #include <Engine/Core/Debug.h>
 
@@ -28,6 +29,8 @@ namespace engine
 
 		ResourceManager::GetInst().Init();
 
+		RenderManager::GetInst().Init();
+
 		SceneManager::GetInst().Init();
 
 		InputManager::GetInst();
@@ -49,10 +52,12 @@ namespace engine
 		scene_mgr.LateUpdate();
 
 		GraphicsDevice::GetInst().BindSwapChainRTV();
-		scene_mgr.Render();
+		
+		RenderManager::GetInst().Render();
 
-		GraphicsDevice::GetInst().Render();
+		GraphicsDevice::GetInst().Present();
 
+		RenderManager::GetInst().FrameEnd();
 		GraphicsDevice::GetInst().FrameEnd();
 
 		scene_mgr.ChangeSceneNow();

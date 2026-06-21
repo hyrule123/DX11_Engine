@@ -55,17 +55,6 @@ namespace engine
 		}
 	}
 
-	void Scene::Render()
-	{
-		for (const auto& obj : game_objects_)
-		{
-			if (obj)
-			{
-				obj->Render();
-			}
-		}
-	}
-
 	void Scene::FrameEnd()
 	{
 		for (const auto& obj : game_objects_)

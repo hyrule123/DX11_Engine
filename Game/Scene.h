@@ -13,6 +13,9 @@
 namespace engine
 {
 	class GameObject;
+	class Camera;
+	class Renderer;
+
 	class Scene 
 		: public Entity
 	{
@@ -22,11 +25,10 @@ namespace engine
 		virtual ~Scene() override;
 
 		virtual void Init() = 0;
-		virtual void FrameStart();
-		virtual void Update();
-		virtual void LateUpdate();
-		virtual void Render();
-		virtual void FrameEnd();
+		void FrameStart();
+		void Update();
+		void LateUpdate();
+		void FrameEnd();
 
 		bool HasInitialized() const { return has_initialized_; }
 
@@ -38,7 +40,7 @@ namespace engine
 			AddGameObject(new_gameobj);
 			return new_gameobj;
 		}
-
+		
 	private:
 		std::vector<s_ptr<GameObject>> game_objects_ = {};
 		std::vector<s_ptr<GameObject>> pending_add_objects_ = {};

@@ -12,16 +12,15 @@ namespace engine
 		DECLARE_SINGLETON(SceneManager)
 
 		friend class GameEngine;
+	private:
+		void Init();
 
 	public:
 		void ChangeScene(s_ptr<Scene> scene);
-
-	private:
-		void Init();
+		
 		void FrameStart();
 		void Update();
 		void LateUpdate();
-		void Render();
 
 		void ChangeSceneNow();
 

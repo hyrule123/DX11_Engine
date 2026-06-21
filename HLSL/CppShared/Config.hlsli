@@ -8,7 +8,7 @@
 #endif//__cplusplus
 
 #ifdef __HLSL
-//#pragma pack_matrix(row_major)
+#pragma pack_matrix(row_major)
 #endif
 
 #endif//HLSL_CONFIG

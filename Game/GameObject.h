@@ -28,7 +28,6 @@ namespace engine
 		void FrameStart();
 		void Update();
 		void LateUpdate();
-		void Render();
 		void FrameEnd();
 
 		s_ptr<Component> AddComponent(s_ptr<Component> component);

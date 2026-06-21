@@ -31,8 +31,8 @@
 // ==========================================
 
 // =============== B BUFFER =================
-#define SLOT_B_CAMERA REG_B(0)
-#define SLOT_B_WORLD REG_B(1) // TEMP
+#define SLOT_B_PER_OBJECT REG_B(0)
+#define SLOT_B_PER_PASS REG_B(1)
 
 // ==========================================
 

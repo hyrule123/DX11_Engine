@@ -93,26 +93,6 @@ namespace engine
 		}
 	}
 
-	void GameObject::Render()
-	{
-		//DEBUG_LOG("Render 돌고 있습니다");
-		for (const auto& com : fixed_order_components_)
-		{
-			if (com)
-			{
-				com->Render();
-			}
-		}
-
-		for (const auto& com : other_components_)
-		{
-			if (com)
-			{
-				com->Render();
-			}
-		}
-	}
-
 	void GameObject::FrameEnd()
 	{
 		//컴포넌트 제거 프로세스

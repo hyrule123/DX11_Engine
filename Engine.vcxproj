@@ -228,6 +228,7 @@
     <ClInclude Include="Game\Scene.h" />
     <ClInclude Include="Game\Component\Renderer.h" />
     <ClInclude Include="Manager\InputManager.h" />
+    <ClInclude Include="Manager\RenderManager.h" />
     <ClInclude Include="Resource\DefaultRes\DefaultRes.h" />
     <ClInclude Include="Resource\GPUBuffer\ConstantBuffer.h" />
     <ClInclude Include="Resource\GraphicsPipeline\GraphicsPipeline.h" />
@@ -265,6 +266,7 @@
     <ClCompile Include="Game\Scene.cpp" />
     <ClCompile Include="Game\Component\Renderer.cpp" />
     <ClCompile Include="Manager\InputManager.cpp" />
+    <ClCompile Include="Manager\RenderManager.cpp" />
     <ClCompile Include="Resource\DefaultRes\DebugRenderObjects.cpp" />
     <ClCompile Include="Resource\GPUBuffer\ConstantBuffer.cpp" />
     <ClCompile Include="Resource\GraphicsPipeline\GraphicsPipeline.cpp" />
@@ -306,6 +308,7 @@
     <None Include="HLSL\CppShared\Type.hlsli" />
     <None Include="HLSL\Debug\Debug.hlsli" />
     <None Include="HLSL\CppShared\Register.hlsli" />
+    <None Include="HLSL\CommonConstBuffer.hlsli" />
     <None Include="ThirdParty\SimpleMath.inl" />
   </ItemGroup>
   <ItemGroup>

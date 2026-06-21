@@ -4,17 +4,11 @@
 #include <Engine/HLSL/CppShared/CoreMinimal.hlsli>
 #include <Engine/HLSL/CppShared/Struct.hlsli>
 
+#include <Engine/HLSL/CommonConstBuffer.hlsli>
+
 #ifdef __HLSL
 
-cbuffer cbuffer_camera : register(SLOT_B_CAMERA)
-{ 
-	CameraData camera; 
-}
 
-cbuffer cbuffer_world : register(SLOT_B_WORLD)
-{
-	matrix world_mat;
-}
 
 struct VS_IN
 {

@@ -1,6 +1,8 @@
 #ifndef HLSL_TYPE
 #define HLSL_TYPE
 
+#include <Engine/HLSL/CppShared/Config.hlsli>
+
 #define BOOL int
 #define TRUE 1
 #define FALSE 0

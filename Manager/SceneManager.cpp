@@ -56,13 +56,7 @@ namespace engine
 			cur_scene_->LateUpdate();
 		}
 	}
-	void SceneManager::Render()
-	{
-		if (cur_scene_)
-		{
-			cur_scene_->Render();
-		}
-	}
+
 	void SceneManager::ChangeSceneNow()
 	{
 		if (next_scene_)

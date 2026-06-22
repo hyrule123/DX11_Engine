@@ -2,6 +2,7 @@
 #include <Engine/Resource/Resource.h>
 
 struct ID3D11DeviceContext;
+struct ID3D11SamplerState;
 
 namespace engine
 {
@@ -35,6 +36,8 @@ namespace engine
         s_ptr<InputLayout> input_layout_ = {};
         s_ptr<VertexShader> vs_ = {};
         s_ptr<PixelShader> ps_ = {};
+
+
     };
 }
 

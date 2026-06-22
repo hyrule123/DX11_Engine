@@ -219,6 +219,7 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Core\Enum.h" />
     <ClInclude Include="Game\Component\Camera.h" />
     <ClInclude Include="Core\CoreMinimal.h" />
     <ClInclude Include="Core\DX11.h" />
@@ -314,6 +315,7 @@
     <Image Include="icon1.ico" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="HLSL\CommonSampler.hlsli" />
     <None Include="HLSL\CppShared\Config.hlsli" />
     <None Include="HLSL\CppShared\CoreMinimal.hlsli" />
     <None Include="HLSL\CppShared\Struct.hlsli" />

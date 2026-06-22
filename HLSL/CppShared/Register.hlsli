@@ -7,6 +7,7 @@
 
 #define REG_T(slot_num) t##slot_num
 #define REG_B(slot_num) b##slot_num
+#define REG_S(slot_num) s##slot_num
 
 #endif //__HLSL
 
@@ -14,6 +15,7 @@
 
 #define REG_T(slot_num) slot_num
 #define REG_B(slot_num) slot_num
+#define REG_S(slot_num) slot_num
 
 #endif //__cplusplus
 
@@ -33,6 +35,13 @@
 // =============== B BUFFER =================
 #define SLOT_B_PER_OBJECT REG_B(0)
 #define SLOT_B_PER_PASS REG_B(1)
+
+// ==========================================
+
+// =============== S BUFFER =================
+
+#define SLOT_S_POINT_CLAMP REG_S(0)
+#define SLOT_S_END 1
 
 // ==========================================
 

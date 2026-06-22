@@ -156,6 +156,9 @@
     <ClInclude Include="Util\string_utils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Core\Enum.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Core\pch.cpp">
@@ -280,6 +283,7 @@
     <None Include="HLSL\CppShared\Config.hlsli" />
     <None Include="HLSL\CommonConstBuffer.hlsli" />
     <None Include="HLSL\Sprite\Sprite.hlsli" />
+    <None Include="HLSL\CommonSampler.hlsli" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="HLSL\Debug\Debug_PS.hlsl" />

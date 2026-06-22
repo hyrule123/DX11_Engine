@@ -32,6 +32,7 @@ namespace engine
 	private:
 		bool Init();
 		bool CreateDeviceAndContext();
+		void ClearContextStates();
 
 		ComPtr<IDXGISwapChain> CreateSwapChain(HWND hwnd, uint32 width, uint32 height);
 		ComPtr<ID3D11RenderTargetView> CreateSwapChainRenderTargetView(ComPtr<IDXGISwapChain> swap_chain, uint32 width, uint32 height);

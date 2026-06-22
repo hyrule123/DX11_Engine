@@ -17,7 +17,13 @@ namespace engine
 {
 	Camera::Camera()
 		: Super(STRINGIFY(Camera), ComponentCategory::kCamera)
+		, proj_mat_(matrix::Identity)
 	{
+		proj_mat_desc_.proj_mode = ProjectionMode::Orthographic;
+		proj_mat_desc_.near_z = 1.0f;
+		proj_mat_desc_.far_z = 100.0f;
+		proj_mat_desc_.width = (float)(GraphicsDevice::GetInst().GetResolutionWidth());
+		proj_mat_desc_.height = (float)(GraphicsDevice::GetInst().GetResolutionHeight());
 	}
 
 	Camera::~Camera()
@@ -38,16 +44,33 @@ namespace engine
 		Super::Awake();
 		my_transform_ = GetComponent<Transform>();
 		ASSERT(my_transform_);
+
+		//Awake 시점까지 projection matrix 미생성 시 자동 지정
+		if (proj_mat_ == matrix::Identity)
+		{
+			CreateProjMatrix(proj_mat_desc_);
+		}
 	}
 	void Camera::LateUpdate()
 	{
 		Super::LateUpdate();
 
 		CreateViewMatrix();
+	}
 
-		float width = (float)GraphicsDevice::GetInst().GetResolutionWidth();
-		float height = (float)GraphicsDevice::GetInst().GetResolutionHeight();
-		CreateProjMatrix(width, height);
+	void Camera::CreateProjMatrix(ProjectionMatrixDesc desc)
+	{
+		//이론 정리
+		//https://app.notion.com/p/hyrule1/3D-Graphics-Study-250cb63f18c18074b5dcca4609f4b447
+		if (desc.proj_mode == ProjectionMode::Perspective)
+		{
+			proj_mat_ = matrix::CreatePerspectiveLH(desc.width, desc.height, desc.near_z, desc.far_z);
+		}
+		else if (desc.proj_mode == ProjectionMode::Orthographic)
+		{
+			proj_mat_ = matrix::CreateOrthographicLH(desc.width, desc.height, desc.near_z, desc.far_z);
+		}
+		proj_mat_desc_ = desc;
 	}
 
 	void Camera::CreateViewMatrix()
@@ -64,10 +87,6 @@ namespace engine
 		inverse_rot.Conjugate();
 
 		view_mat_ = matrix::CreateTranslation(inverse_pos) * matrix::CreateFromQuaternion(inverse_rot);
-	}
-	void Camera::CreateProjMatrix(float width, float height)
-	{
-		proj_mat_ = matrix::CreatePerspectiveLH(width, height, 1.0f, 100.0f);
 	}
 }
 

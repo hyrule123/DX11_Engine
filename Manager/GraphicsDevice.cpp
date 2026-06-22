@@ -1,6 +1,8 @@
 #include "Engine/Core/pch.h"
 #include "GraphicsDevice.h"
 
+#include <Engine/Manager/RenderManager.h>
+
 #include <Engine/Core/EngineMain.h>
 #include <Engine/Core/Constant.h>
 #include <Engine/Core/Debug.h>
@@ -73,6 +75,11 @@ namespace engine
 
 		return true;
 	}
+	void GraphicsDevice::ClearContextStates()
+	{
+		context_->ClearState();
+		RenderManager::GetInst().OnClearContextStates();
+	}
 	bool GraphicsDevice::SetResolution(uint32 resolution_width, uint32 resolution_height)
 	{
 		HWND hwnd = EngineMain::GetInst().GetHWND();
@@ -80,7 +87,7 @@ namespace engine
 		HRESULT hr = E_FAIL;
 
 		//변경 전 초기화
-		context_->ClearState();
+		ClearContextStates();
 		swap_chain_RTV.Reset();
 
 		//스왑체인 생성
@@ -121,6 +128,8 @@ namespace engine
 
 		resolution_width_ = resolution_width;
 		resolution_height_ = resolution_height;
+
+		RenderManager::GetInst().OnResolutionChange(resolution_width, resolution_height);
 
 		return true;
 	}

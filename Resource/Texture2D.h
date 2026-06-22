@@ -30,7 +30,7 @@ namespace engine
 
         static void BindTextures(
             ID3D11DeviceContext* context,
-            const std::array<ID3D11ShaderResourceView*, kTextureMaxCount>& texture_srvs,
+            const std::array<ID3D11ShaderResourceView*, kMaxTextureCount>& texture_srvs,
             ShaderStageFlag stageflag = ShaderStage::kPS
         );
 

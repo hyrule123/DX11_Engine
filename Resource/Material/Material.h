@@ -31,7 +31,7 @@ namespace engine
         }
 
     private:
-        std::array<s_ptr<Texture2D>, kTextureMaxCount> textures_ = {};
+        std::array<s_ptr<Texture2D>, kMaxTextureCount> textures_ = {};
 
         s_ptr<GraphicsPipeline> pipeline_ = {};
     };

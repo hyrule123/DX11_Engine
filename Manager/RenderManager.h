@@ -53,5 +53,3 @@ namespace engine
         std::vector<ComPtr<ID3D11SamplerState>> sampler_states_ = {};
     };
 }
-
-

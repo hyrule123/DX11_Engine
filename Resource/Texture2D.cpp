@@ -115,7 +115,7 @@ namespace engine
 	}
 	void Texture2D::BindTextures(ID3D11DeviceContext* context, 
 		const std::array<ID3D11ShaderResourceView*, 
-		kTextureMaxCount>& texture_srvs,
+		kMaxTextureCount>& texture_srvs,
 		ShaderStageFlag stageflag)
 	{
 		UINT texcount = (UINT)texture_srvs.size();

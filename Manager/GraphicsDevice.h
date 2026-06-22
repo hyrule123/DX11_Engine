@@ -8,9 +8,12 @@ struct ID3D11Device;
 struct ID3D11DeviceContext;
 struct IDXGISwapChain;
 struct ID3D11RenderTargetView;
+struct ID3D11DepthStencilView;
 
 namespace engine
 {
+	class RenderTargetGroup;
+
 	class GraphicsDevice
 	{
 		DECLARE_SINGLETON(GraphicsDevice)
@@ -35,13 +38,16 @@ namespace engine
 		void ClearContextStates();
 
 		ComPtr<IDXGISwapChain> CreateSwapChain(HWND hwnd, uint32 width, uint32 height);
-		ComPtr<ID3D11RenderTargetView> CreateSwapChainRenderTargetView(ComPtr<IDXGISwapChain> swap_chain, uint32 width, uint32 height);
+		ComPtr<ID3D11RenderTargetView> CreateSwapChainRTV(ComPtr<IDXGISwapChain> swap_chain, uint32 width, uint32 height);
+		ComPtr<ID3D11DepthStencilView> CreateSwapChainDSV(uint32 width, uint32 height);
 
 	private:
 		ComPtr<ID3D11Device> device_ = {};
 		ComPtr<ID3D11DeviceContext> context_ = {};
+
 		ComPtr<IDXGISwapChain> swap_chain_ = {};
-		ComPtr<ID3D11RenderTargetView> swap_chain_RTV = {};
+
+		s_ptr<RenderTargetGroup> swap_chain_RT_ = {};
 
 		uint32 resolution_width_ = {};
 		uint32 resolution_height_ = {};

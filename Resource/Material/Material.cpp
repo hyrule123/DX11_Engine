@@ -17,7 +17,7 @@ namespace engine
 
 	void Material::Bind(ID3D11DeviceContext* context)
 	{
-		std::array<ID3D11ShaderResourceView*, kTextureMaxCount> srvs = {};
+		std::array<ID3D11ShaderResourceView*, kMaxTextureCount> srvs = {};
 		for (size_t i = 0; i < textures_.size(); ++i)
 		{
 			if (textures_[i])

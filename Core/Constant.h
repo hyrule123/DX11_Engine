@@ -12,5 +12,6 @@ namespace engine
 
 	constexpr float kDeltaTimeCap = 0.1f;
 
-	constexpr uint32 kTextureMaxCount = 8u;
+	constexpr uint32 kMaxTextureCount = 8u;
+	constexpr uint32 kMaxRenderTargetCount = 8u;
 }

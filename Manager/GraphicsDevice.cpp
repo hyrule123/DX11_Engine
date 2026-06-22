@@ -3,6 +3,8 @@
 
 #include <Engine/Manager/RenderManager.h>
 
+#include <Engine/Resource/GraphicsPipeline/RenderTarget.h>
+
 #include <Engine/Core/EngineMain.h>
 #include <Engine/Core/Constant.h>
 #include <Engine/Core/Debug.h>
@@ -88,11 +90,11 @@ namespace engine
 
 		//변경 전 초기화
 		ClearContextStates();
-		swap_chain_RTV.Reset();
-
-		//스왑체인 생성
+		swap_chain_RT_ = nullptr;
+		
 		if (nullptr == swap_chain_)
 		{
+			//스왑체인 새로 생성
 			swap_chain_ = CreateSwapChain(hwnd, resolution_width, resolution_height);
 			if (nullptr == swap_chain_)
 			{
@@ -102,6 +104,7 @@ namespace engine
 		}
 		else
 		{
+			//이미 생성된 경우 스왑체인 크기만 조절
 			hr = swap_chain_->ResizeBuffers(0, resolution_width, resolution_height, DXGI_FORMAT_UNKNOWN, 0);
 			if (FAILED(hr))
 			{
@@ -110,13 +113,29 @@ namespace engine
 			}
 		}
 
-		swap_chain_RTV = CreateSwapChainRenderTargetView(swap_chain_, resolution_width, resolution_height);
-		if (nullptr == swap_chain_RTV)
+		//RTV 생성
+		ComPtr<ID3D11RenderTargetView> rtv = CreateSwapChainRTV(swap_chain_, resolution_width, resolution_height);
+		if (nullptr == rtv)
 		{
 			ASSERT_RELEASE_MESSAGE(false, "Failed to create Render Target View!");
 			return false;
 		}
 
+		//DSV 생성
+		ComPtr<ID3D11DepthStencilView> dsv = CreateSwapChainDSV(resolution_width, resolution_height);
+		if (nullptr == dsv)
+		{
+			ASSERT_RELEASE_MESSAGE(false, "Failed to create Render Target View!");
+			return false;
+		}
+
+		//Wrapper class에 저장
+		swap_chain_RT_ = std::make_shared<RenderTargetGroup>();
+		RenderTargetGroup::RTVArray views = { rtv, nullptr, };
+		swap_chain_RT_->SetRenderTargets(views);
+		swap_chain_RT_->SetDepthStencilView(dsv);
+
+		//Viewport 생성
 		D3D11_VIEWPORT viewport{};
 		viewport.TopLeftX = 0.0f;
 		viewport.TopLeftY = 0.0f;
@@ -136,9 +155,7 @@ namespace engine
 
 	void GraphicsDevice::BindSwapChainRTV()
 	{
-		// 3. 파이프라인의 출력 병합기(Output Merger) 단계에 렌더 타겟을 바인딩합니다.
-		// 아직 깊이/스텐실 버퍼(Depth/Stencil)가 없다면 두 번째 인자는 nullptr로 둡니다.
-		context_->OMSetRenderTargets(1, swap_chain_RTV.GetAddressOf(), nullptr);
+		swap_chain_RT_->BindOutputMerger(context_.Get());
 	}
 
 	void GraphicsDevice::Present()
@@ -149,11 +166,11 @@ namespace engine
 	void GraphicsDevice::FrameEnd()
 	{
 		// 1. 렌더 타겟 배경색으로 지우기
-		const float clearColor[4] = { 0.1f, 0.1f, 0.1f, 1.0f };
-		context_->ClearRenderTargetView(swap_chain_RTV.Get(), clearColor);
+		constexpr std::array<float, 4> color = { 0.1f, 0.1f, 0.1f, 1.0f };
+		swap_chain_RT_->ClearRenderTargetView(context_.Get(), color);
 
 		// 2. 깊이/스텐실 버퍼 초기화
-		//context_->ClearDepthStencilView(m_DepthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+		swap_chain_RT_->ClearDepthStencilView(context_.Get(), 1.0f, 0);
 	}
 
 	ComPtr<IDXGISwapChain> GraphicsDevice::CreateSwapChain(HWND hwnd, uint32 width, uint32 height)
@@ -219,10 +236,10 @@ namespace engine
 			HRESULT_ERROR_MESSAGE(hr);
 			return nullptr;
 		}
-
+		
 		return swap_chain;
 	}
-	ComPtr<ID3D11RenderTargetView> GraphicsDevice::CreateSwapChainRenderTargetView(ComPtr<IDXGISwapChain> swap_chain, uint32 width, uint32 height)
+	ComPtr<ID3D11RenderTargetView> GraphicsDevice::CreateSwapChainRTV(ComPtr<IDXGISwapChain> swap_chain, uint32 width, uint32 height)
 	{
 		// 1. 스왑 체인으로부터 백 버퍼(Texture2D) 포인터를 가져옵니다.
 		ComPtr<ID3D11Texture2D> backBuffer;
@@ -244,5 +261,58 @@ namespace engine
 		}
 
 		return rtv;
+	}
+	ComPtr<ID3D11DepthStencilView> GraphicsDevice::CreateSwapChainDSV(uint32 width, uint32 height)
+	{
+		// -----------------------------------------------------------------
+	// STEP 1. 깊이와 스텐실 값을 저장할 알맹이(2D 텍스처 리소스) 생성
+	// -----------------------------------------------------------------
+		D3D11_TEXTURE2D_DESC descDepth = {};
+		descDepth.Width = width;            // RTV의 가로 크기와 완전히 일치해야 합니다.
+		descDepth.Height = height;          // RTV의 세로 크기와 완전히 일치해야 합니다.
+		descDepth.MipLevels = 1;               // 깊이 버퍼는 밉맵이 필요 없으므로 1 고정입니다.
+		descDepth.ArraySize = 1;
+
+		// 가장 표준적으로 사용되는 포맷 (24비트 깊이 + 8비트 스텐실)
+		descDepth.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+
+		// 멀티샘플링 설정 (RTV 생성할 때 넣은 Count, Quality 값과 무조건 일치해야 에러가 안 납니다)
+		descDepth.SampleDesc.Count = 1;
+		descDepth.SampleDesc.Quality = 0;
+
+		descDepth.Usage = D3D11_USAGE_DEFAULT;          // GPU가 매 프레임 읽고 쓸 것이므로 DEFAULT
+		descDepth.BindFlags = D3D11_BIND_DEPTH_STENCIL; // 이 텍스처의 용도는 깊이/스텐실 도화지임을 명시
+		descDepth.CPUAccessFlags = 0;
+		descDepth.MiscFlags = 0;
+
+		// GPU 메모리에 실제 깊이/스텐실 버퍼 공간 할당
+		ComPtr<ID3D11Texture2D> ds_buffer = {};
+		HRESULT hr = device_->CreateTexture2D(&descDepth, nullptr, ds_buffer.GetAddressOf());
+		if (FAILED(hr))
+		{
+			HRESULT_ERROR_MESSAGE(hr);
+			return nullptr;
+		}
+
+		// -----------------------------------------------------------------
+		// STEP 2. 생성된 버퍼를 파이프라인에 바인딩하기 위한 사양서(View) 생성
+		// -----------------------------------------------------------------
+		D3D11_DEPTH_STENCIL_VIEW_DESC descDSV = {};
+		descDSV.Format = descDepth.Format; // 위에서 지정한 포맷 구조를 그대로 따릅니다.
+
+		// 이 리소스를 단순한 2D 텍스처 형태로 다루겠다고 설정
+		descDSV.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+		descDSV.Texture2D.MipSlice = 0; // 원본 이미지 레벨(0번)을 조준
+
+		ComPtr<ID3D11DepthStencilView> dsv = {};
+		// 최종적으로 파이프라인 출력 병합기(OM)에 꽂을 DSV 객체 생성
+		hr = device_->CreateDepthStencilView(ds_buffer.Get(), &descDSV, dsv.GetAddressOf());
+		if (FAILED(hr))
+		{
+			HRESULT_ERROR_MESSAGE(hr);
+			return nullptr;
+		}
+
+		return dsv;
 	}
 }

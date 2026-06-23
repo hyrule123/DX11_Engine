@@ -62,13 +62,14 @@ namespace engine
 	{
 		//이론 정리
 		//https://app.notion.com/p/hyrule1/3D-Graphics-Study-250cb63f18c18074b5dcca4609f4b447
+		//+ Reversed Z 적용
 		if (desc.proj_mode == ProjectionMode::Perspective)
 		{
-			proj_mat_ = matrix::CreatePerspectiveLH(desc.width, desc.height, desc.near_z, desc.far_z);
+			proj_mat_ = matrix::CreatePerspectiveLH(desc.width, desc.height, desc.far_z, desc.near_z);
 		}
 		else if (desc.proj_mode == ProjectionMode::Orthographic)
 		{
-			proj_mat_ = matrix::CreateOrthographicLH(desc.width, desc.height, desc.near_z, desc.far_z);
+			proj_mat_ = matrix::CreateOrthographicLH(desc.width, desc.height, desc.far_z, desc.near_z);
 		}
 		proj_mat_desc_ = desc;
 	}

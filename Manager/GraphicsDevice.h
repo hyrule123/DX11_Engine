@@ -9,6 +9,7 @@ struct ID3D11DeviceContext;
 struct IDXGISwapChain;
 struct ID3D11RenderTargetView;
 struct ID3D11DepthStencilView;
+struct ID3D11DepthStencilState;
 
 namespace engine
 {
@@ -40,6 +41,7 @@ namespace engine
 		ComPtr<IDXGISwapChain> CreateSwapChain(HWND hwnd, uint32 width, uint32 height);
 		ComPtr<ID3D11RenderTargetView> CreateSwapChainRTV(ComPtr<IDXGISwapChain> swap_chain, uint32 width, uint32 height);
 		ComPtr<ID3D11DepthStencilView> CreateSwapChainDSV(uint32 width, uint32 height);
+		ComPtr<ID3D11DepthStencilState> CreateSwapChainDSS();
 
 	private:
 		ComPtr<ID3D11Device> device_ = {};
@@ -48,6 +50,7 @@ namespace engine
 		ComPtr<IDXGISwapChain> swap_chain_ = {};
 
 		s_ptr<RenderTargetGroup> swap_chain_RT_ = {};
+		ComPtr<ID3D11DepthStencilState> depth_stencil_state_ = {};
 
 		uint32 resolution_width_ = {};
 		uint32 resolution_height_ = {};

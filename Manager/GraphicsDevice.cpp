@@ -135,6 +135,9 @@ namespace engine
 		swap_chain_RT_->SetRenderTargets(views);
 		swap_chain_RT_->SetDepthStencilView(dsv);
 
+		//Depth Stencil State 생성
+		depth_stencil_state_ = CreateSwapChainDSS();
+
 		//Viewport 생성
 		D3D11_VIEWPORT viewport{};
 		viewport.TopLeftX = 0.0f;
@@ -155,6 +158,7 @@ namespace engine
 
 	void GraphicsDevice::BindSwapChainRTV()
 	{
+		context_->OMSetDepthStencilState(depth_stencil_state_.Get(), 1);
 		swap_chain_RT_->BindOutputMerger(context_.Get());
 	}
 
@@ -170,7 +174,7 @@ namespace engine
 		swap_chain_RT_->ClearRenderTargetView(context_.Get(), color);
 
 		// 2. 깊이/스텐실 버퍼 초기화
-		swap_chain_RT_->ClearDepthStencilView(context_.Get(), 1.0f, 0);
+		swap_chain_RT_->ClearDepthStencilView(context_.Get(), 0.0f, 0);
 	}
 
 	ComPtr<IDXGISwapChain> GraphicsDevice::CreateSwapChain(HWND hwnd, uint32 width, uint32 height)
@@ -273,9 +277,9 @@ namespace engine
 		descDepth.MipLevels = 1;               // 깊이 버퍼는 밉맵이 필요 없으므로 1 고정입니다.
 		descDepth.ArraySize = 1;
 
-		// 가장 표준적으로 사용되는 포맷 (24비트 깊이 + 8비트 스텐실)
-		descDepth.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-
+		// Reversed-Z 사용 시 f32 포맷 사용
+		// 차후 Stencil 버퍼 필요 시 버퍼 공간을 확장
+		descDepth.Format = DXGI_FORMAT_D32_FLOAT;
 		// 멀티샘플링 설정 (RTV 생성할 때 넣은 Count, Quality 값과 무조건 일치해야 에러가 안 납니다)
 		descDepth.SampleDesc.Count = 1;
 		descDepth.SampleDesc.Quality = 0;
@@ -314,5 +318,37 @@ namespace engine
 		}
 
 		return dsv;
+	}
+	ComPtr<ID3D11DepthStencilState> GraphicsDevice::CreateSwapChainDSS()
+	{
+		// 1. Depth Stencil Desc 구조체 선언 및 초기화
+		D3D11_DEPTH_STENCIL_DESC dsDesc = {};
+
+		// --- DEPTH (Reversed-Z 핵심 설정) ---
+		dsDesc.DepthEnable = TRUE;                           // 깊이 테스트 활성화
+		dsDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL; // 깊이 버퍼 쓰기 활성화
+
+		// ★ Reversed-Z의 핵심: LESS_EQUAL 대신 GREATER_EQUAL을 사용합니다.
+		dsDesc.DepthFunc = D3D11_COMPARISON_GREATER_EQUAL;
+
+		// --- STENCIL (기본 마스킹 설정 - 필요에 따라 수정 가능) ---
+		dsDesc.StencilEnable = FALSE;                         // 스텐실 테스트 비활성화
+
+		// 2. State 객체 생성
+		ComPtr<ID3D11DepthStencilState> depth_stencil_state = nullptr;
+		HRESULT hr = device_->CreateDepthStencilState(&dsDesc, &depth_stencil_state);
+
+		if (FAILED(hr))
+		{
+			HRESULT_ERROR_MESSAGE(hr);
+			return nullptr;
+		}
+
+		if (SUCCEEDED(hr)) {
+			// 렌더링 컨텍스트에 바인딩 (스텐실 Ref 값은 1로 예시 설정)
+			context_->OMSetDepthStencilState(depth_stencil_state.Get(), 1);
+		}
+
+		return depth_stencil_state;
 	}
 }

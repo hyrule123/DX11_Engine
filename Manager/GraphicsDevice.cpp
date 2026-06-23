@@ -3,7 +3,7 @@
 
 #include <Engine/Manager/RenderManager.h>
 
-#include <Engine/Resource/GraphicsPipeline/RenderTarget.h>
+#include <Engine/Resource/Graphics/RenderTarget.h>
 
 #include <Engine/Core/EngineMain.h>
 #include <Engine/Core/Constant.h>

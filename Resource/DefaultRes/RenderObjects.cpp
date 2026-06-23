@@ -2,17 +2,17 @@
 #include "DefaultRes.h"
 
 #include <Engine/Manager/ResourceManager.h>
-#include <Engine/Resource/GraphicsPipeline/InputLayout.h>
-#include <Engine/Resource/GraphicsPipeline/VertexShader.h>
-#include <Engine/Resource/GraphicsPipeline/PixelShader.h>
-#include <Engine/Resource/GraphicsPipeline/GraphicsPipeline.h>
+#include <Engine/Resource/Graphics/InputLayout.h>
+#include <Engine/Resource/Graphics/VertexShader.h>
+#include <Engine/Resource/Graphics/PixelShader.h>
+#include <Engine/Resource/Graphics/GraphicsPipeline.h>
 
-#include <Engine/Resource/Material/Material.h>
+#include <Engine/Resource/Graphics/Material.h>
 
-#include <Engine/Resource/Mesh/Mesh.h>
-#include <Engine/Resource/Mesh/VertexBuffer.h>
-#include <Engine/Resource/Mesh/IndexBuffer.h>
-#include <Engine/Resource/Mesh/Vertex.h>
+#include <Engine/Resource/Graphics/Mesh.h>
+#include <Engine/Resource/Graphics/VertexBuffer.h>
+#include <Engine/Resource/Graphics/IndexBuffer.h>
+#include <Engine/Resource/Graphics/Vertex.h>
 
 #include <Engine/Core/Math.h>
 

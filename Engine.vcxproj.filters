@@ -54,16 +54,16 @@
     <ClInclude Include="ThirdParty\SimpleMath.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Resource\Mesh\VertexBuffer.h">
+    <ClInclude Include="Resource\Graphics\VertexBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Resource\Mesh\Mesh.h">
+    <ClInclude Include="Resource\Graphics\Mesh.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Resource\Mesh\IndexBuffer.h">
+    <ClInclude Include="Resource\Graphics\IndexBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Resource\Mesh\Vertex.h">
+    <ClInclude Include="Resource\Graphics\Vertex.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Manager\SceneManager.h">
@@ -72,19 +72,19 @@
     <ClInclude Include="Game\Scene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Resource\GraphicsPipeline\Shader.h">
+    <ClInclude Include="Resource\Graphics\Shader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Util\file_system.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Resource\GraphicsPipeline\VertexShader.h">
+    <ClInclude Include="Resource\Graphics\VertexShader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Resource\GraphicsPipeline\InputLayout.h">
+    <ClInclude Include="Resource\Graphics\InputLayout.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Resource\GraphicsPipeline\PixelShader.h">
+    <ClInclude Include="Resource\Graphics\PixelShader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Game\GameObject.h">
@@ -114,10 +114,10 @@
     <ClInclude Include="Game\Component\Renderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Resource\Material\Material.h">
+    <ClInclude Include="Resource\Graphics\Material.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Resource\GraphicsPipeline\GraphicsPipeline.h">
+    <ClInclude Include="Resource\Graphics\GraphicsPipeline.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Manager\TimeManager.h">
@@ -141,7 +141,7 @@
     <ClInclude Include="Resource\DefaultRes\DefaultRes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Resource\GPUBuffer\ConstantBuffer.h">
+    <ClInclude Include="Resource\Graphics\ConstantBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Game\Component\Camera.h">
@@ -150,7 +150,7 @@
     <ClInclude Include="Manager\RenderManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Resource\Texture2D.h">
+    <ClInclude Include="Resource\Graphics\Texture2D.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Util\string_utils.h">
@@ -159,7 +159,7 @@
     <ClInclude Include="Core\Enum.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Resource\GraphicsPipeline\RenderTarget.h">
+    <ClInclude Include="Resource\Graphics\RenderTarget.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -188,13 +188,13 @@
     <ClCompile Include="ThirdParty\SimpleMath.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Resource\Mesh\VertexBuffer.cpp">
+    <ClCompile Include="Resource\Graphics\VertexBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Resource\Mesh\Mesh.cpp">
+    <ClCompile Include="Resource\Graphics\Mesh.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Resource\Mesh\IndexBuffer.cpp">
+    <ClCompile Include="Resource\Graphics\IndexBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Manager\SceneManager.cpp">
@@ -203,19 +203,19 @@
     <ClCompile Include="Game\Scene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Resource\GraphicsPipeline\Shader.cpp">
+    <ClCompile Include="Resource\Graphics\Shader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Util\file_system.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Resource\GraphicsPipeline\VertexShader.cpp">
+    <ClCompile Include="Resource\Graphics\VertexShader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Resource\GraphicsPipeline\InputLayout.cpp">
+    <ClCompile Include="Resource\Graphics\InputLayout.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Resource\GraphicsPipeline\PixelShader.cpp">
+    <ClCompile Include="Resource\Graphics\PixelShader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Game\GameObject.cpp">
@@ -233,10 +233,10 @@
     <ClCompile Include="Game\Component\Renderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Resource\Material\Material.cpp">
+    <ClCompile Include="Resource\Graphics\Material.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Resource\GraphicsPipeline\GraphicsPipeline.cpp">
+    <ClCompile Include="Resource\Graphics\GraphicsPipeline.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Manager\TimeManager.cpp">
@@ -248,7 +248,7 @@
     <ClCompile Include="Resource\DefaultRes\RenderObjects.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Resource\GPUBuffer\ConstantBuffer.cpp">
+    <ClCompile Include="Resource\Graphics\ConstantBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Game\Component\Camera.cpp">
@@ -257,13 +257,13 @@
     <ClCompile Include="Manager\RenderManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Resource\Texture2D.cpp">
+    <ClCompile Include="Resource\Graphics\Texture2D.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Util\string_utils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Resource\GraphicsPipeline\RenderTarget.cpp">
+    <ClCompile Include="Resource\Graphics\RenderTarget.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

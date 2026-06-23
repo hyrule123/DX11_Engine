@@ -2,8 +2,8 @@
 #include "Mesh.h"
 
 #include <Engine/Manager/GraphicsDevice.h>
-#include <Engine/Resource/Mesh/VertexBuffer.h>
-#include <Engine/Resource/Mesh/IndexBuffer.h>
+#include <Engine/Resource/Graphics/VertexBuffer.h>
+#include <Engine/Resource/Graphics/IndexBuffer.h>
 
 #include <Engine/Core/Debug.h>
 

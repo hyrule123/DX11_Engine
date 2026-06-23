@@ -1,8 +1,8 @@
 #include "Engine/Core/pch.h"
 #include "Material.h"
 
-#include <Engine/Resource/GraphicsPipeline/GraphicsPipeline.h>
-#include <Engine/Resource/Texture2D.h>
+#include <Engine/Resource/Graphics/GraphicsPipeline.h>
+#include <Engine/Resource/Graphics/Texture2D.h>
 
 namespace engine
 {

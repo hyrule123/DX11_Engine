@@ -3,9 +3,9 @@
 
 #include <Engine/Manager/GraphicsDevice.h>
 
-#include <Engine/Resource/GraphicsPipeline/InputLayout.h>
-#include <Engine/Resource/GraphicsPipeline/VertexShader.h>
-#include <Engine/Resource/GraphicsPipeline/PixelShader.h>
+#include <Engine/Resource/Graphics/InputLayout.h>
+#include <Engine/Resource/Graphics/VertexShader.h>
+#include <Engine/Resource/Graphics/PixelShader.h>
 
 namespace engine
 {

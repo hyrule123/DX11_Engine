@@ -5,9 +5,9 @@
 #include <Engine/Game/Component/Renderer.h>
 #include <Engine/Game/Component/Transform.h>
 
-#include <Engine/Resource/GPUBuffer/ConstantBuffer.h>
-#include <Engine/Resource/Material/Material.h>
-#include <Engine/Resource/Mesh/Mesh.h>
+#include <Engine/Resource/Graphics/ConstantBuffer.h>
+#include <Engine/Resource/Graphics/Material.h>
+#include <Engine/Resource/Graphics/Mesh.h>
 
 #include <Engine/HLSL/CppShared/Struct.hlsli>
 #include <Engine/HLSL/CppShared/Register.hlsli>

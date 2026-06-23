@@ -4,8 +4,8 @@
 #include <Engine/Manager/GraphicsDevice.h>
 #include <Engine/Manager/RenderManager.h>
 
-#include <Engine/Resource/Mesh/Mesh.h>
-#include <Engine/Resource/Material/Material.h>
+#include <Engine/Resource/Graphics/Mesh.h>
+#include <Engine/Resource/Graphics/Material.h>
 
 #include <Engine/Game/Component/Transform.h>
 

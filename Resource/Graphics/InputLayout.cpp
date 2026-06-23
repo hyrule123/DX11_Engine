@@ -2,7 +2,7 @@
 #include "InputLayout.h"
 
 #include <Engine/Manager/GraphicsDevice.h>
-#include <Engine/Resource/GraphicsPipeline/VertexShader.h>
+#include <Engine/Resource/Graphics/VertexShader.h>
 
 #include <Engine/Core/Debug.h>
 

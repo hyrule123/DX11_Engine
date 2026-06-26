@@ -4,10 +4,7 @@
 #include <Engine/Core/CoreMinimal.h>
 #include <Engine/Core/UtilMacro.h>
 
-#include <d3d11.h>
-#include <wrl/client.h>
-
-#include <vector>
+struct ID3D11Device;
 
 namespace engine
 {
@@ -22,7 +19,7 @@ namespace engine
         virtual void Bind(ID3D11DeviceContext* context) final;
 
     protected:
-        virtual bool Create(const ComPtr<ID3D11Device>& device, const std::vector<uint8>& bytecode) final;
+        virtual bool Create(ID3D11Device* device, const std::vector<uint8>& bytecode) final;
 
     private:
         ComPtr<ID3D11PixelShader> ps_ = {};

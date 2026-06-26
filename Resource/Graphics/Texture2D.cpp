@@ -26,8 +26,13 @@
 namespace engine
 {
 	Texture2D::Texture2D()
-		: Super(STRINGIFY(TextureBase))
+		: Super(STRINGIFY(Texture2D))
 	{}
+
+	Texture2D::Texture2D(const std::string_view concrete_class_name)
+		: Super(concrete_class_name)
+	{
+	}
 
 	Texture2D::~Texture2D()
 	{}
@@ -75,7 +80,7 @@ namespace engine
 			img.GetImages(),
 			img.GetImageCount(),
 			meta,
-			SRV_.ReleaseAndGetAddressOf()
+			shader_resource_view_.ReleaseAndGetAddressOf()
 		);
 
 		if (FAILED(hr))
@@ -85,7 +90,7 @@ namespace engine
 		}
 
 		ComPtr<ID3D11Resource> temp = {};
-		SRV_->GetResource(temp.GetAddressOf());
+		shader_resource_view_->GetResource(temp.GetAddressOf());
 		temp.As(&tex2D_res_);
 		if (nullptr == tex2D_res_)
 		{
@@ -98,19 +103,19 @@ namespace engine
 	{
 		if (stageflag & ShaderStage::kVS)
 		{
-			context->VSSetShaderResources(slot, 1, SRV_.GetAddressOf());
+			context->VSSetShaderResources(slot, 1, shader_resource_view_.GetAddressOf());
 		}
 		if (stageflag & ShaderStage::kGS)
 		{
-			context->GSSetShaderResources(slot, 1, SRV_.GetAddressOf());
+			context->GSSetShaderResources(slot, 1, shader_resource_view_.GetAddressOf());
 		}
 		if (stageflag & ShaderStage::kPS)
 		{
-			context->PSSetShaderResources(slot, 1, SRV_.GetAddressOf());
+			context->PSSetShaderResources(slot, 1, shader_resource_view_.GetAddressOf());
 		}
 		if (stageflag & ShaderStage::kCS)
 		{
-			context->CSSetShaderResources(slot, 1, SRV_.GetAddressOf());
+			context->CSSetShaderResources(slot, 1, shader_resource_view_.GetAddressOf());
 		}
 	}
 	void Texture2D::BindTextures(ID3D11DeviceContext* context, 
@@ -135,6 +140,18 @@ namespace engine
 		{
 			context->CSSetShaderResources(0u, (UINT)texcount, texture_srvs.data());
 		}
+	}
+	ComPtr<ID3D11Texture2D> Texture2D::CreateTexture2D(ID3D11Device* device, const D3D11_TEXTURE2D_DESC& desc)
+	{
+		HRESULT hr = device->CreateTexture2D(&desc, nullptr, tex2D_res_.ReleaseAndGetAddressOf());
+
+		if (FAILED(hr))
+		{
+			HRESULT_ERROR_MESSAGE(hr);
+			return nullptr;
+		}
+
+		return tex2D_res_;
 	}
 }
 

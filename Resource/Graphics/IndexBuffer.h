@@ -4,8 +4,7 @@
 #include <Engine/Core/CoreMinimal.h>
 #include <Engine/Core/DX11.h>
 
-#include <vector>
-
+struct ID3D11Device;
 struct ID3D11DeviceContext;
 
 namespace engine
@@ -18,7 +17,7 @@ namespace engine
         IndexBuffer();
         virtual ~IndexBuffer() override;
 
-        bool Create(const std::vector<UINT>& indices, D3D11_PRIMITIVE_TOPOLOGY topology);
+        bool Create(ID3D11Device* device, const std::vector<UINT>& indices, D3D11_PRIMITIVE_TOPOLOGY topology);
 
         void Bind(ID3D11DeviceContext* context);
 

@@ -6,6 +6,8 @@
 
 #include <vector>
 
+struct ID3D11Device;
+
 namespace engine
 {
     class VertexShader;
@@ -18,7 +20,7 @@ namespace engine
         InputLayout();
         virtual ~InputLayout() final;
 
-        bool Create(const std::vector<D3D11_INPUT_ELEMENT_DESC>& desc, s_ptr<VertexShader> vs);
+        bool Create(ID3D11Device* device, const std::vector<D3D11_INPUT_ELEMENT_DESC>& desc, s_ptr<VertexShader> vs);
         void Bind(ID3D11DeviceContext* context);
 
     private:

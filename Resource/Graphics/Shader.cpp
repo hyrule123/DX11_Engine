@@ -22,6 +22,6 @@ namespace engine
 
 		auto device = GraphicsDevice::GetInst().GetDevice();
 
-		return Create(device, bytecode);
+		return Create(device.Get(), bytecode);
 	}
 }

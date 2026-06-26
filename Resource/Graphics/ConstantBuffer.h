@@ -4,6 +4,7 @@
 #include <Engine/Resource/Resource.h>
 
 struct ID3D11Buffer;
+struct ID3D11Device;
 struct ID3D11DeviceContext;
 
 namespace engine
@@ -17,10 +18,10 @@ namespace engine
         ConstantBuffer();
         virtual ~ConstantBuffer() override;
         
-        bool Create(size_t stride);
+        bool Create(ID3D11Device* device, size_t stride);
         template <typename T>
-        bool Create() {
-            return Create(sizeof(T));
+        bool Create(ID3D11Device* device) {
+            return Create(device, sizeof(T));
         }
 
         void Upload(ID3D11DeviceContext* context, const void* ptr, size_t size);

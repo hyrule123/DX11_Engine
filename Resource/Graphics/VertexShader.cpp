@@ -1,6 +1,7 @@
 #include "Engine/Core/pch.h"
 #include "VertexShader.h"
 
+#include <Engine/Core/DX11.h>
 #include <Engine/Core/Debug.h>
 
 namespace engine
@@ -17,7 +18,7 @@ namespace engine
 	{
 		context->VSSetShader(vs_.Get(), nullptr, 0);
 	}
-	bool VertexShader::Create(const ComPtr<ID3D11Device>& device, const std::vector<uint8>& bytecode)
+	bool VertexShader::Create(ID3D11Device* device, const std::vector<uint8>& bytecode)
 	{
 		HRESULT hr = device->CreateVertexShader(bytecode.data(), bytecode.size(), nullptr, vs_.ReleaseAndGetAddressOf());
 

@@ -1,0 +1,33 @@
+#pragma once
+#include <Engine/Resource/Resource.h>
+
+#include <Engine/Core/CoreMinimal.h>
+
+struct ID3D11RasterizerState;
+struct ID3D11Device;
+struct ID3D11DeviceContext;
+
+namespace engine
+{
+	
+	class RasterizerState :
+		public Resource
+	{
+		CLASS_INFO(RasterizerState, Resource)
+	public:
+		RasterizerState();
+		virtual ~RasterizerState() override;
+
+		void SetRasterizerState(ComPtr<ID3D11RasterizerState> rss) {
+			rasterizer_state_ = rss;
+		}
+
+		bool Create(ID3D11Device* device, const D3D11_RASTERIZER_DESC& desc);
+		void Bind(ID3D11DeviceContext* context);
+
+	private:
+		ComPtr<ID3D11RasterizerState> rasterizer_state_ = {};
+	};
+}
+
+

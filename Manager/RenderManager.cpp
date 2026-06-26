@@ -30,12 +30,14 @@ namespace engine
 	}
 	void RenderManager::Init()
 	{
+		auto device = GraphicsDevice::GetInst().GetDevice();
+
 		//CONSTANT BUFFERS
 		cb_per_obj_ = std::make_shared<ConstantBuffer>();
-		cb_per_obj_->Create<PerObj>();
+		cb_per_obj_->Create<PerObj>(device.Get());
 
 		cb_per_pass_ = std::make_shared<ConstantBuffer>();
-		cb_per_pass_->Create<PerPass>();
+		cb_per_pass_->Create<PerPass>(device.Get());
 
 		CreateSamplerStates();
 		BindPSSamplerStates();

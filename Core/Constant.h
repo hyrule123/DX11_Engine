@@ -14,4 +14,7 @@ namespace engine
 
 	constexpr uint32 kMaxTextureCount = 8u;
 	constexpr uint32 kMaxRenderTargetCount = 8u;
+
+	constexpr float kDefaultBlendFactor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+	constexpr uint32 kDefaultSampleMask = 0xFF'FF'FF'FFu;
 }

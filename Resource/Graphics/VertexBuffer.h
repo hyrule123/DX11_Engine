@@ -3,6 +3,7 @@
 
 #include <Engine/Core/CoreMinimal.h>
 
+struct ID3D11Device;
 struct ID3D11DeviceContext;
 struct ID3D11Buffer;
 
@@ -16,11 +17,11 @@ namespace engine
 		VertexBuffer();
 		virtual ~VertexBuffer() override;
 
-		bool Create(const void* data, UINT data_stride, UINT data_count);
+		bool Create(ID3D11Device* device, const void* data, UINT data_stride, UINT data_count);
         template <typename T>
-        bool Create(const std::vector<T>& vertices)
+        bool Create(ID3D11Device* device, const std::vector<T>& vertices)
         {
-            return Create(vertices.data(), (UINT)sizeof(T), (UINT)vertices.size());
+            return Create(device, vertices.data(), (UINT)sizeof(T), (UINT)vertices.size());
         }
 
 		virtual bool LoadFromFile(const stdfs::path& path) override;

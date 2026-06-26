@@ -2,8 +2,7 @@
 #include "Engine/Core/pch.h"
 #include "VertexBuffer.h"
 
-#include <Engine/Manager/GraphicsDevice.h>
-
+#include <Engine/Core/DX11.h>
 #include <Engine/Core/Debug.h>
 
 namespace engine
@@ -15,7 +14,7 @@ namespace engine
 	VertexBuffer::~VertexBuffer()
 	{
 	}
-	bool VertexBuffer::Create(const void* data, UINT data_stride, UINT	data_count)
+	bool VertexBuffer::Create(ID3D11Device* device, const void* data, UINT data_stride, UINT	data_count)
 	{
 		if (nullptr == data)
 		{
@@ -31,8 +30,6 @@ namespace engine
 
 		D3D11_SUBRESOURCE_DATA sub_data = {};
 		sub_data.pSysMem = data;
-
-		auto device = GraphicsDevice::GetInst().GetDevice();
 
 		HRESULT hr = device->CreateBuffer(&desc, &sub_data, buffer_.ReleaseAndGetAddressOf());
 

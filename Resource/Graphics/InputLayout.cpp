@@ -1,7 +1,6 @@
 #include "Engine/Core/pch.h"
 #include "InputLayout.h"
 
-#include <Engine/Manager/GraphicsDevice.h>
 #include <Engine/Resource/Graphics/VertexShader.h>
 
 #include <Engine/Core/Debug.h>
@@ -15,11 +14,9 @@ namespace engine
 	InputLayout::~InputLayout()
 	{
 	}
-	bool InputLayout::Create(const std::vector<D3D11_INPUT_ELEMENT_DESC>& desc, s_ptr<VertexShader> vs)
+	bool InputLayout::Create(ID3D11Device* device, const std::vector<D3D11_INPUT_ELEMENT_DESC>& desc, s_ptr<VertexShader> vs)
 	{
 		ASSERT_MESSAGE(!desc.empty() && vs, "desc와 Vertex Shader 둘 다 필요");
-
-		ComPtr<ID3D11Device> device = GraphicsDevice::GetInst().GetDevice();
 
 		const auto& bytecode = vs->GetByteCode();
 

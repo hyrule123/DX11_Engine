@@ -4,28 +4,34 @@
 
 #include <Engine/Core/CoreMinimal.h>
 #include <Engine/Core/Constant.h>
+#include <Engine/Core/DX11.h>
 
 #include <array>
 
 struct ID3D11RenderTargetView;
 struct ID3D11Texture2D;
-struct ID3D11DepthStencilView;
 struct ID3D11DeviceContext;
 
 namespace engine
 {
+    class RenderTargetView;
+    class DepthStencilView;
+
     class RenderTargetGroup 
         : public Resource
     {
         CLASS_INFO(RenderTargetGroup, Resource)
     public:
-        using RTVArray = std::array<ComPtr<ID3D11RenderTargetView>, kMaxRenderTargetCount>;
+        using RenderTargetArray = std::array<s_ptr<RenderTargetView>, kMaxRenderTargetCount>;
 
         RenderTargetGroup();
         virtual ~RenderTargetGroup() override;
 
-        void SetRenderTargets(RTVArray RTVs);
-        void SetDepthStencilView(ComPtr<ID3D11DepthStencilView> DSV) { DSV_ = DSV; }
+        void SetRenderTargets(const RenderTargetArray& rtv_arr);
+        void SetDepthStencilView(s_ptr<DepthStencilView> dsv) { 
+            dsv_ = std::move(dsv);
+        }
+        bool CreateDepthStencilView(ID3D11Device* device, const D3D11_TEXTURE2D_DESC& desc);
 
         void BindOutputMerger(ID3D11DeviceContext* context);
 
@@ -33,8 +39,8 @@ namespace engine
         void ClearDepthStencilView(ID3D11DeviceContext* context, float depth, uint8 stencil);
 
     private:
-        RTVArray RTVs_ = {};
-        ComPtr<ID3D11DepthStencilView> DSV_ = {};
+        RenderTargetArray render_target_buffers_ = {};
+        s_ptr<DepthStencilView> dsv_ = {};
 
         std::array<ID3D11RenderTargetView*, kMaxRenderTargetCount> RTVs_ptr_cache_ = {};
     };

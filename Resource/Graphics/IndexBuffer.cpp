@@ -1,8 +1,6 @@
 #include "Engine/Core/pch.h"
 #include "IndexBuffer.h"
 
-#include <Engine/Manager/GraphicsDevice.h>
-
 #include <Engine/Core/Debug.h>
 
 namespace engine
@@ -13,7 +11,7 @@ namespace engine
 	}
 	IndexBuffer::~IndexBuffer()
 	{}
-	bool IndexBuffer::Create(const std::vector<UINT>& indices, D3D11_PRIMITIVE_TOPOLOGY topology)
+	bool IndexBuffer::Create(ID3D11Device* device, const std::vector<UINT>& indices, D3D11_PRIMITIVE_TOPOLOGY topology)
 	{
 		if (indices.empty())
 		{
@@ -28,8 +26,6 @@ namespace engine
 		desc.CPUAccessFlags = 0;
 
 		//인덱스 버퍼 데이터 복사
-		auto device = GraphicsDevice::GetInst().GetDevice();
-
 		D3D11_SUBRESOURCE_DATA data = {};
 		data.pSysMem = indices.data();
 

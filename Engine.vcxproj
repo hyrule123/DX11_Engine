@@ -219,7 +219,12 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Resource\Graphics\DepthStencilView.h" />
+    <ClInclude Include="Resource\Graphics\RenderTargetView.h" />
+    <ClInclude Include="Resource\Graphics\BlendState.h" />
     <ClInclude Include="Core\Enum.h" />
+    <ClInclude Include="Resource\Graphics\RasterizerState.h" />
+    <ClInclude Include="Resource\Graphics\DepthStencilState.h" />
     <ClInclude Include="Game\Component\Camera.h" />
     <ClInclude Include="Core\CoreMinimal.h" />
     <ClInclude Include="Core\DX11.h" />
@@ -238,7 +243,7 @@
     <ClInclude Include="Game\Component\Renderer.h" />
     <ClInclude Include="Manager\InputManager.h" />
     <ClInclude Include="Manager\RenderManager.h" />
-    <ClInclude Include="Resource\Graphics\RenderTarget.h" />
+    <ClInclude Include="Resource\Graphics\RenderTargetGroup.h" />
     <ClInclude Include="Resource\DefaultRes\DefaultRes.h" />
     <ClInclude Include="Resource\Graphics\ConstantBuffer.h" />
     <ClInclude Include="Resource\Graphics\GraphicsPipeline.h" />
@@ -270,6 +275,11 @@
     <ClInclude Include="Resource\Graphics\VertexShader.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Resource\Graphics\DepthStencilView.cpp" />
+    <ClCompile Include="Resource\Graphics\RenderTargetView.cpp" />
+    <ClCompile Include="Resource\Graphics\BlendState.cpp" />
+    <ClCompile Include="Resource\Graphics\RasterizerState.cpp" />
+    <ClCompile Include="Resource\Graphics\DepthStencilState.cpp" />
     <ClCompile Include="Game\Component\Camera.cpp" />
     <ClCompile Include="Game\Component\Component.cpp" />
     <ClCompile Include="Core\EngineMain.cpp" />
@@ -279,8 +289,8 @@
     <ClCompile Include="Game\Component\Renderer.cpp" />
     <ClCompile Include="Manager\InputManager.cpp" />
     <ClCompile Include="Manager\RenderManager.cpp" />
-    <ClCompile Include="Resource\Graphics\RenderTarget.cpp" />
-    <ClCompile Include="Resource\DefaultRes\RenderObjects.cpp" />
+    <ClCompile Include="Resource\Graphics\RenderTargetGroup.cpp" />
+    <ClCompile Include="Resource\DefaultRes\DefaultRes.cpp" />
     <ClCompile Include="Resource\Graphics\ConstantBuffer.cpp" />
     <ClCompile Include="Resource\Graphics\GraphicsPipeline.cpp" />
     <ClCompile Include="Resource\Graphics\Material.cpp" />

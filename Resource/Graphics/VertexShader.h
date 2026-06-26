@@ -18,7 +18,7 @@ namespace engine
 		const std::vector<uint8>& GetByteCode() const { return byte_code_; }
 
 	protected:
-		virtual bool Create(const ComPtr<ID3D11Device>& device, const std::vector<uint8>& bytecode) final;
+		virtual bool Create(ID3D11Device* device, const std::vector<uint8>& bytecode) final;
 
 	private:
 		ComPtr<ID3D11VertexShader> vs_ = {};

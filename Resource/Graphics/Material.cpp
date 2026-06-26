@@ -4,7 +4,7 @@
 #include <Engine/Manager/ResourceManager.h>
 
 #include <Engine/Resource/Graphics/GraphicsPipeline.h>
-#include <Engine/Resource/Graphics/Texture2D.h>
+#include <Engine/Resource/Graphics/Buffer/Texture2D.h>
 
 namespace engine
 {

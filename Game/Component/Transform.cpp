@@ -4,7 +4,7 @@
 #include <Engine/Manager/ResourceManager.h>
 #include <Engine/Manager/GraphicsDevice.h>
 
-#include <Engine/Resource/Graphics/ConstantBuffer.h>
+#include <Engine/Resource/Graphics/Buffer/ConstantBuffer.h>
 
 #include <Engine/Core/Debug.h>
 

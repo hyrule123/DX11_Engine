@@ -5,7 +5,7 @@
 #include <Engine/Game/Component/Renderer.h>
 #include <Engine/Game/Component/Transform.h>
 
-#include <Engine/Resource/Graphics/ConstantBuffer.h>
+#include <Engine/Resource/Graphics/Buffer/ConstantBuffer.h>
 #include <Engine/Resource/Graphics/Material.h>
 #include <Engine/Resource/Graphics/Mesh.h>
 

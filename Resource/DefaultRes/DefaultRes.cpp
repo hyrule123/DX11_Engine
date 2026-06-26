@@ -3,20 +3,20 @@
 
 #include <Engine/Manager/GraphicsDevice.h>
 #include <Engine/Manager/ResourceManager.h>
-#include <Engine/Resource/Graphics/InputLayout.h>
-#include <Engine/Resource/Graphics/VertexShader.h>
-#include <Engine/Resource/Graphics/PixelShader.h>
+#include <Engine/Resource/Graphics/Shader/InputLayout.h>
+#include <Engine/Resource/Graphics/Shader/VertexShader.h>
+#include <Engine/Resource/Graphics/Shader/PixelShader.h>
 #include <Engine/Resource/Graphics/GraphicsPipeline.h>
 
 #include <Engine/Resource/Graphics/Material.h>
 
 #include <Engine/Resource/Graphics/Mesh.h>
-#include <Engine/Resource/Graphics/VertexBuffer.h>
-#include <Engine/Resource/Graphics/IndexBuffer.h>
+#include <Engine/Resource/Graphics/Buffer/VertexBuffer.h>
+#include <Engine/Resource/Graphics/Buffer/IndexBuffer.h>
 #include <Engine/Resource/Graphics/Vertex.h>
-#include <Engine/Resource/Graphics/RasterizerState.h>
-#include <Engine/Resource/Graphics/BlendState.h>
-#include <Engine/Resource/Graphics/DepthStencilState.h>
+#include <Engine/Resource/Graphics/State/RasterizerState.h>
+#include <Engine/Resource/Graphics/State/BlendState.h>
+#include <Engine/Resource/Graphics/State/DepthStencilState.h>
 
 #include <Engine/Core/Math.h>
 

@@ -54,13 +54,13 @@
     <ClInclude Include="ThirdParty\SimpleMath.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Resource\Graphics\VertexBuffer.h">
+    <ClInclude Include="Resource\Graphics\Buffer\VertexBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Resource\Graphics\Mesh.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Resource\Graphics\IndexBuffer.h">
+    <ClInclude Include="Resource\Graphics\Buffer\IndexBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Resource\Graphics\Vertex.h">
@@ -72,19 +72,19 @@
     <ClInclude Include="Game\Scene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Resource\Graphics\Shader.h">
+    <ClInclude Include="Resource\Graphics\Shader\Shader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Util\file_system.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Resource\Graphics\VertexShader.h">
+    <ClInclude Include="Resource\Graphics\Shader\VertexShader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Resource\Graphics\InputLayout.h">
+    <ClInclude Include="Resource\Graphics\Shader\InputLayout.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Resource\Graphics\PixelShader.h">
+    <ClInclude Include="Resource\Graphics\Shader\PixelShader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Game\GameObject.h">
@@ -141,7 +141,7 @@
     <ClInclude Include="Resource\DefaultRes\DefaultRes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Resource\Graphics\ConstantBuffer.h">
+    <ClInclude Include="Resource\Graphics\Buffer\ConstantBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Game\Component\Camera.h">
@@ -150,7 +150,7 @@
     <ClInclude Include="Manager\RenderManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Resource\Graphics\Texture2D.h">
+    <ClInclude Include="Resource\Graphics\Buffer\Texture2D.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Util\string_utils.h">
@@ -162,19 +162,19 @@
     <ClInclude Include="Resource\Graphics\RenderTargetGroup.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Resource\Graphics\DepthStencilState.h">
+    <ClInclude Include="Resource\Graphics\State\DepthStencilState.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Resource\Graphics\RasterizerState.h">
+    <ClInclude Include="Resource\Graphics\State\RasterizerState.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Resource\Graphics\BlendState.h">
+    <ClInclude Include="Resource\Graphics\State\BlendState.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Resource\Graphics\RenderTargetView.h">
+    <ClInclude Include="Resource\Graphics\Buffer\RenderTargetView.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Resource\Graphics\DepthStencilView.h">
+    <ClInclude Include="Resource\Graphics\Buffer\DepthStencilView.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -203,13 +203,13 @@
     <ClCompile Include="ThirdParty\SimpleMath.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Resource\Graphics\VertexBuffer.cpp">
+    <ClCompile Include="Resource\Graphics\Buffer\VertexBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Resource\Graphics\Mesh.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Resource\Graphics\IndexBuffer.cpp">
+    <ClCompile Include="Resource\Graphics\Buffer\IndexBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Manager\SceneManager.cpp">
@@ -218,19 +218,19 @@
     <ClCompile Include="Game\Scene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Resource\Graphics\Shader.cpp">
+    <ClCompile Include="Resource\Graphics\Shader\Shader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Util\file_system.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Resource\Graphics\VertexShader.cpp">
+    <ClCompile Include="Resource\Graphics\Shader\VertexShader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Resource\Graphics\InputLayout.cpp">
+    <ClCompile Include="Resource\Graphics\Shader\InputLayout.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Resource\Graphics\PixelShader.cpp">
+    <ClCompile Include="Resource\Graphics\Shader\PixelShader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Game\GameObject.cpp">
@@ -263,7 +263,7 @@
     <ClCompile Include="Resource\DefaultRes\DefaultRes.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Resource\Graphics\ConstantBuffer.cpp">
+    <ClCompile Include="Resource\Graphics\Buffer\ConstantBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Game\Component\Camera.cpp">
@@ -272,7 +272,7 @@
     <ClCompile Include="Manager\RenderManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Resource\Graphics\Texture2D.cpp">
+    <ClCompile Include="Resource\Graphics\Buffer\Texture2D.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Util\string_utils.cpp">
@@ -281,19 +281,19 @@
     <ClCompile Include="Resource\Graphics\RenderTargetGroup.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Resource\Graphics\DepthStencilState.cpp">
+    <ClCompile Include="Resource\Graphics\State\DepthStencilState.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Resource\Graphics\RasterizerState.cpp">
+    <ClCompile Include="Resource\Graphics\State\RasterizerState.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Resource\Graphics\BlendState.cpp">
+    <ClCompile Include="Resource\Graphics\State\BlendState.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Resource\Graphics\RenderTargetView.cpp">
+    <ClCompile Include="Resource\Graphics\Buffer\RenderTargetView.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Resource\Graphics\DepthStencilView.cpp">
+    <ClCompile Include="Resource\Graphics\Buffer\DepthStencilView.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -1,5 +1,5 @@
 #pragma once
-#include <Engine/Resource/Graphics/Texture2D.h>
+#include <Engine/Resource/Graphics/Buffer/Texture2D.h>
 
 #include <Engine/Core/CoreMinimal.h>
 #include <Engine/Core/DX11.h>

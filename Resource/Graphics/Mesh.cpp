@@ -3,8 +3,8 @@
 
 #include <Engine/Manager/ResourceManager.h>
 
-#include <Engine/Resource/Graphics/VertexBuffer.h>
-#include <Engine/Resource/Graphics/IndexBuffer.h>
+#include <Engine/Resource/Graphics/Buffer/VertexBuffer.h>
+#include <Engine/Resource/Graphics/Buffer/IndexBuffer.h>
 
 #include <Engine/Core/DX11.h>
 #include <Engine/Core/Debug.h>

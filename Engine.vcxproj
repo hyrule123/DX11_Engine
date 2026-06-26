@@ -219,12 +219,12 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Resource\Graphics\DepthStencilView.h" />
-    <ClInclude Include="Resource\Graphics\RenderTargetView.h" />
-    <ClInclude Include="Resource\Graphics\BlendState.h" />
+    <ClInclude Include="Resource\Graphics\Buffer\DepthStencilView.h" />
+    <ClInclude Include="Resource\Graphics\Buffer\RenderTargetView.h" />
+    <ClInclude Include="Resource\Graphics\State\BlendState.h" />
     <ClInclude Include="Core\Enum.h" />
-    <ClInclude Include="Resource\Graphics\RasterizerState.h" />
-    <ClInclude Include="Resource\Graphics\DepthStencilState.h" />
+    <ClInclude Include="Resource\Graphics\State\RasterizerState.h" />
+    <ClInclude Include="Resource\Graphics\State\DepthStencilState.h" />
     <ClInclude Include="Game\Component\Camera.h" />
     <ClInclude Include="Core\CoreMinimal.h" />
     <ClInclude Include="Core\DX11.h" />
@@ -245,20 +245,20 @@
     <ClInclude Include="Manager\RenderManager.h" />
     <ClInclude Include="Resource\Graphics\RenderTargetGroup.h" />
     <ClInclude Include="Resource\DefaultRes\DefaultRes.h" />
-    <ClInclude Include="Resource\Graphics\ConstantBuffer.h" />
+    <ClInclude Include="Resource\Graphics\Buffer\ConstantBuffer.h" />
     <ClInclude Include="Resource\Graphics\GraphicsPipeline.h" />
     <ClInclude Include="Resource\Graphics\Material.h" />
-    <ClInclude Include="Resource\Graphics\PixelShader.h" />
-    <ClInclude Include="Resource\Graphics\InputLayout.h" />
+    <ClInclude Include="Resource\Graphics\Shader\PixelShader.h" />
+    <ClInclude Include="Resource\Graphics\Shader\InputLayout.h" />
     <ClInclude Include="Manager\SceneManager.h" />
-    <ClInclude Include="Resource\Graphics\IndexBuffer.h" />
+    <ClInclude Include="Resource\Graphics\Buffer\IndexBuffer.h" />
     <ClInclude Include="Manager\GameEngine.h" />
     <ClInclude Include="Manager\GraphicsDevice.h" />
     <ClInclude Include="Core\Debug.h" />
     <ClInclude Include="Game\Component\Transform.h" />
     <ClInclude Include="Game\Component\Script.h" />
     <ClInclude Include="Manager\TimeManager.h" />
-    <ClInclude Include="Resource\Graphics\Texture2D.h" />
+    <ClInclude Include="Resource\Graphics\Buffer\Texture2D.h" />
     <ClInclude Include="Util\string_utils.h" />
     <ClInclude Include="ThirdParty\SimpleMath.h" />
     <ClInclude Include="Core\pch.h" />
@@ -267,19 +267,19 @@
     <ClInclude Include="Resource\Graphics\Mesh.h" />
     <ClInclude Include="Resource\Graphics\Vertex.h" />
     <ClInclude Include="Resource\Resource.h" />
-    <ClInclude Include="Resource\Graphics\Shader.h" />
+    <ClInclude Include="Resource\Graphics\Shader\Shader.h" />
     <ClInclude Include="Core\Singleton.h" />
     <ClInclude Include="Core\StdType.h" />
-    <ClInclude Include="Resource\Graphics\VertexBuffer.h" />
+    <ClInclude Include="Resource\Graphics\Buffer\VertexBuffer.h" />
     <ClInclude Include="Util\file_system.h" />
-    <ClInclude Include="Resource\Graphics\VertexShader.h" />
+    <ClInclude Include="Resource\Graphics\Shader\VertexShader.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Resource\Graphics\DepthStencilView.cpp" />
-    <ClCompile Include="Resource\Graphics\RenderTargetView.cpp" />
-    <ClCompile Include="Resource\Graphics\BlendState.cpp" />
-    <ClCompile Include="Resource\Graphics\RasterizerState.cpp" />
-    <ClCompile Include="Resource\Graphics\DepthStencilState.cpp" />
+    <ClCompile Include="Resource\Graphics\Buffer\DepthStencilView.cpp" />
+    <ClCompile Include="Resource\Graphics\Buffer\RenderTargetView.cpp" />
+    <ClCompile Include="Resource\Graphics\State\BlendState.cpp" />
+    <ClCompile Include="Resource\Graphics\State\RasterizerState.cpp" />
+    <ClCompile Include="Resource\Graphics\State\DepthStencilState.cpp" />
     <ClCompile Include="Game\Component\Camera.cpp" />
     <ClCompile Include="Game\Component\Component.cpp" />
     <ClCompile Include="Core\EngineMain.cpp" />
@@ -291,19 +291,19 @@
     <ClCompile Include="Manager\RenderManager.cpp" />
     <ClCompile Include="Resource\Graphics\RenderTargetGroup.cpp" />
     <ClCompile Include="Resource\DefaultRes\DefaultRes.cpp" />
-    <ClCompile Include="Resource\Graphics\ConstantBuffer.cpp" />
+    <ClCompile Include="Resource\Graphics\Buffer\ConstantBuffer.cpp" />
     <ClCompile Include="Resource\Graphics\GraphicsPipeline.cpp" />
     <ClCompile Include="Resource\Graphics\Material.cpp" />
-    <ClCompile Include="Resource\Graphics\PixelShader.cpp" />
-    <ClCompile Include="Resource\Graphics\InputLayout.cpp" />
+    <ClCompile Include="Resource\Graphics\Shader\PixelShader.cpp" />
+    <ClCompile Include="Resource\Graphics\Shader\InputLayout.cpp" />
     <ClCompile Include="Manager\SceneManager.cpp" />
-    <ClCompile Include="Resource\Graphics\IndexBuffer.cpp" />
+    <ClCompile Include="Resource\Graphics\Buffer\IndexBuffer.cpp" />
     <ClCompile Include="Manager\GameEngine.cpp" />
     <ClCompile Include="Manager\GraphicsDevice.cpp" />
     <ClCompile Include="Game\Component\Transform.cpp" />
     <ClCompile Include="Game\Component\Script.cpp" />
     <ClCompile Include="Manager\TimeManager.cpp" />
-    <ClCompile Include="Resource\Graphics\Texture2D.cpp" />
+    <ClCompile Include="Resource\Graphics\Buffer\Texture2D.cpp" />
     <ClCompile Include="Util\string_utils.cpp" />
     <ClCompile Include="ThirdParty\SimpleMath.cpp" />
     <ClCompile Include="Core\pch.cpp">
@@ -315,10 +315,10 @@
     <ClCompile Include="Manager\ResourceManager.cpp" />
     <ClCompile Include="Resource\Graphics\Mesh.cpp" />
     <ClCompile Include="Resource\Resource.cpp" />
-    <ClCompile Include="Resource\Graphics\VertexBuffer.cpp" />
-    <ClCompile Include="Resource\Graphics\Shader.cpp" />
+    <ClCompile Include="Resource\Graphics\Buffer\VertexBuffer.cpp" />
+    <ClCompile Include="Resource\Graphics\Shader\Shader.cpp" />
     <ClCompile Include="Util\file_system.cpp" />
-    <ClCompile Include="Resource\Graphics\VertexShader.cpp" />
+    <ClCompile Include="Resource\Graphics\Shader\VertexShader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Engine.rc" />

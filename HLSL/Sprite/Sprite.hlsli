@@ -16,8 +16,8 @@ struct VS_IN
 
 struct VS_OUT
 {
-	float2 UV : TEXCOORD;
 	float4 pos : SV_Position;
+	float2 UV : TEXCOORD;
 };
 
 #endif//HLSL_SPRITE

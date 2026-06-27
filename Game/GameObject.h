@@ -13,6 +13,7 @@ namespace engine
 {
 	class Component;
 	class Scene;
+	class Transform;
 
 	class GameObject :
 		public Entity
@@ -45,6 +46,8 @@ namespace engine
 		template <typename T>
 		s_ptr<T> GetComponent() const;
 
+		s_ptr<Transform> GetTransform() const { return transform_; }
+
 		void SetName(const std::string_view name) { name_ = name; }
 		const std::string& GetName() const { return name_; }
 
@@ -60,6 +63,7 @@ namespace engine
 
 		std::array<s_ptr<Component>, (size_t)ComponentCategory::kEnd> fixed_order_components_ = {};
 		std::vector<s_ptr<Component>> other_components_ = {};
+		s_ptr<Transform> transform_ = {};
 
 		std::string name_ = {};
 

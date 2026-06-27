@@ -23,22 +23,22 @@ namespace engine
 		return (bool)pipeline_;
 	}
 
-	void Material::Bind(ID3D11DeviceContext* context)
+	void Material::BindTextures(ID3D11DeviceContext* context, ShaderStageFlag stage_flag)
 	{
-		std::array<ID3D11ShaderResourceView*, kMaxTextureCount> srvs = {};
-		for (size_t i = 0; i < textures_.size(); ++i)
-		{
-			if (textures_[i])
-			{
-				srvs[i] = textures_[i]->GetSRV();
-			}
-		}
-		Texture2D::BindTextures(context, srvs, ShaderStage::kPS);
+		Texture2D::BindSRVs(context, srv_cache_, stage_flag);
+	}
 
+	void Material::BindGraphicsPipeline(ID3D11DeviceContext* context)
+	{
 		if (pipeline_)
 		{
 			pipeline_->Bind(context);
 		}
+	}
+	void Material::BindAll(ID3D11DeviceContext* context, ShaderStageFlag stage_flag)
+	{
+		BindTextures(context, stage_flag);
+		BindGraphicsPipeline(context);
 	}
 	bool Material::SetTexture(const stdfs::path& texture_filepath, uint32 slot)
 	{

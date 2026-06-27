@@ -99,7 +99,7 @@ namespace engine
 
 		return true;
 	}
-	void Texture2D::Bind(ID3D11DeviceContext* context, UINT slot, ShaderStageFlag stageflag)
+	void Texture2D::BindSRV(ID3D11DeviceContext* context, UINT slot, ShaderStageFlag stageflag)
 	{
 		if (stageflag & ShaderStage::kVS)
 		{
@@ -118,29 +118,28 @@ namespace engine
 			context->CSSetShaderResources(slot, 1, shader_resource_view_.GetAddressOf());
 		}
 	}
-	void Texture2D::BindTextures(ID3D11DeviceContext* context, 
-		const std::array<ID3D11ShaderResourceView*, 
-		kMaxTextureCount>& texture_srvs,
-		ShaderStageFlag stageflag)
+
+	void Texture2D::BindSRVs(ID3D11DeviceContext* context, const std::array<ID3D11ShaderResourceView*, kMaxTextureCount>& texture_srvs, ShaderStageFlag stageflag)
 	{
 		UINT texcount = (UINT)texture_srvs.size();
 		if (stageflag & ShaderStage::kVS)
 		{
-			context->VSSetShaderResources(0u, (UINT)texcount, texture_srvs.data());
+			context->VSSetShaderResources(0u, texcount, texture_srvs.data());
 		}
 		if (stageflag & ShaderStage::kGS)
 		{
-			context->GSSetShaderResources(0u, (UINT)texcount, texture_srvs.data());
+			context->GSSetShaderResources(0u, texcount, texture_srvs.data());
 		}
 		if (stageflag & ShaderStage::kPS)
 		{
-			context->PSSetShaderResources(0u, (UINT)texcount, texture_srvs.data());
+			context->PSSetShaderResources(0u, texcount, texture_srvs.data());
 		}
 		if (stageflag & ShaderStage::kCS)
 		{
-			context->CSSetShaderResources(0u, (UINT)texcount, texture_srvs.data());
+			context->CSSetShaderResources(0u, texcount, texture_srvs.data());
 		}
 	}
+
 	ComPtr<ID3D11Texture2D> Texture2D::CreateTexture2D(ID3D11Device* device, const D3D11_TEXTURE2D_DESC& desc)
 	{
 		HRESULT hr = device->CreateTexture2D(&desc, nullptr, tex2D_res_.ReleaseAndGetAddressOf());

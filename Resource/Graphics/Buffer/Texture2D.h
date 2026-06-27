@@ -25,13 +25,13 @@ namespace engine
 
         virtual bool LoadFromFile(const stdfs::path& path) override;
 
-        void Bind(
+        void BindSRV(
             ID3D11DeviceContext* context, 
             UINT slot, 
             ShaderStageFlag stageflag = ShaderStage::kPS
         );
 
-        static void BindTextures(
+        static void BindSRVs(
             ID3D11DeviceContext* context,
             const std::array<ID3D11ShaderResourceView*, kMaxTextureCount>& texture_srvs,
             ShaderStageFlag stageflag = ShaderStage::kPS

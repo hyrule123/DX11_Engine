@@ -289,12 +289,13 @@ namespace engine
 		vertices[1].position = { 0.5f, 0.5f, 0.0f };
 		vertices[2].position = { 0.5f, -0.5f, 0.0f };
 		vertices[3].position = { -0.5f, -0.5f, 0.0f };
-		vb->Create(device.Get(), vertices);
 
 		vertices[0].UV = { 0.0f, 0.0f };
 		vertices[1].UV = { 1.0f, 0.0f };
 		vertices[2].UV = { 1.0f, 1.0f };
 		vertices[3].UV = { 0.0f, 1.0f };
+
+		vb->Create(device.Get(), vertices);
 
 		//INDEX BUFFER
 		auto ib = std::make_shared<IndexBuffer>();

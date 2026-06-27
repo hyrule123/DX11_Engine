@@ -19,6 +19,7 @@ namespace engine
         COMPONENT_CATEGORY(ComponentCategory::kRenderer)
     public:
         Renderer();
+        Renderer(const std::string_view concrete_class_name);
         virtual ~Renderer() override;
 
         virtual void Init() override;
@@ -27,7 +28,9 @@ namespace engine
 
         s_ptr<Transform> GetTransform() const { return my_transform_; }
         void SetMaterial(s_ptr<Material> material) { material_ = std::move(material); }
+        bool SetMaterial(const stdfs::path& mtrl_name);
         void SetMesh(s_ptr<Mesh> mesh) { mesh_ = std::move(mesh); }
+        bool SetMesh(const stdfs::path& mesh_name);
 
         bool IsRenderReady() const { return (material_ && mesh_); }
 

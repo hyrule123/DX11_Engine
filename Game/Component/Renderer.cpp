@@ -3,6 +3,7 @@
 
 #include <Engine/Manager/GraphicsDevice.h>
 #include <Engine/Manager/RenderManager.h>
+#include <Engine/Manager/ResourceManager.h>
 
 #include <Engine/Resource/Graphics/Mesh.h>
 #include <Engine/Resource/Graphics/Material.h>
@@ -19,6 +20,10 @@ namespace engine
 	{
 
 	}
+
+	Renderer::Renderer(const std::string_view concrete_class_name)
+		: Component(concrete_class_name, ComponentCategory::kRenderer)
+	{}
 
 	Renderer::~Renderer()
 	{
@@ -40,6 +45,16 @@ namespace engine
 
 		s_ptr<Renderer> me = std::static_pointer_cast<Renderer>(shared_from_this());
 		RenderManager::GetInst().AddRenderQueue(me);
+	}
+	bool Renderer::SetMaterial(const stdfs::path& mtrl_name)
+	{
+		material_ = ResourceManager::GetInst().Find<Material>(mtrl_name);
+		return (nullptr != material_);
+	}
+	bool Renderer::SetMesh(const stdfs::path & mesh_name)
+	{
+		mesh_ = ResourceManager::GetInst().Find<Mesh>(mesh_name);
+		return (nullptr != mesh_);
 	}
 }
 

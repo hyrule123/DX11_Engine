@@ -72,7 +72,7 @@ namespace engine
 			cb_per_obj_->Upload(context.Get(), world);
 			cb_per_obj_->Bind(context.Get(), ShaderStage::kAllGraphics, SLOT_B_PER_OBJECT);
 
-			renderer->GetMaterial()->Bind(context.Get());
+			renderer->GetMaterial()->BindAll(context.Get(), ShaderStage::kPS);
 			renderer->GetMesh()->Render(context.Get());
 		}
 	}

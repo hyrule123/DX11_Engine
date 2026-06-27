@@ -21,6 +21,7 @@ namespace engine
         virtual ~InputLayout() final;
 
         bool Create(ID3D11Device* device, const std::vector<D3D11_INPUT_ELEMENT_DESC>& desc, s_ptr<VertexShader> vs);
+        bool Create(ID3D11Device* device, const std::vector<D3D11_INPUT_ELEMENT_DESC>& desc, const stdfs::path& vs_path);
         void Bind(ID3D11DeviceContext* context);
 
     private:

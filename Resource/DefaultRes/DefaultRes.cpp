@@ -52,7 +52,7 @@ namespace engine
 			rs_desc.FillMode = D3D11_FILL_SOLID;               // 내부를 색상으로 채움
 			rs_desc.CullMode = D3D11_CULL_BACK;                // 백페이스 컬링(기본값: BACK)
 			rs_desc.FrontCounterClockwise = false;             // Winding Order 설정(기본: CW)
-			rs_desc.DepthClipEnable = true;                    // 카메라 범위를 벗어난 픽셀 자르기 (기본 true)
+			rs_desc.DepthClipEnable = false;
 
 			if (false == rss->Create(device.Get(), rs_desc))
 			{
@@ -87,57 +87,72 @@ namespace engine
 	void DefaultRes::LoadDefaultDepthStencilStates()
 	{
 		auto device = GraphicsDevice::GetInst().GetDevice();
-		s_ptr<DepthStencilState> dss = std::make_shared<DepthStencilState>();
-		ResourceManager::GetInst().AddResource("DSS_Default", dss);
-		ResourceManager::GetInst().SetDefaultResource(dss);
 
-		// 1. Depth Stencil Desc 구조체 선언 및 초기화
-		D3D11_DEPTH_STENCIL_DESC dss_desc = {};
+		{//Debug DSS
+			s_ptr<DepthStencilState> dss = std::make_shared<DepthStencilState>();
+			ResourceManager::GetInst().AddResource("DSS_Debug", dss);
+			ResourceManager::GetInst().SetDefaultResource(dss);
 
-		// ------------------------------------------------------------------
-		// 1. 깊이(Depth) 테스트 설정
-		// ------------------------------------------------------------------
-		dss_desc.DepthEnable = TRUE;                           // 깊이 테스트를 켭니다.
-		dss_desc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;  // 가려지지 않은 물체의 깊이 값을 깊이 버퍼에 기록합니다. (불투명 오브젝트용)
-		dss_desc.DepthFunc = D3D11_COMPARISON_GREATER_EQUAL;   // ReversedZ
+			// 1. Depth Stencil Desc 구조체 선언 및 초기화
+			D3D11_DEPTH_STENCIL_DESC dss_desc = {};
 
-		// ------------------------------------------------------------------
-		// 2. 스텐실(Stencil) 테스트 설정 (일반적인 기본 렌더링에서는 끕니다)
-		// ------------------------------------------------------------------
-		dss_desc.StencilEnable = FALSE;                        // 스텐실 테스트를 끕니다.
-		dss_desc.StencilReadMask = D3D11_DEFAULT_STENCIL_READ_MASK;   // 기본값 (0xff)
-		dss_desc.StencilWriteMask = D3D11_DEFAULT_STENCIL_WRITE_MASK; // 기본값 (0xff)
+			// ------------------------------------------------------------------
+			// 1. 깊이(Depth) 테스트 설정
+			// ------------------------------------------------------------------
+			dss_desc.DepthEnable = FALSE;                           // 깊이 테스트 OFF
 
-		// 3. 앞면(Front Face) 폴리곤에 대한 스텐실 연산 정의
-		dss_desc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;      // 스텐실 실패 시 기존 값 유지
-		dss_desc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP; // 스텐실 성공했으나 깊이 실패 시 유지
-		dss_desc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;      // 모두 성공 시 유지
-		dss_desc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;      // 스텐실 판정은 항상 통과
+			// ------------------------------------------------------------------
+			// 2. 스텐실(Stencil) 테스트 설정 (일반적인 기본 렌더링에서는 끕니다)
+			// ------------------------------------------------------------------
+			dss_desc.StencilEnable = FALSE;                        // 스텐실 테스트를 끕니다.
 
-		// 4. 뒷면(Back Face) 폴리곤에 대한 스텐실 연산 정의 (보통 앞면과 똑같이 맞춰둡니다)
-		dss_desc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
-		dss_desc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
-		dss_desc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
-		dss_desc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+			// 2. State 객체 생성
+			if (false == dss->Create(device.Get(), dss_desc))
+			{
+				ASSERT_RELEASE(false);
+			}
+		}
 
-		// 2. State 객체 생성
-		if (false == dss->Create(device.Get(), dss_desc))
-		{
-			ASSERT_RELEASE(false);
+		{//Default DSS
+			s_ptr<DepthStencilState> dss = std::make_shared<DepthStencilState>();
+			ResourceManager::GetInst().AddResource("DSS_Default", dss);
+			ResourceManager::GetInst().SetDefaultResource(dss);
+
+			// 1. Depth Stencil Desc 구조체 선언 및 초기화
+			D3D11_DEPTH_STENCIL_DESC dss_desc = {};
+
+			// ------------------------------------------------------------------
+			// 1. 깊이(Depth) 테스트 설정
+			// ------------------------------------------------------------------
+			dss_desc.DepthEnable = TRUE;                           // 깊이 테스트를 켭니다.
+			dss_desc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;  // 가려지지 않은 물체의 깊이 값을 깊이 버퍼에 기록합니다. (불투명 오브젝트용)
+			dss_desc.DepthFunc = D3D11_COMPARISON_GREATER_EQUAL;   // ReversedZ
+
+			// ------------------------------------------------------------------
+			// 2. 스텐실(Stencil) 테스트 설정 (일반적인 기본 렌더링에서는 끕니다)
+			// ------------------------------------------------------------------
+			dss_desc.StencilEnable = FALSE;                        // 스텐실 테스트를 끕니다.
+
+			// 2. State 객체 생성
+			if (false == dss->Create(device.Get(), dss_desc))
+			{
+				ASSERT_RELEASE(false);
+			}
 		}
 	}
 	void DefaultRes::LoadDefaultBlendStates()
 	{
-
+		
 	}
 	void DefaultRes::LoadDebugRenderObjects()
 	{
 		auto& resmgr = ResourceManager::GetInst();
 		auto device = GraphicsDevice::GetInst().GetDevice();
 
-		//VERTEX SHADER
-		auto vs = resmgr.LoadFromFile<VertexShader>("Shader/Debug_VS.cso");
-		resmgr.SetDefaultResource(vs);
+		//GRAPHICS PIPELINE
+		s_ptr<GraphicsPipeline> pipeline = std::make_shared<GraphicsPipeline>();
+		resmgr.AddResource("Debug_GraphicsPipeline", pipeline);
+		resmgr.SetDefaultResource(pipeline);
 
 		//INPUT LAYOUT
 		auto il = std::make_shared<InputLayout>();
@@ -169,31 +184,25 @@ namespace engine
 			std::vector<D3D11_INPUT_ELEMENT_DESC> descs;
 			descs.push_back(desc);
 
-			if (false == il->Create(device.Get(), descs, vs))
+			if (false == pipeline->SetInputLayout(descs, "Shader/Debug_VS.cso"))
 			{
 				ASSERT_RELEASE(false);
 			}
-
-			resmgr.AddResource("Debug_InputLayout", il);
-			resmgr.SetDefaultResource(il);
 		}
 
-		//PIXEL SHADER
-		auto ps = resmgr.LoadFromFile<PixelShader>("Shader/Debug_PS.cso");
-		resmgr.SetDefaultResource(ps);
+		//Shaders
+		pipeline->SetVertexShader("Shader/Debug_VS.cso");
+		pipeline->SetPixelShader("Shader/Debug_PS.cso");
+		pipeline->SetDepthStencilState("DSS_Debug");
 
-		//GRAPHICS PIPELINE
-		s_ptr<GraphicsPipeline> pipeline = std::make_shared<GraphicsPipeline>();
-		pipeline->SetInputLayout(il);
-		pipeline->SetVertexShader(vs);
-		pipeline->SetPixelShader(ps);
-		resmgr.AddResource("Debug_GraphicsPipeline", pipeline);
-		resmgr.SetDefaultResource(pipeline);
-
+		///////////// MATERIAL ////////////////
 		s_ptr<Material> material = std::make_shared<Material>();
 		material->SetGraphicsPipeline(pipeline);
+		resmgr.AddResource("Debug_Material", material);
+		resmgr.SetDefaultResource(material);
 
 
+		/////////////  MESH  //////////////
 		//VERTEX BUFFER
 		auto vb = std::make_shared<VertexBuffer>();
 		std::vector<VertexDebug> vertices;
@@ -217,12 +226,7 @@ namespace engine
 		//MESH
 		auto msh = std::make_shared<Mesh>();
 		msh->SetBuffers(vb, ib);
-
-		//최종 등록
-		resmgr.AddResource("Debug_Material", material);
-		resmgr.AddResource("Debug_Mesh", msh);
-		
-		resmgr.SetDefaultResource(material);
+		resmgr.AddResource("Debug_RectMesh", msh);
 		resmgr.SetDefaultResource(msh);
 	}
 	void DefaultRes::LoadSpriteRenderObjects()
@@ -230,12 +234,9 @@ namespace engine
 		auto& resmgr = ResourceManager::GetInst();
 		auto device = GraphicsDevice::GetInst().GetDevice();
 
-		//VERTEX SHADER
-		auto vs = resmgr.LoadFromFile<VertexShader>("Shader/Sprite_VS.cso");
-		resmgr.SetDefaultResource(vs);
+		auto pipeline = std::make_shared<GraphicsPipeline>();
 
 		//INPUT LAYOUT
-		auto il = std::make_shared<InputLayout>();
 		{
 			std::vector<D3D11_INPUT_ELEMENT_DESC> descs;
 			D3D11_INPUT_ELEMENT_DESC desc = {};
@@ -258,27 +259,27 @@ namespace engine
 			desc.InstanceDataStepRate = 0;
 			descs.push_back(desc);
 
-			il->Create(device.Get(), descs, vs);
-
-			resmgr.AddResource("SpriteInputLayout", il);
-			resmgr.SetDefaultResource(il);
+			pipeline->SetInputLayout(descs, "Shader/Sprite_VS.cso");
 		}
 
-		//PIXEL SHADER
-		auto ps = resmgr.LoadFromFile<PixelShader>("Shader/Sprite_PS.cso");
-		resmgr.SetDefaultResource(ps);
 
-		//GRAPHICS PIPELINE
-		s_ptr<GraphicsPipeline> pipeline = std::make_shared<GraphicsPipeline>();
-		pipeline->SetInputLayout(il);
-		pipeline->SetVertexShader(vs);
-		pipeline->SetPixelShader(ps);
-		resmgr.AddResource("SpriteGraphicsPipeline", pipeline);
+		pipeline->SetVertexShader("Shader/Sprite_VS.cso");
+		pipeline->SetPixelShader("Shader/Sprite_PS.cso");
+		pipeline->SetDepthStencilState("DSS_Default");
+
+		resmgr.AddResource("Sprite_GraphicsPipeline", pipeline);
 		resmgr.SetDefaultResource(pipeline);
 
 		//MATERIAL
 		s_ptr<Material> material = std::make_shared<Material>();
 		material->SetGraphicsPipeline(pipeline);
+		resmgr.AddResource("Sprite_Material", material);
+		resmgr.SetDefaultResource(material);
+
+		//MESH
+		auto msh = std::make_shared<Mesh>();
+		resmgr.AddResource("Sprite_Mesh", msh);
+		resmgr.SetDefaultResource(msh);
 
 		//VERTEX BUFFER
 		auto vb = std::make_shared<VertexBuffer>();
@@ -300,18 +301,6 @@ namespace engine
 		std::vector<UINT> indices = { 0, 1, 2, 0, 2, 3 };
 		ib->Create(device.Get(), indices, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-		//MESH
-		auto msh = std::make_shared<Mesh>();
 		msh->SetBuffers(vb, ib);
-
-		//DEPTH STENCIL STATE
-		pipeline->SetDepthStencilState("DSS_Default");
-
-		//최종 등록
-		resmgr.AddResource("SpriteMaterial", material);
-		resmgr.AddResource("SpriteMesh", msh);
-
-		resmgr.SetDefaultResource(material);
-		resmgr.SetDefaultResource(msh);
 	}
 }

@@ -22,6 +22,10 @@ namespace engine
         virtual ~GraphicsPipeline() override;
 
         bool SetInputLayout(const stdfs::path& layout_name);
+        bool SetInputLayout(
+            const std::vector<D3D11_INPUT_ELEMENT_DESC>& il_desc, 
+            const stdfs::path& vs_path
+        );
         void SetInputLayout(s_ptr<InputLayout> input_layout) { 
             input_layout_ = std::move(input_layout); 
         }

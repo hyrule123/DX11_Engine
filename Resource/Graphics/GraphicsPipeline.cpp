@@ -27,6 +27,12 @@ namespace engine
 		input_layout_ = ResourceManager::GetInst().Find<InputLayout>(layout_name);
 		return (bool)input_layout_;
 	}
+	bool GraphicsPipeline::SetInputLayout(const std::vector<D3D11_INPUT_ELEMENT_DESC>& il_desc, const stdfs::path& vs_path)
+	{
+		auto device = GraphicsDevice::GetInst().GetDevice();
+		input_layout_ = std::make_shared<InputLayout>();
+		return input_layout_->Create(device.Get(), il_desc, vs_path);
+	}
 	bool GraphicsPipeline::SetVertexShader(const stdfs::path& vs_name)
 	{
 		vertex_shader_ = ResourceManager::GetInst().LoadFromFile<VertexShader>(vs_name);

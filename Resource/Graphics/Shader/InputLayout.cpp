@@ -3,6 +3,8 @@
 
 #include <Engine/Resource/Graphics/Shader/VertexShader.h>
 
+#include <Engine/Manager/ResourceManager.h>
+
 #include <Engine/Core/Debug.h>
 
 namespace engine
@@ -31,6 +33,11 @@ namespace engine
 		vs_ = vs;
 
 		return true;
+	}
+	bool InputLayout::Create(ID3D11Device* device, const std::vector<D3D11_INPUT_ELEMENT_DESC>& desc, const stdfs::path& vs_path)
+	{
+		s_ptr<VertexShader> vs = ResourceManager::GetInst().LoadFromFile<VertexShader>(vs_path);
+		return Create(device, desc, vs);
 	}
 	void InputLayout::Bind(ID3D11DeviceContext* context)
 	{

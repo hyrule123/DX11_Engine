@@ -36,49 +36,28 @@ namespace engine
 
 	Texture2D::~Texture2D()
 	{}
-	bool Texture2D::LoadFromFile(const stdfs::path & path)
+	bool Texture2D::LoadFromFile(const stdfs::path & res_path)
 	{
-		if (false == Super::LoadFromFile(path)) { return false; }
+		if (false == Super::LoadFromFile(res_path)) { return false; }
 
-		if (false == path.has_extension()) 
+		if (false == res_path.has_extension())
 		{
 			ERROR_MESSAGE("확장자가 없어 로딩 실패");
 			return false; 
 		}
 
-		DirectX::ScratchImage img = {};
-		std::wstring upper_ext = string_utils::GetUpperCase(path.extension().wstring());
-		HRESULT hr = E_FAIL;
-
-		if (upper_ext == L".DDS")
-		{
-			hr = LoadFromDDSFile(path.wstring().c_str(), DirectX::DDS_FLAGS::DDS_FLAGS_NONE, nullptr, img);
-		}
-		else if (upper_ext == L".TGA")
-		{
-			hr = LoadFromTGAFile(path.wstring().c_str(), DirectX::TGA_FLAGS::TGA_FLAGS_NONE, nullptr, img);
-		}
-		else // WIC (png, jpg, jpeg, bmp )
-		{
-			hr = LoadFromWICFile(path.wstring().c_str(), DirectX::WIC_FLAGS::WIC_FLAGS_NONE, nullptr, img);
-		}
-
-		if (FAILED(hr))
-		{
-			HRESULT_ERROR_MESSAGE(hr);
-			return false;
-		}
+		s_ptr<DirectX::ScratchImage> img = LoadScratchImageFromFile(res_path);
 
 		// 메타데이터 저장 (클래스 멤버 변수로 선언되어 있다고 가정)
-		const DirectX::TexMetadata& meta = img.GetMetadata();
+		const DirectX::TexMetadata& meta = img->GetMetadata();
 		width_ = static_cast<UINT>(meta.width);
 		height_ = static_cast<UINT>(meta.height);
 
 		//  리소스 및 SRV(Shader Resource View) 생성
-		hr = DirectX::CreateShaderResourceView(
+		HRESULT hr = DirectX::CreateShaderResourceView(
 			GraphicsDevice::GetInst().GetDevice().Get(),
-			img.GetImages(),
-			img.GetImageCount(),
+			img->GetImages(),
+			img->GetImageCount(),
 			meta,
 			shader_resource_view_.ReleaseAndGetAddressOf()
 		);
@@ -151,6 +130,35 @@ namespace engine
 		}
 
 		return tex2D_res_;
+	}
+	s_ptr<DirectX::ScratchImage> Texture2D::LoadScratchImageFromFile(const stdfs::path& res_path)
+	{
+		using namespace DirectX;
+		auto img = std::make_shared<ScratchImage>();
+
+		std::wstring upper_ext = string_utils::GetUpperCase(res_path.extension().wstring());
+		HRESULT hr = E_FAIL;
+
+		if (upper_ext == L".DDS")
+		{
+			hr = LoadFromDDSFile(res_path.wstring().c_str(), DirectX::DDS_FLAGS::DDS_FLAGS_NONE, nullptr, *img);
+		}
+		else if (upper_ext == L".TGA")
+		{
+			hr = LoadFromTGAFile(res_path.wstring().c_str(), DirectX::TGA_FLAGS::TGA_FLAGS_NONE, nullptr, *img);
+		}
+		else // WIC (png, jpg, jpeg, bmp )
+		{
+			hr = LoadFromWICFile(res_path.wstring().c_str(), DirectX::WIC_FLAGS::WIC_FLAGS_NONE, nullptr, *img);
+		}
+
+		if (FAILED(hr))
+		{
+			HRESULT_ERROR_MESSAGE(hr);
+			return nullptr;
+		}
+
+		return img;
 	}
 }
 

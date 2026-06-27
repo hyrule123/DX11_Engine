@@ -12,6 +12,11 @@ struct ID3D11Device;
 struct ID3D11DeviceContext;
 struct ID3D11ShaderResourceView;
 
+namespace DirectX
+{
+    class ScratchImage;
+}
+
 namespace engine
 {
     class Texture2D :
@@ -20,10 +25,10 @@ namespace engine
         CLASS_INFO(Texture2D, Resource)
     public:
         Texture2D();
-        Texture2D(const std::string_view class_name);
+        Texture2D(const std::string_view concrete_class_name);
         virtual ~Texture2D() override;
 
-        virtual bool LoadFromFile(const stdfs::path& path) override;
+        virtual bool LoadFromFile(const stdfs::path& res_path) override;
 
         void BindSRV(
             ID3D11DeviceContext* context, 
@@ -55,6 +60,8 @@ namespace engine
             width_ = width;
             height_ = height;
         }
+    protected:
+        s_ptr<DirectX::ScratchImage> LoadScratchImageFromFile(const stdfs::path& res_path);
 
     private:
         ComPtr<ID3D11Texture2D>					tex2D_res_ = {};

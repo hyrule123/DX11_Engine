@@ -13,6 +13,7 @@
 #include <Engine/HLSL/CppShared/Register.hlsli>
 
 #include <Engine/Manager/GraphicsDevice.h>
+#include <Engine/Manager/TimeManager.h>
 
 #include <Engine/Core/Debug.h>
 
@@ -68,8 +69,14 @@ namespace engine
 			if (false == renderer->IsRenderReady()) { continue; }
 
 			//Per Obj
-			const matrix& world = renderer->GetTransform()->GetWorldMatrix();
-			cb_per_obj_->Upload(context.Get(), world);
+			PerObj obj_data = renderer->GetPerObjData();
+			
+			//테스트 코드
+			static float dt_acc = 0;
+			dt_acc += TimeManager::GetInst().DeltaTime() * 5.f;
+			obj_data.test_frame = (UINT)dt_acc % 238u;
+
+			cb_per_obj_->Upload(context.Get(), obj_data);
 			cb_per_obj_->Bind(context.Get(), ShaderStage::kAllGraphics, SLOT_B_PER_OBJECT);
 
 			renderer->GetMaterial()->BindAll(context.Get(), ShaderStage::kPS);

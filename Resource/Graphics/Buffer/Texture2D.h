@@ -46,12 +46,12 @@ namespace engine
 
     protected:
         ComPtr<ID3D11Texture2D> CreateTexture2D(
-            ID3D11Device* device, 
+            ID3D11Device* device,
             const D3D11_TEXTURE2D_DESC& desc
         );
-        void SetTexture2D(ComPtr<ID3D11Texture2D> texture) {
-            tex2D_res_ = std::move(texture);
-        }
+        void SetTexture2D(ComPtr<ID3D11Texture2D> texture);
+        ComPtr<ID3D11Texture2D> GetTexture2D() const { return tex2D_res_; }
+
         void SetShaderResourceView(ComPtr<ID3D11ShaderResourceView> shader_resource_view) {
             shader_resource_view_ = std::move(shader_resource_view);
         }

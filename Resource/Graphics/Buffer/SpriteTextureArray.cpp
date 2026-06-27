@@ -1,6 +1,11 @@
 #include "Engine/Core/pch.h"
 #include "SpriteTextureArray.h"
 
+#include <Engine/Manager/GraphicsDevice.h>
+
+#include <Engine/Core/Debug.h>
+#include <Engine/Core/DX11.h>
+
 #include <DirectXTex/Include/DirectXTex.h>
 
 namespace engine
@@ -10,93 +15,96 @@ namespace engine
 	{}
 	SpriteTextureArray::~SpriteTextureArray()
 	{}
-	bool SpriteTextureArray::LoadFromFile(const stdfs::path & res_path)
+
+	bool SpriteTextureArray::CreateSpriteFromAtlas(uint32 row_frames, uint32 col_frames)
 	{
-		//Texture2D의 로딩 과정 의도적으로 건너뜀
-		if (false == Resource::LoadFromFile(res_path))
-		{
-			return false;
-		}
+        auto device = GraphicsDevice::GetInst().GetDevice();
+        auto context = GraphicsDevice::GetInst().GetContext();
 
-        /*
-        // 0. 원본 아틀라스 이미지 정보 가져오기
-        const DirectX::Image* src_img = atlasScratch.GetImage(0, 0, 0); // 가작 첫 번째 밉맵, 첫 이미지
-        if (!src_img) return nullptr;
+		ComPtr<ID3D11Texture2D> atlas_tex = GetTexture2D();
 
-        size_t numCols = src_img->width / frameWidth;
-        size_t numRows = src_img->height / frameHeight;
-        size_t arraySize = numCols * numRows; // 총 프레임(슬라이스) 개수
+        // 1. 원본 아틀라스의 정보(포맷 등)를 가져옵니다.
+        D3D11_TEXTURE2D_DESC atlas_desc;
+        atlas_tex->GetDesc(&atlas_desc);
 
-        // 1. 새로운 텍스처 배열용 ScratchImage 초기화
-        // 가로, 세로, 배열 크기(arraySize), 밉맵 수(우선 1개로 생성 후 나중에 생성)
-        ScratchImage arrayScratch;
-        HRESULT hr = arrayScratch.Initialize2D(
-            src_img->format,
-            frameWidth,
-            frameHeight,
-            arraySize,
-            1
-        );
-        if (FAILED(hr)) return nullptr;
+        // 가로/세로 프레임 개수 및 총 배열 크기 계산
+        UINT frame_width = atlas_desc.Width / (UINT)col_frames;
+        UINT frame_height = atlas_desc.Height / (UINT)row_frames;
+        frame_count_ = row_frames * col_frames;
 
-        // 포맷에 따른 픽셀당 바이트 수 계산 (예: DXGI_FORMAT_R8G8B8A8_UNORM은 4바이트)
-        size_t bpp = BitsPerPixel(src_img->format) / 8;
+        // 2. 비어있는 Texture2DArray를 생성합니다. (초기 데이터 없이 빈 공간만 할당)
+        D3D11_TEXTURE2D_DESC sprite_desc = {};
+        sprite_desc.Width = frame_width;
+        sprite_desc.Height = frame_height;
+        sprite_desc.MipLevels = 1;                 // 밉맵 없음
+        sprite_desc.ArraySize = frame_count_;         // 프레임 개수만큼 층 생성
+        sprite_desc.Format = atlas_desc.Format;     // 원본 아틀라스와 동일한 픽셀 포맷
+        sprite_desc.SampleDesc.Count = 1;
+        sprite_desc.Usage = D3D11_USAGE_DEFAULT;   // GPU가 읽고 쓸 수 있는 기본 사용법
+        sprite_desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
 
-        // 2. CPU 메모리 상에서 아틀라스 쪼개서 복사하기
-        for (size_t i = 0; i < arraySize; ++i)
+        ComPtr<ID3D11Texture2D> sprite_tex = nullptr;
+        HRESULT hr = device->CreateTexture2D(&sprite_desc, nullptr, &sprite_tex);
+        if (FAILED(hr))
         {
-            size_t col = i % numCols;
-            size_t row = i / numCols;
-
-            // 목적지가 될 배열의 i번째 슬라이스(Image)를 가져옴
-            const Image* destImg = arrayScratch.GetImage(0, i, 0); // mip=0, item=i, slice=0
-
-            // 픽셀을 가로 한 줄(Row)씩 복사
-            for (size_t y = 0; y < frameHeight; ++y)
-            {
-                // 소스 아틀라스에서의 절대 Y, X 좌표 계산
-                size_t srcX = col * frameWidth;
-                size_t srcY = row * frameHeight + y;
-
-                // 소스 및 목적지 주소 계산
-                uint8_t* srcPtr = src_img->pixels + (srcY * src_img->rowPitch) + (srcX * bpp);
-                uint8_t* destPtr = destImg->pixels + (y * destImg->rowPitch);
-
-                // 한 줄의 가로 길이만큼 픽셀 데이터 복사
-                memcpy(destPtr, srcPtr, frameWidth * bpp);
-            }
+            HRESULT_ERROR_MESSAGE(hr);
+            return false;
         }
 
-        // 3. (강력 추천) 텍스처 배열의 밉맵 생성
-        // 텍스처 배열 상태에서 밉맵을 만들면 각 슬라이스 독립적으로 밉맵이 계산되므로 블리딩이 원천 차단됩니다.
-        ScratchImage mipchainScratch;
-        hr = GenerateMipMaps(
-            arrayScratch.GetImages(),
-            arrayScratch.GetImageCount(),
-            arrayScratch.GetMetadata(),
-            TEX_FILTER_DEFAULT,
-            0, // 0을 주면 가능한 끝까지 밉맵 생성
-            mipchainScratch
-        );
+        // 3. GPU 명령어(Context)를 통해 아틀라스의 영역을 잘라서 Array로 복사합니다.
+        for (UINT i = 0; i < frame_count_; ++i)
+        {
+            UINT col = i % col_frames;
+            UINT row = i / col_frames;
 
-        // 밉맵 생성이 성공하면 밉맵이 포함된 ScratchImage를 사용하고, 실패하면 원본 배열 사용
-        const ScratchImage& finalScratch = SUCCEEDED(hr) ? mipchainScratch : arrayScratch;
+            // 원본 아틀라스에서 잘라낼 사각형 영역(Box) 정의
+            D3D11_BOX src_box_region;
+            src_box_region.left = col * frame_width;
+            src_box_region.right = src_box_region.left + frame_height;
+            src_box_region.top = row * frame_height;
+            src_box_region.bottom = src_box_region.top + frame_height;
+            src_box_region.front = 0;
+            src_box_region.back = 1; // 2D 텍스처이므로 깊이는 1
 
-        // 4. Direct3D 11 리소스(Shader Resource View) 생성
-        ID3D11ShaderResourceView* srv = nullptr;
-        hr = CreateShaderResourceView(
-            device,
-            finalScratch.GetImages(),
-            finalScratch.GetImageCount(),
-            finalScratch.GetMetadata(),
-            &srv
-        );
+            // 목적지(Array)의 서브리소스 인덱스 계산 (Mip 0번, i번째 슬라이스)
+            UINT dest = D3D11CalcSubresource(0, i, sprite_desc.MipLevels);
 
-        if (FAILED(hr)) return nullptr;
+            // 소스(Atlas)의 서브리소스 인덱스 (Mip 0번, 0번째 슬라이스)
+            UINT src = 0;
 
-        return srv; // 성공적으로 생성된 Texture2DArray의 SRV 반환
-        */
+            // 핵심 함수: 아틀라스의 특정 영역을 배열의 i번째 층에 복사!
+            context->CopySubresourceRegion(
+                sprite_tex.Get(),          // 복사될 목적지 (Array)
+                dest,               // 목적지의 몇 번째 층인가?
+                0, 0, 0,           // 목적지의 X, Y, Z 시작 좌표 (0,0부터 채움)
+                atlas_tex.Get(),    // 복사할 원본 (Atlas)
+                src,                // 원본의 어떤 서브리소스인가?
+                &src_box_region            // 원본에서 잘라낼 영역
+            );
+        }
 
-		return false;
+        // 4. 생성된 Texture2DArray로 Shader Resource View(SRV) 생성
+        D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
+        srvDesc.Format = sprite_desc.Format;
+        srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2DARRAY;
+        srvDesc.Texture2DArray.MostDetailedMip = 0;
+        srvDesc.Texture2DArray.MipLevels = 1;
+        srvDesc.Texture2DArray.FirstArraySlice = 0;
+        srvDesc.Texture2DArray.ArraySize = frame_count_;
+
+        ComPtr<ID3D11ShaderResourceView> srv = nullptr;
+        hr = device->CreateShaderResourceView(sprite_tex.Get(), &srvDesc, &srv);
+
+        if (FAILED(hr))
+        {
+            HRESULT_ERROR_MESSAGE(hr);
+            return false;
+        }
+
+        SetTexture2D(sprite_tex);
+        SetShaderResourceView(srv);
+
+		return true;
 	}
+
 }

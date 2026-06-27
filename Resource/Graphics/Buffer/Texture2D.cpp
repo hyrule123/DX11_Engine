@@ -131,6 +131,21 @@ namespace engine
 
 		return tex2D_res_;
 	}
+	void Texture2D::SetTexture2D(ComPtr<ID3D11Texture2D> texture)
+	{
+		if (texture)
+		{
+			D3D11_TEXTURE2D_DESC desc;
+			texture->GetDesc(&desc);
+			width_ = desc.Width;
+			height_ = desc.Height;
+		}
+		else
+		{
+			width_ = 0u;
+			height_ = 0u;
+		}
+	}
 	s_ptr<DirectX::ScratchImage> Texture2D::LoadScratchImageFromFile(const stdfs::path& res_path)
 	{
 		using namespace DirectX;

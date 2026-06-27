@@ -4,6 +4,7 @@
 #include <Engine/Manager/GraphicsDevice.h>
 #include <Engine/Manager/RenderManager.h>
 #include <Engine/Manager/ResourceManager.h>
+#include <Engine/Manager/TimeManager.h>
 
 #include <Engine/Resource/Graphics/Mesh.h>
 #include <Engine/Resource/Graphics/Material.h>
@@ -55,6 +56,13 @@ namespace engine
 	{
 		mesh_ = ResourceManager::GetInst().Find<Mesh>(mesh_name);
 		return (nullptr != mesh_);
+	}
+	PerObj Renderer::GetPerObjData()
+	{
+		PerObj per_obj = {};
+		per_obj.world_mat = my_transform_->GetWorldMatrix();
+
+		return per_obj;
 	}
 }
 

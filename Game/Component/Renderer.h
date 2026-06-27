@@ -5,6 +5,8 @@
 #include <Engine/Core/UtilMacro.h>
 #include <Engine/Core/CoreMinimal.h>
 
+#include <Engine/HLSL/CppShared/Struct.hlsli>
+
 namespace engine
 {
     class Transform;
@@ -37,13 +39,14 @@ namespace engine
         s_ptr<Material> GetMaterial() const { return material_; }
         s_ptr<Mesh> GetMesh() const { return mesh_; }
 
+        PerObj GetPerObjData();
+
     private:
         s_ptr<Transform> my_transform_ = {};
 
         s_ptr<Material> material_ = {};
         s_ptr<Mesh> mesh_ = {};
 
-        s_ptr<ConstantBuffer> per_obj_cbuffer_ = {};
     };
 }
 

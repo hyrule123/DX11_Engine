@@ -13,6 +13,8 @@ namespace engine
 struct alignas(16)  PerObj
 {
 	matrix world_mat;
+	uint32 test_frame;
+	float3 pad0;
 };
 
 struct alignas(16) PerPass

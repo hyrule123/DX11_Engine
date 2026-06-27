@@ -9,6 +9,8 @@
 
 #ifdef __HLSL
 #define alignas(_Num) 
+#define uint32 uint
+#define int32 int
 #endif//__HLSL
 
 #endif//HLSL_TYPE

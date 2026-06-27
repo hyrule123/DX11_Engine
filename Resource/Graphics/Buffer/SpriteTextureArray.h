@@ -1,6 +1,8 @@
 #pragma once
 #include <Engine/Resource/Graphics/Buffer/Texture2D.h>
 
+struct ID3D11Device;
+
 namespace engine
 {
 
@@ -13,10 +15,11 @@ namespace engine
         SpriteTextureArray();
         virtual ~SpriteTextureArray() override;
 
-        virtual bool LoadFromFile(const stdfs::path& res_path) override;
+        //LoadFromFile을 통해 Atlas 텍스처를 로드한 후 호출하면 됨
+        bool CreateSpriteFromAtlas(uint32 row_frames, uint32 column_frames);
 
     private:
-
+        uint32 frame_count_ = {};
     };
 }
 

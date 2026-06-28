@@ -35,15 +35,20 @@ namespace engine
 		{
 			s_ptr<T> resource = Find<T>(res_relative_path);
 			if (resource) { return resource; }
+			resource = LoadFromFileWithoutAdd<T>(res_relative_path);
+			if (resource) { resources_[res_relative_path] = resource; }
+			return resource;
+		}
 
-			resource = std::make_shared<T>();
+		template <typename T>
+		s_ptr<T> LoadFromFileWithoutAdd(const stdfs::path& res_relative_path)
+		{
+			s_ptr<T> resource = std::make_shared<T>();
 			if (false == resource->LoadFromFile(resource_dir_ / res_relative_path))
-			{ 
-				return nullptr; 
+			{
+				return nullptr;
 			}
-			
 			resource->SetPath(res_relative_path);
-			resources_[res_relative_path] = resource;
 			return resource;
 		}
 
@@ -59,7 +64,6 @@ namespace engine
 
 	private:
 		bool Init();
-
 
 	private:
 		std::unordered_map <stdfs::path, s_ptr<Resource>> resources_;

@@ -180,7 +180,13 @@
     <ClInclude Include="Game\Component\SpriteRenderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Resource\Graphics\Buffer\SpriteTextureArray.h">
+    <ClInclude Include="Resource\Graphics\Buffer\Texture2DArray.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Component\SpriteAnimator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\SpriteAnimation.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -305,7 +311,13 @@
     <ClCompile Include="Game\Component\SpriteRenderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Resource\Graphics\Buffer\SpriteTextureArray.cpp">
+    <ClCompile Include="Resource\Graphics\Buffer\Texture2DArray.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Component\SpriteAnimator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\SpriteAnimation.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

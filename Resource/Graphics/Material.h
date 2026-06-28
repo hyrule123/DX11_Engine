@@ -20,7 +20,7 @@ namespace engine
         CLASS_INFO(Material, Resource)
 
     public:
-        using Texture2DArray = std::array<s_ptr<Texture2D>, kMaxTextureCount>;
+        using Textures = std::array<s_ptr<Texture2D>, kMaxTextureCount>;
 
         Material();
         Material(const Material& other) = default;
@@ -41,7 +41,7 @@ namespace engine
 
         bool SetTexture(const stdfs::path& texture_filepath, uint32 slot);
         void SetTexture(s_ptr<Texture2D> tex, uint32 slot);
-        void SetTextures(const Texture2DArray& textures) {
+        void SetTextures(const Textures& textures) {
             for (size_t i = 0; i < textures.size(); ++i)
             {
                 SetTexture(textures[i], (uint32)i);
@@ -49,7 +49,7 @@ namespace engine
         }
 
     private:
-        Texture2DArray textures_ = {};
+        Textures textures_ = {};
         std::array<ID3D11ShaderResourceView*, kMaxTextureCount> srv_cache_ = {};
 
         s_ptr<GraphicsPipeline> pipeline_ = {};

@@ -1,5 +1,5 @@
 #include "Engine/Core/pch.h"
-#include "SpriteTextureArray.h"
+#include "Texture2DArray.h"
 
 #include <Engine/Manager/GraphicsDevice.h>
 
@@ -10,27 +10,34 @@
 
 namespace engine
 {
-	SpriteTextureArray::SpriteTextureArray()
-		: Super(STRINGIFY(SpriteTextureArray))
+	Texture2DArray::Texture2DArray()
+		: Super(STRINGIFY(Texture2DArray))
 	{}
-	SpriteTextureArray::~SpriteTextureArray()
+	Texture2DArray::~Texture2DArray()
 	{}
 
-	bool SpriteTextureArray::CreateSpriteFromAtlas(uint32 row_frames, uint32 col_frames)
+	bool Texture2DArray::Slice(uint32 row_count, uint32 col_count)
 	{
         auto device = GraphicsDevice::GetInst().GetDevice();
         auto context = GraphicsDevice::GetInst().GetContext();
 
 		ComPtr<ID3D11Texture2D> atlas_tex = GetTexture2D();
+        if (!atlas_tex)
+        {
+            ERROR_MESSAGE("이미지를 먼저 로드하세요");
+            return false;
+        }
 
         // 1. 원본 아틀라스의 정보(포맷 등)를 가져옵니다.
         D3D11_TEXTURE2D_DESC atlas_desc;
         atlas_tex->GetDesc(&atlas_desc);
 
         // 가로/세로 프레임 개수 및 총 배열 크기 계산
-        UINT frame_width = atlas_desc.Width / (UINT)col_frames;
-        UINT frame_height = atlas_desc.Height / (UINT)row_frames;
-        frame_count_ = row_frames * col_frames;
+        UINT frame_width = atlas_desc.Width / (UINT)col_count;
+        UINT frame_height = atlas_desc.Height / (UINT)row_count;
+        frame_count_ = row_count * col_count;
+        row_count_ = row_count;
+        col_count_ = col_count;
 
         // 2. 비어있는 Texture2DArray를 생성합니다. (초기 데이터 없이 빈 공간만 할당)
         D3D11_TEXTURE2D_DESC sprite_desc = {};
@@ -54,8 +61,8 @@ namespace engine
         // 3. GPU 명령어(Context)를 통해 아틀라스의 영역을 잘라서 Array로 복사합니다.
         for (UINT i = 0; i < frame_count_; ++i)
         {
-            UINT col = i % col_frames;
-            UINT row = i / col_frames;
+            UINT col = i % col_count;
+            UINT row = i / col_count;
 
             // 원본 아틀라스에서 잘라낼 사각형 영역(Box) 정의
             D3D11_BOX src_box_region;

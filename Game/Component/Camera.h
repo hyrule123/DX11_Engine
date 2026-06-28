@@ -14,6 +14,7 @@ namespace engine
         public Component
     {
         CLASS_INFO(Camera, Component)
+        COMPONENT_CATEGORY(ComponentCategory::kCamera)
     public:
         enum class ProjectionMode { Orthographic, Perspective };
         struct ProjectionMatrixDesc

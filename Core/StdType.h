@@ -1,5 +1,7 @@
 #pragma once
 #include <cstdint>
+#include <unordered_map>
+#include <string>
 
 namespace engine
 {
@@ -29,4 +31,27 @@ namespace engine
 		};
 	}
 	using ShaderStageFlag = uint32;
+
+	struct StringHasher
+	{
+		using is_transparent = void;
+
+		size_t operator()(std::string_view s) const noexcept
+		{
+			return std::hash<std::string_view>{}(s);
+		}
+
+		size_t operator()(const std::string& s) const noexcept
+		{
+			return std::hash<std::string_view>{}(s);
+		}
+
+		size_t operator()(const char* s) const noexcept
+		{
+			return std::hash<std::string_view>{}(s);
+		}
+	};
+
+	template <typename T>
+	using StringHashMap = std::unordered_map<std::string, T, StringHasher, std::equal_to<>>;
 }

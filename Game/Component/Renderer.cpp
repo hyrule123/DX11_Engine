@@ -44,8 +44,11 @@ namespace engine
 	{
 		Super::LateUpdate();
 
-		s_ptr<Renderer> me = std::static_pointer_cast<Renderer>(shared_from_this());
-		RenderManager::GetInst().AddRenderQueue(me);
+		if (IsRenderReady())
+		{
+			s_ptr<Renderer> me = std::static_pointer_cast<Renderer>(shared_from_this());
+			RenderManager::GetInst().AddRenderQueue(me);
+		}
 	}
 	bool Renderer::SetMaterial(const stdfs::path& mtrl_name)
 	{

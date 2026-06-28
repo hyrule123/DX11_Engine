@@ -66,8 +66,6 @@ namespace engine
 		//오브젝트 별 렌더링
 		for (const auto& renderer : render_queue_)
 		{
-			if (false == renderer->IsRenderReady()) { continue; }
-
 			//Per Obj
 			PerObj obj_data = renderer->GetPerObjData();
 			

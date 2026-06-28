@@ -12,6 +12,8 @@ namespace engine
 {
     enum class ComponentCategory : size_t
     {
+        kAnimator,
+
         kTransform,
         kCamera,
         kRenderer,

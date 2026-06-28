@@ -219,6 +219,8 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Resource\SpriteAnimation.h" />
+    <ClInclude Include="Game\Component\SpriteAnimator.h" />
     <ClInclude Include="Resource\Graphics\Buffer\DepthStencilView.h" />
     <ClInclude Include="Resource\Graphics\Buffer\RenderTargetView.h" />
     <ClInclude Include="Resource\Graphics\State\BlendState.h" />
@@ -260,7 +262,7 @@
     <ClInclude Include="Manager\TimeManager.h" />
     <ClInclude Include="Resource\Graphics\Buffer\Texture2D.h" />
     <ClInclude Include="Game\Component\SpriteRenderer.h" />
-    <ClInclude Include="Resource\Graphics\Buffer\SpriteTextureArray.h" />
+    <ClInclude Include="Resource\Graphics\Buffer\Texture2DArray.h" />
     <ClInclude Include="Util\string_utils.h" />
     <ClInclude Include="ThirdParty\SimpleMath.h" />
     <ClInclude Include="Core\pch.h" />
@@ -277,6 +279,8 @@
     <ClInclude Include="Resource\Graphics\Shader\VertexShader.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Resource\SpriteAnimation.cpp" />
+    <ClCompile Include="Game\Component\SpriteAnimator.cpp" />
     <ClCompile Include="Resource\Graphics\Buffer\DepthStencilView.cpp" />
     <ClCompile Include="Resource\Graphics\Buffer\RenderTargetView.cpp" />
     <ClCompile Include="Resource\Graphics\State\BlendState.cpp" />
@@ -307,7 +311,7 @@
     <ClCompile Include="Manager\TimeManager.cpp" />
     <ClCompile Include="Resource\Graphics\Buffer\Texture2D.cpp" />
     <ClCompile Include="Game\Component\SpriteRenderer.cpp" />
-    <ClCompile Include="Resource\Graphics\Buffer\SpriteTextureArray.cpp" />
+    <ClCompile Include="Resource\Graphics\Buffer\Texture2DArray.cpp" />
     <ClCompile Include="Util\string_utils.cpp" />
     <ClCompile Include="ThirdParty\SimpleMath.cpp" />
     <ClCompile Include="Core\pch.cpp">

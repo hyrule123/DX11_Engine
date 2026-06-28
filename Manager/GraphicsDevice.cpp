@@ -116,6 +116,7 @@ namespace engine
 			}
 		}
 
+#pragma region RTV
 		//RTV 생성
 		swap_chain_RT_ = std::make_shared<RenderTargetGroup>();
 		s_ptr<RenderTargetView> rt = std::make_shared<RenderTargetView>();
@@ -127,7 +128,9 @@ namespace engine
 			return false;
 		}
 		swap_chain_RT_->SetRenderTargets({ rt, });
+#pragma endregion RTV
 
+#pragma region DSV
 		//DSV 생성
 		s_ptr<DepthStencilView> dsv = std::make_shared<DepthStencilView>();
 		D3D11_TEXTURE2D_DESC depth_buffer_desc = {};
@@ -148,12 +151,16 @@ namespace engine
 		depth_buffer_desc.CPUAccessFlags = 0;
 		depth_buffer_desc.MiscFlags = 0;
 
-		if (false == dsv->Create(device_.Get(), depth_buffer_desc))
-		{
-			ASSERT_RELEASE(false);
-		}
+		result = dsv->CreateTexture2D(device_.Get(), &depth_buffer_desc);
+		ASSERT_RELEASE(result);
+
+		result = dsv->CreateDSV(device_.Get(), nullptr);
+		ASSERT_RELEASE(result);
+#pragma endregion DSV
+
 		swap_chain_RT_->SetDepthStencilView(dsv);
 
+#pragma region Viewport
 		//Viewport 생성
 		D3D11_VIEWPORT viewport{};
 		viewport.TopLeftX = 0.0f;
@@ -163,6 +170,7 @@ namespace engine
 		viewport.MinDepth = 0.0f;
 		viewport.MaxDepth = 1.0f;
 		context_->RSSetViewports(1, &viewport);
+#pragma endregion Viewport
 
 		resolution_width_ = resolution_width;
 		resolution_height_ = resolution_height;

@@ -21,7 +21,6 @@
 
 #include <Engine/Core/Debug.h>
 
-#include <d3d11.h>
 
 namespace engine
 {
@@ -70,8 +69,8 @@ namespace engine
 
 		ComPtr<ID3D11Resource> temp = {};
 		shader_resource_view_->GetResource(temp.GetAddressOf());
-		temp.As(&tex2D_res_);
-		if (nullptr == tex2D_res_)
+		temp.As(&tex2D_buffer_);
+		if (nullptr == tex2D_buffer_)
 		{
 			return false;
 		}
@@ -119,17 +118,31 @@ namespace engine
 		}
 	}
 
-	ComPtr<ID3D11Texture2D> Texture2D::CreateTexture2D(ID3D11Device* device, const D3D11_TEXTURE2D_DESC& desc)
+	bool Texture2D::CreateTexture2D(
+		ID3D11Device* device,
+		D3D11_TEXTURE2D_DESC* desc,
+		const D3D11_SUBRESOURCE_DATA* initial_data
+	)
 	{
-		HRESULT hr = device->CreateTexture2D(&desc, nullptr, tex2D_res_.ReleaseAndGetAddressOf());
+		HRESULT hr = device->CreateTexture2D(desc, initial_data, tex2D_buffer_.ReleaseAndGetAddressOf());
 
 		if (FAILED(hr))
 		{
 			HRESULT_ERROR_MESSAGE(hr);
-			return nullptr;
+			return false;
 		}
 
-		return tex2D_res_;
+		return true;
+	}
+	bool Texture2D::CreateSRV(ID3D11Device* device, D3D11_SHADER_RESOURCE_VIEW_DESC* srv_desc)
+	{
+		HRESULT hr = device->CreateShaderResourceView(tex2D_buffer_.Get(), srv_desc, shader_resource_view_.GetAddressOf());
+		if (FAILED(hr))
+		{
+			HRESULT_ERROR_MESSAGE(hr);
+			return false;
+		}
+		return true;
 	}
 	void Texture2D::SetTexture2D(ComPtr<ID3D11Texture2D> texture)
 	{

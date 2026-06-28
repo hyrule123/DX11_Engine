@@ -14,9 +14,7 @@ namespace engine
         DepthStencilView();
         virtual ~DepthStencilView() override;
 
-        //DSV Format은 Texture2D Format 보고 알아서 결정
-        //TYPELESS Format을 사용할 것 (DXGI_FORMAT_R24G8_TYPELESS)
-        bool Create(ID3D11Device* device, const D3D11_TEXTURE2D_DESC& desc);
+        bool CreateDSV(ID3D11Device* device, D3D11_DEPTH_STENCIL_VIEW_DESC* dsv_desc);
 
         ComPtr<ID3D11DepthStencilView> GetDepthStencilView() const { return dsv_; }
         ID3D11DepthStencilView* GetRawDepthStencilView() const { return dsv_.Get(); }

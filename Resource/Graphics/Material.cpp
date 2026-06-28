@@ -59,7 +59,7 @@ namespace engine
 			textures_[slot] = tex;
 			if (tex)
 			{
-				srv_cache_[slot] = tex->GetSRV();
+				srv_cache_[slot] = tex->GetRawSRV();
 			}
 			else
 			{

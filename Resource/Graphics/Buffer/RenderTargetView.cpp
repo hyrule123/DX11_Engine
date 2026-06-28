@@ -23,19 +23,25 @@ namespace engine
 		desc.Usage = D3D11_USAGE_DEFAULT;
 		desc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
 
-		return Create(device, desc);
-	}
-	bool RenderTargetView::Create(ID3D11Device * device, const D3D11_TEXTURE2D_DESC& tex_desc)
-	{
-		ComPtr<ID3D11Texture2D> tex = CreateTexture2D(device, tex_desc);
-
-		if (!tex) 
+		bool tex_result = CreateTexture2D(device, &desc);
+		if (!tex_result)
 		{
-			ERROR_MESSAGE("렌더 타겟용 텍스처 생성 실패");
+			ERROR_MESSAGE("텍스처 생성 실패!!");
 			return false;
 		}
 
-		HRESULT hr = device->CreateRenderTargetView(tex.Get(), nullptr, render_target_view_.ReleaseAndGetAddressOf());
+		return CreateRTV(device, nullptr);
+	}
+	bool RenderTargetView::CreateRTV(ID3D11Device * device, D3D11_RENDER_TARGET_VIEW_DESC* rtv_desc)
+	{
+		auto tex = GetTexture2D();
+		if (!tex)
+		{
+			ERROR_MESSAGE("Texture를 먼저 만드세요");
+			return false;
+		}
+
+		HRESULT hr = device->CreateRenderTargetView(tex.Get(), rtv_desc, render_target_view_.ReleaseAndGetAddressOf());
 		if (FAILED(hr))
 		{
 			HRESULT_ERROR_MESSAGE(hr);

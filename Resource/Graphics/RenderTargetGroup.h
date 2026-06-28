@@ -31,7 +31,6 @@ namespace engine
         void SetDepthStencilView(s_ptr<DepthStencilView> dsv) { 
             dsv_ = std::move(dsv);
         }
-        bool CreateDepthStencilView(ID3D11Device* device, const D3D11_TEXTURE2D_DESC& desc);
 
         void BindOutputMerger(ID3D11DeviceContext* context);
 

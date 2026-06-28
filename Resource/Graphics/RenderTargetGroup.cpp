@@ -30,11 +30,7 @@ namespace engine
 			}
 		}
 	}
-	bool RenderTargetGroup::CreateDepthStencilView(ID3D11Device* device, const D3D11_TEXTURE2D_DESC& desc)
-	{
-		dsv_ = std::make_shared<DepthStencilView>();
-		return dsv_->Create(device, desc);
-	}
+
 	void RenderTargetGroup::BindOutputMerger(ID3D11DeviceContext* context)
 	{
 		ID3D11DepthStencilView* dsv = nullptr;

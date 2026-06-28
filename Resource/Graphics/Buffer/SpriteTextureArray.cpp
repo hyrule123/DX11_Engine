@@ -83,17 +83,8 @@ namespace engine
             );
         }
 
-        // 4. 생성된 Texture2DArray로 Shader Resource View(SRV) 생성
-        D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
-        srvDesc.Format = sprite_desc.Format;
-        srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2DARRAY;
-        srvDesc.Texture2DArray.MostDetailedMip = 0;
-        srvDesc.Texture2DArray.MipLevels = 1;
-        srvDesc.Texture2DArray.FirstArraySlice = 0;
-        srvDesc.Texture2DArray.ArraySize = frame_count_;
-
         ComPtr<ID3D11ShaderResourceView> srv = nullptr;
-        hr = device->CreateShaderResourceView(sprite_tex.Get(), &srvDesc, &srv);
+        hr = device->CreateShaderResourceView(sprite_tex.Get(), nullptr, &srv);
 
         if (FAILED(hr))
         {
@@ -102,7 +93,7 @@ namespace engine
         }
 
         SetTexture2D(sprite_tex);
-        SetShaderResourceView(srv);
+        SetSRV(srv);
 
 		return true;
 	}

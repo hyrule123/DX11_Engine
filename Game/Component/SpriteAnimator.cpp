@@ -2,6 +2,7 @@
 #include "SpriteAnimator.h"
 
 #include <Engine/Manager/ResourceManager.h>
+#include <Engine/Manager/TimeManager.h>
 
 #include <Engine/Resource/SpriteAnimation.h>
 #include <Engine/Resource/Graphics/Material.h>
@@ -58,11 +59,50 @@ namespace engine
 	{
 		Super::LateUpdate();
 
+		if (playing_clip_)
+		{
+			const AnimationClip& clip = *playing_clip_;
 
+			acc_deltatime_ += TimeManager::GetInst().DeltaTime();
+
+			if (acc_deltatime_ > clip.duration)
+			{
+				if (clip.is_loop)
+				{
+					cur_frame_idx_ = 0u;
+					acc_deltatime_ -= clip.duration;
+				}
+			}
+			else
+			{
+				uint32 frames_count = (uint32)clip.frames.size();
+				float time_per_frame = clip.duration / (float)frames_count;
+
+				cur_frame_idx_ = (uint32)(acc_deltatime_ / time_per_frame);
+			}
+
+			if (!renderer_.expired())
+			{
+				renderer_.lock()->SetTestFrame(clip.frames[cur_frame_idx_]);
+			}
+		}
 	}
 	bool SpriteAnimator::SetSpriteAnimation(const stdfs::path& res_path)
 	{
 		anim_ = ResourceManager::GetInst().Find<SpriteAnimation>(res_path);
 		return (bool)anim_;
+	}
+	bool SpriteAnimator::Play(const std::string_view anim_name)
+	{
+		if (!anim_) { return false; }
+		playing_clip_ = anim_->GetAnimationClip(anim_name);
+		if (playing_clip_)
+		{
+			acc_deltatime_ = 0.0f;
+			cur_frame_idx_ = 0u;
+			return true;
+		}
+
+		return false;
 	}
 }

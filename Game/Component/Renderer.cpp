@@ -48,6 +48,8 @@ namespace engine
 		{
 			s_ptr<Renderer> me = std::static_pointer_cast<Renderer>(shared_from_this());
 			RenderManager::GetInst().AddRenderQueue(me);
+
+			per_obj_data_.world_mat = my_transform_->GetWorldMatrix();
 		}
 	}
 	bool Renderer::SetMaterial(const stdfs::path& mtrl_name)
@@ -60,12 +62,6 @@ namespace engine
 		mesh_ = ResourceManager::GetInst().Find<Mesh>(mesh_name);
 		return (nullptr != mesh_);
 	}
-	PerObj Renderer::GetPerObjData()
-	{
-		PerObj per_obj = {};
-		per_obj.world_mat = my_transform_->GetWorldMatrix();
 
-		return per_obj;
-	}
 }
 

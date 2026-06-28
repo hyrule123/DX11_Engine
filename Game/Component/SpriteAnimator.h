@@ -5,6 +5,7 @@ namespace engine
 {
     class SpriteRenderer;
     class SpriteAnimation;
+    struct AnimationClip;
 
     class SpriteAnimator :
         public Component
@@ -23,9 +24,16 @@ namespace engine
         bool SetSpriteAnimation(const stdfs::path& res_path);
         void SetSpriteAnimation(s_ptr<SpriteAnimation> anim) { anim_ = anim; }
 
+        bool Play(const std::string_view anim_name);
+
     private:
         w_ptr<SpriteRenderer> renderer_ = {};
         s_ptr<SpriteAnimation> anim_ = {};
+
+        const AnimationClip* playing_clip_ = {};
+
+        float acc_deltatime_ = {};
+        uint32 cur_frame_idx_ = {};
     };
 }
 

@@ -14,6 +14,10 @@ namespace engine
         virtual ~SpriteRenderer() override;
 
         virtual void Init() override;
+
+        void SetTestFrame(uint32 frame) { per_obj_data_.test_frame = frame; }
+
+    private:
     };
 
 }

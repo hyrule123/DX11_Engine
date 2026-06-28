@@ -68,11 +68,6 @@ namespace engine
 		{
 			//Per Obj
 			PerObj obj_data = renderer->GetPerObjData();
-			
-			//테스트 코드
-			static float dt_acc = 0;
-			dt_acc += TimeManager::GetInst().DeltaTime() * 5.f;
-			obj_data.test_frame = (UINT)dt_acc % 238u;
 
 			cb_per_obj_->Upload(context.Get(), obj_data);
 			cb_per_obj_->Bind(context.Get(), ShaderStage::kAllGraphics, SLOT_B_PER_OBJECT);

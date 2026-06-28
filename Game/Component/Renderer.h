@@ -39,7 +39,10 @@ namespace engine
         s_ptr<Material> GetMaterial() const { return material_; }
         s_ptr<Mesh> GetMesh() const { return mesh_; }
 
-        PerObj GetPerObjData();
+        PerObj GetPerObjData() { return per_obj_data_; }
+
+    protected:
+        PerObj per_obj_data_ = {};
 
     private:
         s_ptr<Transform> my_transform_ = {};
@@ -47,6 +50,7 @@ namespace engine
         s_ptr<Material> material_ = {};
         s_ptr<Mesh> mesh_ = {};
 
+        
     };
 }
 

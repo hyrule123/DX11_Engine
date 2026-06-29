@@ -32,8 +32,10 @@ namespace engine
 
         const AnimationClip* playing_clip_ = {};
 
+        bool is_playing_ = {};
         float acc_deltatime_ = {};
         uint32 cur_frame_idx_ = {};
+        float time_per_frame_ = {};
     };
 }
 

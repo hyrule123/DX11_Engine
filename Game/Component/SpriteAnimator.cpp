@@ -59,27 +59,49 @@ namespace engine
 	{
 		Super::LateUpdate();
 
-		if (playing_clip_)
+		if (playing_clip_ && is_playing_)
 		{
 			const AnimationClip& clip = *playing_clip_;
 
 			acc_deltatime_ += TimeManager::GetInst().DeltaTime();
 
-			if (acc_deltatime_ > clip.duration)
+			//break용
+			do
 			{
+				// 루프(반복)하지 않는 애니메이션의 종료 처리 로직
+				if (!clip.is_loop && acc_deltatime_ >= clip.duration)
+				{
+					// 시간을 최대치로 고정 (Clamp)
+					acc_deltatime_ = clip.duration;
+					// 마지막 프레임 인덱스로 고정
+					cur_frame_idx_ = (uint32)(clip.frames.size() - 1);
+
+					is_playing_ = false;
+					
+					break;
+				}
+
+				// 루프(반복)하는 애니메이션의 초과 시간 정리 로직 (렉 스파이크 대비)
 				if (clip.is_loop)
 				{
-					cur_frame_idx_ = 0u;
-					acc_deltatime_ -= clip.duration;
+					// while문을 사용하여 초과한 시간만큼 모두 빼줌 (fmodf를 사용해도 무방함)
+					while (acc_deltatime_ >= clip.duration)
+					{
+						acc_deltatime_ -= clip.duration;
+					}
 				}
-			}
-			else
-			{
-				uint32 frames_count = (uint32)clip.frames.size();
-				float time_per_frame = clip.duration / (float)frames_count;
 
-				cur_frame_idx_ = (uint32)(acc_deltatime_ / time_per_frame);
-			}
+				// 계산된 남은 시간을 바탕으로 현재 프레임 인덱스 도출
+				cur_frame_idx_ = (uint32)(acc_deltatime_ / time_per_frame_);
+
+				uint32 frames_count = (uint32)clip.frames.size();
+				// 부동소수점 오차로 인해 발생할 수 있는 Out of Range 방어
+				if (cur_frame_idx_ >= frames_count)
+				{
+					cur_frame_idx_ = frames_count - 1;
+				}
+			} while (false);
+
 
 			if (!renderer_.expired())
 			{
@@ -98,8 +120,10 @@ namespace engine
 		playing_clip_ = anim_->GetAnimationClip(anim_name);
 		if (playing_clip_)
 		{
+			is_playing_ = true;
 			acc_deltatime_ = 0.0f;
 			cur_frame_idx_ = 0u;
+			time_per_frame_ = playing_clip_->duration / (float)(playing_clip_->frames.size());
 			return true;
 		}
 

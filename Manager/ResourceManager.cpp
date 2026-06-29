@@ -55,7 +55,7 @@ namespace engine
 			return false;
 		}
 
-		resource->SetPath(path);
+		resource->SetResKey(path);
 		resources_[path] = resource;
 		return true;
 	}

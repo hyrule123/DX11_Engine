@@ -5,7 +5,7 @@ namespace engine
 {
     class SpriteRenderer;
     class SpriteAnimation;
-    struct AnimationClip;
+    class SpriteAnimClip;
 
     class SpriteAnimator :
         public Component
@@ -30,12 +30,15 @@ namespace engine
         w_ptr<SpriteRenderer> renderer_ = {};
         s_ptr<SpriteAnimation> anim_ = {};
 
-        const AnimationClip* playing_clip_ = {};
+        w_ptr<SpriteAnimClip> playing_clip_ = {};
 
         bool is_playing_ = {};
+
+        //상태 캐시
         float acc_deltatime_ = {};
         uint32 cur_frame_idx_ = {};
-        float time_per_frame_ = {};
+        uint32 clip_frame_total_count_ = {};
+        float cur_frame_duration_= {};
     };
 }
 

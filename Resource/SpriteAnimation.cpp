@@ -1,6 +1,9 @@
 #include "Engine/Core/pch.h"
 #include "SpriteAnimation.h"
 
+#include <Engine/Resource/SpriteAnimClip.h>
+#include <Engine/Resource/Graphics/Buffer/Texture2DArray.h>
+
 #include <Engine/Core/Debug.h>
 
 namespace engine
@@ -10,29 +13,39 @@ namespace engine
 	{}
 	SpriteAnimation::~SpriteAnimation()
 	{}
-	void SpriteAnimation::AddAnimationClip(const std::string_view name, const AnimationClip & anim_clip)
+	void SpriteAnimation::AddAnimationClip(const std::string_view name, s_ptr<SpriteAnimClip> anim_clip)
 	{
-		//검증
-		if(anim_clip.duration <= 0) 
+		if (!sprite_)
 		{
-			ERROR_MESSAGE("Duration이 음수입니다.");
+			ERROR_MESSAGE("Sprite Texture를 먼저 설정하세요");
 			return;
 		}
-		if (anim_clip.frames.empty())
+		if (name.empty())
 		{
-			ERROR_MESSAGE("Frame이 없습니다.");
+			ERROR_MESSAGE("이름이 비어있음");
+			return;
+		}
+		if (!anim_clip || !(anim_clip->IsReady()))
+		{
+			ERROR_MESSAGE("anim_clip이 nullptr");
+			return;
+		}
+		if (sprite_->GetFrameCount() <= anim_clip->GetMaxFrameIndex())
+		{
+			ERROR_MESSAGE("최대 프레임 개수보다 높은 Frame Index가 있습니다.");
 			return;
 		}
 
-		anim_clips_[std::string(name)] = anim_clip;
+		anim_clips_[std::string(name)] = std::move(anim_clip);
 	}
-	const AnimationClip* SpriteAnimation::GetAnimationClip(const std::string_view anim_name) const
+
+	s_ptr<SpriteAnimClip> SpriteAnimation::GetAnimationClip(const std::string_view anim_name) const
 	{
 		auto iter = anim_clips_.find(anim_name);
 
 		if (iter != anim_clips_.end())
 		{
-			return &(iter->second);
+			return iter->second;
 		}
 		return nullptr;
 	}

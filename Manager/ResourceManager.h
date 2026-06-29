@@ -48,7 +48,7 @@ namespace engine
 			{
 				return nullptr;
 			}
-			resource->SetPath(res_relative_path);
+			resource->SetResKey(res_relative_path);
 			return resource;
 		}
 

@@ -12,7 +12,7 @@ namespace engine
 	}
 	bool Resource::LoadFromFile(const stdfs::path & path)
 	{
-		res_path_ = path;
+		res_key_ = path;
 		return true;
 	}
 }

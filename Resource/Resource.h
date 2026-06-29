@@ -16,10 +16,10 @@ namespace engine
 
 		virtual bool LoadFromFile(const stdfs::path& path);
 
-		void SetPath(const stdfs::path& path) { res_path_ = path; }
-		const stdfs::path& GetPath() const { return res_path_; }
+		void SetResKey(const stdfs::path& path) { res_key_ = path; }
+		const stdfs::path& GetResKey() const { return res_key_; }
 
 	private:
-		stdfs::path res_path_;
+		stdfs::path res_key_;
 	};
 }

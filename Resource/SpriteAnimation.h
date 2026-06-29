@@ -1,17 +1,11 @@
 #pragma once
 #include <Engine/Resource/Resource.h>
 
+
 namespace engine
 {
-    struct AnimationClip
-    {
-        std::vector<uint32> frames = {};
-        float duration = {};
-        bool is_loop = {};
-    };
-
+    class SpriteAnimClip;
     class Texture2DArray;
-
     class SpriteAnimation :
         public Resource
     {
@@ -26,14 +20,13 @@ namespace engine
 
         void SetSprite(s_ptr<Texture2DArray> sprite) { sprite_ = std::move(sprite); }
 
-        void AddAnimationClip(const std::string_view name, const AnimationClip& anim_clip);
+        void AddAnimationClip(const std::string_view name, s_ptr<SpriteAnimClip> anim_clip);
 
-        //Unordered map은 내부 컨테이너의 주소 일관성이 보장된다.(즉 포인터로 반환해도 에러 발생 X)
-        const AnimationClip* GetAnimationClip(const std::string_view anim_name) const;
+        s_ptr<SpriteAnimClip> GetAnimationClip(const std::string_view anim_name) const;
 
     private:
         s_ptr<Texture2DArray> sprite_ = {};
-        StringHashMap<AnimationClip> anim_clips_ = {};
+        StringHashMap<s_ptr<SpriteAnimClip>> anim_clips_ = {};
     };
 }
 

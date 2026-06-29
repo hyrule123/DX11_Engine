@@ -6,6 +6,7 @@
 
 #include <Engine/Resource/SpriteAnimation.h>
 #include <Engine/Resource/Graphics/Material.h>
+#include <Engine/Resource/SpriteAnimClip.h>
 #include <Engine/Resource/Graphics/Buffer/Texture2DArray.h>
 
 #include <Engine/Game/Component/SpriteRenderer.h>
@@ -40,10 +41,10 @@ namespace engine
 		}
 		
 		//해당 Animation만의 Material Key 생성.
-		stdfs::path uniq_mtrl_key = anim_->GetPath();
+		stdfs::path uniq_mtrl_key = anim_->GetResKey();
 		uniq_mtrl_key += L"_Material";
 		
-		//고유 Material을 찾는다
+		//애니메이션 재생에 사용할 텍스처가 등록된 고유 Material을 찾는다
 		auto& res_mgr = ResourceManager::GetInst();
 		s_ptr<Material> mtrl = res_mgr.Find<Material>(uniq_mtrl_key);
 
@@ -59,53 +60,54 @@ namespace engine
 	{
 		Super::LateUpdate();
 
-		if (playing_clip_ && is_playing_)
+		//Animation Clip 있고, 재생 중이라면 로직 처리
+		if (!(playing_clip_.expired()) && is_playing_)
 		{
-			const AnimationClip& clip = *playing_clip_;
+			s_ptr<SpriteAnimClip> clip = playing_clip_.lock();
 
+			// 시간 누적
 			acc_deltatime_ += TimeManager::GetInst().DeltaTime();
 
-			//break용
-			do
+			//while문을 사용하여
+			while (acc_deltatime_ >= cur_frame_duration_)
 			{
-				// 루프(반복)하지 않는 애니메이션의 종료 처리 로직
-				if (!clip.is_loop && acc_deltatime_ >= clip.duration)
-				{
-					// 시간을 최대치로 고정 (Clamp)
-					acc_deltatime_ = clip.duration;
-					// 마지막 프레임 인덱스로 고정
-					cur_frame_idx_ = (uint32)(clip.frames.size() - 1);
+				// 시간 차감
+				acc_deltatime_ -= cur_frame_duration_;
 
-					is_playing_ = false;
-					
-					break;
-				}
+				// 다음 프레임으로 이동
+				cur_frame_idx_++;
 
-				// 루프(반복)하는 애니메이션의 초과 시간 정리 로직 (렉 스파이크 대비)
-				if (clip.is_loop)
+				// 애니메이션의 끝(마지막 프레임 초과)에 도달했을 때의 처리
+				if (cur_frame_idx_ >= clip_frame_total_count_)
 				{
-					// while문을 사용하여 초과한 시간만큼 모두 빼줌 (fmodf를 사용해도 무방함)
-					while (acc_deltatime_ >= clip.duration)
+					if (clip->IsLoop())
 					{
-						acc_deltatime_ -= clip.duration;
+						// 루프 진행
+						cur_frame_idx_ = 0u;
+					}
+					else
+					{
+						// Non-loop: 마지막 프레임에 고정
+						cur_frame_idx_ = (uint32)(clip->GetFrames().size() - 1);
+
+						// 더 이상 시간이 누적되어 오버플로우가 발생하지 않도록 시간 고정
+						acc_deltatime_ = clip->GetFrames()[cur_frame_idx_].duration;
+
+						//스위치 OFF
+						is_playing_ = false;
+
+						break;
 					}
 				}
 
-				// 계산된 남은 시간을 바탕으로 현재 프레임 인덱스 도출
-				cur_frame_idx_ = (uint32)(acc_deltatime_ / time_per_frame_);
+				// 다음 순회(Iteration)를 위해 다음 프레임의 duration으로 갱신
+				cur_frame_duration_ = clip->GetFrames()[cur_frame_idx_].duration;
+			}
 
-				uint32 frames_count = (uint32)clip.frames.size();
-				// 부동소수점 오차로 인해 발생할 수 있는 Out of Range 방어
-				if (cur_frame_idx_ >= frames_count)
-				{
-					cur_frame_idx_ = frames_count - 1;
-				}
-			} while (false);
-
-
+			//참조해야 하는 TextureArray의 Index를 전달
 			if (!renderer_.expired())
 			{
-				renderer_.lock()->SetTestFrame(clip.frames[cur_frame_idx_]);
+				renderer_.lock()->SetTestFrame(clip->GetFrames()[cur_frame_idx_].index);
 			}
 		}
 	}
@@ -117,13 +119,16 @@ namespace engine
 	bool SpriteAnimator::Play(const std::string_view anim_name)
 	{
 		if (!anim_) { return false; }
-		playing_clip_ = anim_->GetAnimationClip(anim_name);
-		if (playing_clip_)
+		s_ptr<SpriteAnimClip> clip = anim_->GetAnimationClip(anim_name);
+		if (clip)
 		{
 			is_playing_ = true;
 			acc_deltatime_ = 0.0f;
 			cur_frame_idx_ = 0u;
-			time_per_frame_ = playing_clip_->duration / (float)(playing_clip_->frames.size());
+			cur_frame_duration_ = clip->GetFrames()[0].duration;
+			clip_frame_total_count_ = (uint32)clip->GetFrames().size();
+
+			playing_clip_ = clip;
 			return true;
 		}
 

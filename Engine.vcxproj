@@ -264,6 +264,7 @@
     <ClInclude Include="Game\Component\SpriteRenderer.h" />
     <ClInclude Include="Resource\Graphics\Buffer\Texture2DArray.h" />
     <ClInclude Include="Resource\SpriteAnimClip.h" />
+    <ClInclude Include="Resource\Graphics\Buffer\StucturedBuffer.h" />
     <ClInclude Include="Util\string_utils.h" />
     <ClInclude Include="ThirdParty\SimpleMath.h" />
     <ClInclude Include="Core\pch.h" />
@@ -314,6 +315,7 @@
     <ClCompile Include="Game\Component\SpriteRenderer.cpp" />
     <ClCompile Include="Resource\Graphics\Buffer\Texture2DArray.cpp" />
     <ClCompile Include="Resource\SpriteAnimClip.cpp" />
+    <ClCompile Include="Resource\Graphics\Buffer\StucturedBuffer.cpp" />
     <ClCompile Include="Util\string_utils.cpp" />
     <ClCompile Include="ThirdParty\SimpleMath.cpp" />
     <ClCompile Include="Core\pch.cpp">

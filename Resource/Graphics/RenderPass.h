@@ -1,6 +1,8 @@
 #pragma once
 #include <Engine/Resource/Resource.h>
 
+#include <Engine/Core/DX11.h>
+
 struct ID3D11DeviceContext;
 struct ID3D11SamplerState;
 
@@ -12,14 +14,15 @@ namespace engine
     class RasterizerState;
     class BlendState;
     class DepthStencilState;
+    class RenderTargetGroup;
 
-    class GraphicsPipeline :
+    class RenderPass :
         public Resource
     {
-        CLASS_INFO(GraphicsPipeline, Resource)
+        CLASS_INFO(RenderPass, Resource)
     public:
-        GraphicsPipeline();
-        virtual ~GraphicsPipeline() override;
+        RenderPass();
+        virtual ~RenderPass() override;
 
         bool SetInputLayout(const stdfs::path& layout_name);
         bool SetInputLayout(
@@ -55,6 +58,11 @@ namespace engine
             depth_stencil_state_ = dss;
         }
 
+		bool SetRenderTargetGroup(const stdfs::path& rtg_name);
+		void SetRenderTargetGroup(s_ptr<RenderTargetGroup> rtg) {
+			render_target_group_ = std::move(rtg);
+		}
+
         void Bind(ID3D11DeviceContext* context);
 
     private:
@@ -66,6 +74,8 @@ namespace engine
         s_ptr<BlendState> blend_state_ = {};
 
         s_ptr<DepthStencilState> depth_stencil_state_ = {};
+
+		s_ptr<RenderTargetGroup> render_target_group_ = {};
     };
 }
 

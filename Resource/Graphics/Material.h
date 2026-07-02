@@ -3,6 +3,7 @@
 
 #include <Engine/Core/CoreMinimal.h>
 #include <Engine/Core/Constant.h>
+#include <Engine/Core/Enum.h>
 
 #include <array>
 
@@ -11,7 +12,7 @@ struct ID3D11ShaderResourceView;
 
 namespace engine
 {
-    class GraphicsPipeline;
+    class RenderPass;
     class Texture2D;
 
     class Material :
@@ -31,13 +32,13 @@ namespace engine
         }
 
         bool SetGraphicsPipeline(const stdfs::path& pipeline_name);
-        void SetGraphicsPipeline(s_ptr<GraphicsPipeline> pipeline) {
+        void SetGraphicsPipeline(s_ptr<RenderPass> pipeline) {
             pipeline_ = std::move(pipeline);
         }
 
-        void BindTextures(ID3D11DeviceContext* context, ShaderStageFlag stage_flag);
+        void BindTextures(ID3D11DeviceContext* context, ShaderStage::Flags stage_flag);
         void BindGraphicsPipeline(ID3D11DeviceContext* context);
-        void BindAll(ID3D11DeviceContext* context, ShaderStageFlag stage_flag);
+        void BindAll(ID3D11DeviceContext* context, ShaderStage::Flags stage_flag);
 
         bool SetTexture(const stdfs::path& texture_filepath, uint32 slot);
         void SetTexture(s_ptr<Texture2D> tex, uint32 slot);
@@ -52,7 +53,7 @@ namespace engine
         Textures textures_ = {};
         std::array<ID3D11ShaderResourceView*, kMaxTextureCount> srv_cache_ = {};
 
-        s_ptr<GraphicsPipeline> pipeline_ = {};
+        s_ptr<RenderPass> pipeline_ = {};
     };
 }
 

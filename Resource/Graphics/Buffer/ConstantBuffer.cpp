@@ -83,7 +83,7 @@ namespace engine
 		context->Unmap(buffer_.Get(), 0);
 	}
 
-	void ConstantBuffer::Bind(ID3D11DeviceContext* context, ShaderStageFlag flag, UINT slot)
+	void ConstantBuffer::Bind(ID3D11DeviceContext* context, ShaderStage::Flags flag, UINT slot)
 	{
 		if (flag & ShaderStage::kVS)
 		{

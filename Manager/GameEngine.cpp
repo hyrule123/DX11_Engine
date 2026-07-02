@@ -26,8 +26,8 @@ namespace engine
 			ASSERT_RELEASE(false);
 			return false;
 		}
-
 		ResourceManager::GetInst().Init();
+		ResourceManager::GetInst().LoadDefaultResources();
 
 		RenderManager::GetInst().Init();
 

@@ -117,7 +117,7 @@
     <ClInclude Include="Resource\Graphics\Material.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Resource\Graphics\GraphicsPipeline.h">
+    <ClInclude Include="Resource\Graphics\RenderPass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Manager\TimeManager.h">
@@ -195,6 +195,9 @@
     <ClInclude Include="Resource\Graphics\Buffer\StucturedBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Resource\Graphics\RenderPipeline.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Core\pch.cpp">
@@ -269,7 +272,7 @@
     <ClCompile Include="Resource\Graphics\Material.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Resource\Graphics\GraphicsPipeline.cpp">
+    <ClCompile Include="Resource\Graphics\RenderPass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Manager\TimeManager.cpp">
@@ -330,6 +333,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Resource\Graphics\Buffer\StucturedBuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Graphics\RenderPipeline.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

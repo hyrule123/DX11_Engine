@@ -1,5 +1,5 @@
 #include "Engine/Core/pch.h"
-#include "GraphicsPipeline.h"
+#include "RenderPass.h"
 
 #include <Engine/Manager/GraphicsDevice.h>
 #include <Engine/Manager/ResourceManager.h>
@@ -10,55 +10,61 @@
 #include <Engine/Resource/Graphics/Shader/PixelShader.h>
 #include <Engine/Resource/Graphics/State/DepthStencilState.h>
 #include <Engine/Resource/Graphics/State/BlendState.h>
+#include <Engine/Resource/Graphics/RenderTargetGroup.h>
 
 
 namespace engine
 {
-	GraphicsPipeline::GraphicsPipeline()
-		: Resource(STRINGIFY(GraphicsPipeline))
+	RenderPass::RenderPass()
+		: Resource(STRINGIFY(RenderPass))
 	{
 	}
 
-	GraphicsPipeline::~GraphicsPipeline()
+	RenderPass::~RenderPass()
 	{
 	}
-	bool GraphicsPipeline::SetInputLayout(const stdfs::path& layout_name)
+	bool RenderPass::SetInputLayout(const stdfs::path& layout_name)
 	{
 		input_layout_ = ResourceManager::GetInst().Find<InputLayout>(layout_name);
 		return (bool)input_layout_;
 	}
-	bool GraphicsPipeline::SetInputLayout(const std::vector<D3D11_INPUT_ELEMENT_DESC>& il_desc, const stdfs::path& vs_path)
+	bool RenderPass::SetInputLayout(const std::vector<D3D11_INPUT_ELEMENT_DESC>& il_desc, const stdfs::path& vs_path)
 	{
 		auto device = GraphicsDevice::GetInst().GetDevice();
 		input_layout_ = std::make_shared<InputLayout>();
 		return input_layout_->Create(device.Get(), il_desc, vs_path);
 	}
-	bool GraphicsPipeline::SetVertexShader(const stdfs::path& vs_name)
+	bool RenderPass::SetVertexShader(const stdfs::path& vs_name)
 	{
 		vertex_shader_ = ResourceManager::GetInst().LoadFromFile<VertexShader>(vs_name);
 		return (bool)vertex_shader_;
 	}
-	bool GraphicsPipeline::SetPixelShader(const stdfs::path& ps_name)
+	bool RenderPass::SetPixelShader(const stdfs::path& ps_name)
 	{
 		pixel_shader_ = ResourceManager::GetInst().LoadFromFile<PixelShader>(ps_name);
 		return (bool)pixel_shader_;
 	}
-	bool GraphicsPipeline::SetRasterizerState(const stdfs::path& rss_name)
+	bool RenderPass::SetRasterizerState(const stdfs::path& rss_name)
 	{
 		rasterizer_state_ = ResourceManager::GetInst().Find<RasterizerState>(rss_name);
 		return (bool)rasterizer_state_;
 	}
-	bool GraphicsPipeline::SetBlendState(const stdfs::path& bs_name)
+	bool RenderPass::SetBlendState(const stdfs::path& bs_name)
 	{
 		blend_state_ = ResourceManager::GetInst().Find<BlendState>(bs_name);
 		return (bool)blend_state_;
 	}
-	bool GraphicsPipeline::SetDepthStencilState(const stdfs::path& ds_name)
+	bool RenderPass::SetDepthStencilState(const stdfs::path& ds_name)
 	{
 		depth_stencil_state_ = ResourceManager::GetInst().Find<DepthStencilState>(ds_name);
 		return (bool)depth_stencil_state_;
 	}
-	void GraphicsPipeline::Bind(ID3D11DeviceContext* context)
+	bool RenderPass::SetRenderTargetGroup(const stdfs::path& rtg_name)
+	{
+		render_target_group_ = ResourceManager::GetInst().Find<RenderTargetGroup>(rtg_name);
+		return (bool)render_target_group_;
+	}
+	void RenderPass::Bind(ID3D11DeviceContext* context)
 	{
 		if (input_layout_) { input_layout_->Bind(context); }
 		else { context->IASetInputLayout(nullptr); }
@@ -77,6 +83,8 @@ namespace engine
 
 		if (depth_stencil_state_) { depth_stencil_state_->Bind(context); }
 		else { context->OMSetDepthStencilState(nullptr, 1u); }
+
+		if (render_target_group_) { render_target_group_->BindOutputMerger(context); }
 	}
 }
 

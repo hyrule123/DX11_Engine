@@ -6,7 +6,7 @@
 #include <Engine/Resource/Graphics/Shader/InputLayout.h>
 #include <Engine/Resource/Graphics/Shader/VertexShader.h>
 #include <Engine/Resource/Graphics/Shader/PixelShader.h>
-#include <Engine/Resource/Graphics/GraphicsPipeline.h>
+#include <Engine/Resource/Graphics/RenderPass.h>
 
 #include <Engine/Resource/Graphics/Material.h>
 
@@ -150,9 +150,9 @@ namespace engine
 		auto device = GraphicsDevice::GetInst().GetDevice();
 
 		//GRAPHICS PIPELINE
-		s_ptr<GraphicsPipeline> pipeline = std::make_shared<GraphicsPipeline>();
-		resmgr.AddResource("Debug_GraphicsPipeline", pipeline);
-		resmgr.SetDefaultResource(pipeline);
+		s_ptr<RenderPass> renderpass = std::make_shared<RenderPass>();
+		resmgr.AddResource("Debug_GraphicsPipeline", renderpass);
+		resmgr.SetDefaultResource(renderpass);
 
 		//INPUT LAYOUT
 		auto il = std::make_shared<InputLayout>();
@@ -184,20 +184,20 @@ namespace engine
 			std::vector<D3D11_INPUT_ELEMENT_DESC> descs;
 			descs.push_back(desc);
 
-			if (false == pipeline->SetInputLayout(descs, "Shader/Debug_VS.cso"))
+			if (false == renderpass->SetInputLayout(descs, "Shader/Debug_VS.cso"))
 			{
 				ASSERT_RELEASE(false);
 			}
 		}
 
 		//Shaders
-		pipeline->SetVertexShader("Shader/Debug_VS.cso");
-		pipeline->SetPixelShader("Shader/Debug_PS.cso");
-		pipeline->SetDepthStencilState("DSS_Debug");
+		renderpass->SetVertexShader("Shader/Debug_VS.cso");
+		renderpass->SetPixelShader("Shader/Debug_PS.cso");
+		renderpass->SetDepthStencilState("DSS_Debug");
 
 		///////////// MATERIAL ////////////////
 		s_ptr<Material> material = std::make_shared<Material>();
-		material->SetGraphicsPipeline(pipeline);
+		material->SetGraphicsPipeline(renderpass);
 		resmgr.AddResource("Debug_Material", material);
 		resmgr.SetDefaultResource(material);
 
@@ -228,13 +228,17 @@ namespace engine
 		msh->SetBuffers(vb, ib);
 		resmgr.AddResource("Debug_RectMesh", msh);
 		resmgr.SetDefaultResource(msh);
+
+		//RenderTargetGroup
+		auto rtg = GraphicsDevice::GetInst().GetSwapChainRenderTargetGroup();
+
 	}
 	void DefaultRes::LoadSpriteRenderObjects()
 	{
 		auto& resmgr = ResourceManager::GetInst();
 		auto device = GraphicsDevice::GetInst().GetDevice();
 
-		auto pipeline = std::make_shared<GraphicsPipeline>();
+		auto pipeline = std::make_shared<RenderPass>();
 
 		//INPUT LAYOUT
 		{

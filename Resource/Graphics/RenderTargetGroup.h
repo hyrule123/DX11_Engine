@@ -37,6 +37,8 @@ namespace engine
         void ClearRenderTargetView(ID3D11DeviceContext* context, std::array<float, 4> clear_color);
         void ClearDepthStencilView(ID3D11DeviceContext* context, float depth, uint8 stencil);
 
+        void Reset();
+
     private:
         RenderTargetArray render_target_buffers_ = {};
         s_ptr<DepthStencilView> dsv_ = {};

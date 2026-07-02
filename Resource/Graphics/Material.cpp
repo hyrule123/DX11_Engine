@@ -3,7 +3,7 @@
 
 #include <Engine/Manager/ResourceManager.h>
 
-#include <Engine/Resource/Graphics/GraphicsPipeline.h>
+#include <Engine/Resource/Graphics/RenderPass.h>
 #include <Engine/Resource/Graphics/Buffer/Texture2D.h>
 
 namespace engine
@@ -19,11 +19,11 @@ namespace engine
 
 	bool Material::SetGraphicsPipeline(const stdfs::path& pipeline_name)
 	{
-		pipeline_ = ResourceManager::GetInst().Find<GraphicsPipeline>(pipeline_name);
+		pipeline_ = ResourceManager::GetInst().Find<RenderPass>(pipeline_name);
 		return (bool)pipeline_;
 	}
 
-	void Material::BindTextures(ID3D11DeviceContext* context, ShaderStageFlag stage_flag)
+	void Material::BindTextures(ID3D11DeviceContext* context, ShaderStage::Flags stage_flag)
 	{
 		Texture2D::BindSRVs(context, srv_cache_, stage_flag);
 	}
@@ -35,7 +35,7 @@ namespace engine
 			pipeline_->Bind(context);
 		}
 	}
-	void Material::BindAll(ID3D11DeviceContext* context, ShaderStageFlag stage_flag)
+	void Material::BindAll(ID3D11DeviceContext* context, ShaderStage::Flags stage_flag)
 	{
 		BindTextures(context, stage_flag);
 		BindGraphicsPipeline(context);

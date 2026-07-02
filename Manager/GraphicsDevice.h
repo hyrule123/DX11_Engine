@@ -33,6 +33,8 @@ namespace engine
 		void Present();
 		void FrameEnd();
 
+		s_ptr<RenderTargetGroup> GetSwapChainRenderTargetGroup() const { return swap_chain_RT_; }
+
 	private:
 		bool Init();
 		bool CreateDeviceAndContext();

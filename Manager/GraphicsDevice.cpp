@@ -93,7 +93,8 @@ namespace engine
 
 		//변경 전 초기화
 		ClearContextStates();
-		swap_chain_RT_ = nullptr;
+		if (swap_chain_RT_) { swap_chain_RT_->Reset(); }
+		else { swap_chain_RT_ = std::make_shared<RenderTargetGroup>(); }
 		
 		if (nullptr == swap_chain_)
 		{
@@ -118,7 +119,6 @@ namespace engine
 
 #pragma region RTV
 		//RTV 생성
-		swap_chain_RT_ = std::make_shared<RenderTargetGroup>();
 		s_ptr<RenderTargetView> rt = std::make_shared<RenderTargetView>();
 
 		bool result = rt->CreateForSwapchain(device_.Get(), swap_chain_);

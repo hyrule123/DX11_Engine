@@ -64,6 +64,7 @@ namespace engine
 
 	private:
 		bool Init();
+		void LoadDefaultResources();
 
 	private:
 		std::unordered_map <stdfs::path, s_ptr<Resource>> resources_;

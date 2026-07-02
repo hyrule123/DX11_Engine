@@ -77,7 +77,7 @@ namespace engine
 
 		return true;
 	}
-	void Texture2D::BindSRV(ID3D11DeviceContext* context, UINT slot, ShaderStageFlag stageflag)
+	void Texture2D::BindSRV(ID3D11DeviceContext* context, UINT slot, ShaderStage::Flags stageflag)
 	{
 		if (stageflag & ShaderStage::kVS)
 		{
@@ -97,7 +97,7 @@ namespace engine
 		}
 	}
 
-	void Texture2D::BindSRVs(ID3D11DeviceContext* context, const std::array<ID3D11ShaderResourceView*, kMaxTextureCount>& texture_srvs, ShaderStageFlag stageflag)
+	void Texture2D::BindSRVs(ID3D11DeviceContext* context, const std::array<ID3D11ShaderResourceView*, kMaxTextureCount>& texture_srvs, ShaderStage::Flags stageflag)
 	{
 		UINT texcount = (UINT)texture_srvs.size();
 		if (stageflag & ShaderStage::kVS)

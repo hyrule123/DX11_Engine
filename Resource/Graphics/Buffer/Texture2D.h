@@ -3,6 +3,7 @@
 
 #include <Engine/Core/CoreMinimal.h>
 #include <Engine/Core/Constant.h>
+#include <Engine/Core/Enum.h>
 #include <Engine/Core/DX11.h>
 
 #include <array>
@@ -28,13 +29,13 @@ namespace engine
         void BindSRV(
             ID3D11DeviceContext* context, 
             UINT slot, 
-            ShaderStageFlag stageflag = ShaderStage::kPS
+            ShaderStage::Flags stageflag = ShaderStage::kPS
         );
 
         static void BindSRVs(
             ID3D11DeviceContext* context,
             const std::array<ID3D11ShaderResourceView*, kMaxTextureCount>& texture_srvs,
-            ShaderStageFlag stageflag = ShaderStage::kPS
+            ShaderStage::Flags stageflag = ShaderStage::kPS
         );
 
         ComPtr<ID3D11ShaderResourceView> GetSRV() const { return shader_resource_view_; }

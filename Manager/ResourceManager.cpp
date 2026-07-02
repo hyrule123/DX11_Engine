@@ -30,11 +30,12 @@ namespace engine
 		program_path_ = buffer;
 		resource_dir_ = stdfs::weakly_canonical(program_path_.remove_filename() / ".." / ".." / ".." / "Res");
 
-
+		return true;
+	}
+	void ResourceManager::LoadDefaultResources()
+	{
 		// ============ 기본 리소스 로드 ===============
 		DefaultRes::LoadDefaultResources();
-
-		return true;
 	}
 	s_ptr<Resource> ResourceManager::Find(const stdfs::path& path)
 	{

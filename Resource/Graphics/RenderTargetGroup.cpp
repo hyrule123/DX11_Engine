@@ -54,4 +54,10 @@ namespace engine
 			context->ClearDepthStencilView(dsv_->GetRawDepthStencilView(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, (FLOAT)depth, (UINT8)stencil);
 		}
 	}
+	void RenderTargetGroup::Reset()
+	{
+		render_target_buffers_.fill(nullptr);
+		dsv_ = nullptr;
+		RTVs_ptr_cache_.fill(nullptr);
+	}
 }

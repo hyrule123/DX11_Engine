@@ -1,6 +1,8 @@
 #pragma once
 
 #include <Engine/Core/CoreMinimal.h>
+#include <Engine/Core/Enum.h>
+
 #include <Engine/Resource/Resource.h>
 
 struct ID3D11Buffer;
@@ -30,7 +32,7 @@ namespace engine
             Upload(context, &data, sizeof(T));
         }
 
-        void Bind(ID3D11DeviceContext* context, ShaderStageFlag flag, UINT slot);
+        void Bind(ID3D11DeviceContext* context, ShaderStage::Flags flag, UINT slot);
 
     private:
         ComPtr<ID3D11Buffer> buffer_ = {};

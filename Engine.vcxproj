@@ -219,6 +219,7 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Resource\Graphics\RenderPipeline.h" />
     <ClInclude Include="Resource\SpriteAnimation.h" />
     <ClInclude Include="Game\Component\SpriteAnimator.h" />
     <ClInclude Include="Resource\Graphics\Buffer\DepthStencilView.h" />
@@ -248,7 +249,7 @@
     <ClInclude Include="Resource\Graphics\RenderTargetGroup.h" />
     <ClInclude Include="Resource\DefaultRes\DefaultRes.h" />
     <ClInclude Include="Resource\Graphics\Buffer\ConstantBuffer.h" />
-    <ClInclude Include="Resource\Graphics\GraphicsPipeline.h" />
+    <ClInclude Include="Resource\Graphics\RenderPass.h" />
     <ClInclude Include="Resource\Graphics\Material.h" />
     <ClInclude Include="Resource\Graphics\Shader\PixelShader.h" />
     <ClInclude Include="Resource\Graphics\Shader\InputLayout.h" />
@@ -281,6 +282,7 @@
     <ClInclude Include="Resource\Graphics\Shader\VertexShader.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Resource\Graphics\RenderPipeline.cpp" />
     <ClCompile Include="Resource\SpriteAnimation.cpp" />
     <ClCompile Include="Game\Component\SpriteAnimator.cpp" />
     <ClCompile Include="Resource\Graphics\Buffer\DepthStencilView.cpp" />
@@ -300,7 +302,7 @@
     <ClCompile Include="Resource\Graphics\RenderTargetGroup.cpp" />
     <ClCompile Include="Resource\DefaultRes\DefaultRes.cpp" />
     <ClCompile Include="Resource\Graphics\Buffer\ConstantBuffer.cpp" />
-    <ClCompile Include="Resource\Graphics\GraphicsPipeline.cpp" />
+    <ClCompile Include="Resource\Graphics\RenderPass.cpp" />
     <ClCompile Include="Resource\Graphics\Material.cpp" />
     <ClCompile Include="Resource\Graphics\Shader\PixelShader.cpp" />
     <ClCompile Include="Resource\Graphics\Shader\InputLayout.cpp" />

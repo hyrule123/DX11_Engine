@@ -3,22 +3,20 @@
 
 #include <Engine/Manager/GraphicsDevice.h>
 #include <Engine/Manager/ResourceManager.h>
-#include <Engine/Resource/Graphics/Shader/InputLayout.h>
-#include <Engine/Resource/Graphics/Shader/VertexShader.h>
-#include <Engine/Resource/Graphics/Shader/PixelShader.h>
-#include <Engine/Resource/Graphics/RenderPass.h>
 
+#include <Engine/Resource/Graphics/GraphicsShaderSet.h>
 #include <Engine/Resource/Graphics/Material.h>
-
 #include <Engine/Resource/Graphics/Mesh.h>
 #include <Engine/Resource/Graphics/Buffer/VertexBuffer.h>
 #include <Engine/Resource/Graphics/Buffer/IndexBuffer.h>
 #include <Engine/Resource/Graphics/Vertex.h>
 #include <Engine/Resource/Graphics/State/RasterizerState.h>
-#include <Engine/Resource/Graphics/State/BlendState.h>
 #include <Engine/Resource/Graphics/State/DepthStencilState.h>
+#include <Engine/Resource/Graphics/Shader/InputLayoutDesc.h>
 
 #include <Engine/Core/Math.h>
+
+#include <Engine/HLSL/Sprite/Sprite.hlsli>
 
 #include <Engine/Core/Debug.h>
 
@@ -33,6 +31,7 @@ namespace engine
 		LoadDebugRenderObjects();
 		LoadSpriteRenderObjects();
 	}
+
 	void DefaultRes::LoadDefaultRasterizerStates()
 	{
 		auto& res_mgr = ResourceManager::GetInst();
@@ -149,63 +148,25 @@ namespace engine
 		auto& resmgr = ResourceManager::GetInst();
 		auto device = GraphicsDevice::GetInst().GetDevice();
 
-		//GRAPHICS PIPELINE
-		s_ptr<RenderPass> renderpass = std::make_shared<RenderPass>();
-		resmgr.AddResource("Debug_GraphicsPipeline", renderpass);
-		resmgr.SetDefaultResource(renderpass);
+#pragma region //INPUT LAYOUT DESC
+		s_ptr<InputLayoutDesc> input_layout_desc = std::make_shared<InputLayoutDesc>();
+		resmgr.AddResource("InputLayoutDesc_Debug", input_layout_desc);
+		resmgr.SetDefaultResource(input_layout_desc);
 
-		//INPUT LAYOUT
-		auto il = std::make_shared<InputLayout>();
+		for (const auto& desc : Vertex::Debug::kInputLayoutDescs)
 		{
-			D3D11_INPUT_ELEMENT_DESC desc = {};
-
-			//VS의 입력 구조체 매개변수 이름과 일치해야 함
-			desc.SemanticName = "POSITION";
-
-			//POSITION0을 의미 (뒤에 숫자가 없을 때 기본값 0)
-			desc.SemanticIndex = 0;
-
-			//데이터 포맷
-			desc.Format = DXGI_FORMAT_R32G32B32_FLOAT;
-
-			//InputSlot: 0번 정점 버퍼 슬롯을 사용합니다.
-			desc.InputSlot = 0;
-
-			//AlignedByteOffset: 구조체 시작점으로부터 몇 번째부터 읽어야 하는지
-			desc.AlignedByteOffset = 0;
-
-			//정점별로 데이터를 보낼것인지 인스턴스별로 보낼것인지
-			desc.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
-
-			//인스턴스 별로 보낼 때 인스턴스 별로 몇단계씩 올릴 것인지
-			//e.g) 2 -> 0, 2, 4, 8, ...
-			desc.InstanceDataStepRate = 0;
-
-			std::vector<D3D11_INPUT_ELEMENT_DESC> descs;
-			descs.push_back(desc);
-
-			if (false == renderpass->SetInputLayout(descs, "Shader/Debug_VS.cso"))
-			{
-				ASSERT_RELEASE(false);
-			}
+			input_layout_desc->AddLayoutDesc(desc);
 		}
+#pragma endregion //INPUT LAYOUT DESC
 
-		//Shaders
-		renderpass->SetVertexShader("Shader/Debug_VS.cso");
-		renderpass->SetPixelShader("Shader/Debug_PS.cso");
-		renderpass->SetDepthStencilState("DSS_Debug");
+#pragma region //MESH
+		auto msh = std::make_shared<Mesh>();
+		resmgr.AddResource("Mesh_Debug_Rect", msh);
+		resmgr.SetDefaultResource(msh);
 
-		///////////// MATERIAL ////////////////
-		s_ptr<Material> material = std::make_shared<Material>();
-		material->SetGraphicsPipeline(renderpass);
-		resmgr.AddResource("Debug_Material", material);
-		resmgr.SetDefaultResource(material);
-
-
-		/////////////  MESH  //////////////
 		//VERTEX BUFFER
 		auto vb = std::make_shared<VertexBuffer>();
-		std::vector<VertexDebug> vertices;
+		std::vector<Vertex::Debug::Vertex> vertices;
 		vertices.resize(4);
 		vertices[0].position = { -0.5f, 0.5f, 0.0f };
 		vertices[1].position = { 0.5f, 0.5f, 0.0f };
@@ -223,89 +184,97 @@ namespace engine
 		indices.push_back(0u);
 		ib->Create(device.Get(), indices, D3D11_PRIMITIVE_TOPOLOGY_LINESTRIP);
 
-		//MESH
-		auto msh = std::make_shared<Mesh>();
 		msh->SetBuffers(vb, ib);
-		resmgr.AddResource("Debug_RectMesh", msh);
-		resmgr.SetDefaultResource(msh);
+#pragma endregion //MESH
 
-		//RenderTargetGroup
-		auto rtg = GraphicsDevice::GetInst().GetSwapChainRenderTargetGroup();
+#pragma region // GRAPHICS SHADER SET
+		s_ptr<GraphicsShaderSet> shaderset = std::make_shared<GraphicsShaderSet>();
+		resmgr.AddResource("GraphicsShaderSet_Debug", shaderset);
+		resmgr.SetDefaultResource(shaderset);
 
+		shaderset->SetInstancingSupport(true);
+		shaderset->SetPerInstanceDataStride(sizeof(SpriteInstanceData));
+		//Shaders
+		shaderset->SetVertexShader("Shader/Debug_VS.cso");
+		shaderset->CreateInputLayout("InputLayoutDesc_Debug");
+		shaderset->SetPixelShader("Shader/Debug_PS.cso");
+		shaderset->SetDepthStencilState("DSS_Debug");
+#pragma endregion // GRAPHICS SHADER SET
+
+#pragma region //MATERIAL
+		///////////// MATERIAL ////////////////
+		s_ptr<Material> material = std::make_shared<Material>();
+		material->SetShaderSet(shaderset, RenderPassOrder::kUI);
+		resmgr.AddResource("Material_Debug", material);
+		resmgr.SetDefaultResource(material);
+#pragma endregion //MATERIAL
 	}
+
+
+
 	void DefaultRes::LoadSpriteRenderObjects()
 	{
 		auto& resmgr = ResourceManager::GetInst();
 		auto device = GraphicsDevice::GetInst().GetDevice();
 
-		auto pipeline = std::make_shared<RenderPass>();
-
-		//INPUT LAYOUT
+#pragma region //INPUT LAYOUT DESC
+		s_ptr<InputLayoutDesc> input_layout_desc = std::make_shared<InputLayoutDesc>();
+		for (const auto& desc : Vertex::Standard2D::kInputLayoutDescs)
 		{
-			std::vector<D3D11_INPUT_ELEMENT_DESC> descs;
-			D3D11_INPUT_ELEMENT_DESC desc = {};
-			desc.SemanticName = "POSITION";
-			desc.SemanticIndex = 0;
-			desc.Format = DXGI_FORMAT_R32G32B32_FLOAT;
-			desc.InputSlot = 0;
-			desc.AlignedByteOffset = 0;
-			desc.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
-			desc.InstanceDataStepRate = 0;
-			descs.push_back(desc);
-
-			desc.SemanticName = "TEXCOORD";
-			desc.SemanticIndex = 0;
-			desc.Format = DXGI_FORMAT_R32G32_FLOAT;
-			desc.InputSlot = 0;
-			//참고: 같은 InputSlot 사용 시 D3D11_APPEND_ALIGNED_ELEMENT로 자동 정렬 가능
-			desc.AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
-			desc.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
-			desc.InstanceDataStepRate = 0;
-			descs.push_back(desc);
-
-			pipeline->SetInputLayout(descs, "Shader/Sprite_VS.cso");
+			input_layout_desc->AddLayoutDesc(desc);
 		}
+		resmgr.AddResource("InputLayoutDesc_Standard2D", input_layout_desc);
+		resmgr.SetDefaultResource(input_layout_desc);
+#pragma endregion //INPUT LAYOUT DESC
 
+#pragma region //MESH
+		{
+			auto msh = std::make_shared<Mesh>();
+			resmgr.AddResource("Mesh_Standard2D_Rect", msh);
+			resmgr.SetDefaultResource(msh);
 
-		pipeline->SetVertexShader("Shader/Sprite_VS.cso");
-		pipeline->SetPixelShader("Shader/Sprite_PS.cso");
-		pipeline->SetDepthStencilState("DSS_Default");
+			//VERTEX BUFFER
+			auto vb = std::make_shared<VertexBuffer>();
+			std::vector<Vertex::Standard2D::Vertex> vertices;
+			vertices.resize(4);
+			vertices[0].position = { -0.5f, 0.5f, 0.0f };
+			vertices[1].position = { 0.5f, 0.5f, 0.0f };
+			vertices[2].position = { 0.5f, -0.5f, 0.0f };
+			vertices[3].position = { -0.5f, -0.5f, 0.0f };
 
-		resmgr.AddResource("Sprite_GraphicsPipeline", pipeline);
-		resmgr.SetDefaultResource(pipeline);
+			vertices[0].UV = { 0.0f, 0.0f };
+			vertices[1].UV = { 1.0f, 0.0f };
+			vertices[2].UV = { 1.0f, 1.0f };
+			vertices[3].UV = { 0.0f, 1.0f };
+
+			vb->Create(device.Get(), vertices);
+
+			//INDEX BUFFER
+			auto ib = std::make_shared<IndexBuffer>();
+			std::vector<UINT> indices = { 0, 1, 2, 0, 2, 3 };
+			ib->Create(device.Get(), indices, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+			msh->SetBuffers(vb, ib);
+		}
+#pragma endregion //MESH
+		
+#pragma region //GRAPHICS SHADER SET
+		auto shaderset = std::make_shared<GraphicsShaderSet>();
+		
+		shaderset->SetInstancingSupport(true);
+		shaderset->SetPerInstanceDataStride(sizeof(SpriteInstanceData));
+		shaderset->SetVertexShader("Shader/Sprite_VS.cso");
+		shaderset->CreateInputLayout("InputLayoutDesc_Standard2D");
+		shaderset->SetPixelShader("Shader/Sprite_PS.cso");
+		shaderset->SetDepthStencilState("DSS_Default");
+
+		resmgr.AddResource("GraphicsShaderSet_Sprite", shaderset);
+		resmgr.SetDefaultResource(shaderset);
 
 		//MATERIAL
 		s_ptr<Material> material = std::make_shared<Material>();
-		material->SetGraphicsPipeline(pipeline);
-		resmgr.AddResource("Sprite_Material", material);
+		material->SetShaderSet(shaderset, RenderPassOrder::kForwardOpaque);
+		resmgr.AddResource("Material_Sprite", material);
 		resmgr.SetDefaultResource(material);
-
-		//MESH
-		auto msh = std::make_shared<Mesh>();
-		resmgr.AddResource("Sprite_Mesh", msh);
-		resmgr.SetDefaultResource(msh);
-
-		//VERTEX BUFFER
-		auto vb = std::make_shared<VertexBuffer>();
-		std::vector<Vertex2D> vertices;
-		vertices.resize(4);
-		vertices[0].position = { -0.5f, 0.5f, 0.0f };
-		vertices[1].position = { 0.5f, 0.5f, 0.0f };
-		vertices[2].position = { 0.5f, -0.5f, 0.0f };
-		vertices[3].position = { -0.5f, -0.5f, 0.0f };
-
-		vertices[0].UV = { 0.0f, 0.0f };
-		vertices[1].UV = { 1.0f, 0.0f };
-		vertices[2].UV = { 1.0f, 1.0f };
-		vertices[3].UV = { 0.0f, 1.0f };
-
-		vb->Create(device.Get(), vertices);
-
-		//INDEX BUFFER
-		auto ib = std::make_shared<IndexBuffer>();
-		std::vector<UINT> indices = { 0, 1, 2, 0, 2, 3 };
-		ib->Create(device.Get(), indices, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-		msh->SetBuffers(vb, ib);
 	}
 }

@@ -3,8 +3,10 @@
 
 #include <Engine/Manager/ResourceManager.h>
 
-#include <Engine/Resource/Graphics/RenderPass.h>
+#include <Engine/Resource/Graphics/GraphicsShaderSet.h>
 #include <Engine/Resource/Graphics/Buffer/Texture2D.h>
+
+#include <Engine/Core/Debug.h>
 
 namespace engine
 {
@@ -17,10 +19,36 @@ namespace engine
 	{
 	}
 
-	bool Material::SetGraphicsPipeline(const stdfs::path& pipeline_name)
+	bool Material::SetShaderSet(const stdfs::path& shader_set_name, RenderPassOrder pass)
 	{
-		pipeline_ = ResourceManager::GetInst().Find<RenderPass>(pipeline_name);
-		return (bool)pipeline_;
+		SetShaderSet(ResourceManager::GetInst().Find<GraphicsShaderSet>(shader_set_name), pass);
+		return (bool)shader_sets_per_pass_[(size_t)pass];
+	}
+
+	void Material::SetShaderSet(s_ptr<GraphicsShaderSet> shader_set, RenderPassOrder pass)
+	{
+		if (shader_set)
+		{
+			ASSERT(shader_set->IsReady());
+			shader_sets_per_pass_[(size_t)pass] = std::move(shader_set);
+		}
+		else
+		{
+			shader_sets_per_pass_[(size_t)pass] = nullptr;
+		}
+	}
+
+	bool Material::BindShaderSet(ID3D11DeviceContext* context, RenderPassOrder pass)
+	{
+		if (shader_sets_per_pass_[(size_t)pass]) 
+		{ 
+			shader_sets_per_pass_[(size_t)pass]->Bind(context); 
+			return true; 
+		}
+		
+		DEBUG_BREAK
+		GraphicsShaderSet::Clear(context);
+		return false;
 	}
 
 	void Material::BindTextures(ID3D11DeviceContext* context, ShaderStage::Flags stage_flag)
@@ -28,18 +56,6 @@ namespace engine
 		Texture2D::BindSRVs(context, srv_cache_, stage_flag);
 	}
 
-	void Material::BindGraphicsPipeline(ID3D11DeviceContext* context)
-	{
-		if (pipeline_)
-		{
-			pipeline_->Bind(context);
-		}
-	}
-	void Material::BindAll(ID3D11DeviceContext* context, ShaderStage::Flags stage_flag)
-	{
-		BindTextures(context, stage_flag);
-		BindGraphicsPipeline(context);
-	}
 	bool Material::SetTexture(const stdfs::path& texture_filepath, uint32 slot)
 	{
 		s_ptr<Texture2D> tex = 
@@ -66,6 +82,14 @@ namespace engine
 				srv_cache_[slot] = nullptr;
 			}
 		}
+	}
+	size_t Material::GetInstanceDataStride(RenderPassOrder pass) const
+	{
+		if (shader_sets_per_pass_[(size_t)pass])
+		{
+			return shader_sets_per_pass_[(size_t)pass]->GetPerInstanceDataStride();
+		}
+		return 0;
 	}
 }
 

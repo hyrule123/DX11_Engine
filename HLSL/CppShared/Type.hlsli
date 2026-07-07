@@ -9,8 +9,12 @@
 
 #ifdef __HLSL
 #define alignas(_Num) 
-#define uint32 uint
-#define int32 int
+#define SEMANTIC(_semantic) : _semantic;
 #endif//__HLSL
+
+#ifdef __cplusplus
+#include <Engine/Core/Math.h>
+#define SEMANTIC(_semantic) ;
+#endif//__cplusplus
 
 #endif//HLSL_TYPE

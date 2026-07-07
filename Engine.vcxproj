@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -219,7 +219,9 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Resource\Graphics\RenderPipeline.h" />
+    <ClInclude Include="Resource\Graphics\RenderPass\ForwardOpaqueRenderPass.h" />
+    <ClInclude Include="Resource\Graphics\RenderPass\RenderPass.h" />
+    <ClInclude Include="Resource\Graphics\Shader\InputLayoutDesc.h" />
     <ClInclude Include="Resource\SpriteAnimation.h" />
     <ClInclude Include="Game\Component\SpriteAnimator.h" />
     <ClInclude Include="Resource\Graphics\Buffer\DepthStencilView.h" />
@@ -249,10 +251,9 @@
     <ClInclude Include="Resource\Graphics\RenderTargetGroup.h" />
     <ClInclude Include="Resource\DefaultRes\DefaultRes.h" />
     <ClInclude Include="Resource\Graphics\Buffer\ConstantBuffer.h" />
-    <ClInclude Include="Resource\Graphics\RenderPass.h" />
+    <ClInclude Include="Resource\Graphics\GraphicsShaderSet.h" />
     <ClInclude Include="Resource\Graphics\Material.h" />
     <ClInclude Include="Resource\Graphics\Shader\PixelShader.h" />
-    <ClInclude Include="Resource\Graphics\Shader\InputLayout.h" />
     <ClInclude Include="Manager\SceneManager.h" />
     <ClInclude Include="Resource\Graphics\Buffer\IndexBuffer.h" />
     <ClInclude Include="Manager\GameEngine.h" />
@@ -265,7 +266,7 @@
     <ClInclude Include="Game\Component\SpriteRenderer.h" />
     <ClInclude Include="Resource\Graphics\Buffer\Texture2DArray.h" />
     <ClInclude Include="Resource\SpriteAnimClip.h" />
-    <ClInclude Include="Resource\Graphics\Buffer\StucturedBuffer.h" />
+    <ClInclude Include="Resource\Graphics\Buffer\StructuredBuffer.h" />
     <ClInclude Include="Util\string_utils.h" />
     <ClInclude Include="ThirdParty\SimpleMath.h" />
     <ClInclude Include="Core\pch.h" />
@@ -282,7 +283,9 @@
     <ClInclude Include="Resource\Graphics\Shader\VertexShader.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Resource\Graphics\RenderPipeline.cpp" />
+    <ClCompile Include="Resource\Graphics\RenderPass\ForwardOpaqueRenderPass.cpp" />
+    <ClCompile Include="Resource\Graphics\RenderPass\RenderPass.cpp" />
+    <ClCompile Include="Resource\Graphics\Shader\InputLayoutDesc.cpp" />
     <ClCompile Include="Resource\SpriteAnimation.cpp" />
     <ClCompile Include="Game\Component\SpriteAnimator.cpp" />
     <ClCompile Include="Resource\Graphics\Buffer\DepthStencilView.cpp" />
@@ -302,10 +305,9 @@
     <ClCompile Include="Resource\Graphics\RenderTargetGroup.cpp" />
     <ClCompile Include="Resource\DefaultRes\DefaultRes.cpp" />
     <ClCompile Include="Resource\Graphics\Buffer\ConstantBuffer.cpp" />
-    <ClCompile Include="Resource\Graphics\RenderPass.cpp" />
+    <ClCompile Include="Resource\Graphics\GraphicsShaderSet.cpp" />
     <ClCompile Include="Resource\Graphics\Material.cpp" />
     <ClCompile Include="Resource\Graphics\Shader\PixelShader.cpp" />
-    <ClCompile Include="Resource\Graphics\Shader\InputLayout.cpp" />
     <ClCompile Include="Manager\SceneManager.cpp" />
     <ClCompile Include="Resource\Graphics\Buffer\IndexBuffer.cpp" />
     <ClCompile Include="Manager\GameEngine.cpp" />
@@ -317,7 +319,7 @@
     <ClCompile Include="Game\Component\SpriteRenderer.cpp" />
     <ClCompile Include="Resource\Graphics\Buffer\Texture2DArray.cpp" />
     <ClCompile Include="Resource\SpriteAnimClip.cpp" />
-    <ClCompile Include="Resource\Graphics\Buffer\StucturedBuffer.cpp" />
+    <ClCompile Include="Resource\Graphics\Buffer\StructuredBuffer.cpp" />
     <ClCompile Include="Util\string_utils.cpp" />
     <ClCompile Include="ThirdParty\SimpleMath.cpp" />
     <ClCompile Include="Core\pch.cpp">

@@ -39,4 +39,36 @@ namespace engine
 
 	template <typename T>
 	using StringHashMap = std::unordered_map<std::string, T, StringHasher, std::equal_to<>>;
+
+	union RenderKey
+	{
+		struct
+		{
+			uint32 material_id;
+			uint32 mesh_id;
+		};
+		uint64 key = {};
+
+		auto operator<=>(const RenderKey& other) const {
+			return key <=> other.key;
+		}
+		auto operator==(const RenderKey& other) const {
+			return key == other.key;
+		}
+	};
+
+	struct RenderKeyHasher
+	{
+		using is_transparent = void;
+		size_t operator()(const RenderKey& key) const noexcept
+		{
+			return std::hash<uint64>{}(key.key);
+		}
+	};
+
+	struct DataBlock
+	{
+		void* ptr = {};
+		size_t size = {};
+	};
 }

@@ -29,6 +29,7 @@
 // 16 ~ 31: Lighting Pass
 
 // 32 ~ 63: SRV
+#define SLOT_T_PER_INSTANCE REG_T(32)
 
 // ==========================================
 

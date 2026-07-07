@@ -1,5 +1,5 @@
 #include "Engine/Core/pch.h"
-#include "StucturedBuffer.h"
+#include "StructuredBuffer.h"
 
 #include <Engine/Core/DX11.h>
 #include <Engine/Core/Debug.h>
@@ -189,18 +189,10 @@ namespace engine
 
 	void StructuredBuffer::Upload(ID3D11DeviceContext* context, void* data, size_t byte_size)
 	{
-        // 방어 코드: 버퍼가 없거나, 데이터가 없거나, 넣을 크기가 0이면 무시
-        if (!buffer_ || !data || byte_size == 0)
-        {
-            ERROR_MESSAGE("Structured Buffer 준비되지 않음.");
-            return;
-        }
-
-        // 요청한 byte_size가 실제 버퍼의 총 용량보다 크면 사이즈 확장
-        if ((UINT)byte_size > total_byte_size_)
-        {
-            ERROR_MESSAGE("버퍼 사이즈가 부족합니다. 사이즈 확장 필요.");
-        }
+        ASSERT(buffer_);
+        ASSERT(data);
+        ASSERT(0 < byte_size);
+        ASSERT((UINT)byte_size <= total_byte_size_);
 
         bool is_dynamic = (buffer_flag_ & kCPUDynamic) != 0;
 
@@ -208,17 +200,12 @@ namespace engine
         // CPU 쓰기에 최적화된 영역. 데이터를 통째로 덮어쓰는(DISCARD) 데 가장 빠릅니다.
         if (is_dynamic)
         {
-            D3D11_MAPPED_SUBRESOURCE mapped_resource = {};
-
-            // 주의: DYNAMIC 구조화 버퍼는 오직 D3D11_MAP_WRITE_DISCARD만 허용됩니다.
-            HRESULT hr = context->Map(buffer_.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped_resource);
-
-            ASSERT_MESSAGE(FAILED(hr), "Structured Buffer Map 실패");
+			void* mapped_data = MapForWriteDiscard(context);
 
             // 확보한 GPU 공유 메모리 주소(pData)에 C++ 데이터를 밀어 넣음
-            memcpy(mapped_resource.pData, data, (UINT)byte_size);
+            memcpy(mapped_data, data, (UINT)byte_size);
 
-            context->Unmap(buffer_.Get(), 0);
+			UnMap(context);
         }
         // --- [케이스 B] DEFAULT 버퍼 (UpdateSubresource) ---
         // VRAM 전용 영역. CPU가 직접 Map 할 수 없으므로 하드웨어 복사기에게 명령을 내립니다.
@@ -244,4 +231,37 @@ namespace engine
             }
         }
 	}
+    void* StructuredBuffer::MapForWriteDiscard(ID3D11DeviceContext* context)
+    {
+        ASSERT_MESSAGE(((buffer_flag_ & kCPUDynamic) != 0), "MapForWriteDiscard() can only be used with dynamic buffers.");
+
+        D3D11_MAPPED_SUBRESOURCE mapped_resource = {};
+
+        // 주의: DYNAMIC 구조화 버퍼는 오직 D3D11_MAP_WRITE_DISCARD만 허용됩니다.
+        HRESULT hr = context->Map(buffer_.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped_resource);
+
+        if (FAILED(hr))
+        {
+            HRESULT_ERROR_MESSAGE(hr);
+            return nullptr;
+        }
+
+        return mapped_resource.pData;
+    }
+    void StructuredBuffer::UnMap(ID3D11DeviceContext* context)
+    {
+        context->Unmap(buffer_.Get(), 0);
+    }
+    void StructuredBuffer::BindSRV(ID3D11DeviceContext* context, uint32 slot, ShaderStage::Flags stage_flag)
+    {
+        ASSERT(!!SRV_);
+		if (stage_flag & ShaderStage::kVS)
+		{
+			context->VSSetShaderResources(slot, 1, SRV_.GetAddressOf());
+		}
+		if (stage_flag & ShaderStage::kPS)
+		{
+			context->PSSetShaderResources(slot, 1, SRV_.GetAddressOf());
+		}
+    }
 }

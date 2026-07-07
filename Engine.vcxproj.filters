@@ -81,9 +81,6 @@
     <ClInclude Include="Resource\Graphics\Shader\VertexShader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Resource\Graphics\Shader\InputLayout.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Resource\Graphics\Shader\PixelShader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -117,7 +114,7 @@
     <ClInclude Include="Resource\Graphics\Material.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Resource\Graphics\RenderPass.h">
+    <ClInclude Include="Resource\Graphics\GraphicsShaderSet.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Manager\TimeManager.h">
@@ -192,10 +189,16 @@
     <ClInclude Include="Resource\SpriteAnimClip.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Resource\Graphics\Buffer\StucturedBuffer.h">
+    <ClInclude Include="Resource\Graphics\Shader\InputLayoutDesc.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Resource\Graphics\RenderPipeline.h">
+    <ClInclude Include="Resource\Graphics\RenderPass\ForwardOpaqueRenderPass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Graphics\Buffer\StructuredBuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Graphics\RenderPass\RenderPass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -248,9 +251,6 @@
     <ClCompile Include="Resource\Graphics\Shader\VertexShader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Resource\Graphics\Shader\InputLayout.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Resource\Graphics\Shader\PixelShader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -272,7 +272,7 @@
     <ClCompile Include="Resource\Graphics\Material.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Resource\Graphics\RenderPass.cpp">
+    <ClCompile Include="Resource\Graphics\GraphicsShaderSet.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Manager\TimeManager.cpp">
@@ -332,10 +332,16 @@
     <ClCompile Include="Resource\SpriteAnimClip.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Resource\Graphics\Buffer\StucturedBuffer.cpp">
+    <ClCompile Include="Resource\Graphics\Shader\InputLayoutDesc.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Resource\Graphics\RenderPipeline.cpp">
+    <ClCompile Include="Resource\Graphics\RenderPass\ForwardOpaqueRenderPass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Graphics\Buffer\StructuredBuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Graphics\RenderPass\RenderPass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

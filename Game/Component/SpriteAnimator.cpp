@@ -27,7 +27,8 @@ namespace engine
 	void SpriteAnimator::Awake()
 	{
 		Super::Awake();
-		renderer_ = GetComponent<SpriteRenderer>();
+		s_ptr<SpriteRenderer> sprite_renderer = GetComponent<SpriteRenderer>();
+		renderer_ = sprite_renderer;
 		if (renderer_.expired())
 		{
 			DEBUG_LOG("Sprite Renderer 준비되지 않아 렌더링 불가");
@@ -41,8 +42,8 @@ namespace engine
 		}
 		
 		//해당 Animation만의 Material Key 생성.
-		stdfs::path uniq_mtrl_key = anim_->GetResKey();
-		uniq_mtrl_key += L"_Material";
+		stdfs::path uniq_mtrl_key = L"Material_";
+		uniq_mtrl_key += anim_->GetResKey();
 		
 		//애니메이션 재생에 사용할 텍스처가 등록된 고유 Material을 찾는다
 		auto& res_mgr = ResourceManager::GetInst();
@@ -51,10 +52,14 @@ namespace engine
 		//고유 Material이 없을 경우 새로 생성 후 Renderer에 텍스처 지정
 		if (!mtrl)
 		{
-			mtrl = res_mgr.Find<Material>("Sprite_Material")->Clone();
+			mtrl = res_mgr.Find<Material>("Material_Sprite");
+			ASSERT((bool)mtrl);
+			mtrl = mtrl->Clone();
 			mtrl->SetTextures({ anim_->GetSprite(), });
-			renderer_.lock()->SetMaterial(mtrl);
+
+			res_mgr.AddResource(uniq_mtrl_key, mtrl);
 		}
+		sprite_renderer->SetMaterial(mtrl);
 	}
 	void SpriteAnimator::LateUpdate()
 	{
@@ -107,7 +112,7 @@ namespace engine
 			//참조해야 하는 TextureArray의 Index를 전달
 			if (!renderer_.expired())
 			{
-				renderer_.lock()->SetTestFrame(clip->GetFrames()[cur_frame_idx_].index);
+				renderer_.lock()->SetFrameIndex(clip->GetFrames()[cur_frame_idx_].index);
 			}
 		}
 	}

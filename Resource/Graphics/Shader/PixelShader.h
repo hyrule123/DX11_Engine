@@ -16,6 +16,8 @@ namespace engine
         PixelShader();
         virtual ~PixelShader() final;
 
+		bool IsReady() const { return (bool)ps_; }
+
         virtual void Bind(ID3D11DeviceContext* context) final;
 
     protected:

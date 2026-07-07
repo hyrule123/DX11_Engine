@@ -4,27 +4,10 @@
 #include <Engine/HLSL/CppShared/Type.hlsli>
 #include <Engine/HLSL/CppShared/Register.hlsli>
 
-#ifdef __cplusplus
-#include <Engine/Core/Math.h>
-namespace engine
-{
-#endif//__cplusplus
-
-struct alignas(16)  PerObj
-{
-	matrix world_mat;
-	uint32 test_frame;
-	float3 pad0;
-};
-
 struct alignas(16) PerPass
 {
 	matrix view_mat;
 	matrix proj_mat;
 };
-
-#ifdef __cplusplus
-};
-#endif//__cplusplus
 
 #endif//HLSL_STRUCT

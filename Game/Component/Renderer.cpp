@@ -16,14 +16,9 @@
 
 namespace engine
 {
-	Renderer::Renderer()
-		: Component(STRINGIFY(Renderer), ComponentCategory::kRenderer)
-	{
-
-	}
-
-	Renderer::Renderer(const std::string_view concrete_class_name)
+	Renderer::Renderer(const std::string_view concrete_class_name, size_t per_obj_data_size)
 		: Component(concrete_class_name, ComponentCategory::kRenderer)
+		, per_instance_data_size_(per_obj_data_size)
 	{}
 
 	Renderer::~Renderer()
@@ -43,15 +38,8 @@ namespace engine
 	void Renderer::LateUpdate()
 	{
 		Super::LateUpdate();
-
-		if (IsRenderReady())
-		{
-			s_ptr<Renderer> me = std::static_pointer_cast<Renderer>(shared_from_this());
-			RenderManager::GetInst().AddRenderQueue(me);
-
-			per_obj_data_.world_mat = my_transform_->GetWorldMatrix();
-		}
 	}
+
 	bool Renderer::SetMaterial(const stdfs::path& mtrl_name)
 	{
 		material_ = ResourceManager::GetInst().Find<Material>(mtrl_name);

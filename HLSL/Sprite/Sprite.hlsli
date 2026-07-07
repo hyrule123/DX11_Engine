@@ -2,22 +2,37 @@
 #define HLSL_SPRITE
 
 #include <Engine/HLSL/CppShared/CoreMinimal.hlsli>
+
+struct alignas(16)     SpriteInstanceData
+{
+	matrix world_mat;
+	uint sprite_frame_idx;
+	float3 padding_0;
+};
+
+struct SpriteVSInput
+{
+	float3 position SEMANTIC(POSITION)
+	float2 UV SEMANTIC(TEXCOORD)
+	
+	#ifdef __HLSL
+	uint instance_ID :SV_InstanceID;
+	#endif //__HLSL
+};
+
+#ifdef __HLSL
 #include <Engine/HLSL/CommonConstBuffer.hlsli>
 #include <Engine/HLSL/CommonSampler.hlsli>
 
 Texture2DArray base_color : register(SLOT_T_BASE_COLOR);
-
-struct VS_IN
-{
-	float3 pos : POSITION;
-	float2 UV : TEXCOORD;
-	uint instance_ID : SV_InstanceID;
-};
+StructuredBuffer<SpriteInstanceData> g_sprite_instance_data : register(SLOT_T_PER_INSTANCE);
 
 struct VS_OUT
 {
-	float4 pos : SV_Position;
-	float2 UV : TEXCOORD;
+		float4 position : SV_Position;
+		float2 UV : TEXCOORD;
+		uint instance_ID : SV_InstanceID;
 };
+#endif//__HLSL
 
 #endif//HLSL_SPRITE

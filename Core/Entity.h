@@ -11,6 +11,7 @@ namespace engine
 	{
 	public:
 		Entity(const std::string_view concrete_class_name);
+		Entity(const Entity& copy);
 		virtual ~Entity();
 
 		const std::string_view GetConcreteClassName() const { return concrete_class_name_; }
@@ -18,10 +19,12 @@ namespace engine
 		void SetName(const std::string_view name) { name_ = name; }
 		const std::string& GetName() const { return name_; }
 
+		uint32 GetInstanceID() const { return (uint32)id_; }
+
 	private:
 		std::string_view concrete_class_name_ = {};
-		uint64 id_ = {};
-		static inline uint64 next_id_ = 0;
+		uint32 id_ = {};
+		static inline uint32 next_id_ = 0;
 		std::string name_ = {};
 	};
 }

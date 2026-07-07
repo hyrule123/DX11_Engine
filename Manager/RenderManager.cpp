@@ -22,21 +22,16 @@ namespace engine
 {
 	RenderManager::RenderManager()
 	{
-
 	}
 
 	RenderManager::~RenderManager()
 	{
-
 	}
 	void RenderManager::Init()
 	{
 		auto device = GraphicsDevice::GetInst().GetDevice();
 
 		//CONSTANT BUFFERS
-		cb_per_obj_ = std::make_shared<ConstantBuffer>();
-		cb_per_obj_->Create<PerObj>(device.Get());
-
 		cb_per_pass_ = std::make_shared<ConstantBuffer>();
 		cb_per_pass_->Create<PerPass>(device.Get());
 
@@ -51,6 +46,7 @@ namespace engine
 			return; 
 		}
 
+		auto device = GraphicsDevice::GetInst().GetDevice();
 		auto context = GraphicsDevice::GetInst().GetContext();
 
 		auto cam = main_cam_.lock();
@@ -63,22 +59,13 @@ namespace engine
 		cb_per_pass_->Upload(context.Get(), per_pass_data);
 		cb_per_pass_->Bind(context.Get(), ShaderStage::kAllGraphics, SLOT_B_PER_PASS);
 
-		//오브젝트 별 렌더링
-		for (const auto& renderer : render_queue_)
-		{
-			//Per Obj
-			PerObj obj_data = renderer->GetPerObjData();
-
-			cb_per_obj_->Upload(context.Get(), obj_data);
-			cb_per_obj_->Bind(context.Get(), ShaderStage::kAllGraphics, SLOT_B_PER_OBJECT);
-
-			renderer->GetMaterial()->BindAll(context.Get(), ShaderStage::kPS);
-			renderer->GetMesh()->Render(context.Get());
-		}
+		//Render Pass 별 렌더링
+		forward_opaque_pass_.Execute(device.Get(), context.Get());
 	}
 	void RenderManager::FrameEnd()
 	{
-		render_queue_.clear();
+		//일단은 하지 않음
+		//render_queue_.clear();
 	}
 	void RenderManager::OnResolutionChange(uint32 width, uint32 height)
 	{

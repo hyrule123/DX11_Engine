@@ -19,25 +19,12 @@ namespace engine
 		using Flags = uint32;
 	}
 
-	namespace RenderPassType
+	enum class RenderPassOrder : uint32
 	{
-		enum class Order : uint32
-		{
-			kForwardOpaque = 0u,
-			kForwardAlphaTested,
-			kForwardTransparent,
-			kUI,
-			kEND
-		};
-
-		enum Flag : uint32
-		{
-			kForwardOpaque = 1 << (uint32)Order::kForwardOpaque,
-			kForwardAlphaTested = 1 << (uint32)Order::kForwardAlphaTested,
-			kForwardTransparent = 1 << (uint32)Order::kForwardTransparent,
-			kUI = 1 << (uint32)Order::kUI,
-		};
-
-		using Flags = uint32;
-	}
+		kForwardOpaque = 0u,
+		kForwardAlphaTested,
+		kForwardTransparent,
+		kUI,
+		kEND
+	};
 }

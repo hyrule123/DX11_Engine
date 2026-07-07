@@ -8,6 +8,11 @@ namespace engine
 		, id_(next_id_++)
 	{}
 
+	Entity::Entity(const Entity & copy)
+		: concrete_class_name_(copy.concrete_class_name_)
+		, id_(next_id_++)
+	{}
+
 	Entity::~Entity()
 	{}
 }

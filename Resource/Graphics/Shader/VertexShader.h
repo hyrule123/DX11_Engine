@@ -13,6 +13,8 @@ namespace engine
 		VertexShader();
 		virtual ~VertexShader() final;
 
+		bool IsReady() const { return (bool)vs_; }
+
 		virtual void Bind(ID3D11DeviceContext* context) final;
 
 		const std::vector<uint8>& GetByteCode() const { return byte_code_; }

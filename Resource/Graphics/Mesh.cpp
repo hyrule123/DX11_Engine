@@ -17,7 +17,7 @@ namespace engine
 	Mesh::~Mesh()
 	{}
 
-	void Mesh::Render(ID3D11DeviceContext* context)
+	void Mesh::Draw(ID3D11DeviceContext* context, size_t instance_count)
 	{
 		if (!(vertex_buffer_ && index_buffer_))
 		{
@@ -28,7 +28,7 @@ namespace engine
 		vertex_buffer_->Bind(context);
 		index_buffer_->Bind(context);
 
-		context->DrawIndexed(index_buffer_->GetIndexCount(), 0, 0);
+		context->DrawIndexedInstanced(index_buffer_->GetIndexCount(), (UINT)instance_count, 0, 0, 0);
 	}
 
 	bool Mesh::LoadFromFile(const stdfs::path& path)

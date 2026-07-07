@@ -18,6 +18,8 @@ namespace engine
 		RasterizerState();
 		virtual ~RasterizerState() override;
 
+		bool IsReady() const { return (bool)rasterizer_state_; }
+
 		void SetRasterizerState(ComPtr<ID3D11RasterizerState> rss) {
 			rasterizer_state_ = rss;
 		}

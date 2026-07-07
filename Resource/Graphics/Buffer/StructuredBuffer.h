@@ -2,6 +2,7 @@
 #include <Engine/Resource/Resource.h>
 
 #include <Engine/Core/CoreMinimal.h>
+#include <Engine/Core/Enum.h>
 
 struct ID3D11Device;
 struct ID3D11DeviceContext;
@@ -36,6 +37,12 @@ namespace engine
 
         //사이즈 부족 시 에러 발생하므로 확장 필요 여부 확인 필수
         void Upload(ID3D11DeviceContext* context, void* data, size_t byte_size);
+
+		//Dynamic 버퍼 모드에서만 사용 가능. 반드시 UnMap() 호출할것.
+		void* MapForWriteDiscard(ID3D11DeviceContext* context);
+		void UnMap(ID3D11DeviceContext* context);
+
+		void BindSRV(ID3D11DeviceContext* context, uint32 slot, ShaderStage::Flags stage_flag);
 
 		size_t GetElementStride() const { return elem_stride_; }
 		size_t GetElementCount() const { return elem_count_; }

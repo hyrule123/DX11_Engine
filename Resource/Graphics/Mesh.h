@@ -17,7 +17,7 @@ namespace engine
 		Mesh();
 		virtual ~Mesh() override;
 
-		void Render(ID3D11DeviceContext* context);
+		void Draw(ID3D11DeviceContext* context, size_t instance_count);
 
 		virtual bool LoadFromFile(const stdfs::path& path) override;
 

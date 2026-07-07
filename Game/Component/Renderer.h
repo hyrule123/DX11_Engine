@@ -20,13 +20,12 @@ namespace engine
         CLASS_INFO(Renderer, Component)
         COMPONENT_CATEGORY(ComponentCategory::kRenderer)
     public:
-        Renderer();
-        Renderer(const std::string_view concrete_class_name);
+        Renderer(const std::string_view concrete_class_name, size_t per_obj_data_size);
         virtual ~Renderer() override;
 
         virtual void Init() override;
         virtual void Awake() override;
-        virtual void LateUpdate() override;
+        virtual void LateUpdate() = 0;
 
         s_ptr<Transform> GetTransform() const { return my_transform_; }
         void SetMaterial(s_ptr<Material> material) { material_ = std::move(material); }
@@ -39,10 +38,8 @@ namespace engine
         s_ptr<Material> GetMaterial() const { return material_; }
         s_ptr<Mesh> GetMesh() const { return mesh_; }
 
-        PerObj GetPerObjData() { return per_obj_data_; }
-
-    protected:
-        PerObj per_obj_data_ = {};
+		size_t GetPerInstanceDataStride() const { return per_instance_data_size_; }
+        virtual void WritePerObjData(void* ptr) = 0;
 
     private:
         s_ptr<Transform> my_transform_ = {};
@@ -50,7 +47,7 @@ namespace engine
         s_ptr<Material> material_ = {};
         s_ptr<Mesh> mesh_ = {};
 
-        
+        size_t per_instance_data_size_ = {};
     };
 }
 

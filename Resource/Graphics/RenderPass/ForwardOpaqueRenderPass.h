@@ -43,15 +43,9 @@ namespace engine
 		virtual void Execute(ID3D11Device* device, ID3D11DeviceContext* context) final;
 
     private:
-		struct InstancingDataBufferCache
-		{
-			u_ptr<StructuredBuffer> struct_buffer = {};
-			std::vector<uint8> data_storage = {};
-		};
-
 		std::vector<RenderItem> render_queue_ = {};
 
-		std::unordered_map<RenderKey, InstancingDataBufferCache, RenderKeyHasher> instancing_data_buffers_ = {};
+		std::unordered_map<RenderKey, u_ptr<StructuredBuffer>, RenderKeyHasher> instancing_data_buffers_ = {};
     };
 }
 

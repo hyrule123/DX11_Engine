@@ -64,37 +64,41 @@ namespace engine
 				size_t total_instance_data_size = instance_data_stride * instances_count;
 
 				//구조화 버퍼 탐색 및 업로드
-				InstancingDataBufferCache& cache = instancing_data_buffers_[render_queue_[i].key];
+				u_ptr<StructuredBuffer>& struct_buffer = instancing_data_buffers_[render_queue_[i].key];
 
 				//캐시에 없을 시 새로 생성
-				if (!cache.struct_buffer)
+				if (!struct_buffer)
 				{
-					cache.struct_buffer = std::make_unique<StructuredBuffer>();
+					struct_buffer = std::make_unique<StructuredBuffer>();
 
 					constexpr StructuredBuffer::BufferFlag flag = StructuredBuffer::kSRV | StructuredBuffer::kCPUDynamic;
 
 					bool result =
-						cache.struct_buffer->Create(device, flag, instance_data_stride, instances_count);
+						struct_buffer->Create(device, flag, instance_data_stride, instances_count);
 
 					ASSERT(result);
 				}
 
 				// 사이즈 부족 시 2배 크기로 resize
-				if (cache.struct_buffer->GetTotalByteSize() < total_instance_data_size)
+				if (struct_buffer->GetTotalByteSize() < total_instance_data_size)
 				{
-					bool result = cache.struct_buffer->Resize(device, context, instances_count * 2, false);
+					bool result = struct_buffer->Resize(device, context, instances_count * 2, false);
 					ASSERT(result);
 				}
 
-				// StructuredBuffer에 업로드할 데이터 생성
-				cache.data_storage.resize(total_instance_data_size);
-				for (size_t j = 0; j < instances_count; ++j)
 				{
-					render_queue_[i + j].renderer->WritePerObjData(&(cache.data_storage[j * instance_data_stride]));
+					uint8* mapped_data = 
+						static_cast<uint8*>(struct_buffer->MapForWriteDiscard(context));
+
+					for (size_t j = 0; j < instances_count; ++j)
+					{
+						render_queue_[i + j].renderer->WritePerObjData((mapped_data + j * instance_data_stride));
+					}
+
+					struct_buffer->UnMap(context);
 				}
 
-				cache.struct_buffer->Upload(context, cache.data_storage.data(), total_instance_data_size);
-				cache.struct_buffer->BindSRV(context, SLOT_T_PER_INSTANCE, ShaderStage::kVS | ShaderStage::kPS);
+				struct_buffer->BindSRV(context, SLOT_T_PER_INSTANCE, ShaderStage::kVS | ShaderStage::kPS);
 
 				//렌더링
 				Mesh* mesh = render_queue_[i].renderer->GetMesh().get();

@@ -51,6 +51,7 @@ namespace engine
             }
         }
 
+		bool IsInstancingSupported(RenderPassOrder pass) const;
         size_t GetInstanceDataStride(RenderPassOrder pass) const;
 
     private:

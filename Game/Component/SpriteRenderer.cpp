@@ -15,7 +15,7 @@
 namespace engine
 {
 	SpriteRenderer::SpriteRenderer()
-		: Super(SpriteRenderer::kClassConcreteName, sizeof(per_obj_data_))
+		: Super(SpriteRenderer::kClassConcreteName)
 	{}
 	SpriteRenderer::~SpriteRenderer()
 	{}
@@ -25,8 +25,12 @@ namespace engine
 		Super::Init();
 		bool result = SetMesh("Mesh_Standard2D_Rect");
 		result = (result && SetMaterial("Material_Sprite"));
-
 		ASSERT(result);
+	}
+	void SpriteRenderer::Awake()
+	{
+		Super::Awake();
+		ASSERT(sizeof(per_obj_data_) == GetInstanceDataStride(render_pass_mode_));
 	}
 	void SpriteRenderer::LateUpdate()
 	{
@@ -38,14 +42,17 @@ namespace engine
 			return; 
 		}
 
-		auto* opaque_pass = RenderManager::GetInst().GetOpaquePass();
-		
-		ForwardOpaqueRenderPass::RenderItem item;
-		item.key.material_id = GetMaterial()->GetInstanceID();
-		item.key.mesh_id = GetMesh()->GetInstanceID();
-		item.renderer = this;
+		if (GetMaterial()->IsReady(render_pass_mode_))
+		{
+			auto* opaque_pass = RenderManager::GetInst().GetOpaquePass();
 
-		opaque_pass->SubmitRenderItem(item);
+			ForwardOpaqueRenderPass::RenderItem item;
+			item.key.material_id = GetMaterial()->GetInstanceID();
+			item.key.mesh_id = GetMesh()->GetInstanceID();
+			item.renderer = this;
+
+			opaque_pass->SubmitRenderItem(item);
+		}
 	}
 	void SpriteRenderer::WritePerObjData(void* ptr)
 	{

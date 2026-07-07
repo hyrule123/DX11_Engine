@@ -83,6 +83,14 @@ namespace engine
 			}
 		}
 	}
+	bool Material::IsInstancingSupported(RenderPassOrder pass) const
+	{
+		if (shader_sets_per_pass_[(size_t)pass])
+		{
+			return shader_sets_per_pass_[(size_t)pass]->IsInstancingSupported();
+		}
+		return false;
+	}
 	size_t Material::GetInstanceDataStride(RenderPassOrder pass) const
 	{
 		if (shader_sets_per_pass_[(size_t)pass])

@@ -4,6 +4,7 @@
 
 #include <Engine/Core/UtilMacro.h>
 #include <Engine/Core/CoreMinimal.h>
+#include <Engine/Core/Enum.h>
 
 #include <Engine/HLSL/CppShared/Struct.hlsli>
 
@@ -20,7 +21,7 @@ namespace engine
         CLASS_INFO(Renderer, Component)
         COMPONENT_CATEGORY(ComponentCategory::kRenderer)
     public:
-        Renderer(const std::string_view concrete_class_name, size_t per_obj_data_size);
+        Renderer(const std::string_view concrete_class_name);
         virtual ~Renderer() override;
 
         virtual void Init() override;
@@ -38,7 +39,9 @@ namespace engine
         s_ptr<Material> GetMaterial() const { return material_; }
         s_ptr<Mesh> GetMesh() const { return mesh_; }
 
-		size_t GetPerInstanceDataStride() const { return per_instance_data_size_; }
+		bool IsInstancingSupported(RenderPassOrder pass) const;
+
+        size_t GetInstanceDataStride(RenderPassOrder pass) const;
         virtual void WritePerObjData(void* ptr) = 0;
 
     private:
@@ -46,8 +49,6 @@ namespace engine
 
         s_ptr<Material> material_ = {};
         s_ptr<Mesh> mesh_ = {};
-
-        size_t per_instance_data_size_ = {};
     };
 }
 

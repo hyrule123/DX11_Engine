@@ -16,9 +16,8 @@
 
 namespace engine
 {
-	Renderer::Renderer(const std::string_view concrete_class_name, size_t per_obj_data_size)
+	Renderer::Renderer(const std::string_view concrete_class_name)
 		: Component(concrete_class_name, ComponentCategory::kRenderer)
-		, per_instance_data_size_(per_obj_data_size)
 	{}
 
 	Renderer::~Renderer()
@@ -51,5 +50,26 @@ namespace engine
 		return (nullptr != mesh_);
 	}
 
+	bool Renderer::IsInstancingSupported(RenderPassOrder pass) const
+	{
+		if (!material_)
+		{
+			ASSERT_MESSAGE(false, "Material이 nullptr");
+			return false;
+		}
+
+		return material_->IsInstancingSupported(pass);
+	}
+
+	size_t Renderer::GetInstanceDataStride(RenderPassOrder pass) const
+	{
+		if (!material_)
+		{
+			ASSERT_MESSAGE(false, "Material이 nullptr");
+			return 0;
+		}
+
+		return material_->GetInstanceDataStride(pass);
+	}
 }
 

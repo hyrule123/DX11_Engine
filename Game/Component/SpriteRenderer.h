@@ -16,6 +16,7 @@ namespace engine
         virtual ~SpriteRenderer() override;
 
         virtual void Init() override;
+        virtual void Awake() override;
 		virtual void LateUpdate() override;
 
         virtual void WritePerObjData(void* ptr) final;
@@ -24,6 +25,7 @@ namespace engine
 
     private:
         SpriteInstanceData per_obj_data_ = {};
+		RenderPassOrder render_pass_mode_ = RenderPassOrder::kForwardOpaque;
     };
 }
 

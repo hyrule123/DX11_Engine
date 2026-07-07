@@ -60,7 +60,7 @@ namespace engine
 
 				//버퍼 사이즈 계산
 				size_t instances_count = span_end - i;
-				size_t instance_data_stride = render_queue_[i].renderer->GetPerInstanceDataStride();
+				size_t instance_data_stride = render_queue_[i].renderer->GetInstanceDataStride(GetPassOrder());
 				size_t total_instance_data_size = instance_data_stride * instances_count;
 
 				//구조화 버퍼 탐색 및 업로드

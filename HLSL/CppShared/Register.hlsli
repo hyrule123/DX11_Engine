@@ -34,7 +34,7 @@
 // ==========================================
 
 // =============== B BUFFER =================
-#define SLOT_B_PER_OBJECT REG_B(0)
+#define SLOT_B_PER_INSTANCE REG_B(0)
 #define SLOT_B_PER_PASS REG_B(1)
 
 // ==========================================

@@ -46,7 +46,6 @@ namespace engine
         std::vector<Frame> frames_ = {};
         float total_duration_ = {};
         bool is_loop_ = {};
-
         uint32 max_frame_idx_ = {};
     };
 }

@@ -13,7 +13,7 @@ namespace engine
 	{}
 	SpriteAnimation::~SpriteAnimation()
 	{}
-	void SpriteAnimation::AddAnimationClip(const std::string_view name, s_ptr<SpriteAnimClip> anim_clip)
+	void SpriteAnimation::AddAnimationClip(const std::string_view name, u_ptr<SpriteAnimClip> anim_clip)
 	{
 		if (!sprite_)
 		{
@@ -36,16 +36,17 @@ namespace engine
 			return;
 		}
 
+		anim_clip_ptrs_.insert(anim_clip.get());
 		anim_clips_[std::string(name)] = std::move(anim_clip);
 	}
 
-	s_ptr<SpriteAnimClip> SpriteAnimation::GetAnimationClip(const std::string_view anim_name) const
+	SpriteAnimClip* SpriteAnimation::GetAnimationClip(const std::string_view anim_name) const
 	{
 		auto iter = anim_clips_.find(anim_name);
 
 		if (iter != anim_clips_.end())
 		{
-			return iter->second;
+			return iter->second.get();
 		}
 		return nullptr;
 	}

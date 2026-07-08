@@ -267,6 +267,7 @@ namespace engine
 		shaderset->CreateInputLayout("InputLayoutDesc_Standard2D");
 		shaderset->SetPixelShader("Shader/Sprite_PS.cso");
 		shaderset->SetDepthStencilState("DSS_Default");
+		shaderset->SetRasterizerState("RSS_Solid_Back");
 
 		resmgr.AddResource("GraphicsShaderSet_Sprite", shaderset);
 		resmgr.SetDefaultResource(shaderset);

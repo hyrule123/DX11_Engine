@@ -66,10 +66,8 @@ namespace engine
 		Super::LateUpdate();
 
 		//Animation Clip 있고, 재생 중이라면 로직 처리
-		if (!(playing_clip_.expired()) && is_playing_)
+		if (playing_clip_ && is_playing_)
 		{
-			s_ptr<SpriteAnimClip> clip = playing_clip_.lock();
-
 			// 시간 누적
 			acc_deltatime_ += TimeManager::GetInst().DeltaTime();
 
@@ -85,7 +83,7 @@ namespace engine
 				// 애니메이션의 끝(마지막 프레임 초과)에 도달했을 때의 처리
 				if (cur_frame_idx_ >= clip_frame_total_count_)
 				{
-					if (clip->IsLoop())
+					if (playing_clip_->IsLoop())
 					{
 						// 루프 진행
 						cur_frame_idx_ = 0u;
@@ -93,10 +91,10 @@ namespace engine
 					else
 					{
 						// Non-loop: 마지막 프레임에 고정
-						cur_frame_idx_ = (uint32)(clip->GetFrames().size() - 1);
+						cur_frame_idx_ = (uint32)(playing_clip_->GetFrames().size() - 1);
 
 						// 더 이상 시간이 누적되어 오버플로우가 발생하지 않도록 시간 고정
-						acc_deltatime_ = clip->GetFrames()[cur_frame_idx_].duration;
+						acc_deltatime_ = playing_clip_->GetFrames()[cur_frame_idx_].duration;
 
 						//스위치 OFF
 						is_playing_ = false;
@@ -106,13 +104,13 @@ namespace engine
 				}
 
 				// 다음 순회(Iteration)를 위해 다음 프레임의 duration으로 갱신
-				cur_frame_duration_ = clip->GetFrames()[cur_frame_idx_].duration;
+				cur_frame_duration_ = playing_clip_->GetFrames()[cur_frame_idx_].duration;
 			}
 
 			//참조해야 하는 TextureArray의 Index를 전달
 			if (!renderer_.expired())
 			{
-				renderer_.lock()->SetFrameIndex(clip->GetFrames()[cur_frame_idx_].index);
+				renderer_.lock()->SetFrameIndex(playing_clip_->GetFrames()[cur_frame_idx_].index);
 			}
 		}
 	}
@@ -124,7 +122,7 @@ namespace engine
 	bool SpriteAnimator::Play(const std::string_view anim_name)
 	{
 		if (!anim_) { return false; }
-		s_ptr<SpriteAnimClip> clip = anim_->GetAnimationClip(anim_name);
+		SpriteAnimClip* clip = anim_->GetAnimationClip(anim_name);
 		if (clip)
 		{
 			is_playing_ = true;

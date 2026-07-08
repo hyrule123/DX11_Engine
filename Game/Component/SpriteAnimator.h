@@ -25,12 +25,13 @@ namespace engine
         void SetSpriteAnimation(s_ptr<SpriteAnimation> anim) { anim_ = anim; }
 
         bool Play(const std::string_view anim_name);
+        bool Play(SpriteAnimClip* clip_ptr);
 
     private:
         w_ptr<SpriteRenderer> renderer_ = {};
         s_ptr<SpriteAnimation> anim_ = {};
 
-        w_ptr<SpriteAnimClip> playing_clip_ = {};
+        SpriteAnimClip* playing_clip_ = {};
 
         bool is_playing_ = {};
 

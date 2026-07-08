@@ -1,6 +1,7 @@
 #pragma once
 #include <Engine/Resource/Resource.h>
 
+#include <unordered_set>
 
 namespace engine
 {
@@ -20,13 +21,19 @@ namespace engine
 
         void SetSprite(s_ptr<Texture2DArray> sprite) { sprite_ = std::move(sprite); }
 
-        void AddAnimationClip(const std::string_view name, s_ptr<SpriteAnimClip> anim_clip);
+        void AddAnimationClip(const std::string_view name, u_ptr<SpriteAnimClip> anim_clip);
 
-        s_ptr<SpriteAnimClip> GetAnimationClip(const std::string_view anim_name) const;
+        SpriteAnimClip* GetAnimationClip(const std::string_view anim_name) const;
+
+        //포인터로 더 빠른 색인을 위함
+		bool HasAnimationClip(SpriteAnimClip* clip_ptr) const {
+			return (anim_clip_ptrs_.find(clip_ptr) != anim_clip_ptrs_.end());
+		}
 
     private:
         s_ptr<Texture2DArray> sprite_ = {};
-        StringHashMap<s_ptr<SpriteAnimClip>> anim_clips_ = {};
+        StringHashMap<u_ptr<SpriteAnimClip>> anim_clips_ = {};
+		std::unordered_set<SpriteAnimClip*> anim_clip_ptrs_ = {};
     };
 }
 

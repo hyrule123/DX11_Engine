@@ -12,6 +12,7 @@ namespace engine
 	public:
 		Entity(const std::string_view concrete_class_name);
 		Entity(const Entity& copy);
+		Entity(const Entity&& move) noexcept;
 		virtual ~Entity();
 
 		const std::string_view GetConcreteClassName() const { return concrete_class_name_; }

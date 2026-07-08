@@ -42,7 +42,9 @@ namespace engine
 			return; 
 		}
 
-		if (GetMaterial()->IsReady(render_pass_mode_))
+		if (render_pass_mode_ == RenderPassOrder::kForwardOpaque
+			&&
+			GetMaterial()->IsReady(render_pass_mode_))
 		{
 			auto* opaque_pass = RenderManager::GetInst().GetOpaquePass();
 

@@ -13,6 +13,11 @@ namespace engine
 		, id_(next_id_++)
 	{}
 
+	Entity::Entity(const Entity && move) noexcept
+		: concrete_class_name_(move.concrete_class_name_)
+		, id_(next_id_++)
+	{}
+
 	Entity::~Entity()
 	{}
 }

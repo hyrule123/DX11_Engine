@@ -219,6 +219,7 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Util\HashedStringTable.h" />
     <ClInclude Include="Resource\Graphics\RenderPass\ForwardOpaqueRenderPass.h" />
     <ClInclude Include="Resource\Graphics\RenderPass\RenderPass.h" />
     <ClInclude Include="Resource\Graphics\Shader\InputLayoutDesc.h" />

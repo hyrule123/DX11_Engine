@@ -24,7 +24,7 @@ namespace engine
 	{
 	}
 
-	bool GraphicsShaderSet::SetVertexShader(const stdfs::path& vs_name)
+	bool GraphicsShaderSet::SetVertexShader(const HashedStringView& vs_name)
 	{
 		vertex_shader_ = ResourceManager::GetInst().LoadFromFile<VertexShader>(vs_name);
 		return (bool)vertex_shader_;
@@ -38,7 +38,7 @@ namespace engine
 		}
 		vertex_shader_ = std::move(vertex_shader);
 	}
-	bool GraphicsShaderSet::CreateInputLayout(const stdfs::path& layout_name)
+	bool GraphicsShaderSet::CreateInputLayout(const HashedStringView& layout_name)
 	{
 		s_ptr<InputLayoutDesc> desc = ResourceManager::GetInst().Find<InputLayoutDesc>(layout_name);
 		return CreateInputLayout(desc);
@@ -67,22 +67,22 @@ namespace engine
 		return (bool)input_layout_;
 	}
 
-	bool GraphicsShaderSet::SetPixelShader(const stdfs::path& ps_name)
+	bool GraphicsShaderSet::SetPixelShader(const HashedStringView& ps_name)
 	{
 		SetPixelShader(ResourceManager::GetInst().LoadFromFile<PixelShader>(ps_name));
 		return (bool)pixel_shader_;
 	}
-	bool GraphicsShaderSet::SetRasterizerState(const stdfs::path& rss_name)
+	bool GraphicsShaderSet::SetRasterizerState(const HashedStringView& rss_name)
 	{
 		SetRasterizerState(ResourceManager::GetInst().Find<RasterizerState>(rss_name));
 		return (bool)rasterizer_state_;
 	}
-	bool GraphicsShaderSet::SetBlendState(const stdfs::path& bs_name)
+	bool GraphicsShaderSet::SetBlendState(const HashedStringView& bs_name)
 	{
 		SetBlendState(ResourceManager::GetInst().Find<BlendState>(bs_name));
 		return (bool)blend_state_;
 	}
-	bool GraphicsShaderSet::SetDepthStencilState(const stdfs::path& ds_name)
+	bool GraphicsShaderSet::SetDepthStencilState(const HashedStringView& ds_name)
 	{
 		SetDepthStencilState(ResourceManager::GetInst().Find<DepthStencilState>(ds_name));
 		return (bool)depth_stencil_state_;

@@ -31,28 +31,28 @@ namespace engine
 		void SetInstancingSupport(bool is_supported) { is_instancing_supported_ = is_supported; }
 		bool IsInstancingSupported() const { return is_instancing_supported_; }
 
-        bool SetVertexShader(const stdfs::path& vs_name);
+        bool SetVertexShader(const HashedStringView& vs_name);
         void SetVertexShader(s_ptr<VertexShader> vertex_shader);
 
-        bool CreateInputLayout(const stdfs::path& layout_desc_name);
+        bool CreateInputLayout(const HashedStringView& layout_desc_name);
         bool CreateInputLayout(s_ptr<InputLayoutDesc> input_layout_desc);
 
-        bool SetPixelShader(const stdfs::path& ps_name);
+        bool SetPixelShader(const HashedStringView& ps_name);
         void SetPixelShader(s_ptr<PixelShader> pixel_shader) {
 			pixel_shader_ = std::move(pixel_shader);
         }
 
-        bool SetRasterizerState(const stdfs::path& rss_name);
+        bool SetRasterizerState(const HashedStringView& rss_name);
         void SetRasterizerState(s_ptr<RasterizerState> rss) {
 			rasterizer_state_ = std::move(rss);
         }
 
-        bool SetBlendState(const stdfs::path& bs_name);
+        bool SetBlendState(const HashedStringView& bs_name);
         void SetBlendState(s_ptr<BlendState> bs) {
 			blend_state_ = std::move(bs);
         }
 
-        bool SetDepthStencilState(const stdfs::path& ds_name);
+        bool SetDepthStencilState(const HashedStringView& ds_name);
         void SetDepthStencilState(s_ptr<DepthStencilState> dss) {
 			depth_stencil_state_ = std::move(dss);
         }

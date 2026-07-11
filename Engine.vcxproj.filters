@@ -201,7 +201,7 @@
     <ClInclude Include="Resource\Graphics\RenderPass\RenderPass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Util\HashedStringTable.h">
+    <ClInclude Include="Util\StringHashTable.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

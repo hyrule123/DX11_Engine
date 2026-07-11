@@ -15,10 +15,12 @@
 #include <Engine/Resource/Graphics/Shader/InputLayoutDesc.h>
 
 #include <Engine/Core/Math.h>
+#include <Engine/Core/Debug.h>
+
+#include <Engine/Util/StringHashTable.h>
 
 #include <Engine/HLSL/Sprite/Sprite.hlsli>
 
-#include <Engine/Core/Debug.h>
 
 namespace engine
 {
@@ -38,7 +40,7 @@ namespace engine
 		auto device = GraphicsDevice::GetInst().GetDevice();
 		{
 			s_ptr<RasterizerState> rss = std::make_shared<RasterizerState>();
-			res_mgr.AddResource("RSS_Solid_Back", rss);
+			res_mgr.AddResource("RSS_Solid_Back"_hash, rss);
 			res_mgr.SetDefaultResource(rss);
 
 			// 구조체 초기화
@@ -61,7 +63,7 @@ namespace engine
 
 		{
 			s_ptr<RasterizerState> rss_wireframe = std::make_shared<RasterizerState>();
-			res_mgr.AddResource("RSS_WireFrame", rss_wireframe);
+			res_mgr.AddResource("RSS_WireFrame"_hash, rss_wireframe);
 			res_mgr.SetDefaultResource(rss_wireframe);
 
 			// 구조체 초기화
@@ -89,7 +91,7 @@ namespace engine
 
 		{//Debug DSS
 			s_ptr<DepthStencilState> dss = std::make_shared<DepthStencilState>();
-			ResourceManager::GetInst().AddResource("DSS_Debug", dss);
+			ResourceManager::GetInst().AddResource("DSS_Debug"_hash, dss);
 			ResourceManager::GetInst().SetDefaultResource(dss);
 
 			// 1. Depth Stencil Desc 구조체 선언 및 초기화
@@ -114,7 +116,7 @@ namespace engine
 
 		{//Default DSS
 			s_ptr<DepthStencilState> dss = std::make_shared<DepthStencilState>();
-			ResourceManager::GetInst().AddResource("DSS_Default", dss);
+			ResourceManager::GetInst().AddResource("DSS_Default"_hash, dss);
 			ResourceManager::GetInst().SetDefaultResource(dss);
 
 			// 1. Depth Stencil Desc 구조체 선언 및 초기화
@@ -150,7 +152,7 @@ namespace engine
 
 #pragma region //INPUT LAYOUT DESC
 		s_ptr<InputLayoutDesc> input_layout_desc = std::make_shared<InputLayoutDesc>();
-		resmgr.AddResource("InputLayoutDesc_Debug", input_layout_desc);
+		resmgr.AddResource("InputLayoutDesc_Debug"_hash, input_layout_desc);
 		resmgr.SetDefaultResource(input_layout_desc);
 
 		for (const auto& desc : Vertex::Debug::kInputLayoutDescs)
@@ -161,7 +163,7 @@ namespace engine
 
 #pragma region //MESH
 		auto msh = std::make_shared<Mesh>();
-		resmgr.AddResource("Mesh_Debug_Rect", msh);
+		resmgr.AddResource("Mesh_Debug_Rect"_hash, msh);
 		resmgr.SetDefaultResource(msh);
 
 		//VERTEX BUFFER
@@ -189,23 +191,23 @@ namespace engine
 
 #pragma region // GRAPHICS SHADER SET
 		s_ptr<GraphicsShaderSet> shaderset = std::make_shared<GraphicsShaderSet>();
-		resmgr.AddResource("GraphicsShaderSet_Debug", shaderset);
+		resmgr.AddResource("GraphicsShaderSet_Debug"_hash, shaderset);
 		resmgr.SetDefaultResource(shaderset);
 
 		shaderset->SetInstancingSupport(true);
 		shaderset->SetPerInstanceDataStride(sizeof(SpriteInstanceData));
 		//Shaders
-		shaderset->SetVertexShader("Shader/Debug_VS.cso");
-		shaderset->CreateInputLayout("InputLayoutDesc_Debug");
-		shaderset->SetPixelShader("Shader/Debug_PS.cso");
-		shaderset->SetDepthStencilState("DSS_Debug");
+		shaderset->SetVertexShader("Shader/Debug_VS.cso"_hash);
+		shaderset->CreateInputLayout("InputLayoutDesc_Debug"_hash);
+		shaderset->SetPixelShader("Shader/Debug_PS.cso"_hash);
+		shaderset->SetDepthStencilState("DSS_Debug"_hash);
 #pragma endregion // GRAPHICS SHADER SET
 
 #pragma region //MATERIAL
 		///////////// MATERIAL ////////////////
 		s_ptr<Material> material = std::make_shared<Material>();
 		material->SetShaderSet(shaderset, RenderPassOrder::kUI);
-		resmgr.AddResource("Material_Debug", material);
+		resmgr.AddResource("Material_Debug"_hash, material);
 		resmgr.SetDefaultResource(material);
 #pragma endregion //MATERIAL
 	}
@@ -223,14 +225,14 @@ namespace engine
 		{
 			input_layout_desc->AddLayoutDesc(desc);
 		}
-		resmgr.AddResource("InputLayoutDesc_Standard2D", input_layout_desc);
+		resmgr.AddResource("InputLayoutDesc_Standard2D"_hash, input_layout_desc);
 		resmgr.SetDefaultResource(input_layout_desc);
 #pragma endregion //INPUT LAYOUT DESC
 
 #pragma region //MESH
 		{
 			auto msh = std::make_shared<Mesh>();
-			resmgr.AddResource("Mesh_Standard2D_Rect", msh);
+			resmgr.AddResource("Mesh_Standard2D_Rect"_hash, msh);
 			resmgr.SetDefaultResource(msh);
 
 			//VERTEX BUFFER
@@ -263,19 +265,19 @@ namespace engine
 		
 		shaderset->SetInstancingSupport(true);
 		shaderset->SetPerInstanceDataStride(sizeof(SpriteInstanceData));
-		shaderset->SetVertexShader("Shader/Sprite_VS.cso");
-		shaderset->CreateInputLayout("InputLayoutDesc_Standard2D");
-		shaderset->SetPixelShader("Shader/Sprite_PS.cso");
-		shaderset->SetDepthStencilState("DSS_Default");
-		shaderset->SetRasterizerState("RSS_Solid_Back");
+		shaderset->SetVertexShader("Shader/Sprite_VS.cso"_hash);
+		shaderset->CreateInputLayout("InputLayoutDesc_Standard2D"_hash);
+		shaderset->SetPixelShader("Shader/Sprite_PS.cso"_hash);
+		shaderset->SetDepthStencilState("DSS_Default"_hash);
+		shaderset->SetRasterizerState("RSS_Solid_Back"_hash);
 
-		resmgr.AddResource("GraphicsShaderSet_Sprite", shaderset);
+		resmgr.AddResource("GraphicsShaderSet_Sprite"_hash, shaderset);
 		resmgr.SetDefaultResource(shaderset);
 
 		//MATERIAL
 		s_ptr<Material> material = std::make_shared<Material>();
 		material->SetShaderSet(shaderset, RenderPassOrder::kForwardOpaque);
-		resmgr.AddResource("Material_Sprite", material);
+		resmgr.AddResource("Material_Sprite"_hash, material);
 		resmgr.SetDefaultResource(material);
 	}
 }

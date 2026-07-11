@@ -1,6 +1,8 @@
 #pragma once
 #include <Engine/Resource/Resource.h>
 
+#include <Engine/Util/StringHashTable.h>
+
 #include <unordered_set>
 
 namespace engine
@@ -21,9 +23,9 @@ namespace engine
 
         void SetSprite(s_ptr<Texture2DArray> sprite) { sprite_ = std::move(sprite); }
 
-        void AddAnimationClip(const std::string_view name, u_ptr<SpriteAnimClip> anim_clip);
+        void AddAnimationClip(const HashedStringView& name, u_ptr<SpriteAnimClip> anim_clip);
 
-        SpriteAnimClip* GetAnimationClip(const std::string_view anim_name) const;
+        SpriteAnimClip* GetAnimationClip(const HashedStringView& anim_name) const;
 
         //포인터로 더 빠른 색인을 위함
 		bool HasAnimationClip(SpriteAnimClip* clip_ptr) const {
@@ -32,7 +34,7 @@ namespace engine
 
     private:
         s_ptr<Texture2DArray> sprite_ = {};
-        StringHashMap<u_ptr<SpriteAnimClip>> anim_clips_ = {};
+        StringHashTable<u_ptr<SpriteAnimClip>> anim_clips_ = {};
 		std::unordered_set<SpriteAnimClip*> anim_clip_ptrs_ = {};
     };
 }

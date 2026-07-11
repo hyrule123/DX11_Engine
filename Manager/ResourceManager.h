@@ -4,7 +4,8 @@
 
 #include <Engine/Core/CoreMinimal.h>
 
-#include <unordered_map>
+#include <Engine/Util/StringHashTable.h>
+
 #include <unordered_set>
 
 namespace engine
@@ -17,12 +18,12 @@ namespace engine
 		friend class GameEngine;
 
 	public:
-		s_ptr<Resource> Find(const stdfs::path& res_relative_path);
+		s_ptr<Resource> Find(const HashedStringView& res_key);
 
 		template <typename T>
-		s_ptr<T> Find(const stdfs::path& res_relative_path)
+		s_ptr<T> Find(const HashedStringView& res_key)
 		{
-			s_ptr<Resource> result = Find(res_relative_path);
+			s_ptr<Resource> result = Find(res_key);
 			if (result)
 			{
 				return std::dynamic_pointer_cast<T>(result);
@@ -31,28 +32,30 @@ namespace engine
 		}
 
 		template <typename T>
-		s_ptr<T> LoadFromFile(const stdfs::path& res_relative_path)
+		s_ptr<T> LoadFromFile(const HashedStringView& res_key)
 		{
-			s_ptr<T> resource = Find<T>(res_relative_path);
+			s_ptr<T> resource = Find<T>(res_key);
 			if (resource) { return resource; }
-			resource = LoadFromFileWithoutAdd<T>(res_relative_path);
-			if (resource) { resources_[res_relative_path] = resource; }
+			resource = LoadFromFileWithoutAdd<T>(res_key);
+			if (resource) 
+			{ 
+				resources_.insert(std::make_pair(std::string(res_key.GetStringView()), resource));
+			}
 			return resource;
 		}
 
 		template <typename T>
-		s_ptr<T> LoadFromFileWithoutAdd(const stdfs::path& res_relative_path)
+		s_ptr<T> LoadFromFileWithoutAdd(const HashedStringView& res_key)
 		{
 			s_ptr<T> resource = std::make_shared<T>();
-			if (false == resource->LoadFromFile(resource_dir_ / res_relative_path))
+			if (false == resource->LoadFromFile(resource_dir_ / res_key.GetStringView()))
 			{
 				return nullptr;
 			}
-			resource->SetResKey(res_relative_path);
 			return resource;
 		}
 
-		bool AddResource(const stdfs::path& res_relative_path, s_ptr<Resource> resource);
+		bool AddResource(const HashedStringView& res_key, s_ptr<Resource> resource);
 
 		void SetDefaultResource(s_ptr<Resource> resource)
 		{
@@ -67,7 +70,7 @@ namespace engine
 		void LoadDefaultResources();
 
 	private:
-		std::unordered_map <stdfs::path, s_ptr<Resource>> resources_;
+		StringHashTable<s_ptr<Resource>> resources_;
 		std::unordered_set<s_ptr<Resource>> default_resources_;
 
 		stdfs::path program_path_ = {};

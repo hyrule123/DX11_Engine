@@ -21,10 +21,10 @@ namespace engine
 
         virtual void LateUpdate() override;
 
-        bool SetSpriteAnimation(const stdfs::path& res_path);
+        bool SetSpriteAnimation(const HashedStringView& res_path);
         void SetSpriteAnimation(s_ptr<SpriteAnimation> anim) { anim_ = anim; }
 
-        bool Play(const std::string_view anim_name);
+        bool Play(const HashedStringView& anim_name);
         bool Play(SpriteAnimClip* clip_ptr);
 
     private:

@@ -4,6 +4,8 @@
 
 #include <Engine/Core/UtilMacro.h>
 
+#include <Engine/Util/StringHashTable.h>
+
 namespace engine
 {
 	class Resource 
@@ -14,12 +16,6 @@ namespace engine
 		Resource(const std::string_view concrete_class_name);
 		virtual ~Resource() override;
 
-		virtual bool LoadFromFile(const stdfs::path& path);
-
-		void SetResKey(const stdfs::path& path) { res_key_ = path; }
-		const stdfs::path& GetResKey() const { return res_key_; }
-
-	private:
-		stdfs::path res_key_;
+		virtual bool LoadFromFile(const stdfs::path& path) { return true; }
 	};
 }

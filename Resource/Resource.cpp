@@ -10,9 +10,4 @@ namespace engine
 	Resource::~Resource()
 	{
 	}
-	bool Resource::LoadFromFile(const stdfs::path & path)
-	{
-		res_key_ = path;
-		return true;
-	}
 }

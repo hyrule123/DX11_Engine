@@ -12,3 +12,4 @@ namespace stdfs = std::filesystem;
 #include <vector>
 #include <array>
 #include <unordered_map>
+#include <Engine/Util/StringHashTable.h>

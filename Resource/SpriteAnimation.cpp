@@ -13,34 +13,20 @@ namespace engine
 	{}
 	SpriteAnimation::~SpriteAnimation()
 	{}
-	void SpriteAnimation::AddAnimationClip(const std::string_view name, u_ptr<SpriteAnimClip> anim_clip)
+	void SpriteAnimation::AddAnimationClip(const HashedStringView& name, u_ptr<SpriteAnimClip> anim_clip)
 	{
-		if (!sprite_)
-		{
-			ERROR_MESSAGE("Sprite Texture를 먼저 설정하세요");
-			return;
-		}
-		if (name.empty())
-		{
-			ERROR_MESSAGE("이름이 비어있음");
-			return;
-		}
-		if (!anim_clip || !(anim_clip->IsReady()))
-		{
-			ERROR_MESSAGE("anim_clip이 nullptr");
-			return;
-		}
-		if (sprite_->GetFrameCount() <= anim_clip->GetMaxFrameIndex())
-		{
-			ERROR_MESSAGE("최대 프레임 개수보다 높은 Frame Index가 있습니다.");
-			return;
-		}
+		ASSERT(!!sprite_);
+		ASSERT(name.GetStringView().size() > 0);
+		ASSERT(anim_clip && anim_clip->IsReady());
+		ASSERT(sprite_->GetFrameCount() > anim_clip->GetMaxFrameIndex());
+
+		ASSERT(anim_clips_.find(name) == anim_clips_.end());
 
 		anim_clip_ptrs_.insert(anim_clip.get());
-		anim_clips_[std::string(name)] = std::move(anim_clip);
+		anim_clips_.insert(std::make_pair(std::string(name.GetStringView()), std::move(anim_clip)));
 	}
 
-	SpriteAnimClip* SpriteAnimation::GetAnimationClip(const std::string_view anim_name) const
+	SpriteAnimClip* SpriteAnimation::GetAnimationClip(const HashedStringView& anim_name) const
 	{
 		auto iter = anim_clips_.find(anim_name);
 

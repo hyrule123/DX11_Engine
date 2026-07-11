@@ -28,38 +28,11 @@ namespace engine
 	{
 		Super::Awake();
 		s_ptr<SpriteRenderer> sprite_renderer = GetComponent<SpriteRenderer>();
+		ASSERT_MESSAGE(sprite_renderer, "SpriteRenderer가 존재하지 않습니다.");
 		renderer_ = sprite_renderer;
-		if (renderer_.expired())
-		{
-			DEBUG_LOG("Sprite Renderer 준비되지 않아 렌더링 불가");
-			return;
-		}
 		
-		if (!anim_ || !(anim_->IsReady()))
-		{
-			DEBUG_LOG("Sprite Animation 준비되지 않아 렌더링 불가");
-			return;
-		}
-		
-		//해당 Animation만의 Material Key 생성.
-		stdfs::path uniq_mtrl_key = L"Material_";
-		uniq_mtrl_key += anim_->GetResKey();
-		
-		//애니메이션 재생에 사용할 텍스처가 등록된 고유 Material을 찾는다
-		auto& res_mgr = ResourceManager::GetInst();
-		s_ptr<Material> mtrl = res_mgr.Find<Material>(uniq_mtrl_key);
-
-		//고유 Material이 없을 경우 새로 생성 후 Renderer에 텍스처 지정
-		if (!mtrl)
-		{
-			mtrl = res_mgr.Find<Material>("Material_Sprite");
-			ASSERT((bool)mtrl);
-			mtrl = mtrl->Clone();
-			mtrl->SetTextures({ anim_->GetSprite(), });
-
-			res_mgr.AddResource(uniq_mtrl_key, mtrl);
-		}
-		sprite_renderer->SetMaterial(mtrl);
+		ASSERT_MESSAGE(anim_, "Sprite Animation이 존재하지 않습니다.");
+		ASSERT_MESSAGE(anim_->IsReady(), "Sprite Animation이 준비되지 않았습니다.");
 	}
 	void SpriteAnimator::LateUpdate()
 	{
@@ -114,12 +87,12 @@ namespace engine
 			}
 		}
 	}
-	bool SpriteAnimator::SetSpriteAnimation(const stdfs::path& res_path)
+	bool SpriteAnimator::SetSpriteAnimation(const HashedStringView& res_path)
 	{
 		anim_ = ResourceManager::GetInst().Find<SpriteAnimation>(res_path);
 		return (bool)anim_;
 	}
-	bool SpriteAnimator::Play(const std::string_view anim_name)
+	bool SpriteAnimator::Play(const HashedStringView& anim_name)
 	{
 		if (!anim_) { return false; }
 		SpriteAnimClip* clip = anim_->GetAnimationClip(anim_name);

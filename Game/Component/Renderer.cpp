@@ -39,12 +39,12 @@ namespace engine
 		Super::LateUpdate();
 	}
 
-	bool Renderer::SetMaterial(const stdfs::path& mtrl_name)
+	bool Renderer::SetMaterial(const HashedString& mtrl_name)
 	{
 		material_ = ResourceManager::GetInst().Find<Material>(mtrl_name);
 		return (nullptr != material_);
 	}
-	bool Renderer::SetMesh(const stdfs::path & mesh_name)
+	bool Renderer::SetMesh(const HashedString& mesh_name)
 	{
 		mesh_ = ResourceManager::GetInst().Find<Mesh>(mesh_name);
 		return (nullptr != mesh_);

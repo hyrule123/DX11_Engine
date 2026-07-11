@@ -36,13 +36,13 @@ namespace engine
 			return (bool)shader_sets_per_pass_[(size_t)pass];
 		}
 
-        bool SetShaderSet(const stdfs::path& shader_set_name, RenderPassOrder pass);
+        bool SetShaderSet(const HashedStringView& shader_set_name, RenderPassOrder pass);
         void SetShaderSet(s_ptr<GraphicsShaderSet> shader_set, RenderPassOrder pass);
         bool BindShaderSet(ID3D11DeviceContext* context, RenderPassOrder pass);
 
         void BindTextures(ID3D11DeviceContext* context, ShaderStage::Flags stage_flag);
 
-        bool SetTexture(const stdfs::path& texture_filepath, uint32 slot);
+        bool SetTexture(const HashedStringView& texture_name, uint32 slot);
         void SetTexture(s_ptr<Texture2D> tex, uint32 slot);
         void SetTextures(const Textures& textures) {
             for (size_t i = 0; i < textures.size(); ++i)

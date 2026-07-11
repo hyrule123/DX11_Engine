@@ -19,7 +19,7 @@ namespace engine
 	{
 	}
 
-	bool Material::SetShaderSet(const stdfs::path& shader_set_name, RenderPassOrder pass)
+	bool Material::SetShaderSet(const HashedStringView& shader_set_name, RenderPassOrder pass)
 	{
 		SetShaderSet(ResourceManager::GetInst().Find<GraphicsShaderSet>(shader_set_name), pass);
 		return (bool)shader_sets_per_pass_[(size_t)pass];
@@ -56,10 +56,10 @@ namespace engine
 		Texture2D::BindSRVs(context, srv_cache_, stage_flag);
 	}
 
-	bool Material::SetTexture(const stdfs::path& texture_filepath, uint32 slot)
+	bool Material::SetTexture(const HashedStringView& texture_name, uint32 slot)
 	{
 		s_ptr<Texture2D> tex = 
-			ResourceManager::GetInst().LoadFromFile<Texture2D>(texture_filepath);
+			ResourceManager::GetInst().LoadFromFile<Texture2D>(texture_name);
 
 		if (tex)
 		{

@@ -23,8 +23,8 @@ namespace engine
 	void SpriteRenderer::Init()
 	{
 		Super::Init();
-		bool result = SetMesh("Mesh_Standard2D_Rect");
-		result = (result && SetMaterial("Material_Sprite"));
+		bool result = SetMesh("Mesh_Standard2D_Rect"_hash);
+		result = (result && SetMaterial("Material_Sprite"_hash));
 		ASSERT(result);
 	}
 	void SpriteRenderer::Awake()

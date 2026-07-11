@@ -37,9 +37,9 @@ namespace engine
 		// ============ 기본 리소스 로드 ===============
 		DefaultRes::LoadDefaultResources();
 	}
-	s_ptr<Resource> ResourceManager::Find(const stdfs::path& path)
+	s_ptr<Resource> ResourceManager::Find(const HashedStringView& res_key)
 	{
-		auto iter = resources_.find(path);
+		auto iter = resources_.find(res_key);
 
 		if (iter != resources_.end())
 		{
@@ -48,16 +48,15 @@ namespace engine
 
 		return nullptr;
 	}
-	bool ResourceManager::AddResource(const stdfs::path& path, s_ptr<Resource> resource)
+	bool ResourceManager::AddResource(const HashedStringView& res_key, s_ptr<Resource> resource)
 	{
-		auto iter = resources_.find(path);
+		auto iter = resources_.find(res_key);
 		if (iter != resources_.end())
 		{
 			return false;
 		}
-
-		resource->SetResKey(path);
-		resources_[path] = resource;
+		
+		resources_.insert(std::make_pair(std::string(res_key.GetStringView()), resource));
 		return true;
 	}
 }

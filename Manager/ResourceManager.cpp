@@ -5,6 +5,8 @@
 
 #include <Engine/Resource/DefaultRes/DefaultRes.h>
 
+#include <Engine/Core/Debug.h>
+
 namespace engine
 {
 	ResourceManager::ResourceManager()
@@ -39,24 +41,21 @@ namespace engine
 	}
 	s_ptr<Resource> ResourceManager::Find(const HashedStringView& res_key)
 	{
-		auto iter = resources_.find(res_key);
-
-		if (iter != resources_.end())
-		{
-			return iter->second;
-		}
-
-		return nullptr;
+		s_ptr<Resource> ret = nullptr;
+		s_ptr<Resource>* res = resources_.find(res_key);
+		if (res) { ret = *res; }
+		return ret;
 	}
 	bool ResourceManager::AddResource(const HashedStringView& res_key, s_ptr<Resource> resource)
 	{
-		auto iter = resources_.find(res_key);
-		if (iter != resources_.end())
-		{
-			return false;
+		s_ptr<Resource>* res = resources_.find(res_key);
+		if (res) 
+		{ 
+			DEBUG_MESSAGE("Resource already exists");
+			return false; 
 		}
-		
-		resources_.insert(std::make_pair(std::string(res_key.GetStringView()), resource));
+
+		resources_.insert(res_key, std::move(resource));
 		return true;
 	}
 }

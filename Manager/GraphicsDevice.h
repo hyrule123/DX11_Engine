@@ -4,6 +4,8 @@
 
 #include <Engine/Core/CoreMinimal.h>
 
+#include <Engine/Core/DX11.h>
+
 struct ID3D11Device;
 struct ID3D11DeviceContext;
 struct IDXGISwapChain;

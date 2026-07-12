@@ -8,6 +8,7 @@
 namespace engine
 {
 	class HFSMState;
+	class Blackboard;
 
     class HFSM :
         public Component
@@ -30,6 +31,8 @@ namespace engine
 
 		void ValidateStates() const;
 
+		s_ptr<Blackboard> GetBlackboard() const { return blackboard_.lock(); }
+
 	private:
 		void ChangeState(const HashedStringView& state_name);
 
@@ -38,6 +41,8 @@ namespace engine
 		u_ptr<HFSMState> root_ = {};
 
 		HFSMState* current_state_ = {};
+
+		w_ptr<Blackboard> blackboard_ = {};
     };
 }
 

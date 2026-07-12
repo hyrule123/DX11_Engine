@@ -20,19 +20,18 @@ namespace engine
 		ASSERT(anim_clip && anim_clip->IsReady());
 		ASSERT(sprite_->GetFrameCount() > anim_clip->GetMaxFrameIndex());
 
-		ASSERT(anim_clips_.find(name) == anim_clips_.end());
+		ASSERT(nullptr == anim_clips_.find(name));
 
 		anim_clip_ptrs_.insert(anim_clip.get());
-		anim_clips_.insert(std::make_pair(std::string(name.GetStringView()), std::move(anim_clip)));
+		anim_clips_.insert(name, std::move(anim_clip));
 	}
 
-	SpriteAnimClip* SpriteAnimation::GetAnimationClip(const HashedStringView& anim_name) const
+	SpriteAnimClip* SpriteAnimation::GetAnimationClip(const HashedStringView& anim_name) const 
 	{
-		auto iter = anim_clips_.find(anim_name);
-
-		if (iter != anim_clips_.end())
+		const u_ptr<SpriteAnimClip>* anim_clip_pp = anim_clips_.find(anim_name);
+		if (anim_clip_pp)
 		{
-			return iter->second.get();
+			return anim_clip_pp->get();
 		}
 		return nullptr;
 	}

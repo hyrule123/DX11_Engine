@@ -21,7 +21,7 @@ namespace engine
         virtual void OnUpdate() {};
 		virtual void OnExit() {};
 
-		virtual HashedStringView* CheckTransition() { return nullptr; }
+		virtual HashedStringView CheckTransition() { return ""_hash; }
 
         void SetParentState(HFSMState* parent_state);
 		HFSMState* GetParentState() const { return parent_state_; }

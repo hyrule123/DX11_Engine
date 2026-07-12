@@ -1,6 +1,8 @@
 #include "Engine/Core/pch.h"
 #include "RenderPass.h"
 
+#include <Engine/Core/DX11.h>
+
 namespace engine
 {
 	RenderPass::RenderPass(const std::string_view concrete_class_name, RenderPassOrder pass_order)

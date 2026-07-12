@@ -39,7 +39,7 @@ namespace engine
 			resource = LoadFromFileWithoutAdd<T>(res_key);
 			if (resource) 
 			{ 
-				resources_.insert(std::make_pair(std::string(res_key.GetStringView()), resource));
+				resources_.insert(res_key.GetStringView(), resource);
 			}
 			return resource;
 		}

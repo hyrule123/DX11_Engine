@@ -2,6 +2,7 @@
 #include "HFSM.h"
 
 #include <Engine/Game/Component/HFSMState.h>
+#include <Engine/Game/Component/Blackboard.h>
 
 #include <Engine/Core/Debug.h>
 
@@ -17,6 +18,9 @@ namespace engine
 	void HFSM::Awake()
 	{
 		Super::Awake();
+
+		blackboard_ = GetOwner()->GetComponent<Blackboard>();
+		ASSERT(!blackboard_.expired());
 
 		// 모든 상태의 ancestor_states_를 갱신
 		root_->RefreshAncestorStates({});
@@ -42,10 +46,10 @@ namespace engine
 				state->OnUpdate();
 			}
 
-			HashedStringView* next_state_name = current_state_->CheckTransition();
-			if (next_state_name)
+			HashedStringView next_state_name = current_state_->CheckTransition();
+			if (!next_state_name.IsEmpty())
 			{
-				ChangeState(*next_state_name);
+				ChangeState(next_state_name);
 			}
 		}
 	}
@@ -56,18 +60,18 @@ namespace engine
 		ASSERT(state);
 
 		//중복 삽입 방지
-		ASSERT(states_.find(state_name) == states_.end());
+		ASSERT(nullptr == states_.find(state_name));
 
 		state->SetOwnerHFSM(std::static_pointer_cast<HFSM>(shared_from_this()));
-		states_.insert(std::make_pair(state_name.GetStringView(), std::move(state)));
+		states_.insert(state_name, std::move(state));
 	}
 
 	void HFSM::SetInitialState(const HashedStringView& state_name)
 	{
-		auto iter = states_.find(state_name);
-		if (iter != states_.end())
+		u_ptr<HFSMState>* state = states_.find(state_name);
+		if (state)
 		{
-			current_state_ = iter->second.get();
+			current_state_ = state->get();
 		}
 		ASSERT_MESSAGE(current_state_, "State not found");
 	}
@@ -77,7 +81,7 @@ namespace engine
 #ifndef NDEBUG
 		ASSERT(current_state_);
 
-		for (const auto& pair : states_)
+		for (const auto& pair : states_.cont)
 		{
 			const auto& state = pair.second;
 			ASSERT(state);
@@ -91,19 +95,19 @@ namespace engine
 
 	void HFSM::ChangeState(const HashedStringView& state_name)
 	{
-		auto iter = states_.find(state_name);
-		if (iter != states_.end())
+		u_ptr<HFSMState>* state = states_.find(state_name);
+		if (state)
 		{
 			if (current_state_)
 			{
 				const auto& hierarchy = current_state_->GetAncestorStates();
 
-				for (auto* state : hierarchy)
+				for (auto* ancestor : hierarchy)
 				{
-					state->OnExit();
+					ancestor->OnExit();
 				}
 			}
-			current_state_ = iter->second.get();
+			current_state_ = state->get();
 		}
 		ASSERT_MESSAGE(current_state_, "State not found");
 	}

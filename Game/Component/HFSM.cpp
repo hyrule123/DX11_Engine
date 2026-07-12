@@ -95,19 +95,40 @@ namespace engine
 
 	void HFSM::ChangeState(const HashedStringView& state_name)
 	{
-		u_ptr<HFSMState>* state = states_.find(state_name);
-		if (state)
+		u_ptr<HFSMState>* state_pp = states_.find(state_name);
+		if (state_pp)
 		{
+			//null check는 삽입시 진행했음
+			HFSMState* state = state_pp->get();
+
 			if (current_state_)
 			{
-				const auto& hierarchy = current_state_->GetAncestorStates();
+				const auto& prev_hierarchy = current_state_->GetAncestorStates();
+				const auto& next_hierarchy = state->GetAncestorStates();
 
-				for (auto* ancestor : hierarchy)
+				//간단한 LCA
+				size_t min_size = std::min(prev_hierarchy.size(), next_hierarchy.size());
+
+				for (size_t i = 0; i < min_size; ++i)
 				{
-					ancestor->OnExit();
+					//공통조상 아닌부분 찾기
+					if (prev_hierarchy[i] != next_hierarchy[i])
+					{
+						// 나가려는 쪽은 OnExit 싹 호출
+						for (size_t j = prev_hierarchy.size() - 1; j >= i; --j)
+						{
+							prev_hierarchy[j]->OnExit();
+						}
+						// 들어오는 쪽은 OnEnter 싹 호출
+						for (size_t j = i; j < next_hierarchy.size(); ++j)
+						{
+							next_hierarchy[j]->OnEnter();
+						}
+						break;
+					}
 				}
 			}
-			current_state_ = state->get();
+			current_state_ = state;
 		}
 		ASSERT_MESSAGE(current_state_, "State not found");
 	}

@@ -3,6 +3,8 @@
 
 #include <Engine/Core/UtilMacro.h>
 
+#include <Engine/Core/DX11.h>
+
 struct ID3D11Device;
 struct ID3D11DeviceContext;
 

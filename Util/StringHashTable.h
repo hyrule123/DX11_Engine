@@ -16,6 +16,12 @@ static constexpr size_t hash_str_fnv1a(const std::string_view s) {
 // HashedStringView 구조체, constexpr
 class HashedStringView {
 public:
+	template <size_t N>
+	consteval HashedStringView(const char(&s)[N]) :
+		hash(hash_str_fnv1a(std::string_view(s, N - 1))),
+		str_view(s, N - 1)
+	{}
+
 	constexpr HashedStringView(const std::string_view s) : hash(hash_str_fnv1a(s)), str_view(s) {}
 
 	bool IsEmpty() const { return str_view.empty(); }
@@ -84,10 +90,6 @@ struct StringHasher {
 		return hash_str_fnv1a(s);
 	}
 
-	size_t operator()(const std::string& s) const noexcept {
-		return hash_str_fnv1a(s);
-	}
-
 	size_t operator()(const HashedStringView& s) const noexcept {
 		return s.GetHash();
 	}
@@ -99,12 +101,62 @@ struct StringEqual {
 	bool operator()(const std::string_view lhs, const std::string_view rhs) const { return lhs == rhs; }
 
 	bool operator()(const std::string_view lhs, const HashedStringView& rhs) const { return lhs == rhs.GetStringView(); }
-	bool operator()(const HashedStringView& lhs, const std::string_view rhs) const { return lhs.GetStringView() == rhs; }
 
-	bool operator()(const HashedStringView& lhs, const HashedStringView& rhs) const {
-		return lhs == rhs;
-	}
+	bool operator()(const HashedStringView& lhs, const std::string_view rhs) const { return lhs.GetStringView() == rhs; }
 };
 
-template <typename T>
-using StringHashTable = std::unordered_map<std::string, T, StringHasher, StringEqual>;
+//혹시나 내부기능이 필요하면 cont에 직접 접근해서 쓰면됨
+template <typename ValueType>
+struct StringHashTable
+{
+	using ContType = std::unordered_map<std::string, ValueType, StringHasher, StringEqual>;
+	using iterator = ContType::iterator;
+
+	ValueType& operator[](const HashedStringView& key) {
+		auto it = cont.find(key);
+		if (it != cont.end()) {
+			return it->second;
+		}
+
+		// 못 찾았을 때만 key.str(string_view)를 이용해 런타임에 메모리 할당 후 삽입
+		return cont[std::string(key.GetStringView())];
+	}
+
+	const ValueType* find(const HashedStringView& key) const {
+		auto it = cont.find(key);
+		if (it != cont.end()) {
+			return &it->second;
+		}
+		return nullptr;
+	}
+	ValueType* find(const HashedStringView& key) {
+		auto it = cont.find(key);
+		if (it != cont.end()) {
+			return &it->second;
+		}
+		return nullptr;
+	}
+
+	bool insert(const HashedStringView& key, const ValueType& value) {
+		auto [it, inserted] =
+			cont.emplace(std::string(key.GetStringView()), value);
+		return inserted;
+	}
+
+	bool insert(const HashedStringView& key, ValueType&& value) {
+		auto [it, inserted] =
+			cont.emplace(std::string(key.GetStringView()), std::move(value));
+		return inserted;
+	}
+
+	bool erase(const HashedStringView& key) {
+		auto it = cont.find(key);
+		if (it != cont.end()) {
+			cont.erase(it);
+			return true;
+		}
+		return false;
+	}
+
+	std::unordered_map<std::string, ValueType, StringHasher, StringEqual> cont = {};
+};

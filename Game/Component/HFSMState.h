@@ -33,6 +33,7 @@ namespace engine
 		void RefreshAncestorStates(const std::vector<HFSMState*>& ancestors);
 
 		void SetOwnerHFSM(const s_ptr<HFSM>& hfsm) { owner_hfsm_ = hfsm; }
+		s_ptr<HFSM> GetOwnerHFSM() const { return owner_hfsm_.lock(); }
 
     private:
         void AddChildState(HFSMState* child_state);

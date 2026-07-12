@@ -110,7 +110,8 @@ template <typename ValueType>
 struct StringHashTable
 {
 	using ContType = std::unordered_map<std::string, ValueType, StringHasher, StringEqual>;
-	using iterator = ContType::iterator;
+	using Iterator = ContType::iterator;
+	using ConstIterator = ContType::const_iterator;
 
 	ValueType& operator[](const HashedStringView& key) {
 		auto it = cont.find(key);
@@ -122,20 +123,21 @@ struct StringHashTable
 		return cont[std::string(key.GetStringView())];
 	}
 
-	const ValueType* find(const HashedStringView& key) const {
-		auto it = cont.find(key);
-		if (it != cont.end()) {
-			return &it->second;
-		}
-		return nullptr;
+	ConstIterator find(const HashedStringView& key) const {
+		 return cont.find(key);
 	}
-	ValueType* find(const HashedStringView& key) {
-		auto it = cont.find(key);
-		if (it != cont.end()) {
-			return &it->second;
-		}
-		return nullptr;
+
+	Iterator find(const HashedStringView& key) {
+		return cont.find(key);
 	}
+
+	Iterator end() noexcept {
+		return cont.end();
+	}
+	ConstIterator end() const noexcept {
+		return cont.end();
+	}
+
 
 	bool insert(const HashedStringView& key, const ValueType& value) {
 		auto [it, inserted] =
@@ -149,9 +151,11 @@ struct StringHashTable
 		return inserted;
 	}
 
-	bool erase(const HashedStringView& key) {
-		auto it = cont.find(key);
-		if (it != cont.end()) {
+	bool erase(const HashedStringView& key) noexcept {
+		return erase(cont.find(key));
+	}
+	bool erase(Iterator it) noexcept {
+		if (it != end()) {
 			cont.erase(it);
 			return true;
 		}

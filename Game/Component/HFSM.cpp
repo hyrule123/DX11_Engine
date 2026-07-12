@@ -60,7 +60,7 @@ namespace engine
 		ASSERT(state);
 
 		//중복 삽입 방지
-		ASSERT(nullptr == states_.find(state_name));
+		ASSERT(states_.find(state_name) == states_.end());
 
 		state->SetOwnerHFSM(std::static_pointer_cast<HFSM>(shared_from_this()));
 		states_.insert(state_name, std::move(state));
@@ -68,10 +68,10 @@ namespace engine
 
 	void HFSM::SetInitialState(const HashedStringView& state_name)
 	{
-		u_ptr<HFSMState>* state = states_.find(state_name);
-		if (state)
+		auto iter = states_.find(state_name);
+		if (iter != states_.end())
 		{
-			current_state_ = state->get();
+			current_state_ = iter->second.get();
 		}
 		ASSERT_MESSAGE(current_state_, "State not found");
 	}
@@ -95,11 +95,11 @@ namespace engine
 
 	void HFSM::ChangeState(const HashedStringView& state_name)
 	{
-		u_ptr<HFSMState>* state_pp = states_.find(state_name);
-		if (state_pp)
+		auto iter = states_.find(state_name);
+		if (iter != states_.end())
 		{
 			//null check는 삽입시 진행했음
-			HFSMState* state = state_pp->get();
+			HFSMState* state = iter->second.get();
 
 			if (current_state_)
 			{

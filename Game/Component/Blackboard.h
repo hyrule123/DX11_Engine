@@ -28,7 +28,11 @@ namespace engine
 
 		template <typename T>
 		T* GetValue(const HashedStringView& key) {
-			return std::any_cast<T>(cont_.find(key));
+			auto iter = cont_.find(key);
+			if (iter != cont_.end()) {
+				return std::any_cast<T>(&iter->second);
+			}
+			return nullptr;
 		}
 
 		bool Remove(const HashedStringView& key) {

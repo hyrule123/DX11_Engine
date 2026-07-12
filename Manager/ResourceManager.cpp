@@ -42,14 +42,14 @@ namespace engine
 	s_ptr<Resource> ResourceManager::Find(const HashedStringView& res_key)
 	{
 		s_ptr<Resource> ret = nullptr;
-		s_ptr<Resource>* res = resources_.find(res_key);
-		if (res) { ret = *res; }
+		auto iter = resources_.find(res_key);
+		if (iter != resources_.end()) { ret = iter->second; }
 		return ret;
 	}
 	bool ResourceManager::AddResource(const HashedStringView& res_key, s_ptr<Resource> resource)
 	{
-		s_ptr<Resource>* res = resources_.find(res_key);
-		if (res) 
+		auto iter = resources_.find(res_key);
+		if (iter != resources_.end()) 
 		{ 
 			DEBUG_MESSAGE("Resource already exists");
 			return false; 

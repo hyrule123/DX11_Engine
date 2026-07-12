@@ -8,6 +8,7 @@ VS_OUT main(SpriteVSInput indata)
 	outdata.position = mul(outdata.position, g_CB_camera.view_mat);
 	outdata.position = mul(outdata.position, g_CB_camera.proj_mat);
 	outdata.UV = indata.UV;
+	outdata.instance_ID = indata.instance_ID;
 	
 	return outdata;
 }

@@ -9,5 +9,7 @@ VS_OUT main(DebugVSInput inpos)
 	outpos.position = mul(outpos.position, g_CB_camera.view_mat);
 	outpos.position = mul(outpos.position, g_CB_camera.proj_mat);
 	
+	outpos.instance_ID = inpos.instance_ID;
+	
 	return outpos;
 }

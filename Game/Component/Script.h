@@ -8,7 +8,7 @@ namespace engine
         public Component
     {
         CLASS_INFO(Script, Component)
-            COMPONENT_CATEGORY(ComponentCategory::kOthers)
+            COMPONENT_CATEGORY(ComponentCategory::kScripts)
     public:
         Script(const std::string_view class_name);
         virtual ~Script() override;

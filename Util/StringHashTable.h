@@ -18,8 +18,13 @@ class HashedStringView {
 public:
 	constexpr HashedStringView(const std::string_view s) : hash(hash_str_fnv1a(s)), str_view(s) {}
 
+	bool IsEmpty() const { return str_view.empty(); }
 	size_t GetHash() const { return hash; }
 	std::string_view GetStringView() const { return str_view; }
+
+	bool operator==(const HashedStringView& other) const {
+		return (hash == other.hash) && (str_view == other.str_view);
+	}
 
 private:
 	//HashedString용 생성자, 해시값을 직접 넣어주는 용도
@@ -97,7 +102,7 @@ struct StringEqual {
 	bool operator()(const HashedStringView& lhs, const std::string_view rhs) const { return lhs.GetStringView() == rhs; }
 
 	bool operator()(const HashedStringView& lhs, const HashedStringView& rhs) const {
-		return lhs.GetHash() == rhs.GetHash() && lhs.GetStringView() == rhs.GetStringView();
+		return lhs == rhs;
 	}
 };
 

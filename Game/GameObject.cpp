@@ -50,7 +50,14 @@ namespace engine
 
 	void GameObject::Update()
 	{
-		//DEBUG_LOG("Update 돌고 있습니다");
+		for (const auto& com : other_components_)
+		{
+			if (com)
+			{
+				com->Update();
+			}
+		}
+
 		for (const auto& com : fixed_order_components_)
 		{
 			if (com)
@@ -64,26 +71,20 @@ namespace engine
 			}
 		}
 
-		for (const auto& com : other_components_)
-		{
-			if (com)
-			{
-				com->Update();
-			}
-		}
+
 	}
 
 	void GameObject::LateUpdate()
 	{
-		for (const auto& com : fixed_order_components_)
+		for (const auto& com : other_components_)
 		{
 			if (com)
 			{
 				com->LateUpdate();
 			}
 		}
-			
-		for (const auto& com : other_components_)
+
+		for (const auto& com : fixed_order_components_)
 		{
 			if (com)
 			{
@@ -144,7 +145,7 @@ namespace engine
 
 		ComponentCategory cat = component->GetComponentCategory();
 
-		if (cat < ComponentCategory::kOthers)
+		if (ComponentCategory::kScripts < cat)
 		{
 			if (fixed_order_components_[(size_t)cat])
 			{

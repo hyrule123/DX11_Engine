@@ -204,6 +204,15 @@
     <ClInclude Include="Util\StringHashTable.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Game\Component\HFSM.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Component\HFSMState.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Blackboard.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Core\pch.cpp">
@@ -345,6 +354,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Resource\Graphics\RenderPass\RenderPass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Component\HFSM.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Component\HFSMState.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Blackboard.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

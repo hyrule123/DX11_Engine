@@ -219,6 +219,9 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Blackboard.h" />
+    <ClInclude Include="Game\Component\HFSM.h" />
+    <ClInclude Include="Game\Component\HFSMState.h" />
     <ClInclude Include="Util\StringHashTable.h" />
     <ClInclude Include="Resource\Graphics\RenderPass\ForwardOpaqueRenderPass.h" />
     <ClInclude Include="Resource\Graphics\RenderPass\RenderPass.h" />
@@ -284,6 +287,9 @@
     <ClInclude Include="Resource\Graphics\Shader\VertexShader.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Blackboard.cpp" />
+    <ClCompile Include="Game\Component\HFSM.cpp" />
+    <ClCompile Include="Game\Component\HFSMState.cpp" />
     <ClCompile Include="Resource\Graphics\RenderPass\ForwardOpaqueRenderPass.cpp" />
     <ClCompile Include="Resource\Graphics\RenderPass\RenderPass.cpp" />
     <ClCompile Include="Resource\Graphics\Shader\InputLayoutDesc.cpp" />

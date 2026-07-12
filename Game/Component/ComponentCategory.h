@@ -10,16 +10,25 @@ constexpr static ComponentCategory kComponentCategory = component_category;
 
 namespace engine
 {
-    enum class ComponentCategory : size_t
+    enum class ComponentCategory : int32
     {
+        kScripts = -1,
+
+        // 1. 데이터 및 로직
+        kBlackboard = 0,
+        kBehavior,
+
+        // 2. 물리 및 이동
+        kTransform,
+
+        // 3. 시각적 상태
         kAnimator,
 
-        kTransform,
+        // 4. 화면 출력
         kCamera,
         kRenderer,
-
-        kOthers,
-        kEnd = kOthers
+        
+        kEnd
     };
 
     template <typename T>

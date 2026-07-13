@@ -5,6 +5,8 @@
 
 #include <Engine/Util/StringHashTable.h>
 
+#include <Engine/Game/Component/AIContext.h>
+
 namespace engine
 {
 	class HFSMState;
@@ -23,26 +25,29 @@ namespace engine
 		virtual void Awake() override;
 		virtual void Update() override;
 
-		void AddState(const HashedStringView& state_name, u_ptr<HFSMState> state);
+		HFSMState* AddState(const HashedStringView& state_name, u_ptr<HFSMState> state);
+
+		void SetRootState(HFSMState* root_state) { root_ = root_state; }
 
 		void SetInitialState(const HashedStringView& state_name);
 
-		HFSMState* GetRootState() const { return root_.get(); }
-
-		void ValidateStates() const;
+		HFSMState* GetRootState() const { return root_; }
 
 		s_ptr<Blackboard> GetBlackboard() const { return blackboard_.lock(); }
 
 	private:
+		void ValidateStates() const;
 		void ChangeState(const HashedStringView& state_name);
 
 		StringHashTable<u_ptr<HFSMState>> states_ = {};
 
-		u_ptr<HFSMState> root_ = {};
+		HFSMState* root_ = {};
 
 		HFSMState* current_state_ = {};
 
 		w_ptr<Blackboard> blackboard_ = {};
+
+		AIContext ai_context_ = {};
     };
 }
 

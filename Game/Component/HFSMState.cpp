@@ -10,6 +10,14 @@ namespace engine
 	{}
 	HFSMState::~HFSMState()
 	{}
+	void HFSMState::OnAwakeRecursive(const AIContext & ai_context)
+	{
+		OnAwake(ai_context);
+		for (HFSMState* child : child_states_)
+		{
+			child->OnAwakeRecursive(ai_context);
+		}
+	}
 	void HFSMState::SetParentState(HFSMState* parent_state)
 	{
 		ASSERT(this != parent_state);

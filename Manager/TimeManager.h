@@ -15,6 +15,8 @@ namespace engine
 	public:
 		float DeltaTime() const { return delta_time_; }
 
+		constexpr float GetDeltaTimeCap() const { return kDeltaTimeCap; }
+
 		void Update();
 
 	private:

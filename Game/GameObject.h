@@ -83,7 +83,7 @@ namespace engine
 		constexpr ComponentCategory cat = T::kComponentCategory;
 
 		//고정순서 컴포넌트는 저장된 컴포넌트 번호만 찾아온다.
-		if constexpr (cat < ComponentCategory::kEnd)
+		if constexpr (ComponentCategory::kScripts < cat && cat < ComponentCategory::kEnd)
 		{
 			ret = std::dynamic_pointer_cast<T>(fixed_order_components_[(size_t)cat]);
 		}

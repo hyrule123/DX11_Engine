@@ -5,6 +5,8 @@
 
 #include <Engine/Util/StringHashTable.h>
 
+#include <Engine/Game/Component/AIContext.h>
+
 namespace engine
 {
     class HFSM;
@@ -17,11 +19,14 @@ namespace engine
         HFSMState(const std::string_view concrete_class_name);
 		virtual ~HFSMState() override;
 
-        virtual void OnEnter() {};
-        virtual void OnUpdate() {};
-		virtual void OnExit() {};
+		void OnAwakeRecursive(const AIContext& ai_context);
 
-		virtual HashedStringView CheckTransition() { return ""_hash; }
+		virtual void OnAwake(const AIContext& ai_context) {};
+        virtual void OnEnter(const AIContext& ai_context) {};
+        virtual void OnUpdate(const AIContext& ai_context) {};
+		virtual void OnExit(const AIContext& ai_context) {};
+
+		virtual HashedStringView CheckTransition(const AIContext& ai_context) { return ""_hash; }
 
         void SetParentState(HFSMState* parent_state);
 		HFSMState* GetParentState() const { return parent_state_; }

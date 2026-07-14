@@ -7,7 +7,8 @@ struct alignas(16)     SpriteInstanceData
 {
 	matrix world_mat;
 	uint sprite_frame_idx;
-	float3 padding_0;
+	BOOL flip_left_right;
+	float2 padding_0;
 };
 
 struct SpriteVSInput

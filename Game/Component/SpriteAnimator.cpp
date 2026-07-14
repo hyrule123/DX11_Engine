@@ -92,22 +92,70 @@ namespace engine
 		anim_ = ResourceManager::GetInst().Find<SpriteAnimation>(res_path);
 		return (bool)anim_;
 	}
+
 	bool SpriteAnimator::Play(const HashedStringView& anim_name)
 	{
-		if (!anim_) { return false; }
+		ASSERT(anim_);
 		SpriteAnimClip* clip = anim_->GetAnimationClip(anim_name);
 		if (clip)
 		{
-			is_playing_ = true;
-			acc_deltatime_ = 0.0f;
-			cur_frame_idx_ = 0u;
-			cur_frame_duration_ = clip->GetFrames()[0].duration;
-			clip_frame_total_count_ = (uint32)clip->GetFrames().size();
-
-			playing_clip_ = clip;
+			PlayInternal(clip);
 			return true;
 		}
 
+		return false;
+	}
+	bool SpriteAnimator::Play(SpriteAnimClip* clip_ptr)
+	{
+		ASSERT(anim_);
+		if (clip_ptr && anim_->HasAnimationClip(clip_ptr))
+		{
+			PlayInternal(clip_ptr);
+			return true;
+		}
+
+		return false;
+	}
+	bool SpriteAnimator::SwitchAnimKeepFrame(const HashedStringView& anim_name)
+	{
+		ASSERT(anim_);
+
+		SpriteAnimClip* clip = anim_->GetAnimationClip(anim_name);
+		if (clip)
+		{
+			return SwitchAnimKeepFrameInternal(clip);
+		}
+		return false;
+	}
+	bool SpriteAnimator::SwitchAnimKeepFrame(SpriteAnimClip* clip_ptr)
+	{
+		ASSERT(anim_);
+		ASSERT(clip_ptr);
+
+		if (clip_ptr && anim_->HasAnimationClip(clip_ptr))
+		{
+			return SwitchAnimKeepFrameInternal(clip_ptr);
+		}
+		return false;
+	}
+	void SpriteAnimator::PlayInternal(SpriteAnimClip* clip_ptr)
+	{
+		is_playing_ = true;
+		acc_deltatime_ = 0.0f;
+		cur_frame_idx_ = 0u;
+		cur_frame_duration_ = clip_ptr->GetFrames()[0].duration;
+		clip_frame_total_count_ = (uint32)clip_ptr->GetFrames().size();
+
+		playing_clip_ = clip_ptr;
+	}
+
+	bool SpriteAnimator::SwitchAnimKeepFrameInternal(SpriteAnimClip* clip_ptr)
+	{
+		if (playing_clip_ && playing_clip_->GetFrames().size() == clip_ptr->GetFrames().size())
+		{
+			playing_clip_ = clip_ptr;
+			return true;
+		}
 		return false;
 	}
 }

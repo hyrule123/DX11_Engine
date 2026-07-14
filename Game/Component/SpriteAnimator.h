@@ -27,7 +27,13 @@ namespace engine
         bool Play(const HashedStringView& anim_name);
         bool Play(SpriteAnimClip* clip_ptr);
 
+        bool SwitchAnimKeepFrame(const HashedStringView& anim_name);
+        bool SwitchAnimKeepFrame(SpriteAnimClip* clip_ptr);
+
     private:
+        void PlayInternal(SpriteAnimClip* clip_ptr);
+        bool SwitchAnimKeepFrameInternal(SpriteAnimClip* clip_ptr);
+
         w_ptr<SpriteRenderer> renderer_ = {};
         s_ptr<SpriteAnimation> anim_ = {};
 

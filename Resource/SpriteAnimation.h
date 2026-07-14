@@ -29,7 +29,7 @@ namespace engine
 
         //포인터로 더 빠른 색인을 위함
 		bool HasAnimationClip(SpriteAnimClip* clip_ptr) const {
-			return (anim_clip_ptrs_.find(clip_ptr) != anim_clip_ptrs_.end());
+            return (anim_clip_ptrs_.find(clip_ptr) != anim_clip_ptrs_.end());
 		}
 
     private:

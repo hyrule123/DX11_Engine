@@ -18,7 +18,7 @@ namespace engine
 	{
 		Super::Awake();
 
-		s_ptr<Blackboard> blackboard = GetOwner()->GetComponent<Blackboard>();
+		s_ptr<BlackBoard> blackboard = GetOwner()->GetComponent<BlackBoard>();
 
 		blackboard_ = blackboard;
 		ASSERT(!blackboard_.expired());
@@ -45,7 +45,7 @@ namespace engine
 	{
 		Super::Update();
 
-		s_ptr<Blackboard> blackboard = blackboard_.lock();
+		s_ptr<BlackBoard> blackboard = blackboard_.lock();
 
 		if (current_state_)
 		{
@@ -121,7 +121,7 @@ namespace engine
 	void HFSM::ChangeState(const HashedStringView& state_name)
 	{
 		auto iter = states_.find(state_name);
-		s_ptr<Blackboard> blackboard = blackboard_.lock();
+		s_ptr<BlackBoard> blackboard = blackboard_.lock();
 		if (iter != states_.end())
 		{
 			//null check는 삽입시 진행했음

@@ -220,7 +220,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Game\Component\AIContext.h" />
-    <ClInclude Include="Game\Component\bb.h" />
+    <ClInclude Include="Game\Component\BlackBoard.h" />
     <ClInclude Include="Game\Component\HFSM.h" />
     <ClInclude Include="Game\Component\HFSMState.h" />
     <ClInclude Include="Util\StringHashTable.h" />
@@ -288,7 +288,7 @@
     <ClInclude Include="Resource\Graphics\Shader\VertexShader.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Game\Component\bb.cpp" />
+    <ClCompile Include="Game\Component\BlackBoard.cpp" />
     <ClCompile Include="Game\Component\HFSM.cpp" />
     <ClCompile Include="Game\Component\HFSMState.cpp" />
     <ClCompile Include="Resource\Graphics\RenderPass\ForwardOpaqueRenderPass.cpp" />

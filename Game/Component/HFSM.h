@@ -10,7 +10,7 @@
 namespace engine
 {
 	class HFSMState;
-	class Blackboard;
+	class BlackBoard;
 
     class HFSM :
         public Component
@@ -33,7 +33,7 @@ namespace engine
 
 		HFSMState* GetRootState() const { return root_; }
 
-		s_ptr<Blackboard> GetBlackboard() const { return blackboard_.lock(); }
+		s_ptr<BlackBoard> GetBlackboard() const { return blackboard_.lock(); }
 
 	private:
 		void ValidateStates() const;
@@ -45,7 +45,7 @@ namespace engine
 
 		HFSMState* current_state_ = {};
 
-		w_ptr<Blackboard> blackboard_ = {};
+		w_ptr<BlackBoard> blackboard_ = {};
 
 		AIContext ai_context_ = {};
     };

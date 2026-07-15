@@ -9,15 +9,15 @@
 
 namespace engine
 {
-    class Blackboard :
+    class BlackBoard :
         public Component
     {
-		CLASS_INFO(Blackboard, Component)
+		CLASS_INFO(BlackBoard, Component)
 		COMPONENT_CATEGORY(ComponentCategory::kBlackboard)
 
 	public:
-		Blackboard();
-		virtual ~Blackboard() override;
+		BlackBoard();
+		virtual ~BlackBoard() override;
 
 		virtual void Init() override {};
 

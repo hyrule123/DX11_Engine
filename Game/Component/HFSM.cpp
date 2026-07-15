@@ -2,7 +2,7 @@
 #include "HFSM.h"
 
 #include <Engine/Game/Component/HFSMState.h>
-#include <Engine/Game/Component/Blackboard.h>
+#include <Engine/Game/Component/BlackBoard.h>
 
 #include <Engine/Core/Debug.h>
 

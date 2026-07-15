@@ -1,7 +1,7 @@
 #pragma once
 #include <Engine/Resource/Resource.h>
 
-#include <Engine/Util/StringHashTable.h>
+
 
 #include <unordered_set>
 

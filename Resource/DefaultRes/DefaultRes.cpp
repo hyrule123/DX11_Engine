@@ -17,7 +17,7 @@
 #include <Engine/Core/Math.h>
 #include <Engine/Core/Debug.h>
 
-#include <Engine/Util/StringHashTable.h>
+
 
 #include <Engine/HLSL/Sprite/Sprite.hlsli>
 

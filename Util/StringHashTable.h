@@ -18,11 +18,14 @@ class HashedStringView {
 public:
 	template <size_t N>
 	consteval HashedStringView(const char(&s)[N]) :
-		hash(hash_str_fnv1a(std::string_view(s, N - 1))),
-		str_view(s, N - 1)
+		str_view(s, N - 1),
+		hash(hash_str_fnv1a(str_view))
 	{}
 
-	constexpr HashedStringView(const std::string_view s) : hash(hash_str_fnv1a(s)), str_view(s) {}
+	constexpr HashedStringView(const std::string_view s) : 
+		str_view(s), 
+		hash(hash_str_fnv1a(str_view)) 
+	{}
 
 	bool IsEmpty() const { return str_view.empty(); }
 	size_t GetHash() const { return hash; }
@@ -33,13 +36,13 @@ public:
 	}
 
 private:
-	//HashedString용 생성자, 해시값을 직접 넣어주는 용도
 	friend class HashedString;
-	explicit HashedStringView(const std::string_view s, size_t h) : hash(h), str_view(s) {}
+	HashedStringView(const std::string& s, const size_t h) : str_view(s), hash(h) {}
+
 	HashedStringView() = delete;
 
-	size_t hash;
 	std::string_view str_view;
+	size_t hash;
 };
 
 // ""_hash 리터럴 연산자, consteval
@@ -50,37 +53,33 @@ consteval HashedStringView operator "" _hash(const char* s, size_t len) {
 // HashedString 구조체, 해시값과 문자열을 함께 저장(런타임용)
 class HashedString {
 public:
-	HashedString(const std::string_view s) : str(s), value(str) {}
-	HashedString(const std::string& s) : str(s), value(str) {}
-	explicit HashedString(std::string&& s) : str(std::move(s)), value(str) {}
+	HashedString(const std::string_view s) : str(s), hash(hash_str_fnv1a(s)) {}
+	HashedString(const std::string& s) : str(s), hash(hash_str_fnv1a(s)) {}
+	HashedString(std::string&& s) : str(std::move(s)), hash(hash_str_fnv1a(str)) {}
 
 	//문자열은 복사, 해시값은 그대로 사용
-	HashedString(const HashedString& s) : str(s.str), value(str, s.value.hash) {}
+	HashedString(const HashedString& s) : 
+		str(s.str), 
+		hash(s.hash)
+	{}
 
 	//Hashed String View가 들어오면 문자열만 복사하고 해시값은 그대로 사용
-	HashedString(const HashedStringView& sv) : str(sv.str_view), value(str, sv.hash) {}
-
-	HashedString& operator =(const HashedStringView& s) {
-		HashedString temp(s);
-
-		str.swap(temp.str);
-		value.str_view.swap(temp.value.str_view);
-		value.hash = temp.value.hash;
-
-		return *this;
-	}
+	HashedString(const HashedStringView& sv) : 
+		str(sv.GetStringView()), 
+		hash(sv.GetHash()) 
+	{}
 
 	HashedString() = delete;
 
-	// 내부의 HashedStringView를 반환하는 연산자
-	operator const HashedStringView& () const { return value; }
+	HashedStringView GetHashedStringView() const { return HashedStringView(str, hash); }
+	// HashedStringView를 반환하는 연산자
+	operator HashedStringView () const { return GetHashedStringView(); }
 
-	const HashedStringView& GetHashedStringView() const { return value; }
 	const std::string& GetString() const { return str; }
 
 private:
 	std::string str;
-	HashedStringView value;
+	size_t hash;
 };
 
 struct StringHasher {

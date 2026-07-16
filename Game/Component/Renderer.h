@@ -30,9 +30,9 @@ namespace engine
 
         s_ptr<Transform> GetTransform() const { return my_transform_; }
         void SetMaterial(s_ptr<Material> material) { material_ = std::move(material); }
-        bool SetMaterial(const HashedString& mtrl_name);
+        bool SetMaterial(const HashedStringView& mtrl_name);
         void SetMesh(s_ptr<Mesh> mesh) { mesh_ = std::move(mesh); }
-        bool SetMesh(const HashedString& mesh_name);
+        bool SetMesh(const HashedStringView& mesh_name);
 
         bool IsRenderReady() const { return (material_ && mesh_); }
 

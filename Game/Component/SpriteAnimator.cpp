@@ -154,6 +154,9 @@ namespace engine
 		if (playing_clip_ && playing_clip_->GetFrames().size() == clip_ptr->GetFrames().size())
 		{
 			playing_clip_ = clip_ptr;
+
+			//새 인덱스 계산을 위해 스위치 true로 변경
+			is_playing_ = true;
 			return true;
 		}
 		return false;

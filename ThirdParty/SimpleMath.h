@@ -17,6 +17,7 @@
 namespace engine
 {
 	constexpr float kPi = ::DirectX::XM_PI;
+	constexpr float kHalfPi = ::DirectX::XM_PIDIV2;
 	constexpr float kTwoPi = ::DirectX::XM_2PI;
 
 	//1(rad) / 180 * PI = PI / 180

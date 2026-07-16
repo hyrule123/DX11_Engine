@@ -3,6 +3,7 @@
 
 #include <Engine/Game/Component/HFSMState.h>
 #include <Engine/Game/Component/BlackBoard.h>
+#include <Engine/Game/Component/Transform.h>
 
 #include <Engine/Core/Debug.h>
 
@@ -28,9 +29,9 @@ namespace engine
 		// 모든 상태의 ancestor_states_를 갱신
 		root_->RefreshAncestorStates({});
 
-		ai_context_.blackboard = blackboard_;
-		ai_context_.owner = GetOwner();
-		ai_context_.hfsm = std::static_pointer_cast<HFSM>(shared_from_this());
+		ai_context_.black_board = blackboard_;
+		ai_context_.game_object = GetOwner();
+		ai_context_.transform = GetOwner()->GetComponent<Transform>();
 
 		//등록 순서 보장(DFS)으로 OnAwake 호출
 		root_->OnAwakeRecursive(ai_context_);
@@ -56,11 +57,14 @@ namespace engine
 			for (auto* state : ancestors)
 			{
 				next_state_name = state->CheckTransition(ai_context_);
-				if (!(next_state_name.IsEmpty())) 
-				{ 
-					//전환될 상태가 반환될 경우 중단 후 즉시 전환
+
+				//State 이름이 비어있지 않고, 현재 State 이름과 다르다면 번환
+				if (false == next_state_name.IsEmpty() 
+					&&
+					current_state_->GetStateName() != next_state_name)
+				{
 					ChangeState(next_state_name);
-					break; 
+					break;
 				}
 			}
 
@@ -83,6 +87,7 @@ namespace engine
 		HFSMState* ret = state.get();
 
 		state->SetOwnerHFSM(std::static_pointer_cast<HFSM>(shared_from_this()));
+		state->SetStateName(state_name);
 		states_.insert(state_name, std::move(state));
 
 		return ret;
@@ -121,41 +126,47 @@ namespace engine
 	void HFSM::ChangeState(const HashedStringView& state_name)
 	{
 		auto iter = states_.find(state_name);
-		s_ptr<BlackBoard> blackboard = blackboard_.lock();
-		if (iter != states_.end())
+		if (iter == states_.end())
 		{
-			//null check는 삽입시 진행했음
-			HFSMState* state = iter->second.get();
+			//의도한 상태일수도 있음. 로그만 찍고 나가기
+			DEBUG_LOG("해당하는 State가 없음.");
+			return;
+		}
 
-			if (current_state_)
+		s_ptr<BlackBoard> blackboard = blackboard_.lock();
+		//null check는 삽입시 진행했음
+		HFSMState* state = iter->second.get();
+
+		if (current_state_)
+		{
+			const auto& prev_hierarchy = current_state_->GetAncestorStates();
+			const auto& next_hierarchy = state->GetAncestorStates();
+
+			//간단한 LCA
+			size_t min_size = std::min(prev_hierarchy.size(), next_hierarchy.size());
+			size_t lca_index = 0;
+
+			for (size_t i = 0; i < min_size; ++i)
 			{
-				const auto& prev_hierarchy = current_state_->GetAncestorStates();
-				const auto& next_hierarchy = state->GetAncestorStates();
-
-				//간단한 LCA
-				size_t min_size = std::min(prev_hierarchy.size(), next_hierarchy.size());
-
-				for (size_t i = 0; i < min_size; ++i)
+				lca_index = i;
+				//공통조상 아닌부분 찾기
+				if (prev_hierarchy[i] != next_hierarchy[i])
 				{
-					//공통조상 아닌부분 찾기
-					if (prev_hierarchy[i] != next_hierarchy[i])
-					{
-						// 나가려는 쪽은 OnExit 싹 호출
-						for (size_t j = prev_hierarchy.size() - 1; j >= i; --j)
-						{
-							prev_hierarchy[j]->OnExit(ai_context_);
-						}
-						// 들어오는 쪽은 OnEnter 싹 호출
-						for (size_t j = i; j < next_hierarchy.size(); ++j)
-						{
-							next_hierarchy[j]->OnEnter(ai_context_);
-						}
-						break;
-					}
+					break;
 				}
 			}
-			current_state_ = state;
+
+			// 나가려는 쪽은 OnExit 싹 호출(index -1이 될수있으므로 int32로 변환)
+			for (int32 i = (int32)(prev_hierarchy.size()) - 1; i >= (int32)lca_index; --i)
+			{
+				prev_hierarchy[i]->OnExit(ai_context_);
+			}
+			// 들어오는 쪽은 OnEnter 싹 호출
+			for (size_t i = lca_index; i < next_hierarchy.size(); ++i)
+			{
+				next_hierarchy[i]->OnEnter(ai_context_);
+			}
 		}
-		ASSERT_MESSAGE(current_state_, "State not found");
+		current_state_ = state;
 	}
 }

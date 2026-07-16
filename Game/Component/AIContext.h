@@ -6,8 +6,8 @@ namespace engine
 {
 	struct AIContext
 	{
-		w_ptr<class GameObject> owner = {};
-		w_ptr<class HFSM> hfsm = {};
-		w_ptr<class BlackBoard> blackboard = {};
+		w_ptr<class GameObject> game_object = {};
+		w_ptr<class BlackBoard> black_board = {};
+		w_ptr<class Transform> transform = {};
 	};
 }

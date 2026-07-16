@@ -40,6 +40,9 @@ namespace engine
 		void SetOwnerHFSM(const s_ptr<HFSM>& hfsm) { owner_hfsm_ = hfsm; }
 		s_ptr<HFSM> GetOwnerHFSM() const { return owner_hfsm_.lock(); }
 
+		HashedStringView GetStateName() const { return state_name_; }
+		void SetStateName(const HashedStringView& state_name) { state_name_ = state_name; }
+
     private:
         void AddChildState(HFSMState* child_state);
 
@@ -49,6 +52,8 @@ namespace engine
 		std::vector<HFSMState*> child_states_ = {};
 
 		std::vector<HFSMState*> ancestor_states_ = {};
+
+		HashedString state_name_ = ""_hash;
     };
 }
 

@@ -18,6 +18,8 @@ namespace engine
 		RenderPass(const std::string_view concrete_class_name, RenderPassOrder pass_order);
 		virtual ~RenderPass() override;
 
+		virtual void Init(ID3D11Device* device, ID3D11DeviceContext* context) {};
+
 		virtual void Execute(ID3D11Device* device, ID3D11DeviceContext* context) = 0;
 
 		RenderPassOrder GetPassOrder() const { return pass_order_; }
@@ -25,6 +27,7 @@ namespace engine
 		void SetRenderTargetGroup(s_ptr<RenderTargetGroup> rt_group) { 
 			render_target_group_ = std::move(rt_group); 
 		}
+		void BindRenderTargetGroup(ID3D11DeviceContext* context);
 	private:
 		RenderTargetGroup* GetRenderTargetGroup() const { return render_target_group_.get(); }
 

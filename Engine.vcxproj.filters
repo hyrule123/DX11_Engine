@@ -216,6 +216,9 @@
     <ClInclude Include="Game\Component\AIContext.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Resource\Graphics\RenderPass\PresentPass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Core\pch.cpp">
@@ -368,6 +371,9 @@
     <ClCompile Include="Game\Component\BlackBoard.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Resource\Graphics\RenderPass\PresentPass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Engine.rc">
@@ -392,11 +398,14 @@
     <None Include="HLSL\CommonConstBuffer.hlsli" />
     <None Include="HLSL\Sprite\Sprite.hlsli" />
     <None Include="HLSL\CommonSampler.hlsli" />
+    <None Include="HLSL\Present\Present.hlsli" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="HLSL\Debug\Debug_PS.hlsl" />
     <FxCompile Include="HLSL\Debug\Debug_VS.hlsl" />
     <FxCompile Include="HLSL\Sprite\Sprite_VS.hlsl" />
     <FxCompile Include="HLSL\Sprite\Sprite_PS.hlsl" />
+    <FxCompile Include="HLSL\Present\Present_VS.hlsl" />
+    <FxCompile Include="HLSL\Present\Present_PS.hlsl" />
   </ItemGroup>
 </Project>

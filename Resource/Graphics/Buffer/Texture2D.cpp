@@ -132,6 +132,9 @@ namespace engine
 			return false;
 		}
 
+		width_ = desc->Width;
+		height_ = desc->Height;
+
 		return true;
 	}
 	bool Texture2D::CreateSRV(ID3D11Device* device, D3D11_SHADER_RESOURCE_VIEW_DESC* srv_desc)
@@ -142,6 +145,42 @@ namespace engine
 			HRESULT_ERROR_MESSAGE(hr);
 			return false;
 		}
+		return true;
+	}
+	bool Texture2D::Resize(ID3D11Device* device, uint32 width, uint32 height)
+	{
+		if (!tex2D_buffer_)
+		{
+			DEBUG_MESSAGE("Texture2D가 존재하지 않습니다. Resize를 수행할 수 없습니다.");
+			return false;
+		}
+
+		D3D11_TEXTURE2D_DESC desc = {};
+		tex2D_buffer_->GetDesc(&desc);
+
+		desc.Width = width;
+		desc.Height = height;
+
+		bool result = CreateTexture2D(device, &desc);
+		if (false == result)
+		{
+			ASSERT(false);
+			return false;
+		}
+
+		if (shader_resource_view_)
+		{
+			D3D11_SHADER_RESOURCE_VIEW_DESC srv_desc = {};
+			shader_resource_view_->GetDesc(&srv_desc);
+
+			result = CreateSRV(device, &srv_desc);
+			if (false == result)
+			{
+				ASSERT(false);
+				return false;
+			}
+		}
+
 		return true;
 	}
 	void Texture2D::SetTexture2D(ComPtr<ID3D11Texture2D> texture)

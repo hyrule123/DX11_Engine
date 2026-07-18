@@ -9,6 +9,7 @@ namespace engine
 	{
 		enum Flag : uint32
 		{
+			kNone = 0,
 			kVS = 1 << 0,
 			kGS = 1 << 1,
 			kPS = 1 << 2,
@@ -25,6 +26,7 @@ namespace engine
 		kForwardAlphaTested,
 		kForwardTransparent,
 		kUI,
+		kPresent,
 		kEND
 	};
 }

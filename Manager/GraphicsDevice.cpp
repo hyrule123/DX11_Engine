@@ -85,10 +85,14 @@ namespace engine
 		context_->ClearState();
 		RenderManager::GetInst().OnClearContextStates();
 	}
+	void GraphicsDevice::OnScreenSizeChange(uint32 width, uint32 height)
+	{
+		bool result = SetResolution(width, height);
+		ASSERT(result);
+		RenderManager::GetInst().OnScreenSizeChange(width, height);
+	}
 	bool GraphicsDevice::SetResolution(uint32 resolution_width, uint32 resolution_height)
 	{
-		HWND hwnd = EngineMain::GetInst().GetHWND();
-
 		HRESULT hr = E_FAIL;
 
 		//변경 전 초기화
@@ -98,6 +102,8 @@ namespace engine
 		
 		if (nullptr == swap_chain_)
 		{
+			HWND hwnd = EngineMain::GetInst().GetHWND();
+
 			//스왑체인 새로 생성
 			swap_chain_ = CreateSwapChain(hwnd, resolution_width, resolution_height);
 			if (nullptr == swap_chain_)
@@ -160,22 +166,10 @@ namespace engine
 
 		swap_chain_RT_->SetDepthStencilView(dsv);
 
-#pragma region Viewport
-		//Viewport 생성
-		D3D11_VIEWPORT viewport{};
-		viewport.TopLeftX = 0.0f;
-		viewport.TopLeftY = 0.0f;
-		viewport.Width = (float)resolution_width;
-		viewport.Height = (float)resolution_height;
-		viewport.MinDepth = 0.0f;
-		viewport.MaxDepth = 1.0f;
-		context_->RSSetViewports(1, &viewport);
-#pragma endregion Viewport
+
 
 		resolution_width_ = resolution_width;
 		resolution_height_ = resolution_height;
-
-		RenderManager::GetInst().OnResolutionChange(resolution_width, resolution_height);
 
 		return true;
 	}

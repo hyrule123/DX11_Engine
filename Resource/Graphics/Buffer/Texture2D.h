@@ -48,6 +48,11 @@ namespace engine
         );
         bool CreateSRV(ID3D11Device* device, D3D11_SHADER_RESOURCE_VIEW_DESC* srv_desc);
 
+		virtual bool Resize(ID3D11Device* device, uint32 width, uint32 height);
+
+        uint32 GetWidth() const { return width_; }
+        uint32 GetHeight() const { return height_; }
+
     protected:
         void SetTexture2D(ComPtr<ID3D11Texture2D> texture);
         ComPtr<ID3D11Texture2D> GetTexture2D() const { return tex2D_buffer_; }

@@ -19,6 +19,11 @@ namespace engine
 	{
 	}
 
+	void GameEngine::OnScreenSizeChange(uint32 width, uint32 height)
+	{
+		GraphicsDevice::GetInst().OnScreenSizeChange(width, height);
+	}
+
 	bool GameEngine::Init()
 	{
 		if (GraphicsDevice::GetInst().Init() == false)
@@ -35,6 +40,7 @@ namespace engine
 
 		InputManager::GetInst();
 
+		is_initialized_ = true;
 		return true;
 	}
 

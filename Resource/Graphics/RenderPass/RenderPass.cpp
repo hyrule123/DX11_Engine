@@ -3,6 +3,10 @@
 
 #include <Engine/Core/DX11.h>
 
+#include <Engine/Resource/Graphics/RenderTargetGroup.h>
+
+#include <Engine/Core/Debug.h>
+
 namespace engine
 {
 	RenderPass::RenderPass(const std::string_view concrete_class_name, RenderPassOrder pass_order)
@@ -12,5 +16,12 @@ namespace engine
 
 	RenderPass::~RenderPass()
 	{}
+	void RenderPass::BindRenderTargetGroup(ID3D11DeviceContext* context)
+	{
+		if (render_target_group_)
+		{
+			render_target_group_->BindOutputMerger(context);
+		}
+	}
 }
 

@@ -30,6 +30,7 @@ namespace engine
 	void RenderManager::Init()
 	{
 		auto device = GraphicsDevice::GetInst().GetDevice();
+		auto context = GraphicsDevice::GetInst().GetContext();
 
 		//CONSTANT BUFFERS
 		cb_per_pass_ = std::make_shared<ConstantBuffer>();
@@ -37,6 +38,8 @@ namespace engine
 
 		CreateSamplerStates();
 		BindPSSamplerStates();
+
+		present_pass_.Init(device.Get(), context.Get());
 	}
 	void RenderManager::Render()
 	{
@@ -61,22 +64,25 @@ namespace engine
 
 		//Render Pass 별 렌더링
 		forward_opaque_pass_.Execute(device.Get(), context.Get());
+
+		if (present_pass_.IsSet())
+		{
+			present_pass_.Execute(device.Get(), context.Get());
+		}
 	}
 	void RenderManager::FrameEnd()
 	{
 		//일단은 하지 않음
 		//render_queue_.clear();
 	}
-	void RenderManager::OnResolutionChange(uint32 width, uint32 height)
+	void RenderManager::SetMainCamera(s_ptr<Camera> cam)
 	{
-		s_ptr<Camera> main_cam = main_cam_.lock();
-		if (main_cam)
-		{
-			Camera::ProjectionMatrixDesc desc = main_cam->GetProjectionMatrixDesc();
-			desc.width = (float)width;
-			desc.height = (float)height;
-			main_cam->CreateProjMatrix(desc);
-		}
+		main_cam_ = cam;
+	}
+	void RenderManager::OnScreenSizeChange(uint32 width, uint32 height)
+	{
+		resolution_width_ = width;
+		resolution_height_ = height;
 	}
 	void RenderManager::OnClearContextStates()
 	{

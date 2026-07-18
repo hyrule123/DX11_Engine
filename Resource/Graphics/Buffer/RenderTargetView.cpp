@@ -73,4 +73,19 @@ namespace engine
 			
 		return true;
 	}
+	bool RenderTargetView::Resize(ID3D11Device* device, uint32 width, uint32 height)
+	{
+		bool result = Super::Resize(device, width, height);
+		if (!result)
+		{
+			return false;
+		}
+
+		D3D11_RENDER_TARGET_VIEW_DESC rtv_desc = {};
+		render_target_view_->GetDesc(&rtv_desc);
+		
+		result = CreateRTV(device, &rtv_desc);
+		ASSERT(result);
+		return true;
+	}
 }

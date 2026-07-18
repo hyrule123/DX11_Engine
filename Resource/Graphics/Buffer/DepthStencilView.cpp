@@ -32,4 +32,17 @@ namespace engine
 
         return true;
     }
+	bool DepthStencilView::Resize(ID3D11Device* device, uint32 width, uint32 height)
+	{
+		bool result = Super::Resize(device, width, height);
+		if (!result)
+		{
+			return false;
+		}
+
+		D3D11_DEPTH_STENCIL_VIEW_DESC dsv_desc = {};
+		dsv_->GetDesc(&dsv_desc);
+
+		return CreateDSV(device, &dsv_desc);
+	}
 }

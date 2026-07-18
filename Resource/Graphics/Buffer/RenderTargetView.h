@@ -30,6 +30,8 @@ namespace engine
         ComPtr<ID3D11RenderTargetView> GetRTV() const { return render_target_view_; }
         ID3D11RenderTargetView* GetRawRTV() const { return render_target_view_.Get(); }
 
+		virtual bool Resize(ID3D11Device* device, uint32 width, uint32 height) override;
+
     private:
         ComPtr<ID3D11RenderTargetView> render_target_view_ = {};
     };

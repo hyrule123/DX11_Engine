@@ -22,8 +22,6 @@ namespace engine
 		proj_mat_desc_.proj_mode = ProjectionMode::Orthographic;
 		proj_mat_desc_.near_z = 1.0f;
 		proj_mat_desc_.far_z = 100.0f;
-		proj_mat_desc_.width = (float)(GraphicsDevice::GetInst().GetResolutionWidth());
-		proj_mat_desc_.height = (float)(GraphicsDevice::GetInst().GetResolutionHeight());
 	}
 
 	Camera::~Camera()
@@ -48,6 +46,8 @@ namespace engine
 		//Awake 시점까지 projection matrix 미생성 시 자동 지정
 		if (proj_mat_ == matrix::Identity)
 		{
+			proj_mat_desc_.viewport_width = (float)(GraphicsDevice::GetInst().GetResolutionWidth());
+			proj_mat_desc_.viewport_height = (float)(GraphicsDevice::GetInst().GetResolutionHeight());
 			CreateProjMatrix(proj_mat_desc_);
 		}
 	}
@@ -65,11 +65,11 @@ namespace engine
 		//+ Reversed Z 적용
 		if (desc.proj_mode == ProjectionMode::Perspective)
 		{
-			proj_mat_ = matrix::CreatePerspectiveLH(desc.width, desc.height, desc.far_z, desc.near_z);
+			proj_mat_ = matrix::CreatePerspectiveLH(desc.viewport_width, desc.viewport_height, desc.far_z, desc.near_z);
 		}
 		else if (desc.proj_mode == ProjectionMode::Orthographic)
 		{
-			proj_mat_ = matrix::CreateOrthographicLH(desc.width, desc.height, desc.far_z, desc.near_z);
+			proj_mat_ = matrix::CreateOrthographicLH(desc.viewport_width, desc.viewport_height, desc.far_z, desc.near_z);
 		}
 		proj_mat_desc_ = desc;
 	}

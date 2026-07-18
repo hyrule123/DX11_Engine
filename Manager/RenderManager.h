@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Engine/Resource/Graphics/RenderPass/ForwardOpaqueRenderPass.h>
+#include <Engine/Resource/Graphics/RenderPass/PresentPass.h>
 
 #include <Engine/Core/CoreMinimal.h>
 
@@ -28,15 +29,14 @@ namespace engine
         void Render();
         void FrameEnd();
 
-        void SetMainCamera(s_ptr<Camera> cam) {
-            main_cam_ = cam;
-        }
+        void SetMainCamera(s_ptr<Camera> cam);
         s_ptr<Camera> GetMainCamera() const { return main_cam_.lock(); }
 
-        void OnResolutionChange(uint32 width, uint32 height);
+        void OnScreenSizeChange(uint32 width, uint32 height);
         void OnClearContextStates();
 
 		ForwardOpaqueRenderPass* GetOpaquePass() { return &forward_opaque_pass_; }
+		PresentPass* GetPresentPass() { return &present_pass_; }
 
     private:
         void CreateSamplerStates();
@@ -51,5 +51,9 @@ namespace engine
 
         //Render Pass
         ForwardOpaqueRenderPass forward_opaque_pass_ = {};
+		PresentPass present_pass_ = {};
+
+		uint32 resolution_width_ = {};
+		uint32 resolution_height_ = {};
     };
 }

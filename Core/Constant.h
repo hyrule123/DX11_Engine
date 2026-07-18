@@ -8,7 +8,7 @@ namespace engine
 	constexpr const wchar_t* kDefaultClassNameW = L"DX11_Engine_Class";
 
 	constexpr uint32 kDefaultWidth = 1280;
-	constexpr uint32 kDefaultHeight = 720;
+	constexpr uint32 kDefaultHeight = 960;
 
 	constexpr float kDeltaTimeCap = 0.1f;
 

@@ -23,6 +23,8 @@ namespace engine
 	{}
 	void ForwardOpaqueRenderPass::Execute(ID3D11Device* device, ID3D11DeviceContext* context)
 	{
+		BindRenderTargetGroup(context);
+
 		std::sort(render_queue_.begin(), render_queue_.end());
 
 		if (!render_queue_.empty())

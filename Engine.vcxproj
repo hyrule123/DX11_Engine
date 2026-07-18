@@ -223,6 +223,7 @@
     <ClInclude Include="Game\Component\BlackBoard.h" />
     <ClInclude Include="Game\Component\HFSM.h" />
     <ClInclude Include="Game\Component\HFSMState.h" />
+    <ClInclude Include="Resource\Graphics\RenderPass\PresentPass.h" />
     <ClInclude Include="Util\StringHashTable.h" />
     <ClInclude Include="Resource\Graphics\RenderPass\ForwardOpaqueRenderPass.h" />
     <ClInclude Include="Resource\Graphics\RenderPass\RenderPass.h" />
@@ -291,6 +292,7 @@
     <ClCompile Include="Game\Component\BlackBoard.cpp" />
     <ClCompile Include="Game\Component\HFSM.cpp" />
     <ClCompile Include="Game\Component\HFSMState.cpp" />
+    <ClCompile Include="Resource\Graphics\RenderPass\PresentPass.cpp" />
     <ClCompile Include="Resource\Graphics\RenderPass\ForwardOpaqueRenderPass.cpp" />
     <ClCompile Include="Resource\Graphics\RenderPass\RenderPass.cpp" />
     <ClCompile Include="Resource\Graphics\Shader\InputLayoutDesc.cpp" />
@@ -359,6 +361,7 @@
     <None Include="HLSL\Debug\Debug.hlsli" />
     <None Include="HLSL\CppShared\Register.hlsli" />
     <None Include="HLSL\CommonConstBuffer.hlsli" />
+    <None Include="HLSL\Present\Present.hlsli" />
     <None Include="HLSL\Sprite\Sprite.hlsli" />
     <None Include="ThirdParty\SimpleMath.inl" />
   </ItemGroup>
@@ -373,6 +376,18 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+    </FxCompile>
+    <FxCompile Include="HLSL\Present\Present_PS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="HLSL\Present\Present_VS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
     </FxCompile>
     <FxCompile Include="HLSL\Sprite\Sprite_PS.hlsl">

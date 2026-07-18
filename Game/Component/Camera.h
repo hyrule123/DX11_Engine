@@ -21,7 +21,7 @@ namespace engine
         {
             ProjectionMode proj_mode;
             float near_z, far_z;
-            float width, height;
+            float viewport_width, viewport_height;
         };
 
         Camera();
@@ -35,6 +35,10 @@ namespace engine
         const matrix& GetViewMatrix() const { return view_mat_; }
 
         ProjectionMatrixDesc GetProjectionMatrixDesc() const { return proj_mat_desc_; }
+
+		float GetViewportWidth() const { return proj_mat_desc_.viewport_width; }
+		float GetViewportHeight() const { return proj_mat_desc_.viewport_height; }
+
         void CreateProjMatrix(ProjectionMatrixDesc desc);
         const matrix& GetProjMatrix() const { return proj_mat_; }
 

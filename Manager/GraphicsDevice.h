@@ -27,6 +27,7 @@ namespace engine
 		ComPtr<ID3D11Device> GetDevice() const { return device_; }
 		ComPtr<ID3D11DeviceContext> GetContext() const { return context_; }
 
+		void OnScreenSizeChange(uint32 width, uint32 height);
 		bool SetResolution(uint32 resolution_width, uint32 resolution_height);
 		uint32 GetResolutionWidth() const { return resolution_width_; }
 		uint32 GetResolutionHeight() const { return resolution_height_; }
@@ -50,6 +51,7 @@ namespace engine
 		ComPtr<IDXGISwapChain> swap_chain_ = {};
 
 		s_ptr<RenderTargetGroup> swap_chain_RT_ = {};
+		
 
 		uint32 resolution_width_ = {};
 		uint32 resolution_height_ = {};

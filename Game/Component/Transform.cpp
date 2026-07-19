@@ -14,10 +14,6 @@ namespace engine
 {
 	Transform::Transform()
 		: Super(STRINGIFY(Transform), ComponentCategory::kTransform)
-		, local_scale_(float3::One)
-		, local_rot_(Quaternion::Identity)
-		, local_pos_(float3::Zero)
-		, world_mat_(matrix::Identity)
 	{
 	}
 	Transform::~Transform()
@@ -40,22 +36,64 @@ namespace engine
 	{
 		Super::LateUpdate();
 
-		matrix scale_mat = matrix::CreateScale(local_scale_);
+		GetWorldMatrix();
+	}
+	const matrix& Transform::GetLocalMatrix()
+	{
+		if (is_local_dirty_) {
+			matrix scale_mat = matrix::CreateScale(local_scale_);
+			matrix rot_mat = matrix::CreateFromQuaternion(local_rot_);
+			matrix pos_mat = matrix::CreateTranslation(local_pos_);
+			local_mat_ = scale_mat * rot_mat * pos_mat;
+			is_local_dirty_ = false;
+		}
 
-		matrix rot_mat = matrix::CreateFromQuaternion(local_rot_);
+		return local_mat_;
+	}
+	const matrix& Transform::GetWorldMatrix()
+	{
+		if (is_world_dirty_)
+		{
+			if (auto current_parent = parent_)
+			{
+				// 내 로컬 행렬(필요시 갱신됨) * 부모의 월드 행렬(필요시 갱신됨)
+				world_mat_ = GetLocalMatrix() * current_parent->GetWorldMatrix();
+			}
+			else
+			{
+				world_mat_ = GetLocalMatrix();
+			}
 
-		matrix pos_mat = matrix::CreateTranslation(local_pos_);
+			is_world_dirty_ = false;
+		}
 
-		world_mat_ = scale_mat * rot_mat * pos_mat;
+		return world_mat_;
+	}
+	void Transform::SetParent(Transform* new_parent)
+	{
+		if(new_parent == this) { return; }
 
-//#define TF_DEBUG
-#ifdef TF_DEBUG
-		std::string msg = "LOCAL SCALE: " + std::to_string(local_scale_.x) + std::to_string(local_scale_.y) + std::to_string(local_scale_.z) + "\n";
+		if(auto current_parent = parent_) {
+			current_parent->RemoveChild(this);
+		}
 
-		msg += "LOCAL ROTATION: " + std::to_string(local_rot_.x) + std::to_string(local_rot_.y) + std::to_string(local_rot_.z) + std::to_string(local_rot_.w) + "\n";
+		parent_ = new_parent;
+		if (new_parent)
+		{
+			new_parent->AddChild(this);
+			SetWorldDirty();
+		}
+	}
+	void Transform::RemoveChild(Transform* child)
+	{
+		if (!child) { return; }
 
-		msg += "LOCAL POS: " + std::to_string(local_pos_.x) + std::to_string(local_pos_.y) + std::to_string(local_pos_.z) + "\n\n";
-		DEBUG_LOG_A(msg.c_str());
-#endif
+		auto iter = children_.begin();
+		for (iter; iter != children_.end(); ++iter) {
+			if (*iter == child) {
+				children_.erase(iter);
+				break;
+			}
+		}
 	}
 }

@@ -1,6 +1,8 @@
 #include "Engine/Core/pch.h"
 #include "StructuredBuffer.h"
 
+#include <Engine/Manager/GraphicsDevice.h>
+
 #include <Engine/Core/DX11.h>
 
 
@@ -11,7 +13,7 @@ namespace engine
 	{}
 	StructuredBuffer::~StructuredBuffer()
 	{}
-	bool StructuredBuffer::Create(ID3D11Device * device, BufferFlag flag, size_t elem_stride, size_t elem_count, void* initial_data)
+	bool StructuredBuffer::Create(BufferFlag flag, size_t elem_stride, size_t elem_count, void* initial_data)
 	{
         // 1. 방어 코드: 크기가 0이거나 비정상적인 요청 차단
         if (elem_stride == 0 || elem_count == 0)
@@ -74,6 +76,7 @@ namespace engine
             p_sub_data = &sub_data;
         }
 
+		auto* device = GraphicsDevice::GetInst().GetDevice();
         HRESULT hr = device->CreateBuffer(&buffer_desc, p_sub_data, buffer.GetAddressOf());
         if (FAILED(hr)) 
         { 
@@ -127,7 +130,7 @@ namespace engine
         return true;
 	}
 
-	bool StructuredBuffer::Resize(ID3D11Device* device, ID3D11DeviceContext* context, size_t new_count, bool preserve_data)
+	bool StructuredBuffer::Resize( ID3D11DeviceContext* context, size_t new_count, bool preserve_data)
 	{
         // 1. 방어 코드: 크기가 같거나 0이면 무시 (혹은 0일 때의 Clear 로직 필요 시 추가)
         if (!buffer_ || new_count == 0)
@@ -147,7 +150,7 @@ namespace engine
 
 
         // 3. 기존 세팅(flag, stride)을 그대로 사용하여 새로운 크기의 버퍼 생성
-        if (!Create(device, buffer_flag_, elem_stride_, new_count, nullptr))
+        if (!Create(buffer_flag_, elem_stride_, new_count, nullptr))
         {
             //실패 시 원복
             buffer_ = old_buffer;

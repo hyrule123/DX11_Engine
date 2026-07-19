@@ -1,6 +1,8 @@
 #include "Engine/Core/pch.h"
 #include "RasterizerState.h"
 
+#include <Engine/Manager/GraphicsDevice.h>
+
 #include <Engine/Core/DX11.h>
 #include <Engine/Core/Debug.h>
 
@@ -13,10 +15,11 @@ namespace engine
 	RasterizerState::~RasterizerState()
 	{
 	}
-	bool RasterizerState::Create(ID3D11Device* device, const D3D11_RASTERIZER_DESC& desc)
+	bool RasterizerState::Create( const D3D11_RASTERIZER_DESC& desc)
 	{
 		ComPtr<ID3D11RasterizerState> raw_rss = {};
 
+		auto* device = GraphicsDevice::GetInst().GetDevice();
 		HRESULT hr = device->CreateRasterizerState(&desc, raw_rss.GetAddressOf());
 		if (FAILED(hr))
 		{

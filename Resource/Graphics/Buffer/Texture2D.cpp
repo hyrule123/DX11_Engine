@@ -54,7 +54,7 @@ namespace engine
 
 		//  리소스 및 SRV(Shader Resource View) 생성
 		HRESULT hr = DirectX::CreateShaderResourceView(
-			GraphicsDevice::GetInst().GetDevice().Get(),
+			GraphicsDevice::GetInst().GetDevice(),
 			img->GetImages(),
 			img->GetImageCount(),
 			meta,
@@ -119,12 +119,12 @@ namespace engine
 	}
 
 	bool Texture2D::CreateTexture2D(
-		ID3D11Device* device,
+		
 		D3D11_TEXTURE2D_DESC* desc,
 		const D3D11_SUBRESOURCE_DATA* initial_data
 	)
 	{
-		HRESULT hr = device->CreateTexture2D(desc, initial_data, tex2D_buffer_.ReleaseAndGetAddressOf());
+		HRESULT hr = GraphicsDevice::GetInst().GetDevice()->CreateTexture2D(desc, initial_data, tex2D_buffer_.ReleaseAndGetAddressOf());
 
 		if (FAILED(hr))
 		{
@@ -137,9 +137,9 @@ namespace engine
 
 		return true;
 	}
-	bool Texture2D::CreateSRV(ID3D11Device* device, D3D11_SHADER_RESOURCE_VIEW_DESC* srv_desc)
+	bool Texture2D::CreateSRV(D3D11_SHADER_RESOURCE_VIEW_DESC* srv_desc)
 	{
-		HRESULT hr = device->CreateShaderResourceView(tex2D_buffer_.Get(), srv_desc, shader_resource_view_.GetAddressOf());
+		HRESULT hr = GraphicsDevice::GetInst().GetDevice()->CreateShaderResourceView(tex2D_buffer_.Get(), srv_desc, shader_resource_view_.GetAddressOf());
 		if (FAILED(hr))
 		{
 			HRESULT_ERROR_MESSAGE(hr);
@@ -147,7 +147,7 @@ namespace engine
 		}
 		return true;
 	}
-	bool Texture2D::Resize(ID3D11Device* device, uint32 width, uint32 height)
+	bool Texture2D::Resize(uint32 width, uint32 height)
 	{
 		if (!tex2D_buffer_)
 		{
@@ -161,7 +161,7 @@ namespace engine
 		desc.Width = width;
 		desc.Height = height;
 
-		bool result = CreateTexture2D(device, &desc);
+		bool result = CreateTexture2D(&desc);
 		if (false == result)
 		{
 			ASSERT(false);
@@ -173,7 +173,7 @@ namespace engine
 			D3D11_SHADER_RESOURCE_VIEW_DESC srv_desc = {};
 			shader_resource_view_->GetDesc(&srv_desc);
 
-			result = CreateSRV(device, &srv_desc);
+			result = CreateSRV(&srv_desc);
 			if (false == result)
 			{
 				ASSERT(false);

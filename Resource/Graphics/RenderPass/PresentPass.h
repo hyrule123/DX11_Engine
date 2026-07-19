@@ -15,8 +15,8 @@ namespace engine
         PresentPass();
 		virtual ~PresentPass() override;
 
-		virtual void Init(ID3D11Device* device, ID3D11DeviceContext* context) override;
-		virtual void Execute(ID3D11Device* device, ID3D11DeviceContext* context) override;
+		virtual void Init( ID3D11DeviceContext* context) override;
+		virtual void Execute( ID3D11DeviceContext* context) override;
 
 		// src_render_target_이 없으면 작동하지 않음
 		bool IsSet() const { return src_render_target_ != nullptr; }

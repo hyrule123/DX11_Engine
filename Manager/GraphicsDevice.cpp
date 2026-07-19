@@ -127,7 +127,7 @@ namespace engine
 		//RTV 생성
 		s_ptr<RenderTargetView> rt = std::make_shared<RenderTargetView>();
 
-		bool result = rt->CreateForSwapchain(device_.Get(), swap_chain_);
+		bool result = rt->CreateForSwapchain(swap_chain_);
 		if (!result)
 		{
 			ASSERT_RELEASE_MESSAGE(false, "Failed to create Render Target");
@@ -157,10 +157,10 @@ namespace engine
 		depth_buffer_desc.CPUAccessFlags = 0;
 		depth_buffer_desc.MiscFlags = 0;
 
-		result = dsv->CreateTexture2D(device_.Get(), &depth_buffer_desc);
+		result = dsv->CreateTexture2D(&depth_buffer_desc);
 		ASSERT_RELEASE(result);
 
-		result = dsv->CreateDSV(device_.Get(), nullptr);
+		result = dsv->CreateDSV(nullptr);
 		ASSERT_RELEASE(result);
 #pragma endregion DSV
 

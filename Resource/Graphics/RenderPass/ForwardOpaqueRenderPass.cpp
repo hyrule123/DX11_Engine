@@ -21,7 +21,7 @@ namespace engine
 	{}
 	ForwardOpaqueRenderPass::~ForwardOpaqueRenderPass()
 	{}
-	void ForwardOpaqueRenderPass::Execute(ID3D11Device* device, ID3D11DeviceContext* context)
+	void ForwardOpaqueRenderPass::Execute( ID3D11DeviceContext* context)
 	{
 		BindRenderTargetGroup(context);
 
@@ -76,7 +76,7 @@ namespace engine
 					constexpr StructuredBuffer::BufferFlag flag = StructuredBuffer::kSRV | StructuredBuffer::kCPUDynamic;
 
 					bool result =
-						struct_buffer->Create(device, flag, instance_data_stride, instances_count);
+						struct_buffer->Create(flag, instance_data_stride, instances_count);
 
 					ASSERT(result);
 				}
@@ -84,7 +84,7 @@ namespace engine
 				// 사이즈 부족 시 2배 크기로 resize
 				if (struct_buffer->GetTotalByteSize() < total_instance_data_size)
 				{
-					bool result = struct_buffer->Resize(device, context, instances_count * 2, false);
+					bool result = struct_buffer->Resize(context, instances_count * 2, false);
 					ASSERT(result);
 				}
 

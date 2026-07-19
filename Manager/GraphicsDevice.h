@@ -24,8 +24,8 @@ namespace engine
 		friend class GameEngine;
 
 	public:
-		ComPtr<ID3D11Device> GetDevice() const { return device_; }
-		ComPtr<ID3D11DeviceContext> GetContext() const { return context_; }
+		ID3D11Device* GetDevice() const { return device_.Get(); }
+		ID3D11DeviceContext* GetContext() const { return context_.Get(); }
 
 		void OnScreenSizeChange(uint32 width, uint32 height);
 		bool SetResolution(uint32 resolution_width, uint32 resolution_height);

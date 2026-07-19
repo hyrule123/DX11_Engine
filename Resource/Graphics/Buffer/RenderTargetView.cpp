@@ -1,6 +1,8 @@
 #include "Engine/Core/pch.h"
 #include "RenderTargetView.h"
 
+#include <Engine/Manager/GraphicsDevice.h>
+
 #include <Engine/Core/Debug.h>
 
 namespace engine
@@ -10,7 +12,7 @@ namespace engine
 	{}
 	RenderTargetView::~RenderTargetView()
 	{}
-	bool RenderTargetView::CreateDefault(ID3D11Device * device, uint32 width, uint32 height, DXGI_FORMAT format)
+	bool RenderTargetView::CreateDefault(uint32 width, uint32 height, DXGI_FORMAT format)
 	{
 		// 내부에서 표준 DESC를 조립
 		D3D11_TEXTURE2D_DESC desc = {};
@@ -23,16 +25,16 @@ namespace engine
 		desc.Usage = D3D11_USAGE_DEFAULT;
 		desc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
 
-		bool tex_result = CreateTexture2D(device, &desc);
+		bool tex_result = CreateTexture2D(&desc);
 		if (!tex_result)
 		{
 			ERROR_MESSAGE("텍스처 생성 실패!!");
 			return false;
 		}
 
-		return CreateRTV(device, nullptr);
+		return CreateRTV(nullptr);
 	}
-	bool RenderTargetView::CreateRTV(ID3D11Device * device, D3D11_RENDER_TARGET_VIEW_DESC* rtv_desc)
+	bool RenderTargetView::CreateRTV(D3D11_RENDER_TARGET_VIEW_DESC* rtv_desc)
 	{
 		auto tex = GetTexture2D();
 		if (!tex)
@@ -41,7 +43,7 @@ namespace engine
 			return false;
 		}
 
-		HRESULT hr = device->CreateRenderTargetView(tex.Get(), rtv_desc, render_target_view_.ReleaseAndGetAddressOf());
+		HRESULT hr = GraphicsDevice::GetInst().GetDevice()->CreateRenderTargetView(tex.Get(), rtv_desc, render_target_view_.ReleaseAndGetAddressOf());
 		if (FAILED(hr))
 		{
 			HRESULT_ERROR_MESSAGE(hr);
@@ -50,7 +52,7 @@ namespace engine
 
 		return true;
 	}
-	bool RenderTargetView::CreateForSwapchain(ID3D11Device* device, ComPtr<IDXGISwapChain> swap_chain)
+	bool RenderTargetView::CreateForSwapchain( ComPtr<IDXGISwapChain> swap_chain)
 	{
 		// 1. 스왑 체인으로부터 백 버퍼(Texture2D) 포인터를 가져옵니다.
 		ComPtr<ID3D11Texture2D> back_buffer;
@@ -64,7 +66,7 @@ namespace engine
 
 		// 2. 백 버퍼 정보를 바탕으로 Render Target View를 생성합니다.
 		// 팁: 두 번째 인자(Desc)에 nullptr을 넣으면 백 버퍼의 리소스 포맷을 그대로 상속받습니다.
-		hr = device->CreateRenderTargetView(back_buffer.Get(), nullptr, render_target_view_.GetAddressOf());
+		hr = GraphicsDevice::GetInst().GetDevice()->CreateRenderTargetView(back_buffer.Get(), nullptr, render_target_view_.GetAddressOf());
 		if (FAILED(hr))
 		{
 			HRESULT_ERROR_MESSAGE(hr);
@@ -73,9 +75,9 @@ namespace engine
 			
 		return true;
 	}
-	bool RenderTargetView::Resize(ID3D11Device* device, uint32 width, uint32 height)
+	bool RenderTargetView::Resize( uint32 width, uint32 height)
 	{
-		bool result = Super::Resize(device, width, height);
+		bool result = Super::Resize(width, height);
 		if (!result)
 		{
 			return false;
@@ -84,7 +86,7 @@ namespace engine
 		D3D11_RENDER_TARGET_VIEW_DESC rtv_desc = {};
 		render_target_view_->GetDesc(&rtv_desc);
 		
-		result = CreateRTV(device, &rtv_desc);
+		result = CreateRTV(&rtv_desc);
 		ASSERT(result);
 		return true;
 	}

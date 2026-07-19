@@ -53,7 +53,7 @@ namespace engine
 			rs_desc.FrontCounterClockwise = false;             // Winding Order 설정(기본: CW)
 			rs_desc.DepthClipEnable = false;
 
-			if (false == rss->Create(device.Get(), rs_desc))
+			if (false == rss->Create(rs_desc))
 			{
 				ASSERT_RELEASE(false);
 			}
@@ -77,7 +77,7 @@ namespace engine
 			rsDesc.FrontCounterClockwise = false;
 			rsDesc.DepthClipEnable = false;				//Depth Clip OFF
 
-			if (!rss_wireframe->Create(device.Get(), rsDesc))
+			if (!rss_wireframe->Create(rsDesc))
 			{
 				ASSERT_RELEASE(false);
 			}
@@ -108,7 +108,7 @@ namespace engine
 			dss_desc.StencilEnable = FALSE;                        // 스텐실 테스트를 끕니다.
 
 			// 2. State 객체 생성
-			if (false == dss->Create(device.Get(), dss_desc))
+			if (false == dss->Create(dss_desc))
 			{
 				ASSERT_RELEASE(false);
 			}
@@ -155,12 +155,12 @@ namespace engine
 			vertices[2].UV = { 1.0f, 1.0f };
 			vertices[3].UV = { 0.0f, 1.0f };
 
-			vb->Create(device.Get(), vertices);
+			vb->Create(vertices);
 
 			//INDEX BUFFER
 			auto ib = std::make_shared<IndexBuffer>();
 			std::vector<UINT> indices = { 0, 1, 2, 0, 2, 3 };
-			ib->Create(device.Get(), indices, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+			ib->Create(indices, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 			msh->SetBuffers(vb, ib);
 		}

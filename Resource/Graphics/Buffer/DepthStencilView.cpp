@@ -1,6 +1,8 @@
 #include "Engine/Core/pch.h"
 #include "DepthStencilView.h"
 
+#include <Engine/Manager/GraphicsDevice.h>
+
 #include <Engine/Core/Debug.h>
 
 namespace engine
@@ -13,7 +15,7 @@ namespace engine
 	{
 	}
 
-    bool DepthStencilView::CreateDSV(ID3D11Device* device, D3D11_DEPTH_STENCIL_VIEW_DESC* dsv_desc)
+    bool DepthStencilView::CreateDSV( D3D11_DEPTH_STENCIL_VIEW_DESC* dsv_desc)
     {
 		auto tex = GetTexture2D();
 		if (!tex)
@@ -22,6 +24,7 @@ namespace engine
 			return false;
 		}
 
+		auto* device = GraphicsDevice::GetInst().GetDevice();
 		HRESULT hr = device->CreateDepthStencilView(tex.Get(), dsv_desc, dsv_.ReleaseAndGetAddressOf());
 
 		if (FAILED(hr))
@@ -32,9 +35,9 @@ namespace engine
 
         return true;
     }
-	bool DepthStencilView::Resize(ID3D11Device* device, uint32 width, uint32 height)
+	bool DepthStencilView::Resize(uint32 width, uint32 height)
 	{
-		bool result = Super::Resize(device, width, height);
+		bool result = Super::Resize(width, height);
 		if (!result)
 		{
 			return false;
@@ -43,6 +46,6 @@ namespace engine
 		D3D11_DEPTH_STENCIL_VIEW_DESC dsv_desc = {};
 		dsv_->GetDesc(&dsv_desc);
 
-		return CreateDSV(device, &dsv_desc);
+		return CreateDSV(&dsv_desc);
 	}
 }

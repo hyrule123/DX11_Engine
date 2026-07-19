@@ -54,7 +54,7 @@ namespace engine
 	{}
 	PresentPass::~PresentPass()
 	{}
-	void PresentPass::Init(ID3D11Device* device, ID3D11DeviceContext* context)
+	void PresentPass::Init(ID3D11DeviceContext* context)
 	{
 		ResourceManager& res_mgr = ResourceManager::GetInst();
 		const stdfs::path& res_dir = res_mgr.GetResourceDir();
@@ -76,13 +76,13 @@ namespace engine
 			vertices[2].UV = { 1.0f, 1.0f };
 			vertices[3].UV = { 0.0f, 1.0f };
 
-			bool result = vb->Create(device, vertices);
+			bool result = vb->Create(vertices);
 			ASSERT(result);
 
 			//INDEX BUFFER
 			auto ib = std::make_shared<IndexBuffer>();
 			std::vector<UINT> indices = { 0, 1, 2, 0, 2, 3 };
-			result = ib->Create(device, indices, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+			result = ib->Create(indices, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 			ASSERT(result);
 
 			mesh_->SetBuffers(vb, ib);
@@ -112,7 +112,7 @@ namespace engine
 		shader_set_->SetRasterizerState("RSS_Solid_Back"_hash);
 		shader_set_->SetDepthStencilState("DSS_Default"_hash);
 	}
-	void PresentPass::Execute(ID3D11Device * device, ID3D11DeviceContext * context)
+	void PresentPass::Execute(ID3D11DeviceContext * context)
 	{
 		if (!src_render_target_) { return; }
 

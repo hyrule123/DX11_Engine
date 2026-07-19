@@ -20,10 +20,10 @@ namespace engine
         ConstantBuffer();
         virtual ~ConstantBuffer() override;
         
-        bool Create(ID3D11Device* device, size_t stride);
+        bool Create(size_t stride);
         template <typename T>
-        bool Create(ID3D11Device* device) {
-            return Create(device, sizeof(T));
+        bool Create() {
+            return Create(sizeof(T));
         }
 
         void Upload(ID3D11DeviceContext* context, const void* ptr, size_t size);

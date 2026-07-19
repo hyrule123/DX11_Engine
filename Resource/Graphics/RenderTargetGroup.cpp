@@ -154,7 +154,7 @@ namespace engine
 		dsv_ = nullptr;
 		RTVs_ptr_cache_.fill(nullptr);
 	}
-	void RenderTargetGroup::Resize(ID3D11Device* device, uint32 width, uint32 height)
+	void RenderTargetGroup::Resize( uint32 width, uint32 height)
 	{
 		if (!requires_resize_) 
 		{ 
@@ -167,12 +167,12 @@ namespace engine
 		{
 			if (rtv)
 			{
-				rtv->Resize(device, width, height);
+				rtv->Resize(width, height);
 			}
 		}
 		if (dsv_)
 		{
-			dsv_->Resize(device, width, height);
+			dsv_->Resize(width, height);
 		}
 	}
 }

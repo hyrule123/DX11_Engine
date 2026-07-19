@@ -21,7 +21,7 @@ namespace engine
         virtual void Bind(ID3D11DeviceContext* context) final;
 
     protected:
-        virtual bool Create(ID3D11Device* device, const std::vector<uint8>& bytecode) final;
+        virtual bool Create( const std::vector<uint8>& bytecode) final;
 
     private:
         ComPtr<ID3D11PixelShader> ps_ = {};

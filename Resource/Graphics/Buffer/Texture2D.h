@@ -42,13 +42,12 @@ namespace engine
         ID3D11ShaderResourceView* GetRawSRV() const { return shader_resource_view_.Get(); }
 
         bool CreateTexture2D(
-            ID3D11Device* device,
             D3D11_TEXTURE2D_DESC* desc,
             const D3D11_SUBRESOURCE_DATA* initial_data = nullptr
         );
-        bool CreateSRV(ID3D11Device* device, D3D11_SHADER_RESOURCE_VIEW_DESC* srv_desc);
+        bool CreateSRV(D3D11_SHADER_RESOURCE_VIEW_DESC* srv_desc);
 
-		virtual bool Resize(ID3D11Device* device, uint32 width, uint32 height);
+		virtual bool Resize(uint32 width, uint32 height);
 
         uint32 GetWidth() const { return width_; }
         uint32 GetHeight() const { return height_; }

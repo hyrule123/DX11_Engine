@@ -1,6 +1,8 @@
 #include "Engine/Core/pch.h"
 #include "BlendState.h"
 
+#include <Engine/Manager/GraphicsDevice.h>
+
 #include <Engine/Core/Debug.h>
 
 namespace engine
@@ -10,9 +12,9 @@ namespace engine
 	{}
 	BlendState::~BlendState()
 	{}
-	bool BlendState::Create(ID3D11Device * device, const D3D11_BLEND_DESC & desc)
+	bool BlendState::Create(const D3D11_BLEND_DESC & desc)
 	{
-		HRESULT hr = device->CreateBlendState(&desc, blend_state_.ReleaseAndGetAddressOf());
+		HRESULT hr = GraphicsDevice::GetInst().GetDevice()->CreateBlendState(&desc, blend_state_.ReleaseAndGetAddressOf());
 		if (FAILED(hr))
 		{
 			HRESULT_ERROR_MESSAGE(hr);

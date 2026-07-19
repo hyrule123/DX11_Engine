@@ -22,7 +22,7 @@ namespace engine
 
 		bool IsReady() const { return (bool)blend_state_; }
 
-        bool Create(ID3D11Device* device, const D3D11_BLEND_DESC& desc);
+        bool Create( const D3D11_BLEND_DESC& desc);
         void SetBlenState(ComPtr<ID3D11BlendState> bss) {
             blend_state_ = bss;
         }

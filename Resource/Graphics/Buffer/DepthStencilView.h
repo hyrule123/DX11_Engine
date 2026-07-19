@@ -14,12 +14,12 @@ namespace engine
         DepthStencilView();
         virtual ~DepthStencilView() override;
 
-        bool CreateDSV(ID3D11Device* device, D3D11_DEPTH_STENCIL_VIEW_DESC* dsv_desc);
+        bool CreateDSV( D3D11_DEPTH_STENCIL_VIEW_DESC* dsv_desc);
 
         ComPtr<ID3D11DepthStencilView> GetDepthStencilView() const { return dsv_; }
         ID3D11DepthStencilView* GetRawDepthStencilView() const { return dsv_.Get(); }
 
-		virtual bool Resize(ID3D11Device* device, uint32 width, uint32 height) override;
+		virtual bool Resize( uint32 width, uint32 height) override;
 
     private:
         ComPtr<ID3D11DepthStencilView> dsv_ = {};

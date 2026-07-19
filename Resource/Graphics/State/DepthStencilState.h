@@ -19,7 +19,7 @@ namespace engine
 
 		bool IsReady() const { return (bool)ds_state_; }
 
-        bool Create(ID3D11Device* device, const D3D11_DEPTH_STENCIL_DESC& desc);
+        bool Create( const D3D11_DEPTH_STENCIL_DESC& desc);
 
         void SetDepthStencilState(ComPtr<ID3D11DepthStencilState> dss) {
             ds_state_ = std::move(dss);

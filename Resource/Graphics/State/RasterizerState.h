@@ -24,7 +24,7 @@ namespace engine
 			rasterizer_state_ = rss;
 		}
 
-		bool Create(ID3D11Device* device, const D3D11_RASTERIZER_DESC& desc);
+		bool Create( const D3D11_RASTERIZER_DESC& desc);
 		void Bind(ID3D11DeviceContext* context);
 
 	private:

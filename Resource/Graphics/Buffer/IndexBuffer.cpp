@@ -1,6 +1,8 @@
 #include "Engine/Core/pch.h"
 #include "IndexBuffer.h"
 
+#include <Engine/Manager/GraphicsDevice.h>
+
 #include <Engine/Core/Debug.h>
 
 namespace engine
@@ -11,7 +13,7 @@ namespace engine
 	}
 	IndexBuffer::~IndexBuffer()
 	{}
-	bool IndexBuffer::Create(ID3D11Device* device, const std::vector<UINT>& indices, D3D11_PRIMITIVE_TOPOLOGY topology)
+	bool IndexBuffer::Create( const std::vector<UINT>& indices, D3D11_PRIMITIVE_TOPOLOGY topology)
 	{
 		if (indices.empty())
 		{
@@ -29,6 +31,8 @@ namespace engine
 		D3D11_SUBRESOURCE_DATA data = {};
 		data.pSysMem = indices.data();
 
+
+		auto* device = GraphicsDevice::GetInst().GetDevice();
 		HRESULT hr = device->CreateBuffer(&desc, &data, index_buffer_.ReleaseAndGetAddressOf());
 
 		if (FAILED(hr))

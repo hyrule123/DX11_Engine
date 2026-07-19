@@ -23,7 +23,7 @@ namespace engine
 
 		const std::vector<D3D11_INPUT_ELEMENT_DESC>& GetInputLayoutDesc() const { return desc_; }
 
-		ComPtr<ID3D11InputLayout> CreateInputLayout(ID3D11Device* device, s_ptr<VertexShader> vs);
+		ComPtr<ID3D11InputLayout> CreateInputLayout( s_ptr<VertexShader> vs);
 
 	private:
 		std::vector<D3D11_INPUT_ELEMENT_DESC> desc_ = {};

@@ -1,6 +1,8 @@
 #include "Engine/Core/pch.h"
 #include "ConstantBuffer.h"
 
+#include <Engine/Manager/GraphicsDevice.h>
+
 #include <Engine/Core/DX11.h>
 #include <Engine/Core/Debug.h>
 
@@ -11,7 +13,7 @@ namespace engine
 	{}
 	ConstantBuffer::~ConstantBuffer()
 	{}
-	bool ConstantBuffer::Create(ID3D11Device* device, size_t stride)
+	bool ConstantBuffer::Create(size_t stride)
 	{
 		if (stride == 0)
 		{
@@ -32,6 +34,7 @@ namespace engine
 		desc.MiscFlags = 0;
 		desc.StructureByteStride = 0;                       // Constant Buffer는 0으로 둡니다.
 
+		auto* device = GraphicsDevice::GetInst().GetDevice();
 		HRESULT hr = device->CreateBuffer(&desc, nullptr, buffer_.GetAddressOf());
 
 		if (FAILED(hr))

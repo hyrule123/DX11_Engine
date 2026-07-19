@@ -17,7 +17,7 @@ namespace engine
         IndexBuffer();
         virtual ~IndexBuffer() override;
 
-        bool Create(ID3D11Device* device, const std::vector<UINT>& indices, D3D11_PRIMITIVE_TOPOLOGY topology);
+        bool Create( const std::vector<UINT>& indices, D3D11_PRIMITIVE_TOPOLOGY topology);
 
         void Bind(ID3D11DeviceContext* context);
 

@@ -47,9 +47,9 @@ namespace engine
         }
 
     private:
-        void CreateSamplerStates(ID3D11Device* device, ID3D11DeviceContext* context);
+        void CreateSamplerStates( ID3D11DeviceContext* context);
         void BindPSSamplerStates(ID3D11DeviceContext* context);
-        void CreateDebugRenderObjects(ID3D11Device* device, ID3D11DeviceContext* context);
+        void CreateDebugRenderObjects( ID3D11DeviceContext* context);
 
         s_ptr<ConstantBuffer> cb_per_pass_ = {};
 

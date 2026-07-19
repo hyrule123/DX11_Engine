@@ -46,7 +46,7 @@ namespace engine
         void Reset();
 
 		void SetRequiresResize(bool requires_resize) { requires_resize_ = requires_resize; }
-		void Resize(ID3D11Device* device, uint32 width, uint32 height);
+		void Resize( uint32 width, uint32 height);
 
         //기본 Texture Size로 설정됨. override용
 		const D3D11_VIEWPORT& GetViewport() const { return viewport_; }

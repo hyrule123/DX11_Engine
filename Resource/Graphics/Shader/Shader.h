@@ -21,7 +21,7 @@ namespace engine
         virtual bool LoadFromFile(const stdfs::path& path) final;
         virtual void Bind(ID3D11DeviceContext* context) = 0;
     protected:
-        virtual bool Create(ID3D11Device* device, const std::vector<uint8>& bytecode) = 0;
+        virtual bool Create( const std::vector<uint8>& bytecode) = 0;
     };
 }
 

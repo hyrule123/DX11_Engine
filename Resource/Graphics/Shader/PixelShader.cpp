@@ -1,6 +1,8 @@
 #include "Engine/Core/pch.h"
 #include "PixelShader.h"
 
+#include <Engine/Manager/GraphicsDevice.h>
+
 #include <Engine/Core/DX11.h>
 #include <Engine/Core/Debug.h>
 
@@ -17,8 +19,9 @@ namespace engine
 	{
 		context->PSSetShader(ps_.Get(), nullptr, 0);
 	}
-	bool PixelShader::Create(ID3D11Device* device, const std::vector<uint8>& bytecode)
+	bool PixelShader::Create( const std::vector<uint8>& bytecode)
 	{
+		auto* device = GraphicsDevice::GetInst().GetDevice();
 		HRESULT hr = device->CreatePixelShader(bytecode.data(), bytecode.size(), nullptr, ps_.ReleaseAndGetAddressOf());
 
 		if (FAILED(hr))

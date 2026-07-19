@@ -60,9 +60,8 @@ namespace engine
 
 		const auto& descs = desc->GetInputLayoutDesc();
 		const auto& byte_code = vertex_shader_->GetByteCode();
-		auto device = GraphicsDevice::GetInst().GetDevice();
 
-		input_layout_ = desc->CreateInputLayout(device.Get(), vertex_shader_);
+		input_layout_ = desc->CreateInputLayout(vertex_shader_);
 
 		return (bool)input_layout_;
 	}

@@ -36,18 +36,17 @@ namespace engine
 	}
 	void RenderManager::Init()
 	{
-		auto device = GraphicsDevice::GetInst().GetDevice();
-		auto context = GraphicsDevice::GetInst().GetContext();
+		auto* context = GraphicsDevice::GetInst().GetContext();
 
 		//CONSTANT BUFFERS
 		cb_per_pass_ = std::make_shared<ConstantBuffer>();
-		cb_per_pass_->Create<PerPass>(device.Get());
+		cb_per_pass_->Create<PerPass>();
 
-		CreateSamplerStates(device.Get(), context.Get());
-		BindPSSamplerStates(context.Get());
-		CreateDebugRenderObjects(device.Get(), context.Get());
+		CreateSamplerStates(context);
+		BindPSSamplerStates(context);
+		CreateDebugRenderObjects(context);
 
-		present_pass_.Init(device.Get(), context.Get());
+		present_pass_.Init(context);
 	}
 	void RenderManager::Render()
 	{
@@ -57,8 +56,7 @@ namespace engine
 			return; 
 		}
 
-		auto device = GraphicsDevice::GetInst().GetDevice();
-		auto context = GraphicsDevice::GetInst().GetContext();
+		auto* context = GraphicsDevice::GetInst().GetContext();
 
 		auto cam = main_cam_.lock();
 
@@ -67,15 +65,15 @@ namespace engine
 		per_pass_data.view_mat = cam->GetViewMatrix();
 		per_pass_data.proj_mat = cam->GetProjMatrix();
 
-		cb_per_pass_->Upload(context.Get(), per_pass_data);
-		cb_per_pass_->Bind(context.Get(), ShaderStage::kAllGraphics, SLOT_B_PER_PASS);
+		cb_per_pass_->Upload(context, per_pass_data);
+		cb_per_pass_->Bind(context, ShaderStage::kAllGraphics, SLOT_B_PER_PASS);
 
 		//Render Pass 별 렌더링
-		forward_opaque_pass_.Execute(device.Get(), context.Get());
+		forward_opaque_pass_.Execute(context);
 
 		if (present_pass_.IsSet())
 		{
-			present_pass_.Execute(device.Get(), context.Get());
+			present_pass_.Execute(context);
 		}
 
 		//Debug Draw
@@ -86,24 +84,24 @@ namespace engine
 			per_pass_data.view_mat = cam->GetViewMatrix();
 			per_pass_data.proj_mat = cam->GetProjMatrix();
 
-			cb_per_pass_->Upload(context.Get(), per_pass_data);
-			cb_per_pass_->Bind(context.Get(), ShaderStage::kAllGraphics, SLOT_B_PER_PASS);
+			cb_per_pass_->Upload(context, per_pass_data);
+			cb_per_pass_->Bind(context, ShaderStage::kAllGraphics, SLOT_B_PER_PASS);
 
 			//Debug Draw용 버퍼 - 사이즈 부족 시 확장
 			if (debug_rect_data_.size() > debug_buffer_->GetElementCount())
 			{
 				//벡터랑 버퍼 확장 타이밍 맞추기 위해 capacity() 사용
-				bool result = debug_buffer_->Resize(device.Get(), context.Get(), debug_rect_data_.capacity(), false);
+				bool result = debug_buffer_->Resize(context, debug_rect_data_.capacity(), false);
 				ASSERT(result);
 			}
-			debug_buffer_->Upload(context.Get(), debug_rect_data_);
-			debug_buffer_->BindSRV(context.Get(), SLOT_T_PER_INSTANCE, ShaderStage::kVS | ShaderStage::kPS);
+			debug_buffer_->Upload(context, debug_rect_data_);
+			debug_buffer_->BindSRV(context, SLOT_T_PER_INSTANCE, ShaderStage::kVS | ShaderStage::kPS);
 
 			//Shader Set Bind
-			debug_shader_set_->Bind(context.Get());
+			debug_shader_set_->Bind(context);
 
 			//Mesh Draw
-			debug_rect_mesh_->Draw(context.Get(), (UINT)debug_rect_data_.size());
+			debug_rect_mesh_->Draw(context, (UINT)debug_rect_data_.size());
 
 			// 순회 돌면서 dt 감소 및 음수가 된 값들은 제거
 			float dt = TimeManager::GetInst().DeltaTime();
@@ -136,9 +134,9 @@ namespace engine
 	}
 	void RenderManager::OnClearContextStates()
 	{
-		BindPSSamplerStates(GraphicsDevice::GetInst().GetContext().Get());
+		BindPSSamplerStates(GraphicsDevice::GetInst().GetContext());
 	}
-	void RenderManager::CreateSamplerStates(ID3D11Device* device, ID3D11DeviceContext* context)
+	void RenderManager::CreateSamplerStates( ID3D11DeviceContext* context)
 	{
 		sampler_states_.resize(SLOT_S_END);
 
@@ -158,7 +156,8 @@ namespace engine
 		// 밉맵 범위 지정 (도트 게임은 보통 밉맵을 1장만 쓰므로 최소 0~ 최대 무한대로 대기)
 		sampler_desc.MinLOD = 0.0f;
 		sampler_desc.MaxLOD = D3D11_FLOAT32_MAX;
-
+		
+		auto* device = GraphicsDevice::GetInst().GetDevice();
 		HRESULT hr = device->CreateSamplerState(&sampler_desc, point.GetAddressOf());
 		if (FAILED(hr))
 		{
@@ -176,7 +175,7 @@ namespace engine
 
 		context->PSSetSamplers(0u, (UINT)raw_ptrs.size(), raw_ptrs.data());
 	}
-	void RenderManager::CreateDebugRenderObjects(ID3D11Device* device, ID3D11DeviceContext* context)
+	void RenderManager::CreateDebugRenderObjects( ID3D11DeviceContext* context)
 	{
 		debug_buffer_ = std::make_unique<StructuredBuffer>();
 
@@ -185,7 +184,7 @@ namespace engine
 			|
 			StructuredBuffer::BufferFlagBitMask::kCPUDynamic;
 
-		bool result = debug_buffer_->Create<DebugInstanceData>(device, flag, 512);
+		bool result = debug_buffer_->Create<DebugInstanceData>(flag, 512);
 		ASSERT(result);
 
 #pragma region //INPUT LAYOUT DESC
@@ -214,7 +213,7 @@ namespace engine
 		dss_desc.StencilEnable = FALSE;                        // 스텐실 테스트를 끕니다.
 
 		// 2. State 객체 생성
-		if (false == dss->Create(device, dss_desc))
+		if (false == dss->Create(dss_desc))
 		{
 			ASSERT_RELEASE(false);
 		}
@@ -230,7 +229,7 @@ namespace engine
 		vertices[1].position = { 0.5f, 0.5f, 0.0f };
 		vertices[2].position = { 0.5f, -0.5f, 0.0f };
 		vertices[3].position = { -0.5f, -0.5f, 0.0f };
-		vb->Create(device, vertices);
+		vb->Create(vertices);
 
 		//INDEX BUFFER
 		auto ib = std::make_shared<IndexBuffer>();
@@ -240,7 +239,7 @@ namespace engine
 		indices.push_back(2u);
 		indices.push_back(3u);
 		indices.push_back(0u);
-		ib->Create(device, indices, D3D11_PRIMITIVE_TOPOLOGY_LINESTRIP);
+		ib->Create(indices, D3D11_PRIMITIVE_TOPOLOGY_LINESTRIP);
 
 		debug_rect_mesh_->SetBuffers(vb, ib);
 #pragma endregion //MESH

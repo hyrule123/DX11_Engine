@@ -26,16 +26,16 @@ namespace engine
         StructuredBuffer();
         virtual ~StructuredBuffer() override;
 
-        bool Create(ID3D11Device* device, BufferFlag flag, size_t elem_stride, size_t elem_count, void* initial_data = nullptr);
+        bool Create(BufferFlag flag, size_t elem_stride, size_t elem_count, void* initial_data = nullptr);
 
         template <typename T>
-        bool Create(ID3D11Device* device, BufferFlag flag, size_t elem_count, void* initial_data = nullptr)
+        bool Create(BufferFlag flag, size_t elem_count, void* initial_data = nullptr)
         {
-            return Create(device, flag, sizeof(T), elem_count, initial_data);
+            return Create(flag, sizeof(T), elem_count, initial_data);
         }
 
         //Dynamic 버퍼 모드는 데이터를 보존하지 않으므로 새로 업로드할 것
-        bool Resize(ID3D11Device* device, ID3D11DeviceContext* context, size_t new_count, bool preserve_data);
+        bool Resize( ID3D11DeviceContext* context, size_t new_count, bool preserve_data);
 
         template <typename T>
 		void Upload(ID3D11DeviceContext* context, const std::vector<T>& data)

@@ -40,7 +40,7 @@ namespace engine
 			render_queue_.push_back(item);
         }
 
-		virtual void Execute(ID3D11Device* device, ID3D11DeviceContext* context) final;
+		virtual void Execute( ID3D11DeviceContext* context) final;
 
     private:
 		std::vector<RenderItem> render_queue_ = {};

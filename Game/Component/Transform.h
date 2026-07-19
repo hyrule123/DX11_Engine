@@ -24,73 +24,95 @@ namespace engine
 		
 		virtual void Init() override;
 		virtual void Awake() override;
-
 		virtual void LateUpdate() override;
-		
-		void SetLocalScale(float3 local_scale) { 
-			local_scale_ = local_scale; 
-			SetLocalDirty();
-		}
+
 		float3 GetLocalScale() const { return local_scale_; }
-
-		void SetLocalRotation(Quaternion local_rot) { 
-			local_rot_ = local_rot; 
-			SetLocalDirty();
-		}
-
-		void SetLocalRotationEuler(float3 local_rot_euler) {
-			local_rot_ = Quaternion::CreateFromYawPitchRoll(local_rot_.y, local_rot_.x, local_rot_.z);
-			SetLocalDirty();
-		}
-
-		void SetLocalRotationEuler(float yaw, float pitch, float roll) {
-			local_rot_ = Quaternion::CreateFromYawPitchRoll(yaw, pitch, roll);
-			SetLocalDirty();
-		}
-
 		Quaternion GetLocalRotation() const { return local_rot_; }
-
-		void SetLocalPosition(float3 local_pos) { 
-			local_pos_ = local_pos; 
-			SetLocalDirty();
-		}
 		float3 GetLocalPosition() const { return local_pos_; }
 
-		const matrix& GetLocalMatrix();
-		const matrix& GetWorldMatrix();
+		void SetLocalScale(float3 local_scale) {
+			local_scale_ = local_scale;
+			SetDirty();
+		}
+		void SetLocalRotation(Quaternion local_rot) { 
+			local_rot_ = local_rot; 
+			SetDirty();
+		}
+		void SetLocalRotationEuler(float3 local_rot_euler) {
+			local_rot_ = Quaternion::CreateFromYawPitchRoll(local_rot_.y, local_rot_.x, local_rot_.z);
+			SetDirty();
+		}
+		void SetLocalRotationEuler(float yaw, float pitch, float roll) {
+			local_rot_ = Quaternion::CreateFromYawPitchRoll(yaw, pitch, roll);
+			SetDirty();
+		}
+		void SetLocalPosition(float3 local_pos) { 
+			local_pos_ = local_pos; 
+			SetDirty();
+		}
+
+		float3 GetWorldScale() {
+			UpdateWorldTransform();
+			return world_scale_;
+		}
+		Quaternion GetWorldRotation() {
+			UpdateWorldTransform();
+			return world_rot_;
+		}
+		float3 GetWorldPosition() {
+			UpdateWorldTransform();
+			return world_pos_;
+		}
+		const matrix& GetWorldMatrix() {
+			UpdateWorldTransform();
+			return world_mat_;
+		}
+
+		void SetWorldScale(float3 world_scale);
+		void SetWorldRotation(Quaternion world_rot);
+		void SetWorldRotationEuler(float3 world_rot_euler) {
+			SetWorldRotation(
+				Quaternion::CreateFromYawPitchRoll(world_rot_euler.y, world_rot_euler.x, world_rot_euler.z));
+		}
+		void SetWorldRotationEuler(float yaw, float pitch, float roll) {
+			SetWorldRotation(Quaternion::CreateFromYawPitchRoll(yaw, pitch, roll));
+		}
+		void SetWorldPosition(float3 world_pos);
+
 
 		void SetParent(Transform* new_parent);
 		
 	private:
 		void AddChild(Transform* child) { if (child) { children_.push_back(child); } }
-
 		void RemoveChild(Transform* child);
 
-		void SetLocalDirty() {
-			is_local_dirty_ = true;
-			SetWorldDirty();
-		}
-
-		void SetWorldDirty() {
-			if (is_world_dirty_) { return; }
-			is_world_dirty_ = true;
+		void SetDirty() {
+			if (is_dirty_) { return; }
+			is_dirty_ = true;
 			for (auto* child : children_) {
-				child->SetWorldDirty();
+				child->SetDirty();
 			}
 		}
 
+		void UpdateWorldTransform();
+
+		// 1. Local SRT
 		float3 local_scale_ = float3::One;
 		Quaternion local_rot_ = Quaternion::Identity;
 		float3 local_pos_ = float3::Zero;
 
-		matrix local_mat_ = matrix::Identity;
+		// 2. Cached World SRT
+		float3 world_scale_ = float3::One;
+		Quaternion world_rot_ = Quaternion::Identity;
+		float3 world_pos_ = float3::Zero;
+
+		// 3. World Matrix
 		matrix world_mat_ = matrix::Identity;
 
 		Transform* parent_ = {};
 		std::vector<Transform*> children_ = {};
 
-		bool is_local_dirty_ = true;
-		bool is_world_dirty_ = true;
+		bool is_dirty_ = true;
 	};
 }
 

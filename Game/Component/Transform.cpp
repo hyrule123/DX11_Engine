@@ -38,50 +38,67 @@ namespace engine
 
 		GetWorldMatrix();
 	}
-	const matrix& Transform::GetLocalMatrix()
+	void Transform::SetWorldScale(float3 world_scale)
 	{
-		if (is_local_dirty_) {
-			matrix scale_mat = matrix::CreateScale(local_scale_);
-			matrix rot_mat = matrix::CreateFromQuaternion(local_rot_);
-			matrix pos_mat = matrix::CreateTranslation(local_pos_);
-			local_mat_ = scale_mat * rot_mat * pos_mat;
-			is_local_dirty_ = false;
-		}
-
-		return local_mat_;
-	}
-	const matrix& Transform::GetWorldMatrix()
-	{
-		if (is_world_dirty_)
+		if (parent_)
 		{
-			if (auto current_parent = parent_)
-			{
-				// 내 로컬 행렬(필요시 갱신됨) * 부모의 월드 행렬(필요시 갱신됨)
-				world_mat_ = GetLocalMatrix() * current_parent->GetWorldMatrix();
-			}
-			else
-			{
-				world_mat_ = GetLocalMatrix();
-			}
-
-			is_world_dirty_ = false;
+			float3 parent_world_scale = parent_->GetWorldScale();
+			local_scale_ = world_scale / parent_world_scale;
 		}
+		else
+		{
+			local_scale_ = world_scale;
+		}
+		SetDirty();
+	}
+	void Transform::SetWorldRotation(Quaternion world_rot)
+	{
+		if (parent_)
+		{
+			Quaternion parent_world_rot_inv;
+			parent_->GetWorldRotation().Inverse(parent_world_rot_inv);
+			local_rot_ = world_rot * parent_world_rot_inv;
+		}
+		else
+		{
+			local_rot_ = world_rot;
+		}
+		SetDirty();
+	}
+	void Transform::SetWorldPosition(float3 world_pos)
+	{
+		if (parent_)
+		{
+			parent_->UpdateWorldTransform();
 
-		return world_mat_;
+			float3 scaled_rot_local_pos = world_pos - parent_->world_pos_;
+
+			Quaternion parent_world_rot_inv;
+			parent_->world_rot_.Inverse(parent_world_rot_inv);
+
+			float3 scaled_pos = float3::Transform(scaled_rot_local_pos, parent_world_rot_inv);
+
+			local_pos_ = scaled_pos / parent_->world_scale_;
+		}
+		else
+		{
+			local_pos_ = world_pos;
+		}
+		SetDirty();
 	}
 	void Transform::SetParent(Transform* new_parent)
 	{
 		if(new_parent == this) { return; }
 
-		if(auto current_parent = parent_) {
-			current_parent->RemoveChild(this);
+		if(parent_) {
+			parent_->RemoveChild(this);
 		}
 
 		parent_ = new_parent;
 		if (new_parent)
 		{
 			new_parent->AddChild(this);
-			SetWorldDirty();
+			SetDirty();
 		}
 	}
 	void Transform::RemoveChild(Transform* child)
@@ -95,5 +112,39 @@ namespace engine
 				break;
 			}
 		}
+	}
+	void Transform::UpdateWorldTransform()
+	{
+		if (!is_dirty_) { return; }
+
+		if (parent_)
+		{
+			parent_->UpdateWorldTransform();
+
+			world_scale_ = local_scale_ * parent_->world_scale_;
+
+			//Q1 * Q2 -> Q1 회전 후 Q2 회전(Local -> World)
+			world_rot_ = local_rot_ * parent_->world_rot_;
+
+			// 부모 포함 모든 Scale이 적용된 위치
+			float3 scaled_local_pos = local_pos_ * parent_->world_scale_;
+
+			// Scale 적용 후 부모의 월드 회전값을 활용하여 회전
+			float3 rotated_pos = float3::Transform(scaled_local_pos, parent_->world_rot_);
+
+			world_pos_ = parent_->world_pos_ + rotated_pos;
+		}
+		else
+		{
+			world_scale_ = local_scale_;
+			world_rot_ = local_rot_;
+			world_pos_ = local_pos_;
+		}
+
+		world_mat_ = matrix::CreateScale(world_scale_) *
+			matrix::CreateFromQuaternion(world_rot_) *
+			matrix::CreateTranslation(world_pos_);
+
+		is_dirty_ = false;
 	}
 }

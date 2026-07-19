@@ -4,6 +4,8 @@
 #include <Engine/Core/CoreMinimal.h>
 #include <Engine/Core/Enum.h>
 
+#include <Engine/Core/Debug.h>
+
 struct ID3D11Device;
 struct ID3D11DeviceContext;
 namespace engine
@@ -35,8 +37,11 @@ namespace engine
         //Dynamic 버퍼 모드는 데이터를 보존하지 않으므로 새로 업로드할 것
         bool Resize(ID3D11Device* device, ID3D11DeviceContext* context, size_t new_count, bool preserve_data);
 
-        //사이즈 부족 시 에러 발생하므로 확장 필요 여부 확인 필수
-        void Upload(ID3D11DeviceContext* context, void* data, size_t byte_size);
+        template <typename T>
+		void Upload(ID3D11DeviceContext* context, const std::vector<T>& data)
+        {
+            Upload(context, (void*)data.data(), sizeof(T), data.size());
+        }
 
 		//Dynamic 버퍼 모드에서만 사용 가능. 반드시 UnMap() 호출할것.
 		void* MapForWriteDiscard(ID3D11DeviceContext* context);
@@ -49,6 +54,10 @@ namespace engine
 		size_t GetTotalByteSize() const { return total_byte_size_; }
 
     private:
+        //사이즈 부족 시 에러 발생하므로 확장 필요 여부 확인 필수
+        //elem_stride: 사이즈 일치여부 확인 용
+        void Upload(ID3D11DeviceContext* context, void* data, size_t elem_stride, size_t elem_count);
+
         ComPtr<ID3D11Buffer>              buffer_ = {};
         ComPtr<ID3D11ShaderResourceView>  SRV_ = {};
         ComPtr<ID3D11UnorderedAccessView> UAV_ = {};
@@ -59,7 +68,7 @@ namespace engine
         size_t elem_stride_ = {};
         size_t elem_count_ = {};
 		size_t total_byte_size_ = {};
-    };
+	};
 }
 
 

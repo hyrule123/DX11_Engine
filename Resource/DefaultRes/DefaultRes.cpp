@@ -29,8 +29,6 @@ namespace engine
 		LoadDefaultDepthStencilStates();
 		LoadDefaultRasterizerStates();
 		LoadDefaultBlendStates();
-
-		LoadDebugRenderObjects();
 		LoadSpriteRenderObjects();
 	}
 
@@ -89,31 +87,6 @@ namespace engine
 	{
 		auto device = GraphicsDevice::GetInst().GetDevice();
 
-		{//Debug DSS
-			s_ptr<DepthStencilState> dss = std::make_shared<DepthStencilState>();
-			ResourceManager::GetInst().AddResource("DSS_Debug"_hash, dss);
-			ResourceManager::GetInst().SetDefaultResource(dss);
-
-			// 1. Depth Stencil Desc 구조체 선언 및 초기화
-			D3D11_DEPTH_STENCIL_DESC dss_desc = {};
-
-			// ------------------------------------------------------------------
-			// 1. 깊이(Depth) 테스트 설정
-			// ------------------------------------------------------------------
-			dss_desc.DepthEnable = FALSE;                           // 깊이 테스트 OFF
-
-			// ------------------------------------------------------------------
-			// 2. 스텐실(Stencil) 테스트 설정 (일반적인 기본 렌더링에서는 끕니다)
-			// ------------------------------------------------------------------
-			dss_desc.StencilEnable = FALSE;                        // 스텐실 테스트를 끕니다.
-
-			// 2. State 객체 생성
-			if (false == dss->Create(device.Get(), dss_desc))
-			{
-				ASSERT_RELEASE(false);
-			}
-		}
-
 		{//Default DSS
 			s_ptr<DepthStencilState> dss = std::make_shared<DepthStencilState>();
 			ResourceManager::GetInst().AddResource("DSS_Default"_hash, dss);
@@ -145,73 +118,6 @@ namespace engine
 	{
 		
 	}
-	void DefaultRes::LoadDebugRenderObjects()
-	{
-		auto& resmgr = ResourceManager::GetInst();
-		auto device = GraphicsDevice::GetInst().GetDevice();
-
-#pragma region //INPUT LAYOUT DESC
-		s_ptr<InputLayoutDesc> input_layout_desc = std::make_shared<InputLayoutDesc>();
-		resmgr.AddResource("InputLayoutDesc_Debug"_hash, input_layout_desc);
-		resmgr.SetDefaultResource(input_layout_desc);
-
-		for (const auto& desc : Vertex::Debug::kInputLayoutDescs)
-		{
-			input_layout_desc->AddLayoutDesc(desc);
-		}
-#pragma endregion //INPUT LAYOUT DESC
-
-#pragma region //MESH
-		auto msh = std::make_shared<Mesh>();
-		resmgr.AddResource("Mesh_Debug_Rect"_hash, msh);
-		resmgr.SetDefaultResource(msh);
-
-		//VERTEX BUFFER
-		auto vb = std::make_shared<VertexBuffer>();
-		std::vector<Vertex::Debug::Vertex> vertices;
-		vertices.resize(4);
-		vertices[0].position = { -0.5f, 0.5f, 0.0f };
-		vertices[1].position = { 0.5f, 0.5f, 0.0f };
-		vertices[2].position = { 0.5f, -0.5f, 0.0f };
-		vertices[3].position = { -0.5f, -0.5f, 0.0f };
-		vb->Create(device.Get(), vertices);
-
-		//INDEX BUFFER
-		auto ib = std::make_shared<IndexBuffer>();
-		std::vector<UINT> indices;
-		indices.push_back(0u);
-		indices.push_back(1u);
-		indices.push_back(2u);
-		indices.push_back(3u);
-		indices.push_back(0u);
-		ib->Create(device.Get(), indices, D3D11_PRIMITIVE_TOPOLOGY_LINESTRIP);
-
-		msh->SetBuffers(vb, ib);
-#pragma endregion //MESH
-
-#pragma region // GRAPHICS SHADER SET
-		s_ptr<GraphicsShaderSet> shaderset = std::make_shared<GraphicsShaderSet>();
-		resmgr.AddResource("GraphicsShaderSet_Debug"_hash, shaderset);
-		resmgr.SetDefaultResource(shaderset);
-
-		shaderset->SetInstancingSupport(true);
-		shaderset->SetPerInstanceDataStride(sizeof(SpriteInstanceData));
-		//Shaders
-		shaderset->SetVertexShader("Shader/Debug_VS.cso"_hash);
-		shaderset->CreateInputLayout("InputLayoutDesc_Debug"_hash);
-		shaderset->SetPixelShader("Shader/Debug_PS.cso"_hash);
-		shaderset->SetDepthStencilState("DSS_Debug"_hash);
-#pragma endregion // GRAPHICS SHADER SET
-
-#pragma region //MATERIAL
-		///////////// MATERIAL ////////////////
-		s_ptr<Material> material = std::make_shared<Material>();
-		material->SetShaderSet(shaderset, RenderPassOrder::kUI);
-		resmgr.AddResource("Material_Debug"_hash, material);
-		resmgr.SetDefaultResource(material);
-#pragma endregion //MATERIAL
-	}
-
 
 
 	void DefaultRes::LoadSpriteRenderObjects()

@@ -141,7 +141,8 @@ namespace engine
 			world_pos_ = local_pos_;
 		}
 
-		world_mat_ = matrix::CreateScale(world_scale_) *
+		world_mat_ = 
+			matrix::CreateScale(world_scale_) *
 			matrix::CreateFromQuaternion(world_rot_) *
 			matrix::CreateTranslation(world_pos_);
 

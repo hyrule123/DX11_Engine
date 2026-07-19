@@ -8,6 +8,8 @@
 #include <Engine/Core/Singleton.h>
 #include <Engine/Core/Enum.h>
 
+#include <Engine/HLSL/Debug/Debug.hlsli>
+
 struct ID3D11SamplerState;
 
 namespace engine
@@ -17,6 +19,8 @@ namespace engine
     class Camera;
     class Scene;
     class Renderer;
+    class StructuredBuffer;
+    class Mesh;
 
     class RenderManager
     {
@@ -38,9 +42,14 @@ namespace engine
 		ForwardOpaqueRenderPass* GetOpaquePass() { return &forward_opaque_pass_; }
 		PresentPass* GetPresentPass() { return &present_pass_; }
 
+        void DrawDebugRect(const DebugInstanceData& debug_data) {
+            debug_rect_data_.push_back(debug_data);
+        }
+
     private:
-        void CreateSamplerStates();
-        void BindPSSamplerStates();
+        void CreateSamplerStates(ID3D11Device* device, ID3D11DeviceContext* context);
+        void BindPSSamplerStates(ID3D11DeviceContext* context);
+        void CreateDebugRenderObjects(ID3D11Device* device, ID3D11DeviceContext* context);
 
         s_ptr<ConstantBuffer> cb_per_pass_ = {};
 
@@ -55,5 +64,10 @@ namespace engine
 
 		uint32 resolution_width_ = {};
 		uint32 resolution_height_ = {};
+
+		u_ptr<Mesh> debug_rect_mesh_ = {};
+        std::vector<DebugInstanceData> debug_rect_data_;
+		u_ptr<StructuredBuffer> debug_buffer_ = {};
+        u_ptr<GraphicsShaderSet> debug_shader_set_ = {};
     };
 }

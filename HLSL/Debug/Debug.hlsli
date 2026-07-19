@@ -8,7 +8,7 @@ struct alignas(16)   DebugInstanceData
 {
 	matrix world_mat;
 	float3 color;
-	float padding_0;
+	float left_time;
 };
 
 struct DebugVSInput

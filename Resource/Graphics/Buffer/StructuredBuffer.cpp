@@ -2,7 +2,7 @@
 #include "StructuredBuffer.h"
 
 #include <Engine/Core/DX11.h>
-#include <Engine/Core/Debug.h>
+
 
 namespace engine
 {
@@ -162,6 +162,8 @@ namespace engine
 
         bool is_dynamic = (buffer_flag_ & kCPUDynamic) != 0;
 
+		ASSERT_MESSAGE(!(is_dynamic && preserve_data), "Dynamic 버퍼는 데이터를 보존하지 않으므로 preserve_data를 true로 설정할 수 없습니다.");
+
         //Dynamic 모드가 아닐 경우 데이터 복사
         if (!is_dynamic && preserve_data)
         {
@@ -187,12 +189,15 @@ namespace engine
         return true;
 	}
 
-	void StructuredBuffer::Upload(ID3D11DeviceContext* context, void* data, size_t byte_size)
+	void StructuredBuffer::Upload(ID3D11DeviceContext* context, void* data, size_t elem_stride, size_t elem_count)
 	{
         ASSERT(buffer_);
         ASSERT(data);
-        ASSERT(0 < byte_size);
-        ASSERT((UINT)byte_size <= total_byte_size_);
+        ASSERT(0 < elem_count);
+		ASSERT(elem_stride == elem_stride_); // 업로드 데이터의 stride가 버퍼 stride와 일치해야 함
+		ASSERT(elem_count <= elem_count_); // 버퍼 사이즈보다 큰 데이터 업로드 시 에러 발생
+
+		size_t byte_size = elem_count * elem_stride_;
 
         bool is_dynamic = (buffer_flag_ & kCPUDynamic) != 0;
 

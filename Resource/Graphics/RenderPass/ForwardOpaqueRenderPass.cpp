@@ -89,6 +89,8 @@ namespace engine
 				}
 
 				{
+					ASSERT(struct_buffer->GetElementStride() == instance_data_stride);
+
 					uint8* mapped_data = 
 						static_cast<uint8*>(struct_buffer->MapForWriteDiscard(context));
 

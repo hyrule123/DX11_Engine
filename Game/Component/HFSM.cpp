@@ -46,15 +46,13 @@ namespace engine
 	{
 		Super::Update();
 
-		s_ptr<BlackBoard> blackboard = blackboard_.lock();
-
 		if (current_state_)
 		{
 			const auto& ancestors = current_state_->GetAncestorStates();
 
 			HashedStringView next_state_name = ""_hash;
 
-			for (auto* state : ancestors)
+			for (HFSMState* state : ancestors)
 			{
 				next_state_name = state->CheckTransition(ai_context_);
 
@@ -67,9 +65,10 @@ namespace engine
 					break;
 				}
 			}
-
+			
+			const auto& new_ancestors = current_state_->GetAncestorStates();
 			// 현재 상태의 ancestor_states_를 순회하며 OnUpdate 호출
-			for (HFSMState* state : ancestors)
+			for (HFSMState* state : new_ancestors)
 			{
 				state->OnUpdate(ai_context_);
 			}

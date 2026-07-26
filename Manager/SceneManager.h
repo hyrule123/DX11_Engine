@@ -21,6 +21,7 @@ namespace engine
 		void FrameStart();
 		void Update();
 		void LateUpdate();
+		void FrameEnd();
 
 		void ChangeSceneNow();
 

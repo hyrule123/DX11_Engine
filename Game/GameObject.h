@@ -26,10 +26,10 @@ namespace engine
 
 		virtual void Init();
 
-		void FrameStart();
+		void FrameStart();	// Component 추가 및 초기화 담당
 		void Update();
 		void LateUpdate();
-		void FrameEnd();
+		void FrameEnd();	// Component 제거
 
 		s_ptr<Component> AddComponent(s_ptr<Component> component);
 
@@ -51,15 +51,27 @@ namespace engine
 		void SetName(const std::string_view name) { name_ = name; }
 		const std::string& GetName() const { return name_; }
 
-		void SetOwner(s_ptr<Scene> owner) { owner_ = std::move(owner); }
-		s_ptr<Scene> GetOwner() const { return owner_.lock(); }
+		void SetOwnerScene(s_ptr<Scene> scene) { owner_scene_ = std::move(scene); }
+		s_ptr<Scene> GetOwnerScene() const { return owner_scene_.lock(); }
 
 		bool HasInitialized() const { return has_initialized_; }
 
+		void SetActive(bool is_active);
+		bool IsActive() const { return is_active_in_hierarchy_; }
+		bool IsActiveSelf() const { return is_active_; }
+		bool IsActiveInHierarchy() const { return is_active_in_hierarchy_; }
+		bool IsDestroyed() const { return is_destroyed_; }
+
+		// 파괴(비가역)
+		void Destroy();
+
 	private:
+
+		void UpdateHierarchyState(bool is_active_in_hierarchy);
+
 		void AddComponentInternal(const s_ptr<Component>& component);
 
-		w_ptr<Scene> owner_ = {};
+		w_ptr<Scene> owner_scene_ = {};
 
 		std::array<s_ptr<Component>, (size_t)ComponentCategory::kEnd> fixed_order_components_ = {};
 		std::vector<s_ptr<Component>> other_components_ = {};
@@ -70,6 +82,9 @@ namespace engine
 		std::vector<s_ptr<Component>> pending_add_components_ = {};
 
 		bool has_initialized_ = false;
+		bool is_active_ = true;
+		bool is_active_in_hierarchy_ = true;
+		bool is_destroyed_ = false;
 	};
 
 	template <typename T>

@@ -19,7 +19,7 @@ namespace engine
 	{
 		Super::Awake();
 
-		s_ptr<BlackBoard> blackboard = GetOwner()->GetComponent<BlackBoard>();
+		s_ptr<BlackBoard> blackboard = GetOwnerGameObject()->GetComponent<BlackBoard>();
 
 		blackboard_ = blackboard;
 		ASSERT(!blackboard_.expired());
@@ -30,8 +30,8 @@ namespace engine
 		root_->RefreshAncestorStates({});
 
 		ai_context_.black_board = blackboard_;
-		ai_context_.game_object = GetOwner();
-		ai_context_.transform = GetOwner()->GetComponent<Transform>();
+		ai_context_.game_object = GetOwnerGameObject();
+		ai_context_.transform = GetOwnerGameObject()->GetComponent<Transform>();
 
 		//등록 순서 보장(DFS)으로 OnAwake 호출
 		root_->OnAwakeRecursive(ai_context_);

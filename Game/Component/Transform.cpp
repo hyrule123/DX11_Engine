@@ -38,6 +38,18 @@ namespace engine
 
 		GetWorldMatrix();
 	}
+	void Transform::OnDestroy()
+	{
+		Super::OnDestroy();
+
+		if (parent_ && !(parent_->IsDestroyed()))
+		{
+			SetParent(nullptr);
+		}
+
+		// 자식 배열은 어차피 재귀 구조로 모두 Destroy 마킹이 되었으므로 필요 없음
+		// Destroy 되면 AddChild도 막히므로 Destroy 되지 않은 Transform이 들어올 수 없음.
+	}
 	void Transform::SetWorldScale(float3 world_scale)
 	{
 		if (parent_)
@@ -124,14 +136,16 @@ namespace engine
 			world_scale_ = local_scale_ * parent_->world_scale_;
 
 			//Q1 * Q2 -> Q1 회전 후 Q2 회전(Local -> World)
+			// '자전' 후 '부모 축 기준'으로 다시 회전
 			world_rot_ = local_rot_ * parent_->world_rot_;
 
-			// 부모 포함 모든 Scale이 적용된 위치
+			// 부모의 'Scale'을 적용한 'Position'
 			float3 scaled_local_pos = local_pos_ * parent_->world_scale_;
 
-			// Scale 적용 후 부모의 월드 회전값을 활용하여 회전
+			// 부모의 'Rotation'을 적용한 'Position' (= 공전)
 			float3 rotated_pos = float3::Transform(scaled_local_pos, parent_->world_rot_);
 
+			// 공전된 Position을 world_pos에 더해준다
 			world_pos_ = parent_->world_pos_ + rotated_pos;
 		}
 		else

@@ -57,6 +57,14 @@ namespace engine
 		}
 	}
 
+	void SceneManager::FrameEnd()
+	{
+		if (cur_scene_)
+		{
+			cur_scene_->FrameEnd();
+		}
+	}
+
 	void SceneManager::ChangeSceneNow()
 	{
 		if (next_scene_)

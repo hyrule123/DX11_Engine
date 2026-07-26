@@ -32,7 +32,7 @@ namespace engine
 			return false;
 		}
 
-		result = SetResolution(kDefaultWidth, kDefaultHeight);
+		result = SetResolution(EngineMain::GetInst().GetScreenWidth(), EngineMain::GetInst().GetScreenHeight());
 		if (false == result)
 		{
 			ASSERT_RELEASE(false);

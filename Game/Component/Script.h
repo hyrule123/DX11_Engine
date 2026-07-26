@@ -17,7 +17,7 @@ namespace engine
 
         template <typename T>
         s_ptr<T> AddComponent() {
-            return GetOwner()->AddComponent<T>();
+            return GetOwnerGameObject()->AddComponent<T>();
         }
     };
 }

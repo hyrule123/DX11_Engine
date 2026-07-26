@@ -13,6 +13,8 @@ namespace engine
         public Entity
     {
         CLASS_INFO(Component, Entity)
+        
+		friend class GameObject;
     public:
         Component(
             const std::string_view concrete_class_name, 
@@ -21,22 +23,25 @@ namespace engine
         virtual ~Component() override;
 
         virtual void Init() = 0;
+		virtual void OnEnable() {}
         virtual void Awake();
         virtual void Start();
         
         virtual void Update() {}
         virtual void LateUpdate() {}
 
+		virtual void OnDisable() {}
+		virtual void OnDestroy() {}
+
         ComponentCategory GetComponentCategory() const { return category_; }
 
-        void SetOwner(s_ptr<GameObject> owner) { owner_ = owner; }
-        s_ptr<GameObject> GetOwner() const { return owner_.lock(); }
-        s_ptr<GameObject> GetGameObject() const { return GetOwner(); }
+        void SetOwnerGameObject(s_ptr<GameObject> owner) { owner_game_object_ = owner; }
+        s_ptr<GameObject> GetOwnerGameObject() const { return owner_game_object_.lock(); }
         
         template <typename T>
         s_ptr<T> GetComponent() {
-            if (!(owner_.expired())) {
-                return owner_.lock()->GetComponent<T>();
+            if (!(owner_game_object_.expired())) {
+                return owner_game_object_.lock()->GetComponent<T>();
             }
             return nullptr;
         }
@@ -44,15 +49,31 @@ namespace engine
         bool HasInitialzed() const { return has_initialized_; }
         bool HasAwaken() const { return has_awaken_; }
         bool HasStarted() const { return has_started_; }
+        bool IsEnabled() const { return is_enabled_; }
+		bool IsEnabledAndActiveInHierarchy() const { return is_enabled_and_active_in_hierarchy_; }
+		bool IsDestroyed() const { return is_destroyed_; }
+
+        void SetEnable(bool enable) { 
+			if (is_enabled_ == enable) { return; }
+            is_enabled_ = enable; 
+            UpdateEnableState(GetOwnerGameObject()->IsActiveInHierarchy()); 
+        }
+
+        void Destroy();
 
     private:
+		void UpdateEnableState(bool is_active_in_hierarchy);
+
         ComponentCategory category_ = {};
 
-        w_ptr<GameObject> owner_ = {};
+        w_ptr<GameObject> owner_game_object_ = {};
 
         bool has_initialized_ = false;
         bool has_awaken_ = false;
         bool has_started_ = false;
+		bool is_enabled_ = true;
+		bool is_enabled_and_active_in_hierarchy_ = true;
+		bool is_destroyed_ = false;
     };
 }
 

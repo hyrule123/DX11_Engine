@@ -26,6 +26,8 @@ namespace engine
 		virtual void Awake() override;
 		virtual void LateUpdate() override;
 
+		virtual void OnDestroy() override;
+
 		float3 GetLocalScale() const { return local_scale_; }
 		Quaternion GetLocalRotation() const { return local_rot_; }
 		float3 GetLocalPosition() const { return local_pos_; }
@@ -79,11 +81,15 @@ namespace engine
 		}
 		void SetWorldPosition(float3 world_pos);
 
-
 		void SetParent(Transform* new_parent);
+		Transform* GetParent() const { return parent_; }
+		const std::vector<Transform*>& GetChildren() const { return children_; }
 		
 	private:
-		void AddChild(Transform* child) { if (child) { children_.push_back(child); } }
+		void AddChild(Transform* child) { 
+			if (!IsDestroyed() && child && !child->IsDestroyed()) { 
+				children_.push_back(child); 
+			} }
 		void RemoveChild(Transform* child);
 
 		void SetDirty() {

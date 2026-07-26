@@ -26,10 +26,7 @@ namespace engine
 
 		for (const auto& obj : game_objects_)
 		{
-			if (obj)
-			{
-				obj->FrameStart();
-			}
+			obj->FrameStart();
 		}
 	}
 
@@ -37,7 +34,7 @@ namespace engine
 	{
 		for (const auto& obj : game_objects_)
 		{
-			if(obj) 
+			if(obj->IsActive()) 
 			{ 
 				obj->Update();
 			}
@@ -48,7 +45,7 @@ namespace engine
 	{
 		for (const auto& obj : game_objects_)
 		{
-			if (obj)
+			if (obj->IsActive())
 			{
 				obj->LateUpdate();
 			}
@@ -61,16 +58,23 @@ namespace engine
 		{
 			if (obj)
 			{
+				//Object에서 자체적으로 Destroy된 컴포넌트들을 제거함
 				obj->FrameEnd();
 			}
 		}
+
+		//Destroy된 GameObject들 제거
+		std::erase_if(
+			game_objects_,
+			[](const s_ptr<GameObject>& obj) { return obj->IsDestroyed(); }
+		);
 	}
 
 	void Scene::AddGameObject(s_ptr<GameObject> obj)
 	{
 		if (obj)
 		{
-			obj->SetOwner(std::static_pointer_cast<Scene>(shared_from_this()));
+			obj->SetOwnerScene(std::static_pointer_cast<Scene>(shared_from_this()));
 			if (!(obj->HasInitialized()))
 			{
 				obj->Init();

@@ -48,14 +48,13 @@ namespace engine
 	{
 		TimeManager::GetInst().Update();
 
-		SceneManager& scene_mgr = SceneManager::GetInst();
-		scene_mgr.FrameStart();
+		SceneManager::GetInst().FrameStart();
 
 		InputManager::GetInst().Update();
 
-		scene_mgr.Update();
+		SceneManager::GetInst().Update();
 
-		scene_mgr.LateUpdate();
+		SceneManager::GetInst().LateUpdate();
 
 		GraphicsDevice::GetInst().BindSwapChainRTV();
 		
@@ -66,7 +65,9 @@ namespace engine
 		RenderManager::GetInst().FrameEnd();
 		GraphicsDevice::GetInst().FrameEnd();
 
-		scene_mgr.ChangeSceneNow();
+		SceneManager::GetInst().FrameEnd();
+
+		SceneManager::GetInst().ChangeSceneNow();
 		return true;
 	}
 }

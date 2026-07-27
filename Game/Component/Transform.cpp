@@ -50,6 +50,17 @@ namespace engine
 		// 자식 배열은 어차피 재귀 구조로 모두 Destroy 마킹이 되었으므로 필요 없음
 		// Destroy 되면 AddChild도 막히므로 Destroy 되지 않은 Transform이 들어올 수 없음.
 	}
+	matrix Transform::GetWorldMatrix()
+	{
+		UpdateWorldTransform();
+
+		return DirectX::XMMatrixAffineTransformation(
+			GetWorldScale(),
+			DirectX::g_XMZero, // <-- float3(0,0,0) 대신 DirectX 내장 Zero 상수 사용 ( XMLoad 과정 생략 )
+			GetWorldRotation(),
+			GetWorldPosition()
+		);
+	}
 	void Transform::SetWorldScale(float3 world_scale)
 	{
 		if (parent_)
@@ -154,11 +165,6 @@ namespace engine
 			world_rot_ = local_rot_;
 			world_pos_ = local_pos_;
 		}
-
-		world_mat_ = 
-			matrix::CreateScale(world_scale_) *
-			matrix::CreateFromQuaternion(world_rot_) *
-			matrix::CreateTranslation(world_pos_);
 
 		is_dirty_ = false;
 	}

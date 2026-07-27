@@ -278,9 +278,8 @@ namespace engine
 		{
 			if (fixed_order_components_[(size_t)cat])
 			{
-				ERROR_MESSAGE("컴포넌트 중복 추가됨. 확인 필요.");
+				DEBUG_LOG("컴포넌트 중복 추가됨. 확인 필요.");
 			}
-
 			fixed_order_components_[(size_t)cat] = component;
 		}
 		else

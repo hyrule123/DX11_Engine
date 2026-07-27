@@ -65,10 +65,9 @@ namespace engine
 			UpdateWorldTransform();
 			return world_pos_;
 		}
-		const matrix& GetWorldMatrix() {
-			UpdateWorldTransform();
-			return world_mat_;
-		}
+
+		//어차피 최종 렌더링 시에만 호출하므로, 매번 호출 시점에 계산하도록 함. (캐싱 X)
+		matrix GetWorldMatrix();
 
 		void SetWorldScale(float3 world_scale);
 		void SetWorldRotation(Quaternion world_rot);
@@ -111,9 +110,6 @@ namespace engine
 		float3 world_scale_ = float3::One;
 		Quaternion world_rot_ = Quaternion::Identity;
 		float3 world_pos_ = float3::Zero;
-
-		// 3. World Matrix
-		matrix world_mat_ = matrix::Identity;
 
 		Transform* parent_ = {};
 		std::vector<Transform*> children_ = {};

@@ -5,7 +5,7 @@
 
 namespace engine
 {
-	Scene::Scene(const std::string_view concrete_class_name)
+	Scene::Scene(const HashedStringView& concrete_class_name)
 		: Super(concrete_class_name)
 	{}
 	Scene::~Scene()
@@ -81,5 +81,15 @@ namespace engine
 			}
 			pending_add_objects_.push_back(obj);
 		}
+	}
+
+	s_ptr<GameObject> Scene::AddGameObject(const HashedStringView& concrete_class_name)
+	{
+		auto obj = EntityFactory::GetInst().CreateEntityAs<GameObject>(concrete_class_name);
+		if (obj)
+		{
+			AddGameObject(obj);
+		}
+		return obj;
 	}
 }

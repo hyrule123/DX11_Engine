@@ -3,7 +3,7 @@
 
 namespace engine
 {
-	Component::Component(const std::string_view concrete_class_name, ComponentCategory category)
+	Component::Component(const HashedStringView& concrete_class_name, ComponentCategory category)
 		: Super(concrete_class_name)
 		, category_(category)
 	{}

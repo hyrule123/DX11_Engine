@@ -15,7 +15,7 @@ namespace engine
 	{
 		CLASS_INFO(RenderPass, Entity)
 	public:
-		RenderPass(const std::string_view concrete_class_name, RenderPassOrder pass_order);
+		RenderPass(const HashedStringView& concrete_class_name, RenderPassOrder pass_order);
 		virtual ~RenderPass() override;
 
 		virtual void Init( ID3D11DeviceContext* context) {};

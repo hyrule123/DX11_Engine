@@ -11,7 +11,7 @@
 namespace engine
 {
 	Texture2DArray::Texture2DArray()
-		: Super(STRINGIFY(Texture2DArray))
+		: Super(Texture2DArray::kClassConcreteName)
 	{}
 	Texture2DArray::~Texture2DArray()
 	{}

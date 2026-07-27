@@ -21,7 +21,7 @@ namespace engine
         CLASS_INFO(Renderer, Component)
         COMPONENT_CATEGORY(ComponentCategory::kRenderer)
     public:
-        Renderer(const std::string_view concrete_class_name);
+        Renderer(const HashedStringView& concrete_class_name);
         virtual ~Renderer() override;
 
         virtual void Init() override;

@@ -11,7 +11,7 @@
 namespace engine
 {
 	Material::Material()
-		: Resource(STRINGIFY(Material))
+		: Resource(Material::kClassConcreteName)
 	{
 	}
 

@@ -9,7 +9,7 @@
 namespace engine
 {
 	VertexBuffer::VertexBuffer()
-		: Resource(STRINGIFY(VertexBuffer))
+		: Resource(VertexBuffer::kClassConcreteName)
 	{
 	}
 	VertexBuffer::~VertexBuffer()

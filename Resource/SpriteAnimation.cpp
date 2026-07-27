@@ -9,7 +9,7 @@
 namespace engine
 {
 	SpriteAnimation::SpriteAnimation()
-		: Super(STRINGIFY(SpriteAnimation))
+		: Super(SpriteAnimation::kClassConcreteName)
 	{}
 	SpriteAnimation::~SpriteAnimation()
 	{}

@@ -25,10 +25,10 @@
 namespace engine
 {
 	Texture2D::Texture2D()
-		: Super(STRINGIFY(Texture2D))
+		: Super(Texture2D::kClassConcreteName)
 	{}
 
-	Texture2D::Texture2D(const std::string_view concrete_class_name)
+	Texture2D::Texture2D(const HashedStringView& concrete_class_name)
 		: Super(concrete_class_name)
 	{
 	}

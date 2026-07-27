@@ -8,7 +8,7 @@
 namespace engine
 {
 	BlendState::BlendState()
-		: Super(STRINGIFY(BlendState))
+		: Super(BlendState::kClassConcreteName)
 	{}
 	BlendState::~BlendState()
 	{}

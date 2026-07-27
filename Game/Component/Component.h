@@ -17,7 +17,7 @@ namespace engine
 		friend class GameObject;
     public:
         Component(
-            const std::string_view concrete_class_name, 
+            const HashedStringView& concrete_class_name, 
             ComponentCategory category
             );
         virtual ~Component() override;

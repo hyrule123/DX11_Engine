@@ -3,22 +3,29 @@
 
 namespace engine
 {
-	Entity::Entity(const std::string_view concrete_class_name)
+	Entity::Entity(const HashedStringView& concrete_class_name)
 		: concrete_class_name_(concrete_class_name)
-		, id_(next_id_++)
+		, instance_ID_(next_instance_ID_++)
 	{}
 
-	Entity::Entity(const Entity & copy)
+	Entity::Entity(const Entity& copy)
 		: concrete_class_name_(copy.concrete_class_name_)
-		, id_(next_id_++)
+		, instance_ID_(next_instance_ID_++)
 	{}
 
 	Entity::Entity(const Entity && move) noexcept
 		: concrete_class_name_(move.concrete_class_name_)
-		, id_(next_id_++)
+		, instance_ID_(next_instance_ID_++)
 	{}
 
 	Entity::~Entity()
+	{}
+
+
+	EntityFactory::EntityFactory()
+	{}
+
+	EntityFactory::~EntityFactory()
 	{}
 }
 

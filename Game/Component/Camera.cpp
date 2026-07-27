@@ -16,7 +16,7 @@
 namespace engine
 {
 	Camera::Camera()
-		: Super(STRINGIFY(Camera), ComponentCategory::kCamera)
+		: Super(Camera::kClassConcreteName, ComponentCategory::kCamera)
 		, proj_mat_(matrix::Identity)
 	{
 		proj_mat_desc_.proj_mode = ProjectionMode::Orthographic;

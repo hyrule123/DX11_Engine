@@ -9,7 +9,7 @@
 namespace engine
 {
 	ConstantBuffer::ConstantBuffer()
-		: Super(STRINGIFY(ConstantBuffer))
+		: Super(ConstantBuffer::kClassConcreteName)
 	{}
 	ConstantBuffer::~ConstantBuffer()
 	{}

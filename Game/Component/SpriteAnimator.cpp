@@ -16,7 +16,7 @@
 namespace engine
 {
 	SpriteAnimator::SpriteAnimator()
-		: Super(STRINGIFY(SpriteAnimator), ComponentCategory::kAnimator)
+		: Super(SpriteAnimator::kClassConcreteName, ComponentCategory::kAnimator)
 	{}
 	SpriteAnimator::~SpriteAnimator()
 	{}

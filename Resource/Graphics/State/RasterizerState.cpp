@@ -9,7 +9,7 @@
 namespace engine
 {
 	RasterizerState::RasterizerState()
-		: Super(STRINGIFY(RasterizerState))
+		: Super(RasterizerState::kClassConcreteName)
 	{
 	}
 	RasterizerState::~RasterizerState()

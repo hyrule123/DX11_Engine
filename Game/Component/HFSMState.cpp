@@ -5,7 +5,7 @@
 
 namespace engine
 {
-	HFSMState::HFSMState(const std::string_view concrete_class_name)
+	HFSMState::HFSMState(const HashedStringView& concrete_class_name)
 		: Super(concrete_class_name)
 	{}
 	HFSMState::~HFSMState()

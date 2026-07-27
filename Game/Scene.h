@@ -21,7 +21,7 @@ namespace engine
 	{
 		CLASS_INFO(Scene, Entity)
 	public:
-		Scene(const std::string_view concrete_class_name);
+		Scene(const HashedStringView& concrete_class_name);
 		virtual ~Scene() override;
 
 		virtual void Init() = 0;
@@ -34,12 +34,15 @@ namespace engine
 
 		//추가 예약, 실제 추가는 FrameStart() 타이밍
 		void AddGameObject(s_ptr<GameObject> obj);
+
 		template <typename T> requires std::is_base_of_v<GameObject, T>
 		s_ptr<T> AddGameObject() {
 			s_ptr<T> new_gameobj = std::make_shared<T>();
 			AddGameObject(new_gameobj);
 			return new_gameobj;
 		}
+
+		s_ptr<GameObject> AddGameObject(const HashedStringView& concrete_class_name);
 		
 	private:
 		std::vector<s_ptr<GameObject>> game_objects_ = {};

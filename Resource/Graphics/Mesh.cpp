@@ -12,7 +12,7 @@
 namespace engine
 {
 	Mesh::Mesh()
-		: Resource(STRINGIFY(Mesh))
+		: Resource(Mesh::kClassConcreteName)
 	{}
 	Mesh::~Mesh()
 	{}

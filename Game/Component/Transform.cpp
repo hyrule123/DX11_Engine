@@ -13,7 +13,7 @@
 namespace engine
 {
 	Transform::Transform()
-		: Super(STRINGIFY(Transform), ComponentCategory::kTransform)
+		: Super(Transform::kClassConcreteName, ComponentCategory::kTransform)
 	{
 	}
 	Transform::~Transform()

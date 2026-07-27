@@ -9,7 +9,7 @@
 namespace engine
 {
 	DepthStencilState::DepthStencilState()
-		: Super(STRINGIFY(DepthStencilState))
+		: Super(DepthStencilState::kClassConcreteName)
 	{}
 	DepthStencilState::~DepthStencilState()
 	{}

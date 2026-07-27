@@ -16,7 +16,7 @@ namespace engine
     {
 		CLASS_INFO(HFSMState, Entity)
     public:
-        HFSMState(const std::string_view concrete_class_name);
+        HFSMState(const HashedStringView& concrete_class_name);
 		virtual ~HFSMState() override;
 
 		void OnAwakeRecursive(const AIContext& ai_context);

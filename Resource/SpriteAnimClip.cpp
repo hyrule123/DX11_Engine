@@ -6,7 +6,7 @@
 namespace engine
 {
 	SpriteAnimClip::SpriteAnimClip()
-		:Super(STRINGIFY(SpriteAnimClip))
+		:Super(SpriteAnimClip::kClassConcreteName)
 	{}
 	SpriteAnimClip::~SpriteAnimClip()
 	{}

@@ -8,7 +8,7 @@
 namespace engine
 {
 	DepthStencilView::DepthStencilView()
-		: Super(STRINGIFY(DepthStencilView))
+		: Super(DepthStencilView::kClassConcreteName)
 	{
 	}
 	DepthStencilView::~DepthStencilView()

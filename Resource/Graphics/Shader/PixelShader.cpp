@@ -9,7 +9,7 @@
 namespace engine
 {
 	PixelShader::PixelShader()
-		: Shader(STRINGIFY(PixelShader))
+		: Shader(PixelShader::kClassConcreteName)
 	{
 	}
 

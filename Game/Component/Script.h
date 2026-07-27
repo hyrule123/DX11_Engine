@@ -10,7 +10,7 @@ namespace engine
         CLASS_INFO(Script, Component)
             COMPONENT_CATEGORY(ComponentCategory::kScripts)
     public:
-        Script(const std::string_view class_name);
+        Script(const HashedStringView& concrete_class_name);
         virtual ~Script() override;
 
         virtual void Init() override {}

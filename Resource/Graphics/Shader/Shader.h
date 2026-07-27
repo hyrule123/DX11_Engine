@@ -15,7 +15,7 @@ namespace engine
     {
         CLASS_INFO(Shader, Resource)
     public:
-        Shader(const std::string_view concrete_class_name);
+        Shader(const HashedStringView& concrete_class_name);
         virtual ~Shader() override;
 
         virtual bool LoadFromFile(const stdfs::path& path) final;

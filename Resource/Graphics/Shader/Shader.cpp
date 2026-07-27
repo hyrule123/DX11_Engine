@@ -6,7 +6,7 @@
 
 namespace engine
 {
-	Shader::Shader(const std::string_view concrete_class_name)
+	Shader::Shader(const HashedStringView& concrete_class_name)
 		: Resource(concrete_class_name)
 	{}
 	Shader::~Shader()

@@ -8,7 +8,7 @@
 namespace engine
 {
 	RenderTargetView::RenderTargetView()
-		: Super(STRINGIFY(RenderTargetView))
+		: Super(RenderTargetView::kClassConcreteName)
 	{}
 	RenderTargetView::~RenderTargetView()
 	{}

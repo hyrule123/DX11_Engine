@@ -9,7 +9,7 @@
 namespace engine
 {
 	VertexShader::VertexShader()
-		: Shader(STRINGIFY(VertexShader))
+		: Shader(VertexShader::kClassConcreteName)
 	{
 
 	}

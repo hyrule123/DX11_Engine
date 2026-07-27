@@ -9,15 +9,13 @@
 namespace engine
 {
 	GameObject::GameObject()
-		: Super(STRINGIFY(GameObject))
+		: Super(GameObject::kClassConcreteName)
 	{
 	}
 
-	GameObject::GameObject(const std::string_view name)
-		: GameObject()
-	{
-		SetName(name);
-	}
+	GameObject::GameObject(const HashedStringView& concrete_class_name)
+		: Super(concrete_class_name)
+	{}
 
 	GameObject::~GameObject()
 	{}
@@ -146,7 +144,17 @@ namespace engine
 		return component;
 	}
 
-	s_ptr<Component> GameObject::GetComponent(const std::string_view concrete_class_name) const
+	s_ptr<Component> GameObject::AddComponent(const HashedStringView& concrete_class_name)
+	{
+		s_ptr<Component> comp = EntityFactory::GetInst().CreateEntityAs<Component>(concrete_class_name);
+		if (comp)
+		{
+			AddComponent(comp);
+		}
+		return comp;
+	}
+
+	s_ptr<Component> GameObject::GetComponent(const HashedStringView& concrete_class_name) const
 	{
 		for (size_t i = 0; i < fixed_order_components_.size(); ++i)
 		{

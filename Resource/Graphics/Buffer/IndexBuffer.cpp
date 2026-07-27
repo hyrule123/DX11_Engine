@@ -8,7 +8,7 @@
 namespace engine
 {
 	IndexBuffer::IndexBuffer()
-		: Resource(STRINGIFY(IndexBuffer))
+		: Resource(IndexBuffer::kClassConcreteName)
 	{
 	}
 	IndexBuffer::~IndexBuffer()

@@ -1,9 +1,5 @@
 #pragma once
 
-#define STRINGIFY(content) #content
+#include <Engine/Util/StringHashTable.h>
 
-#define CLASS_INFO(child, parent) \
-private: \
-using Super = parent; \
-public: \
-constexpr static std::string_view kClassConcreteName = STRINGIFY(child);
+#define STRINGIFY(content) #content

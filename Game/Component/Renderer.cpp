@@ -16,7 +16,7 @@
 
 namespace engine
 {
-	Renderer::Renderer(const std::string_view concrete_class_name)
+	Renderer::Renderer(const HashedStringView& concrete_class_name)
 		: Component(concrete_class_name, ComponentCategory::kRenderer)
 	{}
 

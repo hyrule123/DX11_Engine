@@ -11,7 +11,7 @@
 namespace engine
 {
 	RenderTargetGroup::RenderTargetGroup()
-		: Super(STRINGIFY(RenderTargetGroup))
+		: Super(RenderTargetGroup::kClassConcreteName)
 	{
 #pragma region Viewport
 		//Viewport 생성
@@ -158,7 +158,7 @@ namespace engine
 	{
 		if (!requires_resize_) 
 		{ 
-			std::string msg = "No resize needed for RenderTargetGroup: " + GetName();
+			std::string msg = "No resize needed for RenderTargetGroup";
 			DEBUG_LOG_A(msg.c_str());
 			return;
 		}

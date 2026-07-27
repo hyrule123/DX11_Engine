@@ -21,7 +21,7 @@ namespace engine
 		CLASS_INFO(GameObject, Entity)
 	public:
 		GameObject();
-		GameObject(const std::string_view name);
+		GameObject(const HashedStringView& concrete_class_name);
 		virtual ~GameObject() override;
 
 		virtual void Init();
@@ -32,6 +32,7 @@ namespace engine
 		void FrameEnd();	// Component 제거
 
 		s_ptr<Component> AddComponent(s_ptr<Component> component);
+		s_ptr<Component> AddComponent(const HashedStringView& concrete_class_name);
 
 		template <typename T>
 		s_ptr<T> AddComponent() {
@@ -41,7 +42,7 @@ namespace engine
 			return comp;
 		}
 
-		s_ptr<Component> GetComponent(const std::string_view concrete_class_name) const;
+		s_ptr<Component> GetComponent(const HashedStringView& concrete_class_name) const;
 
 		template <typename T>
 		s_ptr<T> GetComponent() const;

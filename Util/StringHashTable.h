@@ -26,6 +26,7 @@ public:
 		str_view(s), 
 		hash(hash_str_fnv1a(str_view)) 
 	{}
+	HashedStringView() : HashedStringView(""_hash) {}
 
 	bool IsEmpty() const { return str_view.empty(); }
 	size_t GetHash() const { return hash; }
@@ -34,12 +35,11 @@ public:
 	bool operator==(const HashedStringView& other) const {
 		return (hash == other.hash) && (str_view == other.str_view);
 	}
+	
 
 private:
 	friend class HashedString;
 	HashedStringView(const std::string& s, const size_t h) : str_view(s), hash(h) {}
-
-	HashedStringView() = delete;
 
 	std::string_view str_view;
 	size_t hash;
@@ -57,19 +57,35 @@ public:
 	HashedString(const std::string& s) : str(s), hash(hash_str_fnv1a(s)) {}
 	HashedString(std::string&& s) : str(std::move(s)), hash(hash_str_fnv1a(str)) {}
 
+	HashedString(HashedString&& move) noexcept : str(std::move(move.str)), hash(move.hash) {}
+	HashedString& operator=(HashedString&& move) noexcept {
+		str = std::move(move.str);
+		hash = move.hash;
+		return *this;
+	}
+
 	//문자열은 복사, 해시값은 그대로 사용
 	HashedString(const HashedString& s) : 
 		str(s.str), 
 		hash(s.hash)
 	{}
+	HashedString& operator=(const HashedString& s) {
+		str = s.str;
+		hash = s.hash;
+		return *this;
+	}
 
 	//Hashed String View가 들어오면 문자열만 복사하고 해시값은 그대로 사용
 	HashedString(const HashedStringView& sv) : 
 		str(sv.GetStringView()), 
 		hash(sv.GetHash()) 
 	{}
-
-	HashedString() = delete;
+	HashedString& operator=(const HashedStringView& sv) {
+		str = std::string(sv.GetStringView());
+		hash = sv.GetHash();
+		return *this;
+	}
+	HashedString() : HashedString(""_hash) {}
 
 	HashedStringView GetHashedStringView() const { return HashedStringView(str, hash); }
 	// HashedStringView를 반환하는 연산자

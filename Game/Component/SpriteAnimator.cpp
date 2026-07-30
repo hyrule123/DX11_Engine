@@ -71,19 +71,21 @@ namespace engine
 
 						//스위치 OFF
 						is_playing_ = false;
-
-						break;
 					}
 				}
 
 				// 다음 순회(Iteration)를 위해 다음 프레임의 duration으로 갱신
 				cur_frame_duration_ = playing_clip_->GetFrames()[cur_frame_idx_].duration;
+
+				TriggerNotify(cur_frame_idx_);
+
+				if (!is_playing_) { break; }
 			}
 
 			//참조해야 하는 TextureArray의 Index를 전달
-			if (!renderer_.expired())
+			if (auto renderer = renderer_.lock())
 			{
-				renderer_.lock()->SetFrameIndex(playing_clip_->GetFrames()[cur_frame_idx_].index);
+				renderer->SetFrameIndex(playing_clip_->GetFrames()[cur_frame_idx_].index);
 			}
 		}
 	}
@@ -145,20 +147,48 @@ namespace engine
 		cur_frame_idx_ = 0u;
 		cur_frame_duration_ = clip_ptr->GetFrames()[0].duration;
 		clip_frame_total_count_ = (uint32)clip_ptr->GetFrames().size();
-
 		playing_clip_ = clip_ptr;
+
+		// Check 0 frame notify - 업데이트 루프에서 첫 0프레임은 노티파이 처리 안되므로 여기서 처리
+		TriggerNotify(0);
 	}
 
 	bool SpriteAnimator::SwitchAnimKeepFrameInternal(SpriteAnimClip* clip_ptr)
 	{
+		//clip_ptr의 null check는 이미 호출한 함수에서 처리했으므로 생략
 		if (playing_clip_ && playing_clip_->GetFrames().size() == clip_ptr->GetFrames().size())
 		{
 			playing_clip_ = clip_ptr;
 
-			//새 인덱스 계산을 위해 스위치 true로 변경
-			is_playing_ = true;
+			//참조해야 하는 TextureArray의 Index를 새로 고침
+			if (auto renderer = renderer_.lock())
+			{
+				renderer->SetFrameIndex(playing_clip_->GetFrames()[cur_frame_idx_].index);
+			}
+
 			return true;
 		}
 		return false;
+	}
+
+	//No Exception Check(다 확인했다고 가정)
+	void SpriteAnimator::TriggerNotify(uint32 frame_idx)
+	{
+		// 노티파이 있을 시 호출
+		HashedStringView notify_name = playing_clip_->GetFrameNotifyName(cur_frame_idx_);
+		if (false == notify_name.IsEmpty())
+		{
+			auto iter = frame_notify_callbacks_.find(notify_name);
+			if (iter != frame_notify_callbacks_.end())
+			{
+				for (const auto& callback : iter->second)
+				{
+					if (callback)
+					{
+						callback();
+					}
+				}
+			}
+		}
 	}
 }

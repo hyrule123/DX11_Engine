@@ -25,7 +25,7 @@ namespace engine
         virtual void Init() = 0;
 		virtual void OnEnable() {}
         virtual void Awake();
-        virtual void Start();
+        virtual void BeginPlay();
         
         virtual void Update() {}
         virtual void LateUpdate() {}
@@ -46,9 +46,9 @@ namespace engine
             return nullptr;
         }
 
-        bool HasInitialzed() const { return has_initialized_; }
+        bool HasInitialized() const { return has_initialized_; }
         bool HasAwaken() const { return has_awaken_; }
-        bool HasStarted() const { return has_started_; }
+        bool HasBegunPlay() const { return has_begun_play_; }
         bool IsEnabled() const { return is_enabled_; }
 		bool IsEnabledAndActiveInHierarchy() const { return is_enabled_and_active_in_hierarchy_; }
 		bool IsDestroyed() const { return is_destroyed_; }
@@ -70,7 +70,7 @@ namespace engine
 
         bool has_initialized_ = false;
         bool has_awaken_ = false;
-        bool has_started_ = false;
+        bool has_begun_play_ = false;
 		bool is_enabled_ = true;
 		bool is_enabled_and_active_in_hierarchy_ = true;
 		bool is_destroyed_ = false;

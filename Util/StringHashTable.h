@@ -26,7 +26,7 @@ public:
 		str_view(s), 
 		hash(hash_str_fnv1a(str_view)) 
 	{}
-	HashedStringView() : HashedStringView(""_hash) {}
+	constexpr HashedStringView() : HashedStringView("") {}
 
 	bool IsEmpty() const { return str_view.empty(); }
 	size_t GetHash() const { return hash; }

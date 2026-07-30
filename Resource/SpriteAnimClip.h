@@ -14,6 +14,7 @@ namespace engine
         {
             uint32 index = {};
             float duration = {};
+			HashedString notify_name = {};
         };
 
         SpriteAnimClip();
@@ -41,6 +42,19 @@ namespace engine
 
         bool IsReady() const { return !(frames_.empty()) || (total_duration_ <= 0.0f); }
 
+        void SetFrameNotifyName(uint32 frame_idx, const HashedStringView& name) {
+			if (frame_idx < (uint32)frames_.size())
+			{
+				frames_[frame_idx].notify_name = name;
+			}
+        }
+		HashedStringView GetFrameNotifyName(uint32 frame_idx) const {
+			if (frame_idx < (uint32)frames_.size())
+			{
+				return frames_[frame_idx].notify_name;
+			}
+			return HashedStringView();
+		}
 
     private:
         std::vector<Frame> frames_ = {};

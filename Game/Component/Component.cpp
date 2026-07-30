@@ -19,9 +19,9 @@ namespace engine
 	{
 		has_awaken_ = true;
 	}
-	void Component::Start()
+	void Component::BeginPlay()
 	{
-		has_started_ = true;
+		has_begun_play_ = true;
 	}
 
 	void Component::Destroy()

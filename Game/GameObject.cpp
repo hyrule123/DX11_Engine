@@ -26,7 +26,7 @@ namespace engine
 		transform_ = AddComponent<Transform>();
 	}
 
-	void GameObject::FrameStart()
+	void GameObject::FlushPendingComponents()
 	{
 		//먼저 싹 다 넣고
 		for (const auto& com : pending_add_components_)
@@ -35,24 +35,28 @@ namespace engine
 		}
 
 		//Awake까지는 무조건 호출(다른 컴포넌트 탐색 보장)
-		for (const auto& com : pending_add_components_)
-		{
-			if (!(com->HasAwaken()))
+		size_t pending_count = pending_add_components_.size();	// Snapshot
+		for (size_t i = 0; i < pending_count; ++i)
+		{ ;
+			if (false == pending_add_components_[i]->HasAwaken())
 			{
-				com->Awake();
+				pending_add_components_[i]->Awake();
 			}
 		}
 
 		//GameObject의 활성화 상태에 따라 OnEnable 호출
-		for (const auto& com : pending_add_components_)
+		for (size_t i = 0; i < pending_count; ++i)
 		{
-			if (IsActive() &&  com->IsEnabled())
+			if (IsActive() &&  pending_add_components_[i]->IsEnabled())
 			{
-				com->OnEnable();
+				pending_add_components_[i]->OnEnable();
 			}
 		}
 
-		pending_add_components_.clear();
+		// 이번에 추가된 녀석들만 제거, 중간에 추가된 녀석들은 냅둠
+		pending_add_components_.erase(
+			pending_add_components_.begin(),
+			pending_add_components_.begin() + pending_count);
 	}
 
 	void GameObject::Update()
@@ -61,9 +65,9 @@ namespace engine
 		{
 			if (com && com->IsEnabled())
 			{
-				if (!(com->HasStarted()))
+				if (false == com->HasBegunPlay())
 				{
-					com->Start();
+					com->BeginPlay();
 				}
 				com->Update();
 			}
@@ -73,9 +77,9 @@ namespace engine
 		{
 			if (com && com->IsEnabled())
 			{
-				if (!(com->HasStarted()))
+				if (false == com->HasBegunPlay())
 				{
-					com->Start();
+					com->BeginPlay();
 				}
 				com->Update();
 			}
@@ -88,6 +92,10 @@ namespace engine
 		{
 			if (com && com->IsEnabled())
 			{
+				if (false == com->HasBegunPlay())
+				{
+					com->BeginPlay();
+				}
 				com->LateUpdate();
 			}
 		}
@@ -96,6 +104,10 @@ namespace engine
 		{
 			if (com && com->IsEnabled())
 			{
+				if (false == com->HasBegunPlay())
+				{
+					com->BeginPlay();
+				}
 				com->LateUpdate();
 			}
 		}
@@ -126,6 +138,12 @@ namespace engine
 			other_components_, 
 			[](const s_ptr<Component>& com) { return com == nullptr; }
 		);
+
+		// 혹시나 pending_add_components_에 Destroy된 녀석이 있을 수 있으므로 제거
+		std::erase_if(
+			pending_add_components_,
+			[](const s_ptr<Component>& com) { return com->IsDestroyed(); }
+		);
 	}
 
 	s_ptr<Component> GameObject::AddComponent(s_ptr<Component> component)
@@ -135,7 +153,7 @@ namespace engine
 			pending_add_components_.push_back(component);
 
 			component->SetOwnerGameObject(std::static_pointer_cast<GameObject>(shared_from_this()));
-			if (!component->HasInitialzed())
+			if (!component->HasInitialized())
 			{
 				component->Init();
 			}
@@ -272,6 +290,8 @@ namespace engine
 	void GameObject::AddComponentInternal(const s_ptr<Component>& component)
 	{
 		//넣을 때 null 체크 했으므로 무조건 있다고 가정
+		if (component->IsDestroyed()) { return; }	// 이미 Destroy된 녀석은 넣지 않음
+
 		ComponentCategory cat = component->GetComponentCategory();
 
 		if (ComponentCategory::kScripts < cat)

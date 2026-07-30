@@ -26,7 +26,9 @@ namespace engine
 
 		virtual void Init();
 
-		void FrameStart();	// Component 추가 및 초기화 담당
+		bool HasPendingComponents() const { return !pending_add_components_.empty(); }
+		void FlushPendingComponents();	// Component 추가 및 초기화 담당
+
 		void Update();
 		void LateUpdate();
 		void FrameEnd();	// Component 제거

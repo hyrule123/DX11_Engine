@@ -25,6 +25,7 @@ namespace engine
 		virtual ~Scene() override;
 
 		virtual void Init() = 0;
+
 		void FrameStart();
 		void Update();
 		void LateUpdate();
@@ -32,7 +33,7 @@ namespace engine
 
 		bool HasInitialized() const { return has_initialized_; }
 
-		//추가 예약, 실제 추가는 FrameStart() 타이밍
+		//추가 예약, 실제 추가는 FlushPendingGameObjects() 타이밍
 		void AddGameObject(s_ptr<GameObject> obj);
 
 		template <typename T> requires std::is_base_of_v<GameObject, T>
@@ -43,10 +44,13 @@ namespace engine
 		}
 
 		s_ptr<GameObject> AddGameObject(const HashedStringView& concrete_class_name);
+
+		s_ptr<GameObject> FindGameObject(const std::string_view name) const;
 		
 	private:
+		void FlushPending();
+
 		std::vector<s_ptr<GameObject>> game_objects_ = {};
-		std::vector<s_ptr<GameObject>> pending_add_objects_ = {};
 
 		bool has_initialized_ = false;
 	};

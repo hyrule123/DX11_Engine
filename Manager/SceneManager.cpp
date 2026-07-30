@@ -35,6 +35,7 @@ namespace engine
 	void SceneManager::Init()
 	{
 	}
+
 	void SceneManager::FrameStart()
 	{
 		if (cur_scene_)
@@ -42,6 +43,7 @@ namespace engine
 			cur_scene_->FrameStart();
 		}
 	}
+
 	void SceneManager::Update()
 	{
 		if (cur_scene_)

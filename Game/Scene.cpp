@@ -14,52 +14,49 @@ namespace engine
 	{
 		has_initialized_ = true;
 	}
+
 	void Scene::FrameStart()
 	{
-		game_objects_.insert(
-			game_objects_.end(),
-			pending_add_objects_.begin(),
-			pending_add_objects_.end()
-		);
-
-		pending_add_objects_.clear();
-
-		for (const auto& obj : game_objects_)
-		{
-			obj->FrameStart();
-		}
+		FlushPending();
 	}
 
 	void Scene::Update()
 	{
-		for (const auto& obj : game_objects_)
+		size_t snapshot_size = game_objects_.size();	// Snapshot
+		for (size_t i = 0; i < snapshot_size; ++i)
 		{
-			if(obj->IsActive()) 
+			if(game_objects_[i]->IsActive())
 			{ 
-				obj->Update();
+				game_objects_[i]->Update();
 			}
 		}
+
+		FlushPending();
 	}
 
 	void Scene::LateUpdate()
 	{
-		for (const auto& obj : game_objects_)
+		size_t snapshot_size = game_objects_.size();	// Snapshot
+		for (size_t i = 0; i < snapshot_size; ++i)
 		{
-			if (obj->IsActive())
+			if (game_objects_[i]->IsActive())
 			{
-				obj->LateUpdate();
+				game_objects_[i]->LateUpdate();
 			}
 		}
+
+		FlushPending();
 	}
 
 	void Scene::FrameEnd()
 	{
-		for (const auto& obj : game_objects_)
+		size_t snapshot_size = game_objects_.size();	// Snapshot
+		for (size_t i = 0; i < snapshot_size; ++i)
 		{
-			if (obj)
+			if (game_objects_[i])
 			{
 				//Object에서 자체적으로 Destroy된 컴포넌트들을 제거함
-				obj->FrameEnd();
+				game_objects_[i]->FrameEnd();
 			}
 		}
 
@@ -79,7 +76,7 @@ namespace engine
 			{
 				obj->Init();
 			}
-			pending_add_objects_.push_back(obj);
+			game_objects_.push_back(obj);
 		}
 	}
 
@@ -91,5 +88,28 @@ namespace engine
 			AddGameObject(obj);
 		}
 		return obj;
+	}
+	s_ptr<GameObject> Scene::FindGameObject(const std::string_view name) const
+	{
+		for (const auto& obj : game_objects_)
+		{
+			if (obj->GetName() == name)
+			{
+				return obj;
+			}
+		}
+
+		return nullptr;
+	}
+	void Scene::FlushPending()
+	{
+		size_t snapshot_size = game_objects_.size();	// Snapshot
+		for (size_t i = 0; i < snapshot_size; ++i)
+		{
+			if (game_objects_[i]->HasPendingComponents())
+			{
+				game_objects_[i]->FlushPendingComponents();
+			}
+		}
 	}
 }

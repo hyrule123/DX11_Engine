@@ -17,7 +17,7 @@ namespace engine
 
 	public:
 		void ChangeScene(s_ptr<Scene> scene);
-		
+
 		void FrameStart();
 		void Update();
 		void LateUpdate();

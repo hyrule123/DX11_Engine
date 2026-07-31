@@ -83,6 +83,11 @@ namespace engine
 		void SetParent(Transform* new_parent);
 		Transform* GetParent() const { return parent_; }
 		const std::vector<Transform*>& GetChildren() const { return children_; }
+
+		uint32 GetVersion() { 
+			if (is_dirty_) { UpdateWorldTransform(); }
+			return version_;
+		}
 		
 	private:
 		void AddChild(Transform* child) { 
@@ -114,6 +119,7 @@ namespace engine
 		Transform* parent_ = {};
 		std::vector<Transform*> children_ = {};
 
+		uint32 version_ = 0; //변경될 때마다 증가.
 		bool is_dirty_ = true;
 	};
 }

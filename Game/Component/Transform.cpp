@@ -167,5 +167,7 @@ namespace engine
 		}
 
 		is_dirty_ = false;
+		//버전을 한 단계 올림
+		++version_;
 	}
 }

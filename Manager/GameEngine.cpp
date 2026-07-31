@@ -26,6 +26,8 @@ namespace engine
 
 	bool GameEngine::Init()
 	{
+		TimeManager::GetInst().Init();
+
 		if (GraphicsDevice::GetInst().Init() == false)
 		{
 			ASSERT_RELEASE(false);
@@ -51,6 +53,28 @@ namespace engine
 		SceneManager::GetInst().FrameStart();
 
 		InputManager::GetInst().Update();
+
+#pragma region FIXED_UPDATE
+		acc_delta_time_ += TimeManager::GetInst().GetDeltaTime();
+		TimeManager::GetInst().SetFixedUpdateMode(true);
+		const float fixed_delta_time_ = TimeManager::GetInst().GetFixedDeltaTime();
+		uint32 step_count = 0u;
+		while (acc_delta_time_ >= fixed_delta_time_)
+		{
+			SceneManager::GetInst().FixedUpdate();
+
+			acc_delta_time_ -= fixed_delta_time_;
+
+			step_count++;
+			//지정된 Step 횟수를 초과 시 업데이트 포기
+			if (step_count > max_step_count_)
+			{
+				acc_delta_time_ = std::fmod(acc_delta_time_, fixed_delta_time_);
+				break;
+			}
+		}
+		TimeManager::GetInst().SetFixedUpdateMode(false);
+#pragma endregion FIXED_UPDATE
 
 		SceneManager::GetInst().Update();
 

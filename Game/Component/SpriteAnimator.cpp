@@ -42,7 +42,7 @@ namespace engine
 		if (playing_clip_ && is_playing_)
 		{
 			// 시간 누적
-			acc_deltatime_ += TimeManager::GetInst().DeltaTime();
+			acc_deltatime_ += TimeManager::GetInst().GetDeltaTime();
 
 			//while문을 사용하여
 			while (acc_deltatime_ >= cur_frame_duration_)

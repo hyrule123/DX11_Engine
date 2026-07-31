@@ -34,6 +34,19 @@ namespace engine
 		FlushPending();
 	}
 
+	void Scene::FixedUpdate()
+	{
+		size_t snapshot_size = game_objects_.size();	// Snapshot
+		for (size_t i = 0; i < snapshot_size; ++i)
+		{
+			if (game_objects_[i]->IsActive())
+			{
+				game_objects_[i]->FixedUpdate();
+			}
+		}
+		FlushPending();
+	}
+
 	void Scene::LateUpdate()
 	{
 		size_t snapshot_size = game_objects_.size();	// Snapshot

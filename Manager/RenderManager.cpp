@@ -104,7 +104,7 @@ namespace engine
 			debug_rect_mesh_->Draw(context, (UINT)debug_rect_data_.size());
 
 			// 순회 돌면서 dt 감소 및 음수가 된 값들은 제거
-			float dt = TimeManager::GetInst().DeltaTime();
+			float dt = TimeManager::GetInst().GetDeltaTime();
 			for (int32 i = (int32)debug_rect_data_.size() - 1; i >= 0; --i)
 			{
 				debug_rect_data_[i].left_time -= dt;

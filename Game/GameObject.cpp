@@ -86,6 +86,32 @@ namespace engine
 		}
 	}
 
+	void GameObject::FixedUpdate()
+	{
+		for (const auto& com : other_components_)
+		{
+			if (com && com->IsEnabled())
+			{
+				if (false == com->HasBegunPlay())
+				{
+					com->BeginPlay();
+				}
+				com->FixedUpdate();
+			}
+		}
+		for (const auto& com : fixed_order_components_)
+		{
+			if (com && com->IsEnabled())
+			{
+				if (false == com->HasBegunPlay())
+				{
+					com->BeginPlay();
+				}
+				com->FixedUpdate();
+			}
+		}
+	}
+
 	void GameObject::LateUpdate()
 	{
 		for (const auto& com : other_components_)

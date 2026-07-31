@@ -11,6 +11,8 @@ namespace engine
 	constexpr uint32 kDefaultHeight = 960;
 
 	constexpr float kDeltaTimeCap = 0.1f;
+	constexpr float kDefaultFixedDeltaTime = 1.0f / 60.0f;
+	constexpr uint32 kDefaultMaxStepCount = 3u;
 
 	constexpr uint32 kMaxTextureCount = 8u;
 	constexpr uint32 kMaxRenderTargetCount = 8u;

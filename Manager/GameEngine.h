@@ -2,6 +2,7 @@
 
 #include <Engine/Core/Singleton.h>
 #include <Engine/Core/StdType.h>
+#include <Engine/Core/Constant.h>
 
 namespace engine
 {
@@ -21,5 +22,8 @@ namespace engine
 		bool Run();
 
 		bool is_initialized_ = {};
+		
+		float acc_delta_time_ = kDefaultFixedDeltaTime;
+		uint32 max_step_count_ = kDefaultMaxStepCount;
 	};
 }

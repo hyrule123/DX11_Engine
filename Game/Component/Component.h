@@ -28,6 +28,7 @@ namespace engine
         virtual void BeginPlay();
         
         virtual void Update() {}
+        virtual void FixedUpdate() {}
         virtual void LateUpdate() {}
 
 		virtual void OnDisable() {}

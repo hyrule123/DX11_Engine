@@ -51,6 +51,13 @@ namespace engine
 			cur_scene_->Update();
 		}
 	}
+	void SceneManager::FixedUpdate()
+	{
+		if (cur_scene_)
+		{
+			cur_scene_->FixedUpdate();
+		}
+	}
 	void SceneManager::LateUpdate()
 	{
 		if (cur_scene_)

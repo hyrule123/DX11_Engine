@@ -30,6 +30,7 @@ namespace engine
 		void FlushPendingComponents();	// Component 추가 및 초기화 담당
 
 		void Update();
+		void FixedUpdate();
 		void LateUpdate();
 		void FrameEnd();	// Component 제거
 

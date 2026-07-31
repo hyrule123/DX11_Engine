@@ -28,6 +28,7 @@ namespace engine
 
 		void FrameStart();
 		void Update();
+		void FixedUpdate();
 		void LateUpdate();
 		void FrameEnd();
 

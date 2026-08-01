@@ -33,15 +33,6 @@ namespace engine
 
 		DEBUG_LOG("Collider2D::OnEnable() - Collider registered in CollisionSystem2D.");
 	}
-	void Collider2D::FixedUpdate()
-	{
-		Super::FixedUpdate();
-
-		if (transform_->GetVersion() != tf_last_seen_version_) {
-			tf_last_seen_version_ = transform_->GetVersion();
-			world_bounds_ = ComputeWorldBounds();
-		}
-	}
 	void Collider2D::OnLayerChanged(uint32 prev_layer, uint32 new_layer)
 	{
 		Super::OnLayerChanged(prev_layer, new_layer);
@@ -52,5 +43,14 @@ namespace engine
 		collision_system->RegisterCollider(this);
 
 		DEBUG_LOG("Collider2D::OnLayerChanged() - Collider re-registered in CollisionSystem2D due to layer change.");
+	}
+	const AABB2D& Collider2D::GetWorldBounds() const
+	{
+		uint32 ver = transform_->GetVersion();
+		if (ver != tf_last_seen_version_) {
+			tf_last_seen_version_ = ver;
+			world_bounds_ = ComputeWorldBounds();
+		}
+		return world_bounds_;
 	}
 }

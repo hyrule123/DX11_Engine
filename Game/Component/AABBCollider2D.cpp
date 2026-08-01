@@ -10,7 +10,7 @@ namespace engine
 	{}
 	AABBCollider2D::~AABBCollider2D()
 	{}
-	AABB2D AABBCollider2D::ComputeWorldBounds()
+	AABB2D AABBCollider2D::ComputeWorldBounds() const
 	{
 		AABB2D ret = {};
 

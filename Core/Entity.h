@@ -33,8 +33,8 @@ namespace engine
 	private:
 		HashedStringView concrete_class_name_ = ""_hash; //컴파일 타임에 결정되는 클래스 이름
 
-		uint32 instance_ID_ = {};	//런타임 ID(매번 달라질 수 있음)
-		static inline uint32 next_instance_ID_ = 0;
+		uint32 instance_ID_ = {};	//런타임 ID(매 실행마다 달라질 수 있음)
+		static inline uint32 next_instance_ID_ = 1;
 	};
 
 	class EntityFactory

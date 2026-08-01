@@ -292,7 +292,7 @@ namespace engine
 		}
 		is_calling_set_layer_ = true;
 
-		if(kLayerMaxCount <= layer)
+		if(kMaxLayers <= layer)
 		{
 			ASSERT_MESSAGE(false, "layer 값이 유효 범위를 벗어났습니다.");
 			is_calling_set_layer_ = false;

@@ -12,10 +12,10 @@ namespace engine
 		virtual ~AABBCollider2D() override;
 
 		void SetLocalBounds(AABB2D local_bounds) { local_bounds_ = local_bounds; }
-		AABB2D GetLocalBounds() const { return local_bounds_; }
+		const AABB2D& GetLocalBounds() const { return local_bounds_; }
 
 	protected:
-		virtual AABB2D ComputeWorldBounds() override;
+		virtual AABB2D ComputeWorldBounds() const override;
 
 	private:
 		AABB2D local_bounds_ = {};

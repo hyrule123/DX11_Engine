@@ -1,9 +1,10 @@
 #pragma once
 
 #include <Engine/Core/Entity.h>
-
 #include <Engine/Core/UtilMacro.h>
 #include <Engine/Core/CoreMinimal.h>
+#include <Engine/Core/Constant.h>
+#include <Engine/Core/Debug.h>
 
 #include <Engine/Collision/CollisionSystem2D.h>
 
@@ -11,6 +12,7 @@
 #include <vector>
 
 #include <type_traits>
+#include <bitset>
 
 namespace engine
 {
@@ -51,13 +53,19 @@ namespace engine
 		s_ptr<GameObject> FindGameObject(const std::string_view name) const;
 
 		CollisionSystem2D* GetCollisionSystem2D() { return &collision_system_2D_; }
-		
+
+		void SetCollisionMask(uint32 layer_a, uint32 layer_b, bool can_collide);
+
+		const std::array<std::bitset<kMaxLayers>, kMaxLayers>& GetCollisionMask() const { return collision_mask_; }
+
 	private:
 		void FlushPending();
 
 		std::vector<s_ptr<GameObject>> game_objects_ = {};
 
-		CollisionSystem2D collision_system_2D_ = {};
+		CollisionSystem2D collision_system_2D_;
+
+		std::array<std::bitset<kMaxLayers>, kMaxLayers> collision_mask_ = {};
 
 		bool has_initialized_ = false;
 	};

@@ -20,5 +20,5 @@ namespace engine
 	constexpr float kDefaultBlendFactor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
 	constexpr uint32 kDefaultSampleMask = 0xFF'FF'FF'FFu;
 
-	constexpr uint32 kLayerMaxCount = 32u;
+	constexpr uint32 kMaxLayers = 32u;
 }

@@ -3,16 +3,21 @@
 
 #include <Engine/Game/GameObject.h>
 
+#include <Engine/Core/Debug.h>
+
 namespace engine
 {
 	Scene::Scene(const HashedStringView& concrete_class_name)
 		: Super(concrete_class_name)
+		, collision_system_2D_(this)
 	{}
 	Scene::~Scene()
 	{}
 	void Scene::Init()
 	{
 		has_initialized_ = true;
+
+		collision_system_2D_.Init();
 	}
 
 	void Scene::FrameStart()
@@ -113,6 +118,13 @@ namespace engine
 		}
 
 		return nullptr;
+	}
+	void Scene::SetCollisionMask(uint32 layer_a, uint32 layer_b, bool can_collide)
+	{
+		ASSERT_MESSAGE(layer_a < kMaxLayers && layer_b < kMaxLayers, "Layer index out of bounds");
+
+		collision_mask_[layer_a][layer_b] = can_collide;
+		collision_mask_[layer_b][layer_a] = can_collide; // Ensure symmetry
 	}
 	void Scene::FlushPending()
 	{

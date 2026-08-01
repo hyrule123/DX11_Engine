@@ -69,6 +69,9 @@ namespace engine
 		// 파괴(비가역)
 		void Destroy();
 
+		void SetLayer(uint32 layer);
+		uint32 GetLayer() const { return layer_; }
+
 	private:
 
 		void UpdateHierarchyState(bool is_active_in_hierarchy);
@@ -85,10 +88,14 @@ namespace engine
 
 		std::vector<s_ptr<Component>> pending_add_components_ = {};
 
+		uint32 layer_ = 0;
+
 		bool has_initialized_ = false;
 		bool is_active_ = true;
 		bool is_active_in_hierarchy_ = true;
 		bool is_destroyed_ = false;
+
+		bool is_calling_set_layer_ = false;
 	};
 
 	template <typename T>

@@ -219,6 +219,18 @@
     <ClInclude Include="Resource\Graphics\RenderPass\PresentPass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Collision\CollisionSystem2D.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Collision\Collision.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Component\Collider2D.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Component\AABBCollider2D.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Core\pch.cpp">
@@ -372,6 +384,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Resource\Graphics\RenderPass\PresentPass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Collision\CollisionSystem2D.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Component\Collider2D.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Component\AABBCollider2D.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

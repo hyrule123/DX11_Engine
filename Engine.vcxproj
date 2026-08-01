@@ -219,6 +219,10 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Game\Component\AABBCollider2D.h" />
+    <ClInclude Include="Game\Component\Collider2D.h" />
+    <ClInclude Include="Collision\Collision.h" />
+    <ClInclude Include="Collision\CollisionSystem2D.h" />
     <ClInclude Include="Game\Component\AIContext.h" />
     <ClInclude Include="Game\Component\BlackBoard.h" />
     <ClInclude Include="Game\Component\HFSM.h" />
@@ -289,6 +293,9 @@
     <ClInclude Include="Resource\Graphics\Shader\VertexShader.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Game\Component\AABBCollider2D.cpp" />
+    <ClCompile Include="Game\Component\Collider2D.cpp" />
+    <ClCompile Include="Collision\CollisionSystem2D.cpp" />
     <ClCompile Include="Game\Component\BlackBoard.cpp" />
     <ClCompile Include="Game\Component\HFSM.cpp" />
     <ClCompile Include="Game\Component\HFSMState.cpp" />

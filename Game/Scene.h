@@ -5,6 +5,8 @@
 #include <Engine/Core/UtilMacro.h>
 #include <Engine/Core/CoreMinimal.h>
 
+#include <Engine/Collision/CollisionSystem2D.h>
+
 #include <string_view>
 #include <vector>
 
@@ -47,11 +49,15 @@ namespace engine
 		s_ptr<GameObject> AddGameObject(const HashedStringView& concrete_class_name);
 
 		s_ptr<GameObject> FindGameObject(const std::string_view name) const;
+
+		CollisionSystem2D* GetCollisionSystem2D() { return &collision_system_2D_; }
 		
 	private:
 		void FlushPending();
 
 		std::vector<s_ptr<GameObject>> game_objects_ = {};
+
+		CollisionSystem2D collision_system_2D_ = {};
 
 		bool has_initialized_ = false;
 	};

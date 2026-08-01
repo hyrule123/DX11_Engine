@@ -34,6 +34,8 @@ namespace engine
 		virtual void OnDisable() {}
 		virtual void OnDestroy() {}
 
+		virtual void OnLayerChanged(uint32 prev_layer, uint32 new_layer) {}
+
         ComponentCategory GetComponentCategory() const { return category_; }
 
         void SetOwnerGameObject(s_ptr<GameObject> owner) { owner_game_object_ = owner; }

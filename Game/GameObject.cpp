@@ -5,6 +5,7 @@
 #include <Engine/Game/Component/ComponentCategory.h>
 
 #include <Engine/Core/Debug.h>
+#include <Engine/Core/Constant.h>
 
 namespace engine
 {
@@ -37,7 +38,7 @@ namespace engine
 		//Awake까지는 무조건 호출(다른 컴포넌트 탐색 보장)
 		size_t pending_count = pending_add_components_.size();	// Snapshot
 		for (size_t i = 0; i < pending_count; ++i)
-		{ ;
+		{
 			if (false == pending_add_components_[i]->HasAwaken())
 			{
 				pending_add_components_[i]->Awake();
@@ -278,6 +279,45 @@ namespace engine
 			//Transform의 소유자는 반드시 있음이 보장
 			child_tr->GetOwnerGameObject()->Destroy();
 		}
+	}
+
+	void GameObject::SetLayer(uint32 layer)
+	{
+		if (layer_ == layer) { return; }
+
+		if (is_calling_set_layer_)
+		{
+			ASSERT_MESSAGE(false, "OnLayerChanged()에서 SetLayer()를 호출하면 안됨");
+			return;
+		}
+		is_calling_set_layer_ = true;
+
+		if(kLayerMaxCount <= layer)
+		{
+			ASSERT_MESSAGE(false, "layer 값이 유효 범위를 벗어났습니다.");
+			is_calling_set_layer_ = false;
+			return;
+		}
+
+		uint32 prev_layer = layer_;
+		layer_ = layer;
+
+		for (const auto& com : other_components_)
+		{
+			if (com && com->HasAwaken())
+			{
+				com->OnLayerChanged(prev_layer, layer_);
+			}
+		}
+		for (const auto& com : fixed_order_components_)
+		{
+			if (com && com->HasAwaken())
+			{
+				com->OnLayerChanged(prev_layer, layer_);
+			}
+		}
+
+		is_calling_set_layer_ = false;
 	}
 
 	void GameObject::UpdateHierarchyState(bool is_active_in_hierarchy)

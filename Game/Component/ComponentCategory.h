@@ -18,6 +18,9 @@ namespace engine
         kBlackboard = 0,
         kBehavior,
 
+        //여기에 Collider?
+        kCollider,
+
         // 2. 물리 및 이동
         kTransform,
 

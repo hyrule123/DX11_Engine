@@ -1,9 +1,13 @@
 #pragma once
 #include <Engine/Core/Entity.h>
 
-#include <Engine/Game/Component/ComponentCategory.h>
 #include <Engine/Core/CoreMinimal.h>
 #include <Engine/Core/UtilMacro.h>
+
+#include <Engine/Collision/Collision.h>
+
+#include <Engine/Game/Component/ComponentCategory.h>
+
 #include <array>
 #include <vector>
 #include <string>
@@ -72,8 +76,26 @@ namespace engine
 		void SetLayer(uint32 layer);
 		uint32 GetLayer() const { return layer_; }
 
-	private:
+		void AddCollisionListener(Component* listener) {
+			if (listener) { collision_listeners_.push_back(listener); }
+		}
+		void RemoveCollisionListener(Component* listener) {
+			if (listener) {
+				auto it = std::find(collision_listeners_.begin(), collision_listeners_.end(), listener);
+				if (it != collision_listeners_.end()) {
+					collision_listeners_.erase(it);
+				}
+			}
+		}
 
+		void BroadcastCollisionEnter2D(const Collision2D& col_info);
+		void BroadcastCollisionStay2D(const Collision2D& col_info);
+		void BroadcastCollisionExit2D(Collider2D* other);
+		void BroadcastTriggerEnter2D(Collider2D* other);
+		void BroadcastTriggerStay2D(Collider2D* other);
+		void BroadcastTriggerExit2D(Collider2D* other);
+
+	private:
 		void UpdateHierarchyState(bool is_active_in_hierarchy);
 
 		void AddComponentInternal(const s_ptr<Component>& component);
@@ -87,6 +109,8 @@ namespace engine
 		std::string name_ = {};
 
 		std::vector<s_ptr<Component>> pending_add_components_ = {};
+
+		std::vector<Component*> collision_listeners_ = {};
 
 		uint32 layer_ = 0;
 

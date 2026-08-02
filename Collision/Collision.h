@@ -6,10 +6,11 @@
 
 namespace engine
 {
+    class Collider2D;
+
 	constexpr uint64 kDefaultCollisionBucketSize = 1ull << 14;
 	constexpr uint64 kMaxCollisionBucketSize = 1ull << 20;
     constexpr int64 kMaxCellsPerCollider = 128;	//한 Collider가 차지할 수 있는 Cell의 최대 갯수
-
 
     // POD class
     class ColliderID
@@ -61,5 +62,23 @@ namespace engine
 
         float2 GetCenter()      const noexcept { return (left_bottom + right_top) * 0.5f; }
         float2 GetHalfExtents() const noexcept { return (right_top - left_bottom) * 0.5f; }
+        float2 GetSize()        const noexcept { return (right_top - left_bottom); }
+		void SetSize(float2 size)  noexcept { 
+            left_bottom -= size * 0.5f; 
+            right_top += size * 0.5f; 
+        }
     };
+
+    struct Collision2D
+    {
+		Collider2D* other_collider = {};
+        float2 contact_point = {};
+    };
+
+	enum class CollisionEventType : uint32
+	{
+		kEnter,
+		kStay,
+		kExit
+	};
 }

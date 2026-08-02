@@ -76,47 +76,9 @@ namespace engine
 			present_pass_.Execute(context);
 		}
 
+		
 		//Debug Draw
-		if (!debug_rect_data_.empty())
-		{
-			//Per Pass ( = Camera )
-			PerPass per_pass_data = {};
-			per_pass_data.view_mat = cam->GetViewMatrix();
-			per_pass_data.proj_mat = cam->GetProjMatrix();
-
-			cb_per_pass_->Upload(context, per_pass_data);
-			cb_per_pass_->Bind(context, ShaderStage::kAllGraphics, SLOT_B_PER_PASS);
-
-			//Debug Draw용 버퍼 - 사이즈 부족 시 확장
-			if (debug_rect_data_.size() > debug_buffer_->GetElementCount())
-			{
-				//벡터랑 버퍼 확장 타이밍 맞추기 위해 capacity() 사용
-				bool result = debug_buffer_->Resize(context, debug_rect_data_.capacity(), false);
-				ASSERT(result);
-			}
-			debug_buffer_->Upload(context, debug_rect_data_);
-			debug_buffer_->BindSRV(context, SLOT_T_PER_INSTANCE, ShaderStage::kVS | ShaderStage::kPS);
-
-			//Shader Set Bind
-			debug_shader_set_->Bind(context);
-
-			//Mesh Draw
-			debug_rect_mesh_->Draw(context, (UINT)debug_rect_data_.size());
-
-			// 순회 돌면서 dt 감소 및 음수가 된 값들은 제거
-			float dt = TimeManager::GetInst().GetDeltaTime();
-			for (int32 i = (int32)debug_rect_data_.size() - 1; i >= 0; --i)
-			{
-				debug_rect_data_[i].left_time -= dt;
-				if (debug_rect_data_[i].left_time <= 0.0f)
-				{
-					debug_rect_data_[i] = debug_rect_data_.back();
-					debug_rect_data_.pop_back();
-				}
-			}
-
-
-		}
+		DebugDraw(context);
 	}
 	void RenderManager::FrameEnd()
 	{
@@ -135,6 +97,82 @@ namespace engine
 	void RenderManager::OnClearContextStates()
 	{
 		BindPSSamplerStates(GraphicsDevice::GetInst().GetContext());
+	}
+	void RenderManager::DebugDraw(ID3D11DeviceContext* context)
+	{
+		auto cam = main_cam_.lock();
+
+		if (debug_rect_data_.empty() && debug_circle_data_.empty())
+		{
+			return;
+		}
+
+		//Per Pass ( = Camera )
+		PerPass per_pass_data = {};
+		per_pass_data.view_mat = cam->GetViewMatrix();
+		per_pass_data.proj_mat = cam->GetProjMatrix();
+
+		cb_per_pass_->Upload(context, per_pass_data);
+		cb_per_pass_->Bind(context, ShaderStage::kAllGraphics, SLOT_B_PER_PASS);
+
+		//Shader Set Bind
+		debug_shader_set_->Bind(context);
+
+		//Debug Draw용 버퍼 - 사이즈 부족 시 확장
+		size_t max_size = std::max(debug_rect_data_.size(), debug_circle_data_.size());
+		if (max_size > debug_buffer_->GetElementCount())
+		{
+			//벡터랑 버퍼 확장 타이밍 맞추기 위해 capacity() 사용
+			bool result = debug_buffer_->Resize(context, max_size, false);
+			ASSERT(result);
+		}
+
+		
+#pragma region //Debug Rect Draw
+		float dt = TimeManager::GetInst().GetDeltaTime();
+		if (false == debug_rect_data_.empty())
+		{
+			debug_buffer_->Upload(context, debug_rect_data_);
+			debug_buffer_->BindSRV(context, SLOT_T_PER_INSTANCE, ShaderStage::kVS | ShaderStage::kPS);
+
+			//Mesh Draw
+			debug_rect_mesh_->Draw(context, (UINT)debug_rect_data_.size());
+
+			// 순회 돌면서 dt 감소 및 음수가 된 값들은 제거
+			
+			for (int32 i = (int32)debug_rect_data_.size() - 1; i >= 0; --i)
+			{
+				debug_rect_data_[i].left_time -= dt;
+				if (debug_rect_data_[i].left_time <= 0.0f)
+				{
+					debug_rect_data_[i] = debug_rect_data_.back();
+					debug_rect_data_.pop_back();
+				}
+			}
+		}
+#pragma endregion //Debug Rect Draw
+
+#pragma region //Debug Circle Draw
+		if (false == debug_circle_data_.empty())
+		{
+			debug_buffer_->Upload(context, debug_circle_data_);
+			debug_buffer_->BindSRV(context, SLOT_T_PER_INSTANCE, ShaderStage::kVS | ShaderStage::kPS);
+
+			//Mesh Draw
+			debug_circle_mesh_->Draw(context, (UINT)debug_circle_data_.size());
+
+			// 순회 돌면서 dt 감소 및 음수가 된 값들은 제거
+			for (int32 i = (int32)debug_circle_data_.size() - 1; i >= 0; --i)
+			{
+				debug_circle_data_[i].left_time -= dt;
+				if (debug_circle_data_[i].left_time <= 0.0f)
+				{
+					debug_circle_data_[i] = debug_circle_data_.back();
+					debug_circle_data_.pop_back();
+				}
+			}
+		}
+#pragma endregion //Debug Circle Draw
 	}
 	void RenderManager::CreateSamplerStates( ID3D11DeviceContext* context)
 	{
@@ -175,7 +213,7 @@ namespace engine
 
 		context->PSSetSamplers(0u, (UINT)raw_ptrs.size(), raw_ptrs.data());
 	}
-	void RenderManager::CreateDebugRenderObjects( ID3D11DeviceContext* context)
+	void RenderManager::CreateDebugRenderObjects(ID3D11DeviceContext* context)
 	{
 		debug_buffer_ = std::make_unique<StructuredBuffer>();
 
@@ -218,31 +256,78 @@ namespace engine
 			ASSERT_RELEASE(false);
 		}
 
-#pragma region //MESH
-		debug_rect_mesh_ = std::make_unique<Mesh>();
+#pragma region RECT MESH
+		{
+			debug_rect_mesh_ = std::make_unique<Mesh>();
 
-		//VERTEX BUFFER
-		auto vb = std::make_shared<VertexBuffer>();
-		std::vector<Vertex::Debug::Vertex> vertices;
-		vertices.resize(4);
-		vertices[0].position = { -0.5f, 0.5f, 0.0f };
-		vertices[1].position = { 0.5f, 0.5f, 0.0f };
-		vertices[2].position = { 0.5f, -0.5f, 0.0f };
-		vertices[3].position = { -0.5f, -0.5f, 0.0f };
-		vb->Create(vertices);
+			//VERTEX BUFFER
+			auto vb = std::make_shared<VertexBuffer>();
+			std::vector<Vertex::Debug::Vertex> vertices;
+			vertices.resize(4);
+			vertices[0].position = { -0.5f, 0.5f, 0.0f };
+			vertices[1].position = { 0.5f, 0.5f, 0.0f };
+			vertices[2].position = { 0.5f, -0.5f, 0.0f };
+			vertices[3].position = { -0.5f, -0.5f, 0.0f };
+			vb->Create(vertices);
 
-		//INDEX BUFFER
-		auto ib = std::make_shared<IndexBuffer>();
-		std::vector<UINT> indices;
-		indices.push_back(0u);
-		indices.push_back(1u);
-		indices.push_back(2u);
-		indices.push_back(3u);
-		indices.push_back(0u);
-		ib->Create(indices, D3D11_PRIMITIVE_TOPOLOGY_LINESTRIP);
+			//INDEX BUFFER
+			auto ib = std::make_shared<IndexBuffer>();
+			std::vector<UINT> indices;
+			indices.push_back(0u);
+			indices.push_back(1u);
+			indices.push_back(2u);
+			indices.push_back(3u);
+			indices.push_back(0u);
+			ib->Create(indices, D3D11_PRIMITIVE_TOPOLOGY_LINESTRIP);
 
-		debug_rect_mesh_->SetBuffers(vb, ib);
-#pragma endregion //MESH
+			debug_rect_mesh_->SetBuffers(vb, ib);
+		}
+#pragma endregion // RECT MESH
+		{
+			debug_circle_mesh_ = std::make_unique<Mesh>();
+
+			//VERTEX BUFFER
+			auto vb = std::make_shared<VertexBuffer>();
+			std::vector<Vertex::Debug::Vertex> vertices;
+
+			Vertex::Debug::Vertex v;
+			v.position = { 0.0f, 0.0f, 0.0f };	//중심점
+			vertices.push_back(v);
+
+			//32개 (vertex: 33개 index 0 ~ 32)
+			for (int32 i = 0; i <= 31; ++i)
+			{
+				float angle = (float)i / 32.0f * XM_2PI;
+				float x = cosf(angle) * 0.5f;
+				float y = sinf(angle) * 0.5f;
+				vertices.push_back({ {x, y, 0.0f} });
+			}
+			vb->Create(vertices);
+
+			//INDEX BUFFER
+			auto ib = std::make_shared<IndexBuffer>();
+			std::vector<UINT> indices;
+
+			for (uint i = 0; i <= 30; ++i)
+			{
+				//CW
+				indices.push_back((UINT)0); //중심점
+				indices.push_back((UINT)(i + 2));
+				indices.push_back((UINT)(i + 1));
+			}
+			//마지막 피자 조각
+			indices.push_back((UINT)0);
+			indices.push_back((UINT)1);
+			indices.push_back((UINT)32);
+
+			ib->Create(indices, D3D11_PRIMITIVE_TOPOLOGY_LINESTRIP);
+
+			debug_circle_mesh_->SetBuffers(vb, ib);
+		}
+#pragma region CIRCLE MESH
+
+
+#pragma endregion // CIRCLE MESH
 
 #pragma region // GRAPHICS SHADER SET
 		debug_shader_set_ = std::make_unique<GraphicsShaderSet>();

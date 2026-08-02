@@ -7,38 +7,39 @@
 #include <Engine/Game/GameObject.h>
 #include <Engine/Game/Scene.h>
 
+// Intersect 함수 선언부
 namespace
 {
 	using namespace engine;
-	class Collider2D;
+	class ::engine::Collider2D;
 
 	bool CheckIntersect_AABB_AABB(
-		const Collider2D* _AABB1, const Collider2D* _AABB2, float2* out_contact_point);
+		const Collider2D* AABB1, const Collider2D* AABB2, float2* out_contact_point);
 	bool CheckIntersect_AABB_OBB(
-		const Collider2D* _AABB, const Collider2D* _OBB, float2* out_contact_point);
+		const Collider2D* AABB, const Collider2D* OBB, float2* out_contact_point);
 	bool CheckIntersect_AABB_Circle(
-		const Collider2D* _AABB, const Collider2D* _circle, float2* out_contact_point);
+		const Collider2D* AABB, const Collider2D* circle, float2* out_contact_point);
 
 	bool CheckIntersect_OBB_OBB(
-		const Collider2D* _OBB1, const Collider2D* _OBB2, float2* out_contact_point);
+		const Collider2D* OBB1, const Collider2D* OBB2, float2* out_contact_point);
 	bool CheckIntersect_OBB_Circle(
-		const Collider2D* _OBB, const Collider2D* _circle, float2* out_contact_point);
+		const Collider2D* OBB, const Collider2D* circle, float2* out_contact_point);
 
 	inline bool CheckIntersect_OBB_AABB(
-		const Collider2D* _OBB, const Collider2D* _AABB, float2* out_contact_point) {
-		return CheckIntersect_AABB_OBB(_AABB, _OBB, out_contact_point);
+		const Collider2D* OBB, const Collider2D* AABB, float2* out_contact_point) {
+		return CheckIntersect_AABB_OBB(AABB, OBB, out_contact_point);
 	}
 
 	bool CheckIntersect_Circle_Circle(
-		const Collider2D* _circle1, const Collider2D* _circle2, float2* out_contact_point);
+		const Collider2D* circle1, const Collider2D* circle2, float2* out_contact_point);
 
 	inline bool CheckIntersect_Circle_AABB(
-		const Collider2D* _circle, const Collider2D* _AABB, float2* out_contact_point) {
-		return CheckIntersect_AABB_Circle(_AABB, _circle, out_contact_point);
+		const Collider2D* circle, const Collider2D* AABB, float2* out_contact_point) {
+		return CheckIntersect_AABB_Circle(AABB, circle, out_contact_point);
 	}
 	inline bool CheckIntersect_Circle_OBB(
-		const Collider2D* _circle, const Collider2D* _OBB, float2* out_contact_point) {
-		return CheckIntersect_OBB_Circle(_OBB, _circle, out_contact_point);
+		const Collider2D* circle, const Collider2D* OBB, float2* out_contact_point) {
+		return CheckIntersect_OBB_Circle(OBB, circle, out_contact_point);
 	}
 
 	using CheckIntersectFunction =
@@ -48,7 +49,9 @@ namespace
 	//각 Collider2D가 가지고 있는 eCollider2D_Type를 index 번호로 해서 함수를 호출하기 위함
 	constexpr inline std::array<std::array<CheckIntersectFunction,
 		(int)ColliderShape2D::END>, (int)ColliderShape2D::END>
-		s_check_intersect_functions = []() {
+
+		s_check_intersect_functions = []() { // <<< 요기 변수명
+
 		using S = ColliderShape2D;
 		std::array<std::array<CheckIntersectFunction, (int)S::END>, (int)S::END> arr{};
 
@@ -124,7 +127,7 @@ namespace engine
 		bucket_cursor_.resize(bucket_size_ + 1);
 
 		// 비트시프트 계산
-		bucket_size_bit_shifts_ = 64ull - std::countr_zero(bucket_size_);
+		bucket_size_bit_shifts_ = std::countr_zero(bucket_size_);
 	}
 	void CollisionSystem2D::RegisterCollider(Collider2D* collider)
 	{
@@ -290,12 +293,118 @@ namespace engine
 					if (overlap_cell_index.x != e_i.cell_x || overlap_cell_index.y != e_i.cell_y) 
 					{ continue; }
 
-
 					// 5. Narrow Phase
+					float2 contact_point = {};
+					
+					bool is_trigger = e_i.collider->IsTrigger() || e_j.collider->IsTrigger();
+
+					// Trigger 시 contact_point 계산 필요 없음, nullptr 전달
+					float2* contact_point_ptr = is_trigger ? nullptr : &contact_point;
+
+					bool is_intersect = s_check_intersect_functions
+						[(int)e_i.collider->GetShape()][(int)e_j.collider->GetShape()]
+						(
+						e_i.collider,
+						e_j.collider,
+						contact_point_ptr
+						);
+
+					const uint32 collider_id_i = e_i.collider->GetInstanceID();
+					const uint32 collider_id_j = e_j.collider->GetInstanceID();
+
+					ColliderID id_pair{ collider_id_i, collider_id_j };
+
+					if (is_intersect)
+					{
+						ContactPair2D pair;
+
+						if (collider_id_i == id_pair.GetLo())
+						{
+							pair.lo = e_i.collider;
+							pair.hi = e_j.collider;
+						}
+						else
+						{
+							pair.lo = e_j.collider;
+							pair.hi = e_i.collider;
+						}
+						pair.touched_this_step_ = false;
+						pair.was_trigger_ = is_trigger;
+
+						// unordered_map에 삽입 시도, 이미 존재하면 삽입 실패
+						auto [it, inserted] = collisions_.try_emplace(id_pair , pair);
+
+						// 삽입 성공 = 첫 충돌
+						if (inserted)
+						{
+							if (it->second.was_trigger_)
+							{
+								it->second.lo->TriggerEnter2D(it->second.hi);
+								it->second.hi->TriggerEnter2D(it->second.lo);
+							}
+							else
+							{
+								Collision2D col_info;
+								col_info.contact_point = contact_point;
+
+								col_info.other_collider = it->second.hi;
+								it->second.lo->CollisionEnter2D(col_info);
+
+								col_info.other_collider = it->second.lo;
+								it->second.hi->CollisionEnter2D(col_info);
+							}
+						}
+						// 삽입 실패 = 이미 존재하는 쌍
+						else
+						{
+							if (it->second.was_trigger_)
+							{
+								it->second.lo->TriggerStay2D(it->second.hi);
+								it->second.hi->TriggerStay2D(it->second.lo);
+							}
+							else
+							{
+								Collision2D col_info;
+								col_info.contact_point = contact_point;
+
+								col_info.other_collider = it->second.hi;
+								it->second.lo->CollisionStay2D(col_info);
+
+								col_info.other_collider = it->second.lo;
+								it->second.hi->CollisionStay2D(col_info);
+							}
+						}
+						// 이번 step에 touch되었음을 표시
+						it->second.touched_this_step_ = true;
+					}
+
+					// OnExit는 Pass 5에서 처리한다.
 				}
 			}
 		}
 
+		// Pass 5: OnExit 처리
+		for (auto it = collisions_.begin(); it != collisions_.end(); ) {
+			ContactPair2D& pair = it->second;
+
+			// 다음 스텝을 위해 리셋
+			if (pair.touched_this_step_) {
+				pair.touched_this_step_ = false;      
+				++it;
+				continue;
+			}
+
+			// 이번 step에 touch되지 않은 쌍 = OnExit 발생
+			if (pair.was_trigger_) {
+				pair.lo->TriggerExit2D(pair.hi);
+				pair.hi->TriggerExit2D(pair.lo);
+			}
+			else {
+				pair.lo->CollisionExit2D(pair.hi);
+				pair.hi->CollisionExit2D(pair.lo);
+			}
+			it = collisions_.erase(it);
+		}
 	}
 	void CollisionSystem2D::SetCellSize(float2 cell_size)
 	{
@@ -303,33 +412,131 @@ namespace engine
 		cell_size_ = cell_size;
 		cell_size_inv_ = float2(1.0f / cell_size.x, 1.0f / cell_size.y);
 	}
-
 }
 
+#include <Engine/Game/Component/AABBCollider2D.h>
+#include <Engine/Game/Component/CircleCollider2D.h>
+
+// Intersect 함수 정의부
 namespace 
 {
-	bool CheckIntersect_AABB_AABB(const Collider2D* _AABB1, const Collider2D* _AABB2, float2* out_contact_point)
+	using namespace engine;
+	class ::engine::Collider2D;
+
+	bool CheckIntersect_AABB_AABB(const Collider2D* in_aabb1, const Collider2D* in_aabb2,
+		float2* out_contact_point)
+	{
+		ASSERT(in_aabb1 && in_aabb2);
+
+		const AABB2D& bound_1 = in_aabb1->GetWorldBounds();
+		const AABB2D& bound_2 = in_aabb2->GetWorldBounds();
+
+		if (!CheckIntersect_AABB_AABB(bound_1, bound_2))
+			return false;
+
+		if (out_contact_point)
+		{
+			const AABB2D contact_area{
+				{ std::max(bound_1.left_bottom.x, bound_2.left_bottom.x),
+				  std::max(bound_1.left_bottom.y, bound_2.left_bottom.y) },
+				{ std::min(bound_1.right_top.x,   bound_2.right_top.x),
+				  std::min(bound_1.right_top.y,   bound_2.right_top.y) }
+			};
+			*out_contact_point = contact_area.GetCenter();
+		}
+		return true;
+	}
+	bool CheckIntersect_AABB_OBB(const Collider2D* AABB, const Collider2D* OBB, float2* out_contact_point)
 	{
 		return false;
 	}
-	bool CheckIntersect_AABB_OBB(const Collider2D* _AABB, const Collider2D* _OBB, float2* out_contact_point)
+	bool CheckIntersect_AABB_Circle(const Collider2D* AABB, const Collider2D* circle, float2* out_contact_point)
+	{
+		ASSERT(AABB && circle);
+		ASSERT(AABB->GetShape() == ColliderShape2D::AABB && circle->GetShape() == ColliderShape2D::Circle);
+
+		const AABBCollider2D* aabb = static_cast<const AABBCollider2D*>(AABB);
+		const CircleCollider2D* cc = static_cast<const CircleCollider2D*>(circle);
+
+		const float r = cc->GetRadius();
+		const float2 circle_center = cc->GetCenter();
+		const AABB2D& bounds = aabb->GetWorldBounds();
+
+		// 가장 가까운 점을 구함(clamp 사용 시 바로 구하기 가능)
+		float2 closest = circle_center;
+		closest.Clamp(bounds.left_bottom, bounds.right_top);
+
+		// 가장 가까운 꼭지점에서 원의 중심까지의 거리 제곱이 반지름 제곱보다 작거나 같으면 충돌
+		const float dist_sq = (circle_center - closest).LengthSquared();
+
+		const bool is_intersecting = dist_sq <= r * r;
+
+		if (is_intersecting && out_contact_point)
+		{
+			const float dist = std::sqrt(dist_sq);
+
+			// 원의 중심이 AABB 외부에 있을 때
+			if (dist > kEpsilon)
+			{
+				*out_contact_point = closest;
+			}
+			// 원의 중심이 AABB 내부에 있을 때
+			// closest point가 원의 중심과 동일, 탈출 비용이 가장 싼 변 위의 점을 찾아야 함
+			else
+			{
+				const float to_left = circle_center.x - bounds.left_bottom.x;
+				const float to_right = bounds.right_top.x - circle_center.x;
+				const float to_bottom = circle_center.y - bounds.left_bottom.y;
+				const float to_top = bounds.right_top.y - circle_center.y;
+
+				float min_dist = to_left;
+				float2 face_point = { bounds.left_bottom.x, circle_center.y };
+				if (to_right < min_dist) { min_dist = to_right;  face_point = { bounds.right_top.x,   circle_center.y }; }
+				if (to_bottom < min_dist) { min_dist = to_bottom; face_point = { circle_center.x, bounds.left_bottom.y }; }
+				if (to_top < min_dist) { min_dist = to_top;    face_point = { circle_center.x, bounds.right_top.y }; }
+
+				*out_contact_point = face_point;   // 탈출 비용이 가장 싼 변 위의 점
+			}
+		}
+
+		return is_intersecting;
+	}
+	bool CheckIntersect_OBB_OBB(const Collider2D* OBB1, const Collider2D* OBB2, float2* out_contact_point)
 	{
 		return false;
 	}
-	bool CheckIntersect_AABB_Circle(const Collider2D* _AABB, const Collider2D* _circle, float2* out_contact_point)
+	bool CheckIntersect_OBB_Circle(const Collider2D* OBB, const Collider2D* circle, float2* out_contact_point)
 	{
 		return false;
 	}
-	bool CheckIntersect_OBB_OBB(const Collider2D* _OBB1, const Collider2D* _OBB2, float2* out_contact_point)
+	bool CheckIntersect_Circle_Circle(const Collider2D* circle1, const Collider2D* circle2, float2* out_contact_point)
 	{
-		return false;
-	}
-	bool CheckIntersect_OBB_Circle(const Collider2D* _OBB, const Collider2D* _circle, float2* out_contact_point)
-	{
-		return false;
-	}
-	bool CheckIntersect_Circle_Circle(const Collider2D* _circle1, const Collider2D* _circle2, float2* out_contact_point)
-	{
-		return false;
+		ASSERT(circle1 && circle2);
+		ASSERT(circle1->GetShape() == ColliderShape2D::Circle && circle2->GetShape() == ColliderShape2D::Circle);
+
+		const CircleCollider2D* c1 = static_cast<const CircleCollider2D*>(circle1);
+		const CircleCollider2D* c2 = static_cast<const CircleCollider2D*>(circle2);
+
+		const float2 center1 = c1->GetCenter();
+		const float2 center2 = c2->GetCenter();
+
+		const float2 diff = center2 - center1;
+		const float distance_squared = diff.LengthSquared();
+		const float radius_sum = c1->GetRadius() + c2->GetRadius();
+
+		const bool is_intersecting = distance_squared <= radius_sum * radius_sum;
+		if (out_contact_point && is_intersecting)
+		{
+			const float distance = std::sqrt(distance_squared);
+			const float2 direction = distance > kEpsilon ? (diff / distance) : float2(1.0f, 0.0f); // 단위 벡터
+			const float penetration_depth = radius_sum - distance; // 원의 침투 깊이
+
+			//원의 침투 깊이의 절반만큼 이동
+			// 큰 원이 작은 원 안으로 들어갔을 때의 오차를 대비하여 clamp 사용
+			const float offset = std::clamp(c1->GetRadius() - penetration_depth * 0.5f, 0.0f, distance);
+
+			*out_contact_point = center1 + direction * offset;
+		}
+		return is_intersecting;
 	}
 }

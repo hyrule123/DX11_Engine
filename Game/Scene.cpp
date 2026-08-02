@@ -50,6 +50,8 @@ namespace engine
 			}
 		}
 		FlushPending();
+
+		collision_system_2D_.FixedUpdate();
 	}
 
 	void Scene::LateUpdate()

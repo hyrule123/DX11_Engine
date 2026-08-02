@@ -20,6 +20,14 @@ namespace engine
 		virtual void OnEnable() override;
 		//virtual void FixedUpdate() override;
 
+		void CollisionEnter2D(const Collision2D& col_info);
+		void CollisionStay2D(const Collision2D& col_info);
+		void CollisionExit2D(Collider2D* other);
+
+		void TriggerEnter2D(Collider2D* other);
+		void TriggerStay2D(Collider2D* other);
+		void TriggerExit2D(Collider2D* other);
+
 		virtual void OnLayerChanged(uint32 prev_layer, uint32 new_layer) override;
 
 		void SetTrigger(bool is_trigger) { is_trigger_ = is_trigger; }
@@ -37,6 +45,9 @@ namespace engine
 		int32 GetRegisteredLayer() const { return registered_layer_; }
 
 		ColliderShape2D GetShape() const { return shape_; }
+
+		bool IsContacting() const { return contact_count_ > 0; }
+
 	protected:
 		Collider2D(const HashedStringView& concrete_class_name, ColliderShape2D shape);
 		virtual AABB2D ComputeWorldBounds() const = 0;
@@ -53,6 +64,8 @@ namespace engine
 		// CollisionSystem2D의 배열에 저장된 자신의 Layer과 Index
 		int32 registered_layer_ = -1;
 		int32 collision_system_index_ = -1;
+
+		int32 contact_count_ = 0;
     };
 }
 

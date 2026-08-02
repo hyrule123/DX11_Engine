@@ -33,6 +33,41 @@ namespace engine
 
 		DEBUG_LOG("Collider2D::OnEnable() - Collider registered in CollisionSystem2D.");
 	}
+
+	void Collider2D::CollisionEnter2D(const Collision2D& col_info)
+	{
+		++contact_count_;
+		GetOwnerGameObject()->BroadcastCollisionEnter2D(col_info);
+	}
+
+	void Collider2D::CollisionStay2D(const Collision2D & col_info)
+	{
+		GetOwnerGameObject()->BroadcastCollisionStay2D(col_info);
+	}
+
+	void Collider2D::CollisionExit2D(Collider2D * other)
+	{
+		--contact_count_;
+		GetOwnerGameObject()->BroadcastCollisionExit2D(other);
+	}
+
+	void Collider2D::TriggerEnter2D(Collider2D * other)
+	{
+		++contact_count_;
+		GetOwnerGameObject()->BroadcastTriggerEnter2D(other);
+	}
+
+	void Collider2D::TriggerStay2D(Collider2D * other)
+	{
+		GetOwnerGameObject()->BroadcastTriggerStay2D(other);
+	}
+
+	void Collider2D::TriggerExit2D(Collider2D * other)
+	{
+		--contact_count_;
+		GetOwnerGameObject()->BroadcastTriggerExit2D(other);
+	}
+
 	void Collider2D::OnLayerChanged(uint32 prev_layer, uint32 new_layer)
 	{
 		Super::OnLayerChanged(prev_layer, new_layer);

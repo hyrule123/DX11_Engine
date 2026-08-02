@@ -63,11 +63,11 @@ namespace engine
 		per_obj_data_.world_mat = GetTransform()->GetWorldMatrix();
 		memcpy(ptr, &per_obj_data_, sizeof(per_obj_data_));
 
-#ifndef NDEBUG
-		DebugInstanceData debug_data = {};
-		debug_data.world_mat = per_obj_data_.world_mat;
-		debug_data.color = { 0.0f, 1.0f, 0.0f, 1.0f };
-		RenderManager::GetInst().DrawDebugRect(debug_data);
-#endif
+//#ifndef NDEBUG
+//		DebugInstanceData debug_data = {};
+//		debug_data.world_mat = per_obj_data_.world_mat;
+//		debug_data.color = { 0.0f, 1.0f, 0.0f, 1.0f };
+//		RenderManager::GetInst().DrawDebugRect(debug_data);
+//#endif
 	}
 }

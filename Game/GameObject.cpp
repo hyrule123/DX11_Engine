@@ -320,6 +320,54 @@ namespace engine
 		is_calling_set_layer_ = false;
 	}
 
+	void GameObject::BroadcastCollisionEnter2D(const Collision2D& col_info)
+	{
+		for (const auto& listener : collision_listeners_)
+		{
+			listener->OnCollisionEnter2D(col_info);
+		}
+	}
+
+	void GameObject::BroadcastCollisionStay2D(const Collision2D & col_info)
+	{
+		for (const auto& listener : collision_listeners_)
+		{
+			listener->OnCollisionStay2D(col_info);
+		}
+	}
+
+	void GameObject::BroadcastCollisionExit2D(Collider2D * other)
+	{
+		for (const auto& listener : collision_listeners_)
+		{
+			listener->OnCollisionExit2D(other);
+		}
+	}
+
+	void GameObject::BroadcastTriggerEnter2D(Collider2D * other)
+	{
+		for (const auto& listener : collision_listeners_)
+		{
+			listener->OnTriggerEnter2D(other);
+		}
+	}
+
+	void GameObject::BroadcastTriggerStay2D(Collider2D * other)
+	{
+		for (const auto& listener : collision_listeners_)
+		{
+			listener->OnTriggerStay2D(other);
+		}
+	}
+
+	void GameObject::BroadcastTriggerExit2D(Collider2D * other)
+	{
+		for (const auto& listener : collision_listeners_)
+		{
+			listener->OnTriggerExit2D(other);
+		}
+	}
+
 	void GameObject::UpdateHierarchyState(bool is_active_in_hierarchy)
 	{
 		const bool new_is_active_in_hierarchy = is_active_in_hierarchy && is_active_;

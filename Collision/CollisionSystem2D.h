@@ -6,17 +6,12 @@
 #include <Engine/Collision/Collision.h>
 
 #include <functional>
+#include <array>
 
 namespace engine
 {
 	class Collider2D;
-
-	struct ContactPair2D
-	{
-		Collider2D* lo;
-		Collider2D* hi;
-		bool touched_this_step_;
-	};
+	class Scene;
 
 	class CollisionSystem2D
 	{
@@ -35,7 +30,13 @@ namespace engine
 
 		void SetCellSize(float2 cell_size);
 	private:
-		Scene* owner_scene_ = {};
+		struct ContactPair2D
+		{
+			Collider2D* lo;
+			Collider2D* hi;
+			bool touched_this_step_;
+			bool was_trigger_;
+		};
 
 		struct GridEntry {
 			//For Broad Phase
@@ -48,14 +49,18 @@ namespace engine
 			Collider2D* collider;
 		};
 
+		Scene* owner_scene_ = {};
+
 		std::array<std::vector<Collider2D*>, kMaxLayers> colliders_in_layer_;
 
 		// 1단계 과정에서 만들어 둔 GridEntry를 담아두는 임시 버퍼
 		std::vector<GridEntry> staged_entries_;
 
-		//버킷 별 Start Index
+		// 버킷 별 Start Index
 		std::vector<uint32> bucket_start_idx_;
+		// 버킷에 데이터 작성을 위한 cursor
 		std::vector<uint32> bucket_cursor_;
+		// 버킷에 실제로 들어가는 데이터(flat hash table)
 		std::vector<GridEntry> bucket_;
 
 		size_t bucket_size_ = {};

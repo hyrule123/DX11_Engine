@@ -45,11 +45,18 @@ namespace engine
         void DrawDebugRect(const DebugInstanceData& debug_data) {
             debug_rect_data_.push_back(debug_data);
         }
+		void DrawDebugCircle(const DebugInstanceData& debug_data) {
+			debug_circle_data_.push_back(debug_data);
+		}
 
     private:
-        void CreateSamplerStates( ID3D11DeviceContext* context);
+        void DebugDraw(ID3D11DeviceContext* context);
+
+        void CreateSamplerStates(ID3D11DeviceContext* context);
         void BindPSSamplerStates(ID3D11DeviceContext* context);
-        void CreateDebugRenderObjects( ID3D11DeviceContext* context);
+        void CreateDebugRenderObjects(ID3D11DeviceContext* context);
+
+        
 
         s_ptr<ConstantBuffer> cb_per_pass_ = {};
 
@@ -66,7 +73,9 @@ namespace engine
 		uint32 resolution_height_ = {};
 
 		u_ptr<Mesh> debug_rect_mesh_ = {};
+		u_ptr<Mesh> debug_circle_mesh_ = {};
         std::vector<DebugInstanceData> debug_rect_data_;
+		std::vector<DebugInstanceData> debug_circle_data_;
 		u_ptr<StructuredBuffer> debug_buffer_ = {};
         u_ptr<GraphicsShaderSet> debug_shader_set_ = {};
     };

@@ -19,9 +19,24 @@ namespace engine
 	{
 		has_awaken_ = true;
 	}
+	void Component::OnEnable()
+	{
+		if (has_collision_subscribed_)
+		{
+			RegisterCollisionListener();
+		}
+	}
 	void Component::BeginPlay()
 	{
 		has_begun_play_ = true;
+	}
+
+	void Component::OnDisable()
+	{
+		if (has_collision_subscribed_)
+		{
+			UnregisterCollisionListener();
+		}
 	}
 
 	void Component::Destroy()
@@ -35,6 +50,22 @@ namespace engine
 		{
 			is_enabled_and_active_in_hierarchy_ = false;
 			OnDisable();
+		}
+	}
+
+	void Component::SubscribeCollisionEvents(bool subscribe)
+	{
+		if (subscribe == has_collision_subscribed_) { return; }
+		has_collision_subscribed_ = subscribe;
+
+		// Awake 이후일 경우 GameObject에 등록/해제
+		if (has_collision_subscribed_)
+		{
+			RegisterCollisionListener();
+		}
+		else
+		{
+			UnregisterCollisionListener();
 		}
 	}
 
@@ -57,6 +88,25 @@ namespace engine
 		else
 		{
 			OnDisable();
+		}
+	}
+	void Component::RegisterCollisionListener()
+	{
+		auto owner = GetOwnerGameObject();
+		//owner이 아직 등록되지 않은 시점에는 연기(OnEnable에서 다시 호출됨)
+		if (owner && has_collision_sub_registered_ == false)
+		{
+			has_collision_sub_registered_ = true;
+			owner->AddCollisionListener(this);
+		}
+	}
+	void Component::UnregisterCollisionListener()
+	{
+		auto owner = GetOwnerGameObject();
+		if (owner && has_collision_sub_registered_)
+		{
+			has_collision_sub_registered_ = false;
+			owner->RemoveCollisionListener(this);
 		}
 	}
 }

@@ -53,6 +53,7 @@ namespace engine
         uint32 cur_frame_idx_ = {};
         uint32 clip_frame_total_count_ = {};
         float cur_frame_duration_= {};
+		std::vector<bool> frame_notify_checked_ = {};
 
 		StringHashTable<std::vector<std::function<void()>>> frame_notify_callbacks_ = {};
     };

@@ -60,6 +60,9 @@ namespace engine
 					{
 						// 루프 진행
 						cur_frame_idx_ = 0u;
+
+						//노티파이 확인 배열 초기화
+						std::fill(frame_notify_checked_.begin(), frame_notify_checked_.end(), false);
 					}
 					else
 					{
@@ -76,10 +79,11 @@ namespace engine
 
 				// 다음 순회(Iteration)를 위해 다음 프레임의 duration으로 갱신
 				cur_frame_duration_ = playing_clip_->GetFrames()[cur_frame_idx_].duration;
-
-				TriggerNotify(cur_frame_idx_);
-
+				
 				if (!is_playing_) { break; }
+
+				//재생이 끝난 게 아니면 해당 프레임의 Notify 처리
+				TriggerNotify(cur_frame_idx_);
 			}
 
 			//참조해야 하는 TextureArray의 Index를 전달
@@ -146,6 +150,8 @@ namespace engine
 		acc_deltatime_ = 0.0f;
 		cur_frame_idx_ = 0u;
 		cur_frame_duration_ = clip_ptr->GetFrames()[0].duration;
+		frame_notify_checked_.clear();
+		frame_notify_checked_.resize(clip_ptr->GetFrames().size(), false);
 		clip_frame_total_count_ = (uint32)clip_ptr->GetFrames().size();
 		playing_clip_ = clip_ptr;
 
@@ -174,8 +180,11 @@ namespace engine
 	//No Exception Check(다 확인했다고 가정)
 	void SpriteAnimator::TriggerNotify(uint32 frame_idx)
 	{
+		if (frame_notify_checked_[frame_idx]) { return; }
+		ASSERT(frame_idx < (uint32)frame_notify_checked_.size());
+		frame_notify_checked_[frame_idx] = true;
 		// 노티파이 있을 시 호출
-		HashedStringView notify_name = playing_clip_->GetFrameNotifyName(cur_frame_idx_);
+		HashedStringView notify_name = playing_clip_->GetFrameNotifyName(frame_idx);
 		if (false == notify_name.IsEmpty())
 		{
 			auto iter = frame_notify_callbacks_.find(notify_name);

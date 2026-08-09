@@ -16,6 +16,8 @@ namespace engine
 		void OnScreenSizeChange(uint32 width, uint32 height);
 		bool IsInitialized() const { return is_initialized_; }
 
+		uint64 GetFrameCount() const { return frame_count_; }
+
 	private:
 		bool Init();
 
@@ -25,5 +27,7 @@ namespace engine
 		
 		float acc_delta_time_ = kDefaultFixedDeltaTime;
 		uint32 max_step_count_ = kDefaultMaxStepCount;
+
+		uint64 frame_count_ = {};
 	};
 }

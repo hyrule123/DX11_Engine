@@ -19,8 +19,9 @@ namespace engine
 	{
 		Super::Awake();
 
+		DEBUG_LOG("테스트 코드 작동중 - 확인 후 지울것");
 		blackboard_ = GetOwnerGameObject()->GetComponent<BlackBoard>();
-		ASSERT(!blackboard_.expired());
+		ASSERT(blackboard_.get());
 
 		wh_ptr<Component> com = blackboard_;
 		wh_ptr<BlackBoard> bb = static_handle_cast<BlackBoard>(com);

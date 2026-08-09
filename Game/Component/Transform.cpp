@@ -10,6 +10,9 @@
 
 #include <Engine/HLSL/CppShared/Register.hlsli>
 
+#include <Engine/Manager/GameEngine.h>
+#include <Engine/Core/Debug.h>
+
 namespace engine
 {
 	Transform::Transform()
@@ -18,6 +21,8 @@ namespace engine
 	}
 	Transform::~Transform()
 	{
+		std::string log_msg = "Transform 실제 소멸자 호출!!, FrameCount: " + std::to_string(GameEngine::GetInst().GetFrameCount()) + ")";
+		DEBUG_LOG_A(log_msg.c_str());
 	}
 
 	void Transform::Awake()
@@ -32,6 +37,13 @@ namespace engine
 		Super::LateUpdate();
 
 		GetWorldMatrix();
+	}
+	void Transform::OnDisable()
+	{
+		Super::OnDisable();
+
+		std::string log_msg = "Transform OnDisable 호출!!, FrameCount: " + std::to_string(GameEngine::GetInst().GetFrameCount()) + ")";
+		DEBUG_LOG_A(log_msg.c_str());
 	}
 	void Transform::OnDestroy()
 	{

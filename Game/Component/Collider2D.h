@@ -18,6 +18,7 @@ namespace engine
 		virtual void Init() override {};
 		virtual void Awake() override;
 		virtual void OnEnable() override;
+		virtual void OnDisable() override;
 		//virtual void FixedUpdate() override;
 
 		void CollisionEnter2D(const Collision2D& col_info);

@@ -36,7 +36,7 @@ namespace engine
 		void Update();
 		void FixedUpdate();
 		void LateUpdate();
-		void FrameEnd();	// Component 제거
+		void FrameEnd(std::vector<u_ptr<SceneEntity>>& graveyard);	// Component 제거
 		
 		Component* AddComponent(const HashedStringView& concrete_class_name);
 
@@ -59,8 +59,6 @@ namespace engine
 		void SetOwnerScene(Scene* scene) { owner_scene_ = scene; }
 		Scene* GetOwnerScene() const { return owner_scene_; }
 
-		bool HasInitialized() const { return has_initialized_; }
-
 		void SetActive(bool is_active);
 		bool IsActive() const { return is_active_in_hierarchy_; }
 		bool IsActiveSelf() const { return is_active_; }
@@ -69,6 +67,9 @@ namespace engine
 		// 파괴(비가역)
 		void Destroy();
 		bool IsDestroyed() const { return is_destroyed_; }
+
+		// GameObject 전체가 파괴되었을 때 호출
+		void OnDestroy();
 
 		void SetLayer(uint32 layer);
 		uint32 GetLayer() const { return layer_; }
@@ -112,7 +113,6 @@ namespace engine
 
 		uint32 layer_ = 0;
 
-		bool has_initialized_ = false;
 		bool is_active_ = true;
 		bool is_active_in_hierarchy_ = true;
 		bool is_destroyed_ = false;

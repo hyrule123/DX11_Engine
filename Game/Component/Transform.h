@@ -26,6 +26,7 @@ namespace engine
 		virtual void Awake() override;
 		virtual void LateUpdate() override;
 
+		virtual void OnDisable() override;
 		virtual void OnDestroy() override;
 
 		float3 GetLocalScale() const { return local_scale_; }

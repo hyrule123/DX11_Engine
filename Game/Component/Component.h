@@ -71,6 +71,9 @@ namespace engine
             UpdateEnableState(GetOwnerGameObject()->IsActiveInHierarchy());
         }
 
+        // Destroy 로직 순서는 Unity의 것을 따름
+        // https://gamedevbeginner.com/how-to-destroy-an-object-in-unity/
+		// 요약: 즉시 OnDisable 호출, Destroy 예약, 이번 프레임 끝에 OnDestroy 호출
         void Destroy();
         bool IsDestroyed() const { return is_destroyed_; }
 

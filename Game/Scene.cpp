@@ -4,6 +4,7 @@
 #include <Engine/Game/GameObject.h>
 
 #include <Engine/Core/Debug.h>
+#include <Engine/Core/Constant.h>
 
 namespace engine
 {
@@ -22,7 +23,7 @@ namespace engine
 
 	void Scene::FrameStart()
 	{
-		FlushPending();
+		FlushPendingAdd();
 	}
 
 	void Scene::Update()
@@ -36,7 +37,7 @@ namespace engine
 			}
 		}
 
-		FlushPending();
+		FlushPendingAdd();
 	}
 
 	void Scene::FixedUpdate()
@@ -49,7 +50,7 @@ namespace engine
 				game_objects_[i]->FixedUpdate();
 			}
 		}
-		FlushPending();
+		FlushPendingAdd();
 
 		collision_system_2D_.FixedUpdate();
 	}
@@ -65,26 +66,63 @@ namespace engine
 			}
 		}
 
-		FlushPending();
+		FlushPendingAdd();
 	}
 
 	void Scene::FrameEnd()
 	{
+		// Phase 1: Destroy 되지 않은 GameObject들의 FrameEnd 호출
 		size_t snapshot_size = game_objects_.size();	// Snapshot
 		for (size_t i = 0; i < snapshot_size; ++i)
 		{
-			if (game_objects_[i])
+			ASSERT(game_objects_[i] != nullptr);
+			if(false == game_objects_[i]->IsDestroyed())
 			{
-				//Object에서 자체적으로 Destroy된 컴포넌트들을 제거함
-				game_objects_[i]->FrameEnd();
+				game_objects_[i]->FrameEnd(graveyard_[graveyard_toggle_]);
 			}
 		}
 
-		//Destroy된 GameObject들 제거
+		// Phase 2: Destroy된 GameObject들의 OnDestroy 호출 및 Graveyard 이동
+		// 연쇄적으로 꼬리를 물고 Destroy되는 GameObject가 있을 수 있으므로, 최대 kMaxDestroyPassCount번 반복
+		uint32 pass_count = 0;
+		for (; pass_count <= kMaxDestroyPassCount; ++pass_count)
+		{
+			bool any_destroyed = false;
+
+			size_t snapshot_size = game_objects_.size();	// Snapshot
+			for (size_t i = 0; i < snapshot_size; ++i)
+			{
+				if (game_objects_[i] == nullptr || false == game_objects_[i]->IsDestroyed()) 
+				{
+					continue; 
+				}
+
+				//GameObject 자체가 Destroy되었으면 OnDestroy 호출 후, graveyard로 GameObject를 이동
+				game_objects_[i]->OnDestroy();
+				graveyard_[graveyard_toggle_].push_back(std::move(game_objects_[i]));
+				any_destroyed = true;
+			}
+
+			// pass에서 Destroy된 GameObject가 없으면 반복 종료
+			if (false == any_destroyed)
+			{
+				break;
+			}
+		}
+		// 최대 pass 도달 시 확인 필요(debug)
+		ASSERT_MESSAGE(pass_count < kMaxDestroyPassCount, "Destroy Pass Count exceeded. Possible infinite loop in destruction.");
+
+		//nullptr인 항목들 제거
 		std::erase_if(
 			game_objects_,
-			[](const u_ptr<GameObject>& obj) { return obj->IsDestroyed(); }
+			[](const u_ptr<GameObject>& obj) { return obj == nullptr; }
 		);
+
+		// 반대쪽 Graveyard에 있는 SceneEntity들을 모두 제거
+		graveyard_[!graveyard_toggle_].clear();
+
+		// 토글 변경
+		graveyard_toggle_ = !graveyard_toggle_;
 	}
 
 	GameObject* Scene::AddGameObject(const HashedStringView& concrete_class_name)
@@ -121,7 +159,7 @@ namespace engine
 		return raw_ptr;
 	}
 
-	void Scene::FlushPending()
+	void Scene::FlushPendingAdd()
 	{
 		size_t snapshot_size = game_objects_.size();	// Snapshot
 		for (size_t i = 0; i < snapshot_size; ++i)

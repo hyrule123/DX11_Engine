@@ -179,6 +179,8 @@ namespace engine
     public:
         weak_handle_ptr<T>() = default;
 
+		weak_handle_ptr<T>(nullptr_t) {}
+
         // 업캐스팅
         template<typename U> requires std::derived_from<U, T>
         weak_handle_ptr(const weak_handle_ptr<U>& other) : handle_(other.handle_) {}
@@ -207,25 +209,7 @@ namespace engine
             return static_cast<T*>(base_ptr);
         }
 
-        bool expired() const
-        {
-            return get() == nullptr;
-        }
-
-        explicit operator bool() const
-        {
-            return !expired();
-        }
-
-        T* operator->() const
-        {
-            return get();
-        }
-
-        T& operator*() const
-        {
-            return *get();
-        }
+		void reset() { handle_.Reset(); }
 
         template<typename U, typename V>
         friend weak_handle_ptr<U> static_handle_cast(const weak_handle_ptr<V>& src) noexcept;

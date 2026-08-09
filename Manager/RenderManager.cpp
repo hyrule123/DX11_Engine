@@ -50,7 +50,8 @@ namespace engine
 	}
 	void RenderManager::Render()
 	{
-		if (!main_cam_) 
+		Camera* main_cam = main_cam_.get();
+		if (main_cam == nullptr) 
 		{ 
 			ERROR_MESSAGE("Main Camera 없음");
 			return;
@@ -58,12 +59,10 @@ namespace engine
 
 		auto* context = GraphicsDevice::GetInst().GetContext();
 
-		auto cam = main_cam_;
-
 		//Per Pass ( = Camera )
 		PerPass per_pass_data = {};
-		per_pass_data.view_mat = cam->GetViewMatrix();
-		per_pass_data.proj_mat = cam->GetProjMatrix();
+		per_pass_data.view_mat = main_cam->GetViewMatrix();
+		per_pass_data.proj_mat = main_cam->GetProjMatrix();
 
 		cb_per_pass_->Upload(context, per_pass_data);
 		cb_per_pass_->Bind(context, ShaderStage::kAllGraphics, SLOT_B_PER_PASS);

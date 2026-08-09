@@ -19,12 +19,13 @@ namespace engine
 	{}
 
 	GameObject::~GameObject()
-	{}
+	{
+
+	}
 
 	void GameObject::Init()
 	{
 		Super::Init();
-		has_initialized_ = true;
 		transform_ = AddComponent<Transform>();
 	}
 
@@ -145,36 +146,46 @@ namespace engine
 		}
 	}
 
-	void GameObject::FrameEnd()
+	void GameObject::FrameEnd(std::vector<u_ptr<SceneEntity>>& graveyard)
 	{
-		for (auto& com : other_components_)
+		uint32 pass_count = 0;
+		for (; pass_count < kMaxDestroyPassCount; ++pass_count)
 		{
-			if (com && com->IsDestroyed())
+			bool any_destroyed = false;
+
+			//Destroy된 Component들의 OnDestroy 호출 및 Graveyard 이동
+			for (u_ptr<Component>& com : other_components_)
 			{
-				com->OnDestroy();
-				com = nullptr;
+				if (com && com->IsDestroyed())
+				{
+					com->OnDestroy();
+					graveyard.push_back(std::move(com));
+					any_destroyed = true;
+				}
 			}
+
+			//vector이므로 snapshot 사용
+			size_t snapshot_size = fixed_order_components_.size();
+			for (size_t i = 0; i < snapshot_size; ++i)
+			{
+				if (fixed_order_components_[i] && fixed_order_components_[i]->IsDestroyed())
+				{
+					fixed_order_components_[i]->OnDestroy();
+					graveyard.push_back(std::move(fixed_order_components_[i]));
+					any_destroyed = true;
+				}
+			}
+
+			if (!any_destroyed) { break; }
 		}
 
-		for (auto& com : fixed_order_components_)
-		{
-			if (com && com->IsDestroyed())
-			{
-				com->OnDestroy();
-				com = nullptr;
-			}
-		}
+		// 최대 pass 도달 시 확인 필요(debug)
+		ASSERT_MESSAGE(pass_count < kMaxDestroyPassCount, "Destroy Pass Count exceeded. Possible infinite loop in destruction.");
 
 		//Other Components는 vector이므로 nullptr들인 항목은 제거
 		std::erase_if(
 			other_components_, 
 			[](const u_ptr<Component>& com) { return com == nullptr; }
-		);
-
-		// 혹시나 pending_add_components_에 Destroy된 녀석이 있을 수 있으므로 제거
-		std::erase_if(
-			pending_add_components_,
-			[](const u_ptr<Component>& com) { return com->IsDestroyed(); }
 		);
 	}
 
@@ -399,6 +410,24 @@ namespace engine
 			if (auto child = child_tr[i]->GetOwnerGameObject())
 			{
 				child->UpdateHierarchyState(new_is_active_in_hierarchy);
+			}
+		}
+	}
+
+	void GameObject::OnDestroy()
+	{
+		for (u_ptr<Component>& com : other_components_)
+		{
+			if (com)
+			{
+				com->OnDestroy();
+			}
+		}
+		for (u_ptr<Component>& com : fixed_order_components_)
+		{
+			if (com)
+			{
+				com->OnDestroy();
 			}
 		}
 	}

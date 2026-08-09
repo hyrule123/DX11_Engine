@@ -96,6 +96,8 @@ namespace engine
 		SceneManager::GetInst().FrameEnd();
 
 		SceneManager::GetInst().ChangeSceneNow();
+
+		++frame_count_;
 		return true;
 	}
 }

@@ -34,6 +34,13 @@ namespace engine
 		DEBUG_LOG("Collider2D::OnEnable() - Collider registered in CollisionSystem2D.");
 	}
 
+	void Collider2D::OnDisable()
+	{
+		Super::OnDisable();
+
+		GetOwnerGameObject()->GetOwnerScene()->GetCollisionSystem2D()->UnregisterCollider(this);
+	}
+
 	void Collider2D::CollisionEnter2D(const Collision2D& col_info)
 	{
 		++contact_count_;

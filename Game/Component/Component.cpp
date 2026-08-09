@@ -48,10 +48,13 @@ namespace engine
 		InvalidateHandle();
 
 		//Awake 이후, 활성화 상태였다면 OnDisable 호출
-		if(has_awaken_ && is_enabled_and_active_in_hierarchy_)
+		if (is_enabled_and_active_in_hierarchy_)
 		{
 			is_enabled_and_active_in_hierarchy_ = false;
-			OnDisable();
+			if (has_awaken_)
+			{
+				OnDisable();
+			}
 		}
 	}
 

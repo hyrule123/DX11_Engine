@@ -1,6 +1,6 @@
 #pragma once
+#include <Engine/Game/SceneEntity.h>
 
-#include <Engine/Core/Entity.h>
 #include <Engine/Core/UtilMacro.h>
 #include <Engine/Core/CoreMinimal.h>
 #include <Engine/Core/Constant.h>
@@ -19,11 +19,12 @@ namespace engine
 	class GameObject;
 	class Camera;
 	class Renderer;
+	class SceneEntity;
 
 	class Scene 
-		: public Entity
+		: public SceneEntity
 	{
-		ENTITY_INFO(Scene, Entity)
+		ENTITY_INFO(Scene, SceneEntity)
 	public:
 		Scene(const HashedStringView& concrete_class_name);
 		virtual ~Scene() override;
@@ -51,12 +52,15 @@ namespace engine
 
 	private:
 		GameObject* AddGameObject(u_ptr<GameObject> obj);
-		void FlushPending();
+		void FlushPendingAdd();
 
 		std::vector<u_ptr<GameObject>> game_objects_ = {};
 
 		CollisionSystem2D collision_system_2D_;
 
 		std::array<std::bitset<kMaxLayers>, kMaxLayers> collision_mask_ = {};
+
+		std::vector<u_ptr<SceneEntity>> graveyard_[2] = {};
+		bool graveyard_toggle_ = false;
 	};
 }

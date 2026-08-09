@@ -31,7 +31,8 @@ namespace engine
 	{
 		Super::Init();
 
-		if (!RenderManager::GetInst().GetMainCamera())
+		Camera* cam = RenderManager::GetInst().GetMainCamera().get();
+		if (nullptr == cam)
 		{
 			wh_ptr<Camera> whptr = static_handle_cast<Camera>(weak_handle_from_this());
 			RenderManager::GetInst().SetMainCamera(whptr);

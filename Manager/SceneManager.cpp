@@ -15,9 +15,9 @@ namespace engine
 
 	}
 
-	void SceneManager::ChangeScene(s_ptr<Scene> scene)
+	void SceneManager::ChangeScene(u_ptr<Scene> scene)
 	{
-		next_scene_ = scene;
+		next_scene_ = std::move(scene);
 
 		if (next_scene_)
 		{
@@ -78,7 +78,7 @@ namespace engine
 	{
 		if (next_scene_)
 		{
-			cur_scene_ = next_scene_;
+			cur_scene_ = std::move(next_scene_);
 			next_scene_ = nullptr;
 		}
 	}

@@ -1,9 +1,9 @@
 #pragma once
-#include <Engine/Core/Entity.h>
-#include <Engine/Core/UtilMacro.h>
-
+#include <Engine/Game/SceneEntity.h>
 #include <Engine/Game/GameObject.h>
 #include <Engine/Game/Component/ComponentCategory.h>
+
+#include <Engine/Core/UtilMacro.h>
 
 #include <Engine/Collision/Collision.h>
 
@@ -11,9 +11,9 @@
 namespace engine
 {
     class Component :
-        public Entity
+        public SceneEntity
     {
-        CLASS_INFO(Component, Entity)
+        ENTITY_INFO(Component, SceneEntity)
 
             friend class GameObject;
     public:
@@ -23,7 +23,8 @@ namespace engine
         );
         virtual ~Component() override;
 
-        virtual void Init() = 0;
+        virtual void Init() override;
+
         virtual void Awake();
         virtual void OnEnable();
         virtual void BeginPlay();
@@ -47,13 +48,13 @@ namespace engine
 
         ComponentCategory GetComponentCategory() const { return category_; }
 
-        void SetOwnerGameObject(s_ptr<GameObject> owner) { owner_game_object_ = owner; }
-        s_ptr<GameObject> GetOwnerGameObject() const { return owner_game_object_.lock(); }
+        void SetOwnerGameObject(GameObject* owner) { owner_game_object_ = owner; }
+        GameObject* GetOwnerGameObject() const { return owner_game_object_; }
 
         template <typename T>
-        s_ptr<T> GetComponent() {
-            if (!(owner_game_object_.expired())) {
-                return owner_game_object_.lock()->GetComponent<T>();
+        T* GetComponent() {
+            if (owner_game_object_) {
+                return owner_game_object_->GetComponent<T>();
             }
             return nullptr;
         }
@@ -63,7 +64,6 @@ namespace engine
         bool HasBegunPlay() const { return has_begun_play_; }
         bool IsEnabled() const { return is_enabled_; }
         bool IsEnabledAndActiveInHierarchy() const { return is_enabled_and_active_in_hierarchy_; }
-        bool IsDestroyed() const { return is_destroyed_; }
 
         void SetEnable(bool enable) {
             if (is_enabled_ == enable) { return; }
@@ -72,6 +72,7 @@ namespace engine
         }
 
         void Destroy();
+        bool IsDestroyed() const { return is_destroyed_; }
 
         void SubscribeCollisionEvents(bool subscribe);
 
@@ -82,17 +83,18 @@ namespace engine
 
         ComponentCategory category_ = {};
 
-        w_ptr<GameObject> owner_game_object_ = {};
+        GameObject* owner_game_object_ = {};
 
         bool has_initialized_ = false;
         bool has_awaken_ = false;
         bool has_begun_play_ = false;
         bool is_enabled_ = true;
         bool is_enabled_and_active_in_hierarchy_ = true;
-        bool is_destroyed_ = false;
 
         bool has_collision_subscribed_ = false;
         bool has_collision_sub_registered_ = false;
+
+		bool is_destroyed_ = false;
     };
 }
 

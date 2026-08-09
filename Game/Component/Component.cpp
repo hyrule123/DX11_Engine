@@ -13,6 +13,7 @@ namespace engine
 
 	void Component::Init()
 	{
+		Super::Init();
 		has_initialized_ = true;
 	}
 	void Component::Awake()
@@ -41,9 +42,10 @@ namespace engine
 
 	void Component::Destroy()
 	{
-		if (is_destroyed_) { return; }
+		if (IsDestroyed()) { return; }
 		is_destroyed_ = true;
 		is_enabled_ = false;
+		InvalidateHandle();
 
 		//Awake 이후, 활성화 상태였다면 OnDisable 호출
 		if(has_awaken_ && is_enabled_and_active_in_hierarchy_)

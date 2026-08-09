@@ -14,7 +14,7 @@ namespace engine
 	class Transform final 
 		: public Component
 	{
-		CLASS_INFO(Transform, Component)
+		ENTITY_INFO(Transform, Component)
 		COMPONENT_CATEGORY(ComponentCategory::kTransform)
 
 		friend class Transform;
@@ -22,7 +22,7 @@ namespace engine
 		Transform();
 		virtual ~Transform() override;
 		
-		virtual void Init() override;
+		//virtual void Init() override;
 		virtual void Awake() override;
 		virtual void LateUpdate() override;
 
@@ -92,7 +92,7 @@ namespace engine
 	private:
 		void AddChild(Transform* child) { 
 			if (!IsDestroyed() && child && !child->IsDestroyed()) { 
-				children_.push_back(child); 
+				children_.push_back(child);
 			} }
 		void RemoveChild(Transform* child);
 

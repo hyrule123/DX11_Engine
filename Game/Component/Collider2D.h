@@ -9,7 +9,7 @@ namespace engine
 	class Collider2D :
 		public Component
 	{
-		CLASS_INFO(Collider2D, Component)
+		ENTITY_INFO(Collider2D, Component)
 			COMPONENT_CATEGORY(ComponentCategory::kCollider)
 
 	public:

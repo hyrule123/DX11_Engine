@@ -20,11 +20,6 @@ namespace engine
 	{
 	}
 
-	void Transform::Init()
-	{
-		Super::Init();
-	}
-
 	void Transform::Awake()
 	{
 		Super::Awake();

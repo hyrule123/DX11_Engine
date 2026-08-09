@@ -9,7 +9,7 @@ namespace engine
     class DepthStencilView :
         public Texture2D
     {
-        CLASS_INFO(DepthStencilView, Texture2D)
+        ENTITY_INFO(DepthStencilView, Texture2D)
     public:
         DepthStencilView();
         virtual ~DepthStencilView() override;

@@ -12,7 +12,7 @@ namespace engine
     class IndexBuffer :
         public Resource
     {
-        CLASS_INFO(IndexBuffer, Resource)
+        ENTITY_INFO(IndexBuffer, Resource)
     public:
         IndexBuffer();
         virtual ~IndexBuffer() override;

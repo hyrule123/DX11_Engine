@@ -16,7 +16,7 @@ namespace engine
 		void Init();
 
 	public:
-		void ChangeScene(s_ptr<Scene> scene);
+		void ChangeScene(u_ptr<Scene> scene);
 
 		void FrameStart();
 		void Update();
@@ -27,7 +27,7 @@ namespace engine
 		void ChangeSceneNow();
 
 	private:
-		s_ptr<Scene> cur_scene_;
-		s_ptr<Scene> next_scene_;
+		u_ptr<Scene> cur_scene_;
+		u_ptr<Scene> next_scene_;
 	};
 }

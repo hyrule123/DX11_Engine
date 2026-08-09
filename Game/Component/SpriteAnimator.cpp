@@ -27,9 +27,8 @@ namespace engine
 	void SpriteAnimator::Awake()
 	{
 		Super::Awake();
-		s_ptr<SpriteRenderer> sprite_renderer = GetComponent<SpriteRenderer>();
-		ASSERT_MESSAGE(sprite_renderer, "SpriteRenderer가 존재하지 않습니다.");
-		renderer_ = sprite_renderer;
+		renderer_ = GetComponent<SpriteRenderer>();
+		ASSERT_MESSAGE(renderer_, "SpriteRenderer가 존재하지 않습니다.");
 		
 		ASSERT_MESSAGE(anim_, "Sprite Animation이 존재하지 않습니다.");
 		ASSERT_MESSAGE(anim_->IsReady(), "Sprite Animation이 준비되지 않았습니다.");
@@ -87,9 +86,9 @@ namespace engine
 			}
 
 			//참조해야 하는 TextureArray의 Index를 전달
-			if (auto renderer = renderer_.lock())
+			if (renderer_)
 			{
-				renderer->SetFrameIndex(playing_clip_->GetFrames()[cur_frame_idx_].index);
+				renderer_->SetFrameIndex(playing_clip_->GetFrames()[cur_frame_idx_].index);
 			}
 		}
 	}
@@ -167,9 +166,9 @@ namespace engine
 			playing_clip_ = clip_ptr;
 
 			//참조해야 하는 TextureArray의 Index를 새로 고침
-			if (auto renderer = renderer_.lock())
+			if (renderer_)
 			{
-				renderer->SetFrameIndex(playing_clip_->GetFrames()[cur_frame_idx_].index);
+				renderer_->SetFrameIndex(playing_clip_->GetFrames()[cur_frame_idx_].index);
 			}
 
 			return true;

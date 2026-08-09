@@ -18,7 +18,7 @@ namespace engine
     class Renderer 
         : public Component
     {
-        CLASS_INFO(Renderer, Component)
+        ENTITY_INFO(Renderer, Component)
         COMPONENT_CATEGORY(ComponentCategory::kRenderer)
     public:
         Renderer(const HashedStringView& concrete_class_name);
@@ -28,7 +28,7 @@ namespace engine
         virtual void Awake() override;
         virtual void LateUpdate() = 0;
 
-        s_ptr<Transform> GetTransform() const { return my_transform_; }
+        Transform* GetTransform() const { return my_transform_; }
         void SetMaterial(s_ptr<Material> material) { material_ = std::move(material); }
         bool SetMaterial(const HashedStringView& mtrl_name);
         void SetMesh(s_ptr<Mesh> mesh) { mesh_ = std::move(mesh); }
@@ -45,7 +45,7 @@ namespace engine
         virtual void WritePerObjData(void* ptr) = 0;
 
     private:
-        s_ptr<Transform> my_transform_ = {};
+        Transform* my_transform_ = {};
 
         s_ptr<Material> material_ = {};
         s_ptr<Mesh> mesh_ = {};

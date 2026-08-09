@@ -12,7 +12,7 @@ namespace engine
     class Mesh
 		: public Resource
     {
-		CLASS_INFO(Mesh, Resource)
+		ENTITY_INFO(Mesh, Resource)
 	public:
 		Mesh();
 		virtual ~Mesh() override;

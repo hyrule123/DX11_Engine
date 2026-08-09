@@ -18,7 +18,7 @@ namespace engine
     class Material :
         public Resource
     {
-        CLASS_INFO(Material, Resource)
+        ENTITY_INFO(Material, Resource)
 
     public:
         using Textures = std::array<s_ptr<Texture2D>, kMaxTextureCount>;
@@ -29,7 +29,7 @@ namespace engine
 
         //고유 텍스처를 만들 때 싸용
         s_ptr<Material> Clone() const { 
-            return std::make_shared<Material>(*this); 
+            return std::make_shared<Material>(*this);
         }
 
 		bool IsReady(RenderPassOrder pass) const {

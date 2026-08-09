@@ -1,12 +1,12 @@
 #pragma once
-#include <Engine/Core/Entity.h>
+#include <Engine/Game/SceneEntity.h>
+
+#include <Engine/Game/Component/ComponentCategory.h>
 
 #include <Engine/Core/CoreMinimal.h>
 #include <Engine/Core/UtilMacro.h>
 
 #include <Engine/Collision/Collision.h>
-
-#include <Engine/Game/Component/ComponentCategory.h>
 
 #include <array>
 #include <vector>
@@ -20,15 +20,15 @@ namespace engine
 	class Transform;
 
 	class GameObject :
-		public Entity
+		public SceneEntity
 	{
-		CLASS_INFO(GameObject, Entity)
+		ENTITY_INFO(GameObject, SceneEntity)
 	public:
 		GameObject();
 		GameObject(const HashedStringView& concrete_class_name);
 		virtual ~GameObject() override;
 
-		virtual void Init();
+		virtual void Init() override;
 
 		bool HasPendingComponents() const { return !pending_add_components_.empty(); }
 		void FlushPendingComponents();	// Component 추가 및 초기화 담당
@@ -37,30 +37,27 @@ namespace engine
 		void FixedUpdate();
 		void LateUpdate();
 		void FrameEnd();	// Component 제거
-
-		s_ptr<Component> AddComponent(s_ptr<Component> component);
-		s_ptr<Component> AddComponent(const HashedStringView& concrete_class_name);
+		
+		Component* AddComponent(const HashedStringView& concrete_class_name);
 
 		template <typename T>
-		s_ptr<T> AddComponent() {
+		T* AddComponent() {
 			static_assert(std::is_base_of_v<Component, T>, "Component의 하위 클래스만 가능!");
-			s_ptr<T> comp = std::make_shared<T>();
-			AddComponent(comp);
-			return comp;
+			return static_cast<T*>(AddComponent(EntityManager::GetInst().CreateEntity<T>()));
 		}
 
-		s_ptr<Component> GetComponent(const HashedStringView& concrete_class_name) const;
+		Component* GetComponent(const HashedStringView& concrete_class_name) const;
 
 		template <typename T>
-		s_ptr<T> GetComponent() const;
+		T* GetComponent() const;
 
-		s_ptr<Transform> GetTransform() const { return transform_; }
+		Transform* GetTransform() const { return transform_; }
 
 		void SetName(const std::string_view name) { name_ = name; }
 		const std::string& GetName() const { return name_; }
 
-		void SetOwnerScene(s_ptr<Scene> scene) { owner_scene_ = std::move(scene); }
-		s_ptr<Scene> GetOwnerScene() const { return owner_scene_.lock(); }
+		void SetOwnerScene(Scene* scene) { owner_scene_ = scene; }
+		Scene* GetOwnerScene() const { return owner_scene_; }
 
 		bool HasInitialized() const { return has_initialized_; }
 
@@ -68,10 +65,10 @@ namespace engine
 		bool IsActive() const { return is_active_in_hierarchy_; }
 		bool IsActiveSelf() const { return is_active_; }
 		bool IsActiveInHierarchy() const { return is_active_in_hierarchy_; }
-		bool IsDestroyed() const { return is_destroyed_; }
 
 		// 파괴(비가역)
 		void Destroy();
+		bool IsDestroyed() const { return is_destroyed_; }
 
 		void SetLayer(uint32 layer);
 		uint32 GetLayer() const { return layer_; }
@@ -96,19 +93,20 @@ namespace engine
 		void BroadcastTriggerExit2D(Collider2D* other);
 
 	private:
+		Component* AddComponent(u_ptr<Component> component);
+		Component* AddPendingComponent(u_ptr<Component> component);
+
 		void UpdateHierarchyState(bool is_active_in_hierarchy);
 
-		void AddComponentInternal(const s_ptr<Component>& component);
+		Scene* owner_scene_ = {};
 
-		w_ptr<Scene> owner_scene_ = {};
-
-		std::array<s_ptr<Component>, (size_t)ComponentCategory::kEnd> fixed_order_components_ = {};
-		std::vector<s_ptr<Component>> other_components_ = {};
-		s_ptr<Transform> transform_ = {};
+		std::array<u_ptr<Component>, (size_t)ComponentCategory::kEnd> fixed_order_components_ = {};
+		std::vector<u_ptr<Component>> other_components_ = {};
+		Transform* transform_ = {};
 
 		std::string name_ = {};
 
-		std::vector<s_ptr<Component>> pending_add_components_ = {};
+		std::vector<u_ptr<Component>> pending_add_components_ = {};
 
 		std::vector<Component*> collision_listeners_ = {};
 
@@ -123,19 +121,19 @@ namespace engine
 	};
 
 	template <typename T>
-	s_ptr<T> GameObject::GetComponent() const
+	T* GameObject::GetComponent() const
 	{
 		static_assert(HasComponentCategory<T>,
 			"ComponentCategory.h를 참고하여 컴포넌트 하위 클래스를 생성하세요.");
 
-		s_ptr<T> ret = {};
+		T* ret = {};
 
 		constexpr ComponentCategory cat = T::kComponentCategory;
 
 		//고정순서 컴포넌트는 저장된 컴포넌트 번호만 찾아온다.
 		if constexpr (ComponentCategory::kScripts < cat && cat < ComponentCategory::kEnd)
 		{
-			ret = std::dynamic_pointer_cast<T>(fixed_order_components_[(size_t)cat]);
+			ret = dynamic_cast<T*>(fixed_order_components_[(size_t)cat].get());
 		}
 		//이외의 사용자 정의 컴포넌트들은 직접 순회를 돌며 찾는다
 		//최적화 여지가 있지만 일단은 dynamic cast를 쓰는걸로...
@@ -143,7 +141,7 @@ namespace engine
 		{
 			for (size_t i = 0; i < other_components_.size(); ++i)
 			{
-				ret = std::dynamic_pointer_cast<T>(other_components_[i]);
+				ret = dynamic_cast<T*>(other_components_[i].get());
 				if (ret) { break; }
 			}
 		}

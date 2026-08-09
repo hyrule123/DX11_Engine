@@ -14,5 +14,3 @@ namespace stdfs = std::filesystem;
 #include <unordered_map>
 #include <functional>
 #include <Engine/Util/StringHashTable.h>
-
-#include <Engine/Core/Entity.h>

@@ -8,6 +8,8 @@
 #include <Engine/Manager/InputManager.h>
 #include <Engine/Manager/RenderManager.h>
 
+#include <Engine/Core/HandlePointer.h>
+
 #include <Engine/Core/Debug.h>
 
 namespace engine
@@ -27,6 +29,8 @@ namespace engine
 	bool GameEngine::Init()
 	{
 		TimeManager::GetInst().Init();
+
+		HandlePointerPool::GetInst();	//싱글턴 소멸 시점 고정
 
 		if (GraphicsDevice::GetInst().Init() == false)
 		{

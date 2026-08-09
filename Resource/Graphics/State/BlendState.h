@@ -15,7 +15,7 @@ namespace engine
     class BlendState :
         public Resource
     {
-        CLASS_INFO(BlendState, Resource)
+        ENTITY_INFO(BlendState, Resource)
     public:
         BlendState();
         virtual ~BlendState() override;

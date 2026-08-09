@@ -33,8 +33,8 @@ namespace engine
         void Render();
         void FrameEnd();
 
-        void SetMainCamera(s_ptr<Camera> cam);
-        s_ptr<Camera> GetMainCamera() const { return main_cam_.lock(); }
+		void SetMainCamera(wh_ptr<Camera> cam) { main_cam_ = cam; }
+        wh_ptr<Camera> GetMainCamera() const { return main_cam_; }
 
         void OnScreenSizeChange(uint32 width, uint32 height);
         void OnClearContextStates();
@@ -60,7 +60,7 @@ namespace engine
 
         s_ptr<ConstantBuffer> cb_per_pass_ = {};
 
-        w_ptr<Camera> main_cam_ = {};
+		wh_ptr<Camera> main_cam_ = {};
         
         //Slot에 꽃아두고 계속 사용
         std::vector<ComPtr<ID3D11SamplerState>> sampler_states_ = {};

@@ -17,7 +17,7 @@
 namespace engine
 {
 	ForwardOpaqueRenderPass::ForwardOpaqueRenderPass()
-		: Super(ForwardOpaqueRenderPass::kClassConcreteName, RenderPassOrder::kForwardOpaque)
+		: Super(RenderPassOrder::kForwardOpaque)
 	{}
 	ForwardOpaqueRenderPass::~ForwardOpaqueRenderPass()
 	{}

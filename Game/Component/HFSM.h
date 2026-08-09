@@ -15,7 +15,7 @@ namespace engine
     class HFSM :
         public Component
     {
-		CLASS_INFO(HFSM, Component)
+		ENTITY_INFO(HFSM, Component)
 		COMPONENT_CATEGORY(ComponentCategory::kBehavior)
     public:
 		HFSM();
@@ -33,7 +33,7 @@ namespace engine
 
 		HFSMState* GetRootState() const { return root_; }
 
-		s_ptr<BlackBoard> GetBlackboard() const { return blackboard_.lock(); }
+		BlackBoard* GetBlackboard() const { return blackboard_.get(); }
 
 	private:
 		void ValidateStates() const;
@@ -45,7 +45,7 @@ namespace engine
 
 		HFSMState* current_state_ = {};
 
-		w_ptr<BlackBoard> blackboard_ = {};
+		wh_ptr<BlackBoard> blackboard_ = {};
 
 		AIContext ai_context_ = {};
     };

@@ -19,7 +19,7 @@ namespace engine
 	void Collider2D::Awake()
 	{
 		Super::Awake();
-		transform_ = GetComponent<Transform>().get();
+		transform_ = GetComponent<Transform>();
 
 		ASSERT(transform_);
 	}

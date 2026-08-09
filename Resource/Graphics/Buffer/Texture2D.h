@@ -18,7 +18,7 @@ namespace engine
     class Texture2D :
         public Resource
     {
-        CLASS_INFO(Texture2D, Resource)
+        ENTITY_INFO(Texture2D, Resource)
     public:
         Texture2D();
         Texture2D(const HashedStringView& concrete_class_name);

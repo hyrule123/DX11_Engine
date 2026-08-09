@@ -9,7 +9,7 @@ namespace engine
     class RenderTargetView :
         public Texture2D
     {
-        CLASS_INFO(RenderTargetView, Texture2D)
+        ENTITY_INFO(RenderTargetView, Texture2D)
     public:
         RenderTargetView();
         virtual ~RenderTargetView() override;

@@ -19,17 +19,20 @@ namespace engine
 	{
 		Super::Awake();
 
-		s_ptr<BlackBoard> blackboard = GetOwnerGameObject()->GetComponent<BlackBoard>();
-
-		blackboard_ = blackboard;
+		blackboard_ = GetOwnerGameObject()->GetComponent<BlackBoard>();
 		ASSERT(!blackboard_.expired());
+
+		wh_ptr<Component> com = blackboard_;
+		wh_ptr<BlackBoard> bb = static_handle_cast<BlackBoard>(com);
+
+		int tst = bb.get()->GetTest();
 
 		ValidateStates();
 
 		// 모든 상태의 ancestor_states_를 갱신
 		root_->RefreshAncestorStates({});
 
-		ai_context_.black_board = blackboard_;
+		ai_context_.black_board = blackboard_.get();
 		ai_context_.game_object = GetOwnerGameObject();
 		ai_context_.transform = GetOwnerGameObject()->GetComponent<Transform>();
 
@@ -85,7 +88,7 @@ namespace engine
 
 		HFSMState* ret = state.get();
 
-		state->SetOwnerHFSM(std::static_pointer_cast<HFSM>(shared_from_this()));
+		state->SetOwnerHFSM(this);
 		state->SetStateName(state_name);
 		states_.insert(state_name, std::move(state));
 
@@ -132,7 +135,7 @@ namespace engine
 			return;
 		}
 
-		s_ptr<BlackBoard> blackboard = blackboard_.lock();
+		BlackBoard* blackboard = blackboard_.get();
 		//null check는 삽입시 진행했음
 		HFSMState* state = iter->second.get();
 

@@ -219,6 +219,8 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Core\HandlePointer.h" />
+    <ClInclude Include="Game\SceneEntity.h" />
     <ClInclude Include="Game\Component\CircleCollider2D.h" />
     <ClInclude Include="Game\Component\AABBCollider2D.h" />
     <ClInclude Include="Game\Component\Collider2D.h" />
@@ -294,6 +296,8 @@
     <ClInclude Include="Resource\Graphics\Shader\VertexShader.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Core\HandlePointer.cpp" />
+    <ClCompile Include="Game\SceneEntity.cpp" />
     <ClCompile Include="Game\Component\CircleCollider2D.cpp" />
     <ClCompile Include="Game\Component\AABBCollider2D.cpp" />
     <ClCompile Include="Game\Component\Collider2D.cpp" />

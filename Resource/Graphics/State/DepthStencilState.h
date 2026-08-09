@@ -12,7 +12,7 @@ namespace engine
     class DepthStencilState :
         public Resource
     {
-        CLASS_INFO(DepthStencilState, Resource)
+        ENTITY_INFO(DepthStencilState, Resource)
     public:
         DepthStencilState();
         virtual ~DepthStencilState() override;

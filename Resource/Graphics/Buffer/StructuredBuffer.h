@@ -13,7 +13,7 @@ namespace engine
     class StructuredBuffer :
         public Resource
     {
-        CLASS_INFO(StructuredBuffer, Resource)
+        ENTITY_INFO(StructuredBuffer, Resource)
     public:
 		enum BufferFlagBitMask : uint32
 		{

@@ -17,9 +17,8 @@ namespace engine
     class ForwardOpaqueRenderPass final :
         public RenderPass
     {
-		CLASS_INFO(ForwardOpaqueRenderPass, RenderPass)
+		using Super = RenderPass;
     public:
-
         struct RenderItem
         {
             RenderKey key = {};

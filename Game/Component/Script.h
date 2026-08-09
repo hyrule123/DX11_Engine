@@ -7,7 +7,7 @@ namespace engine
     class Script :
         public Component
     {
-        CLASS_INFO(Script, Component)
+        ENTITY_INFO(Script, Component)
             COMPONENT_CATEGORY(ComponentCategory::kScripts)
     public:
         Script(const HashedStringView& concrete_class_name);

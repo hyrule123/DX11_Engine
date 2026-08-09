@@ -12,7 +12,7 @@ namespace engine
     class SpriteAnimation :
         public Resource
     {
-        CLASS_INFO(SpriteAnimation, Resource)
+        ENTITY_INFO(SpriteAnimation, Resource)
     public:
         SpriteAnimation();
         virtual ~SpriteAnimation() override;

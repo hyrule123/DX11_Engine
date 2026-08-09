@@ -6,8 +6,8 @@ namespace engine
 {
 	struct AIContext
 	{
-		w_ptr<class GameObject> game_object = {};
-		w_ptr<class BlackBoard> black_board = {};
-		w_ptr<class Transform> transform = {};
+		class GameObject* game_object = {};
+		class BlackBoard* black_board = {};
+		class Transform* transform = {};
 	};
 }

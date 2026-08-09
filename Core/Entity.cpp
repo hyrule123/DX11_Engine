@@ -8,24 +8,25 @@ namespace engine
 		, instance_ID_(next_instance_ID_++)
 	{}
 
-	Entity::Entity(const Entity& copy)
+	Entity::Entity(const Entity & copy)
 		: concrete_class_name_(copy.concrete_class_name_)
-		, instance_ID_(next_instance_ID_++)
-	{}
-
-	Entity::Entity(const Entity && move) noexcept
-		: concrete_class_name_(move.concrete_class_name_)
 		, instance_ID_(next_instance_ID_++)
 	{}
 
 	Entity::~Entity()
 	{}
 
+	EntityManager::EntityManager() {}
+	EntityManager::~EntityManager() {}
 
-	EntityFactory::EntityFactory()
-	{}
-
-	EntityFactory::~EntityFactory()
-	{}
+	u_ptr<Entity> EntityManager::CreateEntity(const HashedStringView& key)
+	{
+		auto it = entity_creator_table_.find(key);
+		if (it != entity_creator_table_.end())
+		{
+			// EntityCreationFunc func = it->second;
+			return it->second();
+		}
+		return nullptr;
+	}
 }
-

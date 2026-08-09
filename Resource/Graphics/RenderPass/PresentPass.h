@@ -7,10 +7,10 @@ namespace engine
     class GraphicsShaderSet;
 	class RenderTargetGroup;
 
-    class PresentPass final : 
-        public RenderPass
+	class PresentPass
+		: public RenderPass
     {
-		CLASS_INFO(PresentPass, RenderPass)
+		using Super = RenderPass;
     public:
         PresentPass();
 		virtual ~PresentPass() override;

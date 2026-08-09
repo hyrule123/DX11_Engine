@@ -14,7 +14,7 @@ namespace engine
     class HFSMState :
         public Entity
     {
-		CLASS_INFO(HFSMState, Entity)
+		ENTITY_INFO(HFSMState, Entity)
     public:
         HFSMState(const HashedStringView& concrete_class_name);
 		virtual ~HFSMState() override;
@@ -37,8 +37,8 @@ namespace engine
         // 재귀, 상위 상태 경로를 갱신
 		void RefreshAncestorStates(const std::vector<HFSMState*>& ancestors);
 
-		void SetOwnerHFSM(const s_ptr<HFSM>& hfsm) { owner_hfsm_ = hfsm; }
-		s_ptr<HFSM> GetOwnerHFSM() const { return owner_hfsm_.lock(); }
+		void SetOwnerHFSM(HFSM* hfsm) { owner_hfsm_ = hfsm; }
+		HFSM* GetOwnerHFSM() const { return owner_hfsm_; }
 
 		HashedStringView GetStateName() const { return state_name_; }
 		void SetStateName(const HashedStringView& state_name) { state_name_ = state_name; }
@@ -46,7 +46,7 @@ namespace engine
     private:
         void AddChildState(HFSMState* child_state);
 
-		w_ptr<HFSM> owner_hfsm_ = {};
+		HFSM* owner_hfsm_ = {};
 
         HFSMState* parent_state_ = {};
 		std::vector<HFSMState*> child_states_ = {};

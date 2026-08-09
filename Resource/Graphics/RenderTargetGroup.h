@@ -21,7 +21,7 @@ namespace engine
     class RenderTargetGroup 
         : public Resource
     {
-        CLASS_INFO(RenderTargetGroup, Resource)
+        ENTITY_INFO(RenderTargetGroup, Resource)
     public:
         using RenderTargetArray = std::array<s_ptr<RenderTargetView>, kMaxRenderTargetCount>;
 

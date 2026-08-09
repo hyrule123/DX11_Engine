@@ -11,7 +11,7 @@ namespace engine
     class PixelShader final 
         : public Shader
     {
-        CLASS_INFO(PixelShader, Shader)
+        ENTITY_INFO(PixelShader, Shader)
     public:
         PixelShader();
         virtual ~PixelShader() final;

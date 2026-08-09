@@ -10,7 +10,7 @@ namespace engine
 	class VertexShader final
 		: public Shader
 	{
-		CLASS_INFO(VertexShader, Shader)
+		ENTITY_INFO(VertexShader, Shader)
 	public:
 		VertexShader();
 		virtual ~VertexShader() final;

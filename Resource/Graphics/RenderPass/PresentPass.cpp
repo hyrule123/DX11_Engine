@@ -19,6 +19,8 @@
 
 #include <Engine/HLSL/Present/Present.hlsli>
 
+#include <array>
+
 namespace engine
 {
 	namespace Present_Pass
@@ -50,7 +52,7 @@ namespace engine
 	}
 
 	PresentPass::PresentPass()
-		: Super(PresentPass::kClassConcreteName, RenderPassOrder::kPresent)
+		: Super(RenderPassOrder::kPresent)
 	{}
 	PresentPass::~PresentPass()
 	{}
@@ -63,7 +65,7 @@ namespace engine
 			mesh_ = std::make_unique<Mesh>();
 
 			//VERTEX BUFFER
-			auto vb = std::make_shared<VertexBuffer>();
+			s_ptr<VertexBuffer> vb = EntityManager::CreateEntity<VertexBuffer>();
 			std::vector<Present_Pass::Vertex> vertices;
 			vertices.resize(4);
 			vertices[0].position = { -1.0f, 1.0f, 0.5f };
@@ -80,7 +82,7 @@ namespace engine
 			ASSERT(result);
 
 			//INDEX BUFFER
-			auto ib = std::make_shared<IndexBuffer>();
+			s_ptr<IndexBuffer> ib = EntityManager::CreateEntity<IndexBuffer>();
 			std::vector<UINT> indices = { 0, 1, 2, 0, 2, 3 };
 			result = ib->Create(indices, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 			ASSERT(result);
@@ -91,12 +93,12 @@ namespace engine
 		shader_set_ = std::make_unique<GraphicsShaderSet>();
 		shader_set_->SetPerInstanceDataStride(sizeof(PresentVSInput));
 		
-		s_ptr<VertexShader> vs = std::make_shared<VertexShader>();
+		s_ptr<VertexShader> vs = EntityManager::CreateEntity<VertexShader>();
 		bool result = vs->LoadFromFile(res_dir / L"Shader/Present_VS.cso");
 		ASSERT(result);
 		shader_set_->SetVertexShader(vs);
 
-		s_ptr<InputLayoutDesc> layout_desc = std::make_shared<InputLayoutDesc>();
+		s_ptr<InputLayoutDesc> layout_desc = EntityManager::CreateEntity<InputLayoutDesc>();
 		for (const auto& desc : Present_Pass::kInputLayoutDescs)
 		{
 			layout_desc->AddLayoutDesc(desc);
@@ -104,7 +106,7 @@ namespace engine
 		result = shader_set_->CreateInputLayout(layout_desc);
 		ASSERT(result);
 
-		s_ptr<PixelShader> ps = std::make_shared<PixelShader>();
+		s_ptr<PixelShader> ps = EntityManager::CreateEntity<PixelShader>();
 		result = ps->LoadFromFile(res_dir / L"Shader/Present_PS.cso");
 		ASSERT(result);
 		shader_set_->SetPixelShader(ps);

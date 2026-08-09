@@ -1,10 +1,8 @@
 #pragma once
 
 #include <Engine/Core/Singleton.h>
-
 #include <Engine/Core/CoreMinimal.h>
-
-
+#include <Engine/Core/Entity.h>
 
 #include <unordered_set>
 
@@ -47,7 +45,8 @@ namespace engine
 		template <typename T>
 		s_ptr<T> LoadFromFileWithoutAdd(const HashedStringView& res_key)
 		{
-			s_ptr<T> resource = std::make_shared<T>();
+			static_assert(std::is_base_of_v<Resource, T>, "T must be derived from Resource");
+			s_ptr<T> resource = EntityManager::CreateEntity<T>();
 			if (false == resource->LoadFromFile(resource_dir_ / res_key.GetStringView()))
 			{
 				return nullptr;

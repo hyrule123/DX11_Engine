@@ -10,7 +10,7 @@ namespace engine
     class SpriteRenderer :
         public Renderer
     {
-        CLASS_INFO(SpriteRenderer, Renderer)
+        ENTITY_INFO(SpriteRenderer, Renderer)
     public:
         SpriteRenderer();
         virtual ~SpriteRenderer() override;

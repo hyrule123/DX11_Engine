@@ -12,7 +12,7 @@ namespace engine
     class BlackBoard :
         public Component
     {
-		CLASS_INFO(BlackBoard, Component)
+		ENTITY_INFO(BlackBoard, Component)
 		COMPONENT_CATEGORY(ComponentCategory::kBlackboard)
 
 	public:
@@ -39,8 +39,12 @@ namespace engine
 			return (bool)cont_.erase(key);
 		}
 
+		int GetTest() const { return test; }
+
 	private:
 		StringHashTable<std::any> cont_ = {};
+
+		int test = 1;
     };
 }
 

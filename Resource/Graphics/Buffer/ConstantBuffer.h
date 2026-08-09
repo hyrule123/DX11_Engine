@@ -14,7 +14,7 @@ namespace engine
     class ConstantBuffer :
         public Resource
     {
-        CLASS_INFO(ConstantBuffer, Resource)
+        ENTITY_INFO(ConstantBuffer, Resource)
 
     public:
         ConstantBuffer();

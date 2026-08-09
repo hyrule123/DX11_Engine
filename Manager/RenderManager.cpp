@@ -39,7 +39,7 @@ namespace engine
 		auto* context = GraphicsDevice::GetInst().GetContext();
 
 		//CONSTANT BUFFERS
-		cb_per_pass_ = std::make_shared<ConstantBuffer>();
+		cb_per_pass_ = EntityManager::CreateEntity<ConstantBuffer>();
 		cb_per_pass_->Create<PerPass>();
 
 		CreateSamplerStates(context);
@@ -50,15 +50,15 @@ namespace engine
 	}
 	void RenderManager::Render()
 	{
-		if (main_cam_.expired()) 
+		if (!main_cam_) 
 		{ 
 			ERROR_MESSAGE("Main Camera 없음");
-			return; 
+			return;
 		}
 
 		auto* context = GraphicsDevice::GetInst().GetContext();
 
-		auto cam = main_cam_.lock();
+		auto cam = main_cam_;
 
 		//Per Pass ( = Camera )
 		PerPass per_pass_data = {};
@@ -85,10 +85,7 @@ namespace engine
 		//일단은 하지 않음
 		//render_queue_.clear();
 	}
-	void RenderManager::SetMainCamera(s_ptr<Camera> cam)
-	{
-		main_cam_ = cam;
-	}
+
 	void RenderManager::OnScreenSizeChange(uint32 width, uint32 height)
 	{
 		resolution_width_ = width;
@@ -100,7 +97,7 @@ namespace engine
 	}
 	void RenderManager::DebugDraw(ID3D11DeviceContext* context)
 	{
-		auto cam = main_cam_.lock();
+		Camera* cam = main_cam_.get();
 
 		if (debug_rect_data_.empty() && debug_circle_data_.empty())
 		{
@@ -226,7 +223,7 @@ namespace engine
 		ASSERT(result);
 
 #pragma region //INPUT LAYOUT DESC
-		s_ptr<InputLayoutDesc> input_layout_desc = std::make_shared<InputLayoutDesc>();
+		s_ptr<InputLayoutDesc> input_layout_desc = EntityManager::CreateEntity<InputLayoutDesc>();
 
 		for (const auto& desc : Vertex::Debug::kInputLayoutDescs)
 		{
@@ -235,7 +232,7 @@ namespace engine
 #pragma endregion //INPUT LAYOUT DESC
 
 		//Debug DSS
-		s_ptr<DepthStencilState> dss = std::make_shared<DepthStencilState>();
+		s_ptr<DepthStencilState> dss = EntityManager::CreateEntity<DepthStencilState>();
 
 		// 1. Depth Stencil Desc 구조체 선언 및 초기화
 		D3D11_DEPTH_STENCIL_DESC dss_desc = {};
@@ -261,7 +258,7 @@ namespace engine
 			debug_rect_mesh_ = std::make_unique<Mesh>();
 
 			//VERTEX BUFFER
-			auto vb = std::make_shared<VertexBuffer>();
+			s_ptr<VertexBuffer> vb = EntityManager::CreateEntity<VertexBuffer>();
 			std::vector<Vertex::Debug::Vertex> vertices;
 			vertices.resize(4);
 			vertices[0].position = { -0.5f, 0.5f, 0.0f };
@@ -271,7 +268,7 @@ namespace engine
 			vb->Create(vertices);
 
 			//INDEX BUFFER
-			auto ib = std::make_shared<IndexBuffer>();
+			s_ptr<IndexBuffer> ib = EntityManager::CreateEntity<IndexBuffer>();
 			std::vector<UINT> indices;
 			indices.push_back(0u);
 			indices.push_back(1u);
@@ -287,7 +284,7 @@ namespace engine
 			debug_circle_mesh_ = std::make_unique<Mesh>();
 
 			//VERTEX BUFFER
-			auto vb = std::make_shared<VertexBuffer>();
+			s_ptr<VertexBuffer> vb = EntityManager::CreateEntity<VertexBuffer>();
 			std::vector<Vertex::Debug::Vertex> vertices;
 
 			Vertex::Debug::Vertex v;
@@ -305,7 +302,7 @@ namespace engine
 			vb->Create(vertices);
 
 			//INDEX BUFFER
-			auto ib = std::make_shared<IndexBuffer>();
+			s_ptr<IndexBuffer> ib = EntityManager::CreateEntity<IndexBuffer>();
 			std::vector<UINT> indices;
 
 			for (uint i = 0; i <= 30; ++i)

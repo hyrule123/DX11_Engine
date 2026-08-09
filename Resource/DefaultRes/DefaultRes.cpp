@@ -37,7 +37,7 @@ namespace engine
 		auto& res_mgr = ResourceManager::GetInst();
 		auto device = GraphicsDevice::GetInst().GetDevice();
 		{
-			s_ptr<RasterizerState> rss = std::make_shared<RasterizerState>();
+			s_ptr<RasterizerState> rss = EntityManager::CreateEntity<RasterizerState>();
 			res_mgr.AddResource("RSS_Solid_Back"_hash, rss);
 			res_mgr.SetDefaultResource(rss);
 
@@ -60,7 +60,7 @@ namespace engine
 		}
 
 		{
-			s_ptr<RasterizerState> rss_wireframe = std::make_shared<RasterizerState>();
+			s_ptr<RasterizerState> rss_wireframe = EntityManager::CreateEntity<RasterizerState>();
 			res_mgr.AddResource("RSS_WireFrame"_hash, rss_wireframe);
 			res_mgr.SetDefaultResource(rss_wireframe);
 
@@ -88,7 +88,7 @@ namespace engine
 		auto device = GraphicsDevice::GetInst().GetDevice();
 
 		{//Default DSS
-			s_ptr<DepthStencilState> dss = std::make_shared<DepthStencilState>();
+			s_ptr<DepthStencilState> dss = EntityManager::CreateEntity<DepthStencilState>();
 			ResourceManager::GetInst().AddResource("DSS_Default"_hash, dss);
 			ResourceManager::GetInst().SetDefaultResource(dss);
 
@@ -126,7 +126,7 @@ namespace engine
 		auto device = GraphicsDevice::GetInst().GetDevice();
 
 #pragma region //INPUT LAYOUT DESC
-		s_ptr<InputLayoutDesc> input_layout_desc = std::make_shared<InputLayoutDesc>();
+		s_ptr<InputLayoutDesc> input_layout_desc = EntityManager::CreateEntity<InputLayoutDesc>();
 		for (const auto& desc : Vertex::Standard2D::kInputLayoutDescs)
 		{
 			input_layout_desc->AddLayoutDesc(desc);
@@ -137,12 +137,12 @@ namespace engine
 
 #pragma region //MESH
 		{
-			auto msh = std::make_shared<Mesh>();
+			s_ptr<Mesh> msh = EntityManager::CreateEntity<Mesh>();
 			resmgr.AddResource("Mesh_Standard2D_Rect"_hash, msh);
 			resmgr.SetDefaultResource(msh);
 
 			//VERTEX BUFFER
-			auto vb = std::make_shared<VertexBuffer>();
+			s_ptr<VertexBuffer> vb = EntityManager::CreateEntity<VertexBuffer>();
 			std::vector<Vertex::Standard2D::Vertex> vertices;
 			vertices.resize(4);
 			vertices[0].position = { -0.5f, 0.5f, 0.0f };
@@ -158,7 +158,7 @@ namespace engine
 			vb->Create(vertices);
 
 			//INDEX BUFFER
-			auto ib = std::make_shared<IndexBuffer>();
+			s_ptr<IndexBuffer> ib = EntityManager::CreateEntity<IndexBuffer>();
 			std::vector<UINT> indices = { 0, 1, 2, 0, 2, 3 };
 			ib->Create(indices, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
@@ -167,7 +167,7 @@ namespace engine
 #pragma endregion //MESH
 		
 #pragma region //GRAPHICS SHADER SET
-		auto shaderset = std::make_shared<GraphicsShaderSet>();
+		s_ptr<GraphicsShaderSet> shaderset = EntityManager::CreateEntity<GraphicsShaderSet>();
 		
 		shaderset->SetInstancingSupport(true);
 		shaderset->SetPerInstanceDataStride(sizeof(SpriteInstanceData));
@@ -181,7 +181,7 @@ namespace engine
 		resmgr.SetDefaultResource(shaderset);
 
 		//MATERIAL
-		s_ptr<Material> material = std::make_shared<Material>();
+		s_ptr<Material> material = EntityManager::CreateEntity<Material>();
 		material->SetShaderSet(shaderset, RenderPassOrder::kForwardOpaque);
 		resmgr.AddResource("Material_Sprite"_hash, material);
 		resmgr.SetDefaultResource(material);

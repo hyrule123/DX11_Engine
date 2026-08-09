@@ -11,7 +11,7 @@ namespace engine
 	class Resource 
 		: public Entity
 	{
-		CLASS_INFO(Resource, Entity)
+		ENTITY_INFO(Resource, Entity)
 	public:
 		Resource(const HashedStringView& concrete_class_name);
 		virtual ~Resource() override;

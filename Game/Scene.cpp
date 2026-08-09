@@ -15,6 +15,8 @@ namespace engine
 	{}
 	void Scene::Init()
 	{
+		Super::Init();
+
 		has_initialized_ = true;
 
 		collision_system_2D_.Init();
@@ -83,42 +85,23 @@ namespace engine
 		//Destroy된 GameObject들 제거
 		std::erase_if(
 			game_objects_,
-			[](const s_ptr<GameObject>& obj) { return obj->IsDestroyed(); }
+			[](const u_ptr<GameObject>& obj) { return obj->IsDestroyed(); }
 		);
 	}
 
-	void Scene::AddGameObject(s_ptr<GameObject> obj)
+	GameObject* Scene::AddGameObject(const HashedStringView& concrete_class_name)
 	{
-		if (obj)
-		{
-			obj->SetOwnerScene(std::static_pointer_cast<Scene>(shared_from_this()));
-			if (!(obj->HasInitialized()))
-			{
-				obj->Init();
-			}
-			game_objects_.push_back(obj);
-		}
+		return AddGameObject(EntityManager::GetInst().CreateEntityAs<GameObject>(concrete_class_name));
 	}
-
-	s_ptr<GameObject> Scene::AddGameObject(const HashedStringView& concrete_class_name)
-	{
-		auto obj = EntityFactory::GetInst().CreateEntityAs<GameObject>(concrete_class_name);
-		if (obj)
-		{
-			AddGameObject(obj);
-		}
-		return obj;
-	}
-	s_ptr<GameObject> Scene::FindGameObject(const std::string_view name) const
+	GameObject* Scene::FindGameObject(const std::string_view name) const
 	{
 		for (const auto& obj : game_objects_)
 		{
 			if (obj->GetName() == name)
 			{
-				return obj;
+				return obj.get();
 			}
 		}
-
 		return nullptr;
 	}
 	void Scene::SetCollisionMask(uint32 layer_a, uint32 layer_b, bool can_collide)
@@ -128,6 +111,18 @@ namespace engine
 		collision_mask_[layer_a][layer_b] = can_collide;
 		collision_mask_[layer_b][layer_a] = can_collide; // Ensure symmetry
 	}
+
+	GameObject* Scene::AddGameObject(u_ptr<GameObject> obj)
+	{
+		GameObject* raw_ptr = obj.get();
+		if (obj)
+		{
+			obj->SetOwnerScene(this);
+			game_objects_.push_back(std::move(obj));
+		}
+		return raw_ptr;
+	}
+
 	void Scene::FlushPending()
 	{
 		size_t snapshot_size = game_objects_.size();	// Snapshot

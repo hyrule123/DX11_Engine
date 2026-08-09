@@ -201,7 +201,7 @@ namespace engine
 	s_ptr<DirectX::ScratchImage> Texture2D::LoadScratchImageFromFile(const stdfs::path& res_path)
 	{
 		using namespace DirectX;
-		auto img = std::make_shared<ScratchImage>();
+		s_ptr<DirectX::ScratchImage> img = std::make_shared<ScratchImage>();
 
 		std::wstring upper_ext = string_utils::GetUpperCase(res_path.extension().wstring());
 		HRESULT hr = E_FAIL;

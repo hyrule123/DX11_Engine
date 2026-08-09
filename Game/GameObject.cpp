@@ -23,41 +23,46 @@ namespace engine
 
 	void GameObject::Init()
 	{
+		Super::Init();
 		has_initialized_ = true;
 		transform_ = AddComponent<Transform>();
 	}
 
 	void GameObject::FlushPendingComponents()
 	{
+		std::vector<Component*> flushed_components = {};
+		flushed_components.reserve(pending_add_components_.size());
+
 		//먼저 싹 다 넣고
-		for (const auto& com : pending_add_components_)
+		for (size_t i = 0; i < pending_add_components_.size(); ++i)
 		{
-			AddComponentInternal(com);
+			Component* flushed = AddPendingComponent(std::move(pending_add_components_[i]));
+			if (flushed)
+			{
+				flushed_components.push_back(flushed);
+			}
 		}
 
-		//Awake까지는 무조건 호출(다른 컴포넌트 탐색 보장)
-		size_t pending_count = pending_add_components_.size();	// Snapshot
-		for (size_t i = 0; i < pending_count; ++i)
+		//pending 대기열은 비워준다
+		pending_add_components_.clear();
+
+		// 삽입 성공한 Component에 대해 Awake까지는 무조건 호출(다른 컴포넌트 탐색 보장)
+		for (size_t i = 0; i < flushed_components.size(); ++i)
 		{
-			if (false == pending_add_components_[i]->HasAwaken())
+			if (false == flushed_components[i]->HasAwaken())
 			{
-				pending_add_components_[i]->Awake();
+				flushed_components[i]->Awake();
 			}
 		}
 
 		//GameObject의 활성화 상태에 따라 OnEnable 호출
-		for (size_t i = 0; i < pending_count; ++i)
+		for (size_t i = 0; i < flushed_components.size(); ++i)
 		{
-			if (IsActive() &&  pending_add_components_[i]->IsEnabled())
+			if (IsActive() &&  flushed_components[i]->IsEnabled())
 			{
-				pending_add_components_[i]->OnEnable();
+				flushed_components[i]->OnEnable();
 			}
 		}
-
-		// 이번에 추가된 녀석들만 제거, 중간에 추가된 녀석들은 냅둠
-		pending_add_components_.erase(
-			pending_add_components_.begin(),
-			pending_add_components_.begin() + pending_count);
 	}
 
 	void GameObject::Update()
@@ -163,43 +168,27 @@ namespace engine
 		//Other Components는 vector이므로 nullptr들인 항목은 제거
 		std::erase_if(
 			other_components_, 
-			[](const s_ptr<Component>& com) { return com == nullptr; }
+			[](const u_ptr<Component>& com) { return com == nullptr; }
 		);
 
 		// 혹시나 pending_add_components_에 Destroy된 녀석이 있을 수 있으므로 제거
 		std::erase_if(
 			pending_add_components_,
-			[](const s_ptr<Component>& com) { return com->IsDestroyed(); }
+			[](const u_ptr<Component>& com) { return com->IsDestroyed(); }
 		);
 	}
 
-	s_ptr<Component> GameObject::AddComponent(s_ptr<Component> component)
+	Component* GameObject::AddComponent(const HashedStringView& concrete_class_name)
 	{
-		if (component)
-		{
-			pending_add_components_.push_back(component);
-
-			component->SetOwnerGameObject(std::static_pointer_cast<GameObject>(shared_from_this()));
-			if (!component->HasInitialized())
-			{
-				component->Init();
-			}
-		}
-
-		return component;
-	}
-
-	s_ptr<Component> GameObject::AddComponent(const HashedStringView& concrete_class_name)
-	{
-		s_ptr<Component> comp = EntityFactory::GetInst().CreateEntityAs<Component>(concrete_class_name);
+		u_ptr<Component> comp = EntityManager::GetInst().CreateEntityAs<Component>(concrete_class_name);
 		if (comp)
 		{
-			AddComponent(comp);
+			return AddComponent(std::move(comp));
 		}
-		return comp;
+		return nullptr;
 	}
 
-	s_ptr<Component> GameObject::GetComponent(const HashedStringView& concrete_class_name) const
+	Component* GameObject::GetComponent(const HashedStringView& concrete_class_name) const
 	{
 		for (size_t i = 0; i < fixed_order_components_.size(); ++i)
 		{
@@ -207,7 +196,7 @@ namespace engine
 				&&
 				fixed_order_components_[i]->GetConcreteClassName() == concrete_class_name)
 			{
-				return fixed_order_components_[i];
+				return fixed_order_components_[i].get();
 			}
 		}
 
@@ -217,7 +206,7 @@ namespace engine
 				&&
 				other_components_[i]->GetConcreteClassName() == concrete_class_name)
 			{
-				return other_components_[i];
+				return other_components_[i].get();
 			}
 		}
 
@@ -236,7 +225,7 @@ namespace engine
 		Transform* parent_tr = transform_->GetParent();
 		if (parent_tr)
 		{
-			GameObject* parent = parent_tr->GetOwnerGameObject().get();
+			GameObject* parent = parent_tr->GetOwnerGameObject();
 			bool parent_active_in_hierarchy = parent ? parent->IsActiveInHierarchy() : true;
 
 			UpdateHierarchyState(parent_active_in_hierarchy);
@@ -249,11 +238,13 @@ namespace engine
 
 	void GameObject::Destroy()
 	{
-		if (is_destroyed_) { return; }
+		if (IsDestroyed()) { return; }
 		is_destroyed_ = true;
-
 		is_active_ = false;
 		is_active_in_hierarchy_ = false;
+
+		//Handle 무효화, wh_ptr에서 받아올 수 없음
+		InvalidateHandle();
 
 		//내꺼 파괴하고
 		for (const auto& com : other_components_)
@@ -368,6 +359,17 @@ namespace engine
 		}
 	}
 
+	Component* GameObject::AddComponent(u_ptr<Component> component)
+	{
+		Component* ret = component.get();
+		if (component)
+		{
+			pending_add_components_.push_back(std::move(component));
+			ret->SetOwnerGameObject(this);
+		}
+		return ret;
+	}
+
 	void GameObject::UpdateHierarchyState(bool is_active_in_hierarchy)
 	{
 		const bool new_is_active_in_hierarchy = is_active_in_hierarchy && is_active_;
@@ -401,25 +403,34 @@ namespace engine
 		}
 	}
 
-	void GameObject::AddComponentInternal(const s_ptr<Component>& component)
+	Component* GameObject::AddPendingComponent(u_ptr<Component> component)
 	{
+		// const가 아닌 어떤 함수도 호출하지 마시오!!!!!!!!(단순히 자리에 넣는 용도)
+
 		//넣을 때 null 체크 했으므로 무조건 있다고 가정
-		if (component->IsDestroyed()) { return; }	// 이미 Destroy된 녀석은 넣지 않음
+		if (component->IsDestroyed()) { return nullptr; }	// 이미 Destroy된 녀석은 넣지 않음
 
 		ComponentCategory cat = component->GetComponentCategory();
 
+		Component* ret = component.get();
+
 		if (ComponentCategory::kScripts < cat)
 		{
-			if (fixed_order_components_[(size_t)cat])
+			if (nullptr == fixed_order_components_[(size_t)cat])
 			{
-				DEBUG_LOG("컴포넌트 중복 추가됨. 확인 필요.");
+				fixed_order_components_[(size_t)cat] = std::move(component);
 			}
-			fixed_order_components_[(size_t)cat] = component;
+			else
+			{
+				ASSERT_MESSAGE(false, "컴포넌트 중복 추가됨. 확인 필요.");
+				ret = nullptr;
+			}
 		}
 		else
 		{
-			other_components_.push_back(component);
+			other_components_.push_back(std::move(component));
 		}
+
+		return ret;
 	}
 }
-

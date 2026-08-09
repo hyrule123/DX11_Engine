@@ -98,7 +98,7 @@ namespace engine
 		//변경 전 초기화
 		ClearContextStates();
 		if (swap_chain_RT_) { swap_chain_RT_->Reset(); }
-		else { swap_chain_RT_ = std::make_shared<RenderTargetGroup>(); }
+		else { swap_chain_RT_ = EntityManager::CreateEntity<RenderTargetGroup>(); }
 		
 		if (nullptr == swap_chain_)
 		{
@@ -125,7 +125,7 @@ namespace engine
 
 #pragma region RTV
 		//RTV 생성
-		s_ptr<RenderTargetView> rt = std::make_shared<RenderTargetView>();
+		s_ptr<RenderTargetView> rt = EntityManager::CreateEntity<RenderTargetView>();
 
 		bool result = rt->CreateForSwapchain(swap_chain_);
 		if (!result)
@@ -138,7 +138,7 @@ namespace engine
 
 #pragma region DSV
 		//DSV 생성
-		s_ptr<DepthStencilView> dsv = std::make_shared<DepthStencilView>();
+		s_ptr<DepthStencilView> dsv = EntityManager::CreateEntity<DepthStencilView>();
 		D3D11_TEXTURE2D_DESC depth_buffer_desc = {};
 		depth_buffer_desc.Width = resolution_width;            // RTV의 가로 크기와 완전히 일치해야 합니다.
 		depth_buffer_desc.Height = resolution_height;          // RTV의 세로 크기와 완전히 일치해야 합니다.

@@ -11,12 +11,10 @@ namespace engine
 {
 	class RenderTargetGroup;
 	class RenderPass
-		: public Entity
 	{
-		CLASS_INFO(RenderPass, Entity)
 	public:
-		RenderPass(const HashedStringView& concrete_class_name, RenderPassOrder pass_order);
-		virtual ~RenderPass() override;
+		RenderPass(RenderPassOrder pass_order);
+		virtual ~RenderPass();
 
 		virtual void Init( ID3D11DeviceContext* context) {};
 

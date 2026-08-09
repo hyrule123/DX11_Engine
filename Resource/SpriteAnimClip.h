@@ -8,7 +8,7 @@ namespace engine
     class SpriteAnimClip :
         public Entity
     {
-        CLASS_INFO(SpriteAnimClip, Entity)
+        ENTITY_INFO(SpriteAnimClip, Entity)
     public:
         struct Frame
         {

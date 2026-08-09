@@ -10,7 +10,7 @@ namespace engine
     class Texture2DArray :
         public Texture2D
     {
-        CLASS_INFO(Texture2DArray, Texture2D)
+        ENTITY_INFO(Texture2DArray, Texture2D)
     public:
         Texture2DArray();
         virtual ~Texture2DArray() override;

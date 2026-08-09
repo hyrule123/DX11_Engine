@@ -13,7 +13,7 @@ namespace engine
     class Shader :
         public Resource
     {
-        CLASS_INFO(Shader, Resource)
+        ENTITY_INFO(Shader, Resource)
     public:
         Shader(const HashedStringView& concrete_class_name);
         virtual ~Shader() override;

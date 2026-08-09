@@ -10,7 +10,7 @@ namespace engine
 	class InputLayoutDesc :
 		public Resource
 	{
-		CLASS_INFO(InputLayoutDesc, Resource)
+		ENTITY_INFO(InputLayoutDesc, Resource)
 
 	public:
 		InputLayoutDesc();

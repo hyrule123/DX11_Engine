@@ -6,7 +6,7 @@ namespace engine
     class CircleCollider2D :
         public Collider2D
     {
-        CLASS_INFO(CircleCollider2D, Collider2D)
+        ENTITY_INFO(CircleCollider2D, Collider2D)
 
     public:
         CircleCollider2D();

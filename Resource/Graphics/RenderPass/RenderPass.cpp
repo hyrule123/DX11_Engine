@@ -9,9 +9,8 @@
 
 namespace engine
 {
-	RenderPass::RenderPass(const HashedStringView& concrete_class_name, RenderPassOrder pass_order)
-		: Super(concrete_class_name)
-		, pass_order_(pass_order)
+	RenderPass::RenderPass(RenderPassOrder pass_order)
+		: pass_order_(pass_order)
 	{}
 
 	RenderPass::~RenderPass()

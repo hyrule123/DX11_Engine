@@ -10,7 +10,7 @@ namespace engine
     class SpriteAnimator :
         public Component
     {
-        CLASS_INFO(SpriteAnimator, Component)
+        ENTITY_INFO(SpriteAnimator, Component)
         COMPONENT_CATEGORY(ComponentCategory::kAnimator)
     public:
         SpriteAnimator();
@@ -41,7 +41,7 @@ namespace engine
         bool SwitchAnimKeepFrameInternal(SpriteAnimClip* clip_ptr);
 		void TriggerNotify(uint32 frame_idx);
 
-        w_ptr<SpriteRenderer> renderer_ = {};
+        SpriteRenderer* renderer_ = {};
         s_ptr<SpriteAnimation> anim_ = {};
 
         SpriteAnimClip* playing_clip_ = {};

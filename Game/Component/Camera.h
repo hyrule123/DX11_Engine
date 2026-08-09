@@ -13,7 +13,7 @@ namespace engine
     class Camera :
         public Component
     {
-        CLASS_INFO(Camera, Component)
+        ENTITY_INFO(Camera, Component)
         COMPONENT_CATEGORY(ComponentCategory::kCamera)
     public:
         enum class ProjectionMode { Orthographic, Perspective };
@@ -45,7 +45,7 @@ namespace engine
     private:
         void CreateViewMatrix();
 
-        s_ptr<Transform> my_transform_ = {};
+        Transform* my_transform_ = {};
 
         matrix view_mat_ = {};
         matrix proj_mat_;

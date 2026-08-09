@@ -6,7 +6,7 @@ namespace engine
     class AABBCollider2D :
         public Collider2D
     {
-		CLASS_INFO(AABBCollider2D, Collider2D)
+		ENTITY_INFO(AABBCollider2D, Collider2D)
 	public:
 		AABBCollider2D();
 		virtual ~AABBCollider2D() override;

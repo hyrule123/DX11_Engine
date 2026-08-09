@@ -33,8 +33,8 @@ namespace engine
 
 		if (!RenderManager::GetInst().GetMainCamera())
 		{
-			s_ptr<Camera> ths = std::static_pointer_cast<Camera>(shared_from_this());
-			RenderManager::GetInst().SetMainCamera(ths);
+			wh_ptr<Camera> whptr = static_handle_cast<Camera>(weak_handle_from_this());
+			RenderManager::GetInst().SetMainCamera(whptr);
 		}
 	}
 	void Camera::Awake()

@@ -13,7 +13,7 @@ namespace engine
 	class RasterizerState :
 		public Resource
 	{
-		CLASS_INFO(RasterizerState, Resource)
+		ENTITY_INFO(RasterizerState, Resource)
 	public:
 		RasterizerState();
 		virtual ~RasterizerState() override;

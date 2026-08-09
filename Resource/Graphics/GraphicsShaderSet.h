@@ -19,7 +19,7 @@ namespace engine
     class GraphicsShaderSet :
         public Resource
     {
-        CLASS_INFO(GraphicsShaderSet, Resource)
+        ENTITY_INFO(GraphicsShaderSet, Resource)
     public:
         GraphicsShaderSet();
         virtual ~GraphicsShaderSet() override;

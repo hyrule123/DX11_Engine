@@ -69,6 +69,6 @@ namespace engine
 		float2 cell_size_ = { 1.0f, 1.0f };
 		float2 cell_size_inv_ = { 1.0f, 1.0f };
 
-		std::unordered_map<ColliderID, ContactPair2D, ColliderID_Hasher> collisions_;
+		std::unordered_map<ColliderPairID, ContactPair2D, ColliderPairID_Hasher> collisions_;
 	};
 }

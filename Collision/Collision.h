@@ -13,12 +13,12 @@ namespace engine
     constexpr int64 kMaxCellsPerCollider = 128;	//한 Collider가 차지할 수 있는 Cell의 최대 갯수
 
     // POD class
-    class ColliderID
+    class ColliderPairID
     {
     public:
-        ColliderID() = delete;
+        ColliderPairID() = delete;
 
-        ColliderID(uint32 _1, uint32 _2) noexcept
+        ColliderPairID(uint32 _1, uint32 _2) noexcept
             : id_((_1 < _2)
                 ? ((static_cast<uint64>(_2) << 32) | static_cast<uint64>(_1))
                 : ((static_cast<uint64>(_1) << 32) | static_cast<uint64>(_2)))
@@ -32,17 +32,17 @@ namespace engine
         //ID중 높은쪽
         uint32 GetHi() const noexcept { return static_cast<uint32>(id_ >> 32); }
 
-        bool operator==(const ColliderID& _other) const noexcept = default;
+        bool operator==(const ColliderPairID& _other) const noexcept = default;
 
     private:
         //낮은 ID를 하위 32비트, 높은 ID를 상위 32비트에 패킹
         uint64 id_;
     };
 
-    struct ColliderID_Hasher
+    struct ColliderPairID_Hasher
     {
-        static_assert(sizeof(ColliderID) == sizeof(size_t), "사이즈 미일치. 처리함수를 만드세요.");
-        size_t operator()(ColliderID _id) const noexcept {
+        static_assert(sizeof(ColliderPairID) == sizeof(size_t), "사이즈 미일치. 처리함수를 만드세요.");
+        size_t operator()(ColliderPairID _id) const noexcept {
             return static_cast<size_t>(_id.GetID());
         }
     };

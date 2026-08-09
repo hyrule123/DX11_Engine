@@ -10,6 +10,7 @@
 
 namespace engine
 {
+
 	Collider2D::Collider2D(const HashedStringView& concrete_class_name, ColliderShape2D shape)
 		: Component(concrete_class_name, Collider2D::kComponentCategory)
 		, shape_(shape)
@@ -43,7 +44,6 @@ namespace engine
 
 	void Collider2D::CollisionEnter2D(const Collision2D& col_info)
 	{
-		++contact_count_;
 		GetOwnerGameObject()->BroadcastCollisionEnter2D(col_info);
 	}
 
@@ -52,26 +52,23 @@ namespace engine
 		GetOwnerGameObject()->BroadcastCollisionStay2D(col_info);
 	}
 
-	void Collider2D::CollisionExit2D(Collider2D * other)
+	void Collider2D::CollisionExit2D(Collider2D* other)
 	{
-		--contact_count_;
 		GetOwnerGameObject()->BroadcastCollisionExit2D(other);
 	}
 
-	void Collider2D::TriggerEnter2D(Collider2D * other)
+	void Collider2D::TriggerEnter2D(Collider2D* other)
 	{
-		++contact_count_;
 		GetOwnerGameObject()->BroadcastTriggerEnter2D(other);
 	}
 
-	void Collider2D::TriggerStay2D(Collider2D * other)
+	void Collider2D::TriggerStay2D(Collider2D* other)
 	{
 		GetOwnerGameObject()->BroadcastTriggerStay2D(other);
 	}
 
-	void Collider2D::TriggerExit2D(Collider2D * other)
+	void Collider2D::TriggerExit2D(Collider2D* other)
 	{
-		--contact_count_;
 		GetOwnerGameObject()->BroadcastTriggerExit2D(other);
 	}
 
@@ -86,6 +83,8 @@ namespace engine
 
 		DEBUG_LOG("Collider2D::OnLayerChanged() - Collider re-registered in CollisionSystem2D due to layer change.");
 	}
+
+
 	const AABB2D& Collider2D::GetWorldBounds() const
 	{
 		uint32 ver = transform_->GetVersion();

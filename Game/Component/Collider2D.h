@@ -9,9 +9,9 @@ namespace engine
 	class Collider2D :
 		public Component
 	{
+		friend class CollisionSystem2D;
 		ENTITY_INFO(Collider2D, Component)
-			COMPONENT_CATEGORY(ComponentCategory::kCollider)
-
+		COMPONENT_CATEGORY(ComponentCategory::kCollider)
 	public:
 		virtual ~Collider2D() override;
 
@@ -47,7 +47,7 @@ namespace engine
 
 		ColliderShape2D GetShape() const { return shape_; }
 
-		bool IsContacting() const { return contact_count_ > 0; }
+		bool IsContacting() const { return !contacts_.empty(); }
 
 	protected:
 		Collider2D(const HashedStringView& concrete_class_name, ColliderShape2D shape);
@@ -57,6 +57,15 @@ namespace engine
 		mutable uint32 tf_last_seen_version_ = {};
 
 	private:
+		void AddContact(ColliderPairID pair_id) { contacts_.push_back(pair_id); }
+		void RemoveContact(ColliderPairID pair_id) {
+			auto it = std::find(contacts_.begin(), contacts_.end(), pair_id);
+			if (it == contacts_.end()) { return; }
+			*it = contacts_.back();
+			contacts_.pop_back();
+		}
+		std::vector<ColliderPairID> TakeContacts() { return std::exchange(contacts_, {}); }
+
 		const ColliderShape2D shape_ = {};
 		bool   is_trigger_ = {};
 		float2 offset_ = {};
@@ -66,7 +75,7 @@ namespace engine
 		int32 registered_layer_ = -1;
 		int32 collision_system_index_ = -1;
 
-		int32 contact_count_ = 0;
+		std::vector<ColliderPairID> contacts_ = {};
     };
 }
 

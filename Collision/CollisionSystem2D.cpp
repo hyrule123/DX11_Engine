@@ -164,6 +164,29 @@ namespace engine
 		// 원상복구
 		collider->SetCollisionSystemIndex(-1);
 		collider->SetRegisteredLayer(-1);
+
+		// 남아있는 contacts 제거
+		std::vector<ColliderPairID> contacts = collider->TakeContacts();
+		for (const auto& pair_id : contacts)
+		{
+			auto it = collisions_.find(pair_id);
+			ASSERT_MESSAGE(it != collisions_.end(), "ColliderPairID not found in collisions_");
+
+			//UnRegister 시, 등록 해제하는 자신은 콜백을 호출하지 않음
+			Collider2D* other = (it->second.lo == collider) ? it->second.hi : it->second.lo;
+			other->RemoveContact(pair_id);
+			if (it->second.was_trigger_)
+			{
+				//collider->TriggerExit2D(other);
+				other->TriggerExit2D(collider);
+			}
+			else
+			{
+				//collider->CollisionExit2D(other);
+				other->CollisionExit2D(collider);
+			}
+			collisions_.erase(it);
+		}
 	}
 
 	void CollisionSystem2D::FixedUpdate()
@@ -312,7 +335,7 @@ namespace engine
 					const uint32 collider_id_i = e_i.collider->GetInstanceID();
 					const uint32 collider_id_j = e_j.collider->GetInstanceID();
 
-					ColliderID id_pair{ collider_id_i, collider_id_j };
+					ColliderPairID id_pair{ collider_id_i, collider_id_j };
 
 					if (is_intersect)
 					{
@@ -337,6 +360,10 @@ namespace engine
 						// 삽입 성공 = 첫 충돌
 						if (inserted)
 						{
+							//충돌이 발생한 쌍을 각 Collider2D에 기록
+							it->second.lo->AddContact(it->first);
+							it->second.hi->AddContact(it->first);
+
 							if (it->second.was_trigger_)
 							{
 								it->second.lo->TriggerEnter2D(it->second.hi);
@@ -393,6 +420,9 @@ namespace engine
 				++it;
 				continue;
 			}
+
+			pair.lo->RemoveContact(it->first);
+			pair.hi->RemoveContact(it->first);
 
 			// 이번 step에 touch되지 않은 쌍 = OnExit 발생
 			if (pair.was_trigger_) {

@@ -21,11 +21,6 @@ namespace engine
 
 		if (next_scene_)
 		{
-			if (!next_scene_->HasInitialized())
-			{
-				next_scene_->Init();
-			}
-
 			if (!cur_scene_)
 			{
 				ChangeSceneNow();

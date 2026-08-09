@@ -17,8 +17,6 @@ namespace engine
 	{
 		Super::Init();
 
-		has_initialized_ = true;
-
 		collision_system_2D_.Init();
 	}
 

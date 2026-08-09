@@ -36,8 +36,6 @@ namespace engine
 		void LateUpdate();
 		void FrameEnd();
 
-		bool HasInitialized() const { return has_initialized_; }
-
 		//추가 예약, 실제 추가는 FlushPendingGameObjects() 타이밍
 		template <typename T> requires std::is_base_of_v<GameObject, T>
 		T* AddGameObject() { return AddGameObject(EntityManager::CreateEntity<T>()); }
@@ -60,7 +58,5 @@ namespace engine
 		CollisionSystem2D collision_system_2D_;
 
 		std::array<std::bitset<kMaxLayers>, kMaxLayers> collision_mask_ = {};
-
-		bool has_initialized_ = false;
 	};
 }

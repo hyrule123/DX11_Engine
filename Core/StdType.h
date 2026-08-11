@@ -48,4 +48,35 @@ namespace engine
 		void* ptr = {};
 		size_t size = {};
 	};
+
+	// 스코프 내에서 특정 값의 임시 변경을 보장하는 유틸리티 클래스(가드)
+	template <typename T>
+		requires std::is_nothrow_move_constructible_v<T>&&
+	std::is_nothrow_move_assignable_v<T>
+		class [[nodiscard]] ScopedValue
+	{
+	public:
+		explicit ScopedValue(T& target, T value) noexcept
+			: target_(target)
+			, previous_(std::exchange(target_, std::move(value)))
+		{}
+
+		~ScopedValue() noexcept
+		{
+			target_ = std::move(previous_);
+		}
+
+		ScopedValue(const ScopedValue&) = delete;
+		ScopedValue& operator=(const ScopedValue&) = delete;
+
+		ScopedValue(ScopedValue&&) = delete;
+		ScopedValue& operator=(ScopedValue&&) = delete;
+
+	private:
+		T& target_;
+		T previous_;
+	};
+
+	template <typename T>
+	ScopedValue(T&, T) -> ScopedValue<T>;
 }

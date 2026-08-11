@@ -15,6 +15,45 @@ namespace engine
 
 	class CollisionSystem2D
 	{
+	private:
+		struct ContactPair2D
+		{
+			Collider2D* lo;
+			Collider2D* hi;
+			bool was_trigger_;
+			bool touched_this_step_;
+		};
+
+		struct GridEntry {
+			//For Broad Phase
+			int32 cell_x;
+			int32 cell_y;
+			uint32 bucket_index;
+			uint32 layer;
+
+			//For Narrow Phase
+			Collider2D* collider;
+		};
+
+		// Queuing용 구조체
+		struct EnterEvent2D
+		{
+			ColliderPairID pair_ID;//8
+			Collider2D* lo;//8
+			Collider2D* hi;//8
+			float2 contact_point;//8
+
+			bool was_trigger_;//1
+		};
+		struct ExitEvent2D
+		{
+			ColliderPairID pair_ID;//8
+			Collider2D* lo;//8
+			Collider2D* hi;//8
+
+			bool was_trigger_;//1
+		};
+
 	public:
 		CollisionSystem2D(Scene* owner_scene);
 		~CollisionSystem2D();
@@ -30,24 +69,8 @@ namespace engine
 
 		void SetCellSize(float2 cell_size);
 	private:
-		struct ContactPair2D
-		{
-			Collider2D* lo;
-			Collider2D* hi;
-			bool touched_this_step_;
-			bool was_trigger_;
-		};
-
-		struct GridEntry {
-			//For Broad Phase
-			int32 cell_x;
-			int32 cell_y;
-			uint32 bucket_index;
-			uint32 layer;
-
-			//For Narrow Phase
-			Collider2D* collider;
-		};
+		void DispatchEnterEvent(EnterEvent2D e);
+		void DispatchExitEvent(ExitEvent2D e);
 
 		Scene* owner_scene_ = {};
 
@@ -70,5 +93,10 @@ namespace engine
 		float2 cell_size_inv_ = { 1.0f, 1.0f };
 
 		std::unordered_map<ColliderPairID, ContactPair2D, ColliderPairID_Hasher> collisions_;
+
+		std::vector<EnterEvent2D> enter_events_;
+		std::vector<ExitEvent2D> exit_events_;
+
+		bool is_dispatching_events_ = false;
 	};
 }

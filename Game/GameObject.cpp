@@ -149,7 +149,7 @@ namespace engine
 	void GameObject::FrameEnd(std::vector<u_ptr<SceneEntity>>& graveyard)
 	{
 		uint32 pass_count = 0;
-		for (; pass_count < kMaxDestroyPassCount; ++pass_count)
+		for (; pass_count < kMaxDrainLoopCount; ++pass_count)
 		{
 			bool any_destroyed = false;
 
@@ -180,7 +180,7 @@ namespace engine
 		}
 
 		// 최대 pass 도달 시 확인 필요(debug)
-		ASSERT_MESSAGE(pass_count < kMaxDestroyPassCount, "Destroy Pass Count exceeded. Possible infinite loop in destruction.");
+		ASSERT_MESSAGE(pass_count < kMaxDrainLoopCount, "Destroy Pass Count exceeded. Possible infinite loop in destruction.");
 
 		//Other Components는 vector이므로 nullptr들인 항목은 제거
 		std::erase_if(
@@ -330,14 +330,6 @@ namespace engine
 		}
 	}
 
-	void GameObject::BroadcastCollisionStay2D(const Collision2D & col_info)
-	{
-		for (const auto& listener : collision_listeners_)
-		{
-			listener->OnCollisionStay2D(col_info);
-		}
-	}
-
 	void GameObject::BroadcastCollisionExit2D(Collider2D * other)
 	{
 		for (const auto& listener : collision_listeners_)
@@ -351,14 +343,6 @@ namespace engine
 		for (const auto& listener : collision_listeners_)
 		{
 			listener->OnTriggerEnter2D(other);
-		}
-	}
-
-	void GameObject::BroadcastTriggerStay2D(Collider2D * other)
-	{
-		for (const auto& listener : collision_listeners_)
-		{
-			listener->OnTriggerStay2D(other);
 		}
 	}
 

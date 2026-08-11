@@ -34,14 +34,12 @@ namespace engine
         virtual void LateUpdate() {}
 
         virtual void OnDisable();
-        virtual void OnDestroy() {}
+        virtual void OnDestroy();
 
         virtual void OnCollisionEnter2D(const Collision2D& _info) {}
-        virtual void OnCollisionStay2D(const Collision2D& _info) {}
         virtual void OnCollisionExit2D(Collider2D* other) {}
 
         virtual void OnTriggerEnter2D(Collider2D* other) {}
-        virtual void OnTriggerStay2D(Collider2D* other) {}
         virtual void OnTriggerExit2D(Collider2D* other) {}
 
         virtual void OnLayerChanged(uint32 prev_layer, uint32 new_layer) {}

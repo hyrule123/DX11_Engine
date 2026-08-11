@@ -47,11 +47,6 @@ namespace engine
 		GetOwnerGameObject()->BroadcastCollisionEnter2D(col_info);
 	}
 
-	void Collider2D::CollisionStay2D(const Collision2D & col_info)
-	{
-		GetOwnerGameObject()->BroadcastCollisionStay2D(col_info);
-	}
-
 	void Collider2D::CollisionExit2D(Collider2D* other)
 	{
 		GetOwnerGameObject()->BroadcastCollisionExit2D(other);
@@ -60,11 +55,6 @@ namespace engine
 	void Collider2D::TriggerEnter2D(Collider2D* other)
 	{
 		GetOwnerGameObject()->BroadcastTriggerEnter2D(other);
-	}
-
-	void Collider2D::TriggerStay2D(Collider2D* other)
-	{
-		GetOwnerGameObject()->BroadcastTriggerStay2D(other);
 	}
 
 	void Collider2D::TriggerExit2D(Collider2D* other)

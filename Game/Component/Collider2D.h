@@ -22,11 +22,9 @@ namespace engine
 		//virtual void FixedUpdate() override;
 
 		void CollisionEnter2D(const Collision2D& col_info);
-		void CollisionStay2D(const Collision2D& col_info);
 		void CollisionExit2D(Collider2D* other);
 
 		void TriggerEnter2D(Collider2D* other);
-		void TriggerStay2D(Collider2D* other);
 		void TriggerExit2D(Collider2D* other);
 
 		virtual void OnLayerChanged(uint32 prev_layer, uint32 new_layer) override;

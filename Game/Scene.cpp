@@ -85,7 +85,7 @@ namespace engine
 		// Phase 2: Destroy된 GameObject들의 OnDestroy 호출 및 Graveyard 이동
 		// 연쇄적으로 꼬리를 물고 Destroy되는 GameObject가 있을 수 있으므로, 최대 kMaxDestroyPassCount번 반복
 		uint32 pass_count = 0;
-		for (; pass_count <= kMaxDestroyPassCount; ++pass_count)
+		for (; pass_count <= kMaxDrainLoopCount; ++pass_count)
 		{
 			bool any_destroyed = false;
 
@@ -110,7 +110,7 @@ namespace engine
 			}
 		}
 		// 최대 pass 도달 시 확인 필요(debug)
-		ASSERT_MESSAGE(pass_count < kMaxDestroyPassCount, "Destroy Pass Count exceeded. Possible infinite loop in destruction.");
+		ASSERT_MESSAGE(pass_count < kMaxDrainLoopCount, "Destroy Pass Count exceeded. Possible infinite loop in destruction.");
 
 		//nullptr인 항목들 제거
 		std::erase_if(

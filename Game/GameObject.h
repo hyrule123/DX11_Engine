@@ -87,10 +87,8 @@ namespace engine
 		}
 
 		void BroadcastCollisionEnter2D(const Collision2D& col_info);
-		void BroadcastCollisionStay2D(const Collision2D& col_info);
 		void BroadcastCollisionExit2D(Collider2D* other);
 		void BroadcastTriggerEnter2D(Collider2D* other);
-		void BroadcastTriggerStay2D(Collider2D* other);
 		void BroadcastTriggerExit2D(Collider2D* other);
 
 	private:

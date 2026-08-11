@@ -2,6 +2,7 @@
 #include "CollisionSystem2D.h"
 
 #include <Engine/Core/Debug.h>
+#include <Engine/Core/Constant.h>
 
 #include <Engine/Game/Component/Collider2D.h>
 #include <Engine/Game/GameObject.h>
@@ -99,6 +100,17 @@ namespace
 
 namespace engine
 {
+	struct EventDispatchGuard {
+		EventDispatchGuard(bool& is_dispatching_events) :
+			is_dispatching_events_(is_dispatching_events) {
+			is_dispatching_events_ = true;
+		}
+		~EventDispatchGuard() {
+			is_dispatching_events_ = false;
+		}
+	private:
+		bool& is_dispatching_events_;
+	};
 
 	CollisionSystem2D::CollisionSystem2D(Scene* owner_scene)
 		: owner_scene_(owner_scene)
@@ -167,31 +179,34 @@ namespace engine
 
 		// 남아있는 contacts 제거
 		std::vector<ColliderPairID> contacts = collider->TakeContacts();
-		for (const auto& pair_id : contacts)
+		for (ColliderPairID pair_id : contacts)
 		{
 			auto it = collisions_.find(pair_id);
 			ASSERT_MESSAGE(it != collisions_.end(), "ColliderPairID not found in collisions_");
 
-			//UnRegister 시, 등록 해제하는 자신은 콜백을 호출하지 않음
-			Collider2D* other = (it->second.lo == collider) ? it->second.hi : it->second.lo;
-			other->RemoveContact(pair_id);
-			if (it->second.was_trigger_)
+			// Exit 데이터 꺼내고, Contact에서 제거
+			ExitEvent2D exit_event{ pair_id, it->second.lo, it->second.hi, it->second.was_trigger_ };
+			it->second.lo->RemoveContact(pair_id);
+			it->second.hi->RemoveContact(pair_id);
+			collisions_.erase(it);
+
+			//이벤트 디스패치 중이면 큐에 삽입(큐가 콜백함수 호출해 줄거임)
+			if (is_dispatching_events_)
 			{
-				//collider->TriggerExit2D(other);
-				other->TriggerExit2D(collider);
+				exit_events_.push_back(exit_event);
 			}
+			//그렇지 않다면 즉시 콜백 호출
 			else
 			{
-				//collider->CollisionExit2D(other);
-				other->CollisionExit2D(collider);
+				DispatchExitEvent(exit_event);
 			}
-			collisions_.erase(it);
 		}
 	}
 
 	void CollisionSystem2D::FixedUpdate()
 	{
-		//TODO: 충돌 감지 기간 동안에는 Collider 추가/제거 금지 가드 필요
+		//충돌 감지 기간 동안에는 Collider 추가/제거 금지 가드 필요
+		// >> Event Queueing 방식으로 해결
 
 		uint32 colliders_count = 0;
 		for (const auto& layer : colliders_in_layer_)
@@ -357,52 +372,25 @@ namespace engine
 						// unordered_map에 삽입 시도, 이미 존재하면 삽입 실패
 						auto [it, inserted] = collisions_.try_emplace(id_pair , pair);
 
+						// 이번 step에 touch되었음을 표시
+						it->second.touched_this_step_ = true;
+
 						// 삽입 성공 = 첫 충돌
 						if (inserted)
 						{
-							//충돌이 발생한 쌍을 각 Collider2D에 기록
-							it->second.lo->AddContact(it->first);
-							it->second.hi->AddContact(it->first);
+							//Contacts 추가
+							pair.lo->AddContact(id_pair);
+							pair.hi->AddContact(id_pair);
 
-							if (it->second.was_trigger_)
-							{
-								it->second.lo->TriggerEnter2D(it->second.hi);
-								it->second.hi->TriggerEnter2D(it->second.lo);
-							}
-							else
-							{
-								Collision2D col_info;
-								col_info.contact_point = contact_point;
-
-								col_info.other_collider = it->second.hi;
-								it->second.lo->CollisionEnter2D(col_info);
-
-								col_info.other_collider = it->second.lo;
-								it->second.hi->CollisionEnter2D(col_info);
-							}
+							// Enter Event 발행
+							enter_events_.push_back({ id_pair, pair.lo, pair.hi, contact_point, is_trigger });
 						}
+
 						// 삽입 실패 = 이미 존재하는 쌍
 						else
 						{
-							if (it->second.was_trigger_)
-							{
-								it->second.lo->TriggerStay2D(it->second.hi);
-								it->second.hi->TriggerStay2D(it->second.lo);
-							}
-							else
-							{
-								Collision2D col_info;
-								col_info.contact_point = contact_point;
-
-								col_info.other_collider = it->second.hi;
-								it->second.lo->CollisionStay2D(col_info);
-
-								col_info.other_collider = it->second.lo;
-								it->second.hi->CollisionStay2D(col_info);
-							}
+							// Stay는 일단 없앰 (필요한 쪽에서 Pull)
 						}
-						// 이번 step에 touch되었음을 표시
-						it->second.touched_this_step_ = true;
 					}
 
 					// OnExit는 Pass 5에서 처리한다.
@@ -421,26 +409,75 @@ namespace engine
 				continue;
 			}
 
-			pair.lo->RemoveContact(it->first);
-			pair.hi->RemoveContact(it->first);
+
 
 			// 이번 step에 touch되지 않은 쌍 = OnExit 발생
-			if (pair.was_trigger_) {
-				pair.lo->TriggerExit2D(pair.hi);
-				pair.hi->TriggerExit2D(pair.lo);
-			}
-			else {
-				pair.lo->CollisionExit2D(pair.hi);
-				pair.hi->CollisionExit2D(pair.lo);
-			}
+			// Enter Event 발행
+			exit_events_.push_back({ it->first, pair.lo, pair.hi, pair.was_trigger_ });
+
+			//Contacts 제거
+			pair.lo->RemoveContact(it->first);
+			pair.hi->RemoveContact(it->first);
 			it = collisions_.erase(it);
 		}
+
+		// Pass 6: 큐에 들어온 이벤트 처리
+		// Enter의 경우 narrow phase에서만 들어오기 때문에 
+		// range based for문을 써도 괜찮음
+
+		//현재 Dispatching 중임을 표시, 이벤트 처리 중 Collider가 Destroy되거나 Disable되면 이벤트 큐에 추가됨
+		ScopedValue dispatch_guard(is_dispatching_events_, true);
+
+		for (const EnterEvent2D& event : enter_events_)
+		{
+			DispatchEnterEvent(event);
+		}
+
+		//exit event의 경우 충돌체를 Disable하면서 exit event가 추가될 수 있으므로 (공간 추가)
+		//indexed for문을 쓰는게 안전
+		for (size_t i = 0; i < exit_events_.size(); ++i)
+		{
+			DispatchExitEvent(exit_events_[i]);
+		}
+
+		enter_events_.clear();
+		exit_events_.clear();
 	}
 	void CollisionSystem2D::SetCellSize(float2 cell_size)
 	{
 		ASSERT(cell_size.x >= 1.0f && cell_size.y >= 1.0f);
 		cell_size_ = cell_size;
 		cell_size_inv_ = float2(1.0f / cell_size.x, 1.0f / cell_size.y);
+	}
+	void CollisionSystem2D::DispatchEnterEvent(EnterEvent2D e)
+	{
+		if (e.was_trigger_)
+		{
+			e.lo->TriggerEnter2D(e.hi);
+			e.hi->TriggerEnter2D(e.lo);
+		}
+		else
+		{
+			Collision2D col_info;
+			col_info.contact_point = e.contact_point;
+			col_info.other_collider = e.hi;
+			e.lo->CollisionEnter2D(col_info);
+			col_info.other_collider = e.lo;
+			e.hi->CollisionEnter2D(col_info);
+		}
+	}
+	void CollisionSystem2D::DispatchExitEvent(ExitEvent2D e)
+	{
+		if (e.was_trigger_)
+		{
+			e.lo->TriggerExit2D(e.hi);
+			e.hi->TriggerExit2D(e.lo);
+		}
+		else
+		{
+			e.lo->CollisionExit2D(e.hi);
+			e.hi->CollisionExit2D(e.lo);
+		}
 	}
 }
 

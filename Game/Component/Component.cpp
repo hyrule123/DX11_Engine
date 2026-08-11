@@ -19,13 +19,14 @@ namespace engine
 	void Component::Awake()
 	{
 		has_awaken_ = true;
-	}
-	void Component::OnEnable()
-	{
+
 		if (has_collision_subscribed_)
 		{
 			RegisterCollisionListener();
 		}
+	}
+	void Component::OnEnable()
+	{
 	}
 	void Component::BeginPlay()
 	{
@@ -33,6 +34,10 @@ namespace engine
 	}
 
 	void Component::OnDisable()
+	{
+	}
+
+	void Component::OnDestroy()
 	{
 		if (has_collision_subscribed_)
 		{

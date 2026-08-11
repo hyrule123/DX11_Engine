@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Engine/ThirdParty/SimpleMath.h>
+#include <Engine/ThirdParty/DirectXTK/SimpleMath.h>
 #include <Engine/Core/StdType.h>
 
 // Type aliases for compatibility with HLSL types

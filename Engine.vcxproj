@@ -283,7 +283,7 @@
     <ClInclude Include="Resource\SpriteAnimClip.h" />
     <ClInclude Include="Resource\Graphics\Buffer\StructuredBuffer.h" />
     <ClInclude Include="Util\string_utils.h" />
-    <ClInclude Include="ThirdParty\SimpleMath.h" />
+    <ClInclude Include="ThirdParty\DirectXTK\SimpleMath.h" />
     <ClInclude Include="Core\pch.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Manager\ResourceManager.h" />
@@ -346,7 +346,7 @@
     <ClCompile Include="Resource\SpriteAnimClip.cpp" />
     <ClCompile Include="Resource\Graphics\Buffer\StructuredBuffer.cpp" />
     <ClCompile Include="Util\string_utils.cpp" />
-    <ClCompile Include="ThirdParty\SimpleMath.cpp" />
+    <ClCompile Include="ThirdParty\DirectXTK\SimpleMath.cpp" />
     <ClCompile Include="Core\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -378,7 +378,7 @@
     <None Include="HLSL\CommonConstBuffer.hlsli" />
     <None Include="HLSL\Present\Present.hlsli" />
     <None Include="HLSL\Sprite\Sprite.hlsli" />
-    <None Include="ThirdParty\SimpleMath.inl" />
+    <None Include="ThirdParty\DirectXTK\SimpleMath.inl" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="HLSL\Debug\Debug_PS.hlsl">

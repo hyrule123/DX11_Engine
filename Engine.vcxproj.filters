@@ -51,7 +51,7 @@
     <ClInclude Include="Manager\ResourceManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ThirdParty\SimpleMath.h">
+    <ClInclude Include="ThirdParty\DirectXTK\SimpleMath.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Resource\Graphics\Buffer\VertexBuffer.h">
@@ -269,7 +269,7 @@
     <ClCompile Include="Manager\ResourceManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ThirdParty\SimpleMath.cpp">
+    <ClCompile Include="ThirdParty\DirectXTK\SimpleMath.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Resource\Graphics\Buffer\VertexBuffer.cpp">
@@ -431,7 +431,7 @@
     </Image>
   </ItemGroup>
   <ItemGroup>
-    <None Include="ThirdParty\SimpleMath.inl">
+    <None Include="ThirdParty\DirectXTK\SimpleMath.inl">
       <Filter>Header Files</Filter>
     </None>
     <None Include="HLSL\Debug\Debug.hlsli" />

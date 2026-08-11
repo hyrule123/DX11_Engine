@@ -4,6 +4,8 @@
 #include <Engine/Core/Math.h>
 #include <Engine/Core/Constant.h>
 
+#include <Engine/ThirdParty/ankerl/unordered_dense.h>
+
 namespace engine
 {
     class Collider2D;
@@ -41,9 +43,13 @@ namespace engine
 
     struct ColliderPairID_Hasher
     {
+		// 해시값이 제대로 섞여있을 경우에는 아래 태그를 켜 주면 값을 그대로 받아서 사용
+		// 지금은 해시값이 섞여있지 않으므로 주석
+		//using is_avalanching = void;
+
         static_assert(sizeof(ColliderPairID) == sizeof(size_t), "사이즈 미일치. 처리함수를 만드세요.");
         size_t operator()(ColliderPairID _id) const noexcept {
-            return static_cast<size_t>(_id.GetID());
+            return _id.GetID();
         }
     };
 

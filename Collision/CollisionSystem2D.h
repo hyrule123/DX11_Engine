@@ -3,6 +3,8 @@
 #include <Engine/Core/CoreMinimal.h>
 #include <Engine/Core/Math.h>
 
+#include <Engine/ThirdParty/ankerl/unordered_dense.h>
+
 #include <Engine/Collision/Collision.h>
 
 #include <functional>
@@ -92,7 +94,8 @@ namespace engine
 		float2 cell_size_ = { 1.0f, 1.0f };
 		float2 cell_size_inv_ = { 1.0f, 1.0f };
 
-		std::unordered_map<ColliderPairID, ContactPair2D, ColliderPairID_Hasher> collisions_;
+		//std::unordered_map<ColliderPairID, ContactPair2D, ColliderPairID_Hasher> collisions_;
+		ankerl::unordered_dense::map<ColliderPairID, ContactPair2D, ColliderPairID_Hasher> collisions_;
 
 		std::vector<EnterEvent2D> enter_events_;
 		std::vector<ExitEvent2D> exit_events_;

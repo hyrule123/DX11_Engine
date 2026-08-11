@@ -231,6 +231,8 @@
     <ClInclude Include="Game\Component\HFSM.h" />
     <ClInclude Include="Game\Component\HFSMState.h" />
     <ClInclude Include="Resource\Graphics\RenderPass\PresentPass.h" />
+    <ClInclude Include="ThirdParty\ankerl\unordered_dense.h" />
+    <ClInclude Include="ThirdParty\ankerl\unordered_dense_stl.h" />
     <ClInclude Include="Util\StringHashTable.h" />
     <ClInclude Include="Resource\Graphics\RenderPass\ForwardOpaqueRenderPass.h" />
     <ClInclude Include="Resource\Graphics\RenderPass\RenderPass.h" />

@@ -205,6 +205,9 @@ namespace engine
 
 	void CollisionSystem2D::FixedUpdate()
 	{
+		ASSERT_MESSAGE(enter_events_.empty(), "이게 왜 남아있지? 확인");
+		ASSERT_MESSAGE(exit_events_.empty(), "이게 왜 남아있지? 확인");
+
 		//충돌 감지 기간 동안에는 Collider 추가/제거 금지 가드 필요
 		// >> Event Queueing 방식으로 해결
 
@@ -399,26 +402,29 @@ namespace engine
 		}
 
 		// Pass 5: OnExit 처리
-		for (auto it = collisions_.begin(); it != collisions_.end(); ) {
-			ContactPair2D& pair = it->second;
-
-			// 다음 스텝을 위해 리셋
-			if (pair.touched_this_step_) {
-				pair.touched_this_step_ = false;      
-				++it;
+		for (auto& pair : collisions_)
+		{
+			if(pair.second.touched_this_step_)
+			{
+				pair.second.touched_this_step_ = false;
 				continue;
 			}
 
-
-
 			// 이번 step에 touch되지 않은 쌍 = OnExit 발생
-			// Enter Event 발행
-			exit_events_.push_back({ it->first, pair.lo, pair.hi, pair.was_trigger_ });
+			// Exit Event 발행
+			exit_events_.push_back({ pair.first, pair.second.lo, pair.second.hi, pair.second.was_trigger_ });
 
 			//Contacts 제거
-			pair.lo->RemoveContact(it->first);
-			pair.hi->RemoveContact(it->first);
-			it = collisions_.erase(it);
+			pair.second.lo->RemoveContact(pair.first);
+			pair.second.hi->RemoveContact(pair.first);
+
+			//unordered_dense의 경우 erase 시 iterator가 무효화되므로, '일괄 제거'를 해야함
+			//it = collisions_.erase(it);
+		}
+		// '일괄 제거'
+		for (const auto& exit_event : exit_events_)
+		{
+			collisions_.erase(exit_event.pair_ID);
 		}
 
 		// Pass 6: 큐에 들어온 이벤트 처리

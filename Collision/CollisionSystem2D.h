@@ -18,6 +18,15 @@ namespace engine
 	class CollisionSystem2D
 	{
 	private:
+		struct ColliderInfo
+		{
+			Collider2D* collider;
+			AABB2D world_bounds;
+			uint32 layer;
+			bool is_world_bound_dirty = true;
+			bool is_layer_dirty = true;
+		};
+
 		struct ContactPair2D
 		{
 			Collider2D* lo;
@@ -33,8 +42,8 @@ namespace engine
 			uint32 bucket_index;
 			uint32 layer;
 
-			//For Narrow Phase
-			Collider2D* collider;
+			// Colliders 배열에서의 index
+			uint32 colliders_index;
 		};
 
 		// Queuing용 구조체
@@ -62,7 +71,7 @@ namespace engine
 
 		void Init();
 
-		void SetBucketSize(uint64 requested_size);
+		void SetBucketCount(uint64 requested_count);
 
 		void RegisterCollider(Collider2D* collider);
 		void UnregisterCollider(Collider2D* collider);
@@ -70,13 +79,16 @@ namespace engine
 		void FixedUpdate();
 
 		void SetCellSize(float2 cell_size);
+
+		void SetWorldBoundsDirty(Collider2D* collider);
+		void SetLayerDirty(Collider2D* collider);
 	private:
 		void DispatchEnterEvent(EnterEvent2D e);
 		void DispatchExitEvent(ExitEvent2D e);
 
 		Scene* owner_scene_ = {};
 
-		std::array<std::vector<Collider2D*>, kMaxLayers> colliders_in_layer_;
+		std::vector<ColliderInfo> colliders_;
 
 		// 1단계 과정에서 만들어 둔 GridEntry를 담아두는 임시 버퍼
 		std::vector<GridEntry> staged_entries_;
@@ -88,7 +100,7 @@ namespace engine
 		// 버킷에 실제로 들어가는 데이터(flat hash table)
 		std::vector<GridEntry> bucket_;
 
-		size_t bucket_size_ = {};
+		size_t bucket_count_ = {};
 		uint64 bucket_size_bit_shifts_ = {};
 
 		float2 cell_size_ = { 1.0f, 1.0f };

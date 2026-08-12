@@ -17,8 +17,7 @@ namespace engine
 		void SetSize(float2 size) { local_bounds_.SetSize(size); }
 		const AABB2D& GetLocalBounds() const { return local_bounds_; }
 
-	protected:
-		virtual AABB2D ComputeWorldBounds() const override;
+		virtual AABB2D GetWorldBounds() const override;
 
 	private:
 		AABB2D local_bounds_ = {};

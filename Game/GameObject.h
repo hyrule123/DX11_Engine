@@ -5,6 +5,7 @@
 
 #include <Engine/Core/CoreMinimal.h>
 #include <Engine/Core/UtilMacro.h>
+#include <Engine/Core/Enum.h>
 
 #include <Engine/Collision/Collision.h>
 
@@ -12,6 +13,7 @@
 #include <vector>
 #include <string>
 #include <type_traits>
+#include <bitset>
 
 namespace engine
 {
@@ -74,18 +76,12 @@ namespace engine
 		void SetLayer(uint32 layer);
 		uint32 GetLayer() const { return layer_; }
 
-		void AddCollisionListener(Component* listener) {
-			if (listener) { collision_listeners_.push_back(listener); }
-		}
-		void RemoveCollisionListener(Component* listener) {
-			if (listener) {
-				auto it = std::find(collision_listeners_.begin(), collision_listeners_.end(), listener);
-				if (it != collision_listeners_.end()) {
-					collision_listeners_.erase(it);
-				}
-			}
-		}
+		void Subscribe(SubscribeType type, Component* listener);
+		void Unsubscribe(SubscribeType type, Component* listener);
 
+		// Broadcast는 첫 프레임에 안 옴. 초기화는 각자 알아서 할것
+		void BroadcastTransformDirty(Transform* transform);
+		void BroadcastLayerChanged(uint32 prev_layer, uint32 new_layer);
 		void BroadcastCollisionEnter2D(const Collision2D& col_info);
 		void BroadcastCollisionExit2D(Collider2D* other);
 		void BroadcastTriggerEnter2D(Collider2D* other);
@@ -107,7 +103,8 @@ namespace engine
 
 		std::vector<u_ptr<Component>> pending_add_components_ = {};
 
-		std::vector<Component*> collision_listeners_ = {};
+		std::array<std::vector<Component*>, (size_t)SubscribeType::kEND> listeners_ = {};
+		std::bitset<(size_t)SubscribeType::kEND> is_listeners_dirty_ = {};
 
 		uint32 layer_ = 0;
 

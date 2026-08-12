@@ -23,7 +23,8 @@ namespace engine
 		virtual ~Transform() override;
 		
 		//virtual void Init() override;
-		virtual void Awake() override;
+		//virtual void Awake() override;
+		//virtual void BeginPlay() override;
 		virtual void LateUpdate() override;
 
 		virtual void OnDisable() override;
@@ -100,6 +101,11 @@ namespace engine
 		void SetDirty() {
 			if (is_dirty_) { return; }
 			is_dirty_ = true;
+
+			GameObject* owner = GetOwnerGameObject();
+			if (owner) {
+				owner->BroadcastTransformDirty(this);
+			}
 			for (auto* child : children_) {
 				child->SetDirty();
 			}

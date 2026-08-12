@@ -25,13 +25,6 @@ namespace engine
 		DEBUG_LOG_A(log_msg.c_str());
 	}
 
-	void Transform::Awake()
-	{
-		Super::Awake();
-
-		DEBUG_LOG("Transform Awake 호출!!");
-	}
-
 	void Transform::LateUpdate()
 	{
 		Super::LateUpdate();

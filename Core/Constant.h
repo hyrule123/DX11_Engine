@@ -23,4 +23,6 @@ namespace engine
 	constexpr uint32 kMaxLayers = 32u;
 
 	constexpr uint32 kMaxDrainLoopCount = 8u;
+
+	constexpr int32 kInvalidIndex = -1;
 }

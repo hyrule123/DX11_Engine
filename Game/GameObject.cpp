@@ -52,6 +52,8 @@ namespace engine
 		{
 			if (false == flushed_components[i]->HasAwaken())
 			{
+				flushed_components[i]->MarkAwaken();
+				flushed_components[i]->ReplaySubscriptions();
 				flushed_components[i]->Awake();
 			}
 		}
@@ -187,6 +189,18 @@ namespace engine
 			other_components_, 
 			[](const u_ptr<Component>& com) { return com == nullptr; }
 		);
+
+		for(uint32 i = 0; i < (uint32)SubscribeType::kEND; ++i)
+		{
+			if (is_listeners_dirty_.test(i))
+			{
+				std::erase_if(
+					listeners_[i],
+					[](Component* listener) { return listener == nullptr; }
+				);
+				is_listeners_dirty_.reset(i);
+			}
+		}
 	}
 
 	Component* GameObject::AddComponent(const HashedStringView& concrete_class_name)
@@ -304,53 +318,106 @@ namespace engine
 		uint32 prev_layer = layer_;
 		layer_ = layer;
 
-		for (const auto& com : other_components_)
+		for(Component* listener : listeners_[(size_t)SubscribeType::kLayerChanged])
 		{
-			if (com && com->HasAwaken())
-			{
-				com->OnLayerChanged(prev_layer, layer_);
-			}
-		}
-		for (const auto& com : fixed_order_components_)
-		{
-			if (com && com->HasAwaken())
-			{
-				com->OnLayerChanged(prev_layer, layer_);
-			}
+			if (listener) { listener->OnLayerChanged(prev_layer, layer_); }
 		}
 
 		is_calling_set_layer_ = false;
 	}
 
+	void GameObject::Subscribe(SubscribeType type, Component* listener)
+	{
+		// Destroy 되었으면 어차피 이것도 제거될 예정이므로 걍 냅둔다
+		if (IsDestroyed()) { return; }
+		ASSERT(listener);
+
+		// Component에서 구독 여부 확인을 자체적으로 진행하므로, 중복 여부는 여기서 검사하지 않는다.
+		listeners_[(size_t)type].push_back(listener);
+	}
+
+	void GameObject::Unsubscribe(SubscribeType type, Component* listener)
+	{
+		// Destroy 되었으면 어차피 이것도 제거될 예정이므로 걍 냅둔다
+		if (IsDestroyed()) { return; }
+		ASSERT(listener);
+
+		auto it = std::find(listeners_[(size_t)type].begin(), listeners_[(size_t)type].end(), listener);
+		if (it != listeners_[(size_t)type].end()) {
+			is_listeners_dirty_[(size_t)type] = true;
+			(*it) = nullptr;
+		}
+	}
+
+	void GameObject::BroadcastTransformDirty(Transform* transform)
+	{
+		const auto& listeners = listeners_[(size_t)SubscribeType::kTransformDirty];
+		for (size_t i = 0; i < listeners.size(); ++i)
+		{
+			if (listeners[i])
+			{
+				listeners[i]->OnTransformDirty(transform);
+			}
+		}
+	}
+
+	void GameObject::BroadcastLayerChanged(uint32 prev_layer, uint32 new_layer)
+	{
+		const auto& listeners = listeners_[(size_t)SubscribeType::kLayerChanged];
+		for (size_t i = 0; i < listeners.size(); ++i)
+		{
+			if (listeners[i])
+			{
+				listeners[i]->OnLayerChanged(prev_layer, new_layer);
+			}
+		}
+	}
+
 	void GameObject::BroadcastCollisionEnter2D(const Collision2D& col_info)
 	{
-		for (const auto& listener : collision_listeners_)
+		const auto& listeners = listeners_[(size_t)SubscribeType::kCollision];
+		for(size_t i = 0; i < listeners.size(); ++i)
 		{
-			listener->OnCollisionEnter2D(col_info);
+			if (listeners[i])
+			{
+				listeners[i]->OnCollisionEnter2D(col_info);
+			}
 		}
 	}
 
 	void GameObject::BroadcastCollisionExit2D(Collider2D * other)
 	{
-		for (const auto& listener : collision_listeners_)
+		const auto& listeners = listeners_[(size_t)SubscribeType::kCollision];
+		for (size_t i = 0; i < listeners.size(); ++i)
 		{
-			listener->OnCollisionExit2D(other);
+			if (listeners[i])
+			{
+				listeners[i]->OnCollisionExit2D(other);
+			}
 		}
 	}
 
 	void GameObject::BroadcastTriggerEnter2D(Collider2D * other)
 	{
-		for (const auto& listener : collision_listeners_)
+		const auto& listeners = listeners_[(size_t)SubscribeType::kCollision];
+		for (size_t i = 0; i < listeners.size(); ++i)
 		{
-			listener->OnTriggerEnter2D(other);
+			if (listeners[i])
+			{
+				listeners[i]->OnTriggerEnter2D(other);
+			}
 		}
 	}
 
 	void GameObject::BroadcastTriggerExit2D(Collider2D * other)
 	{
-		for (const auto& listener : collision_listeners_)
+		const auto& listeners = listeners_[(size_t)SubscribeType::kCollision];
+		for (size_t i = 0; i < listeners.size(); ++i)
 		{
-			listener->OnTriggerExit2D(other);
+			if (listeners[i])
+			{
+				listeners[i]->OnTriggerExit2D(other);
+			}
 		}
 	}
 

@@ -1,6 +1,8 @@
 #include "Engine/Core/pch.h"
 #include "Component.h"
 
+#include <Engine/Core/Debug.h>
+
 namespace engine
 {
 	Component::Component(const HashedStringView& concrete_class_name, ComponentCategory category)
@@ -16,33 +18,10 @@ namespace engine
 		Super::Init();
 		has_initialized_ = true;
 	}
-	void Component::Awake()
-	{
-		has_awaken_ = true;
 
-		if (has_collision_subscribed_)
-		{
-			RegisterCollisionListener();
-		}
-	}
-	void Component::OnEnable()
-	{
-	}
 	void Component::BeginPlay()
 	{
 		has_begun_play_ = true;
-	}
-
-	void Component::OnDisable()
-	{
-	}
-
-	void Component::OnDestroy()
-	{
-		if (has_collision_subscribed_)
-		{
-			UnregisterCollisionListener();
-		}
 	}
 
 	void Component::Destroy()
@@ -50,7 +29,6 @@ namespace engine
 		if (IsDestroyed()) { return; }
 		is_destroyed_ = true;
 		is_enabled_ = false;
-		InvalidateHandle();
 
 		//Awake 이후, 활성화 상태였다면 OnDisable 호출
 		if (is_enabled_and_active_in_hierarchy_)
@@ -61,21 +39,57 @@ namespace engine
 				OnDisable();
 			}
 		}
+
+		InvalidateHandle();
+		UnsubscribeAll();
 	}
 
-	void Component::SubscribeCollisionEvents(bool subscribe)
+	void Component::Subscribe(SubscribeType type)
 	{
-		if (subscribe == has_collision_subscribed_) { return; }
-		has_collision_subscribed_ = subscribe;
-
-		// Awake 이후일 경우 GameObject에 등록/해제
-		if (has_collision_subscribed_)
+		// 이미 구독중일 경우 return
+		if (IsDestroyed() || is_subscribing_.test((size_t)type)) { return; }
+		is_subscribing_.set((size_t)type, true);
+		if (has_awaken_)
 		{
-			RegisterCollisionListener();
+			GameObject* owner = GetOwnerGameObject();
+			ASSERT(owner);
+			owner->Subscribe(type, this);
 		}
-		else
+	}
+
+	void Component::Unsubscribe(SubscribeType type)
+	{
+		if (IsDestroyed() || is_subscribing_.test((size_t)type) == false) { return; }
+		is_subscribing_.set((size_t)type, false);
+		if (has_awaken_)
 		{
-			UnregisterCollisionListener();
+			GameObject* owner = GetOwnerGameObject();
+			ASSERT(owner);
+			owner->Unsubscribe(type, this);
+		}
+	}
+
+	void Component::UnsubscribeAll()
+	{
+		for (uint32 i = 0; i < (uint32)SubscribeType::kEND; ++i)
+		{
+			if (is_subscribing_.test(i))
+			{
+				Unsubscribe((SubscribeType)i);
+			}
+		}
+	}
+
+	void Component::ReplaySubscriptions()
+	{
+		GameObject* owner = GetOwnerGameObject();
+		ASSERT(owner);
+		for (size_t i = 0; i < (size_t)SubscribeType::kEND; ++i)
+		{
+			if (is_subscribing_.test(i))
+			{
+				owner->Subscribe((SubscribeType)i, this);
+			}
 		}
 	}
 
@@ -98,25 +112,6 @@ namespace engine
 		else
 		{
 			OnDisable();
-		}
-	}
-	void Component::RegisterCollisionListener()
-	{
-		auto owner = GetOwnerGameObject();
-		//owner이 아직 등록되지 않은 시점에는 연기(OnEnable에서 다시 호출됨)
-		if (owner && has_collision_sub_registered_ == false)
-		{
-			has_collision_sub_registered_ = true;
-			owner->AddCollisionListener(this);
-		}
-	}
-	void Component::UnregisterCollisionListener()
-	{
-		auto owner = GetOwnerGameObject();
-		if (owner && has_collision_sub_registered_)
-		{
-			has_collision_sub_registered_ = false;
-			owner->RemoveCollisionListener(this);
 		}
 	}
 }

@@ -14,7 +14,7 @@ namespace engine
 
 		virtual void LateUpdate() override;
 
-		virtual AABB2D ComputeWorldBounds() const override;
+		virtual AABB2D GetWorldBounds() const override;
 
 		void SetRadius(float radius) { radius_ = radius; }
 		float GetRadius() const { return radius_; }

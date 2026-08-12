@@ -17,19 +17,24 @@ namespace engine
 	{}
 	Collider2D::~Collider2D()
 	{}
+	void Collider2D::Init()
+	{
+		Super::Init();
+
+		Subscribe(SubscribeType::kTransformDirty);
+		Subscribe(SubscribeType::kLayerChanged);
+	}
 	void Collider2D::Awake()
 	{
 		Super::Awake();
 		transform_ = GetComponent<Transform>();
-
 		ASSERT(transform_);
+
+		collision_system_ = GetOwnerGameObject()->GetOwnerScene()->GetCollisionSystem2D();
 	}
 	void Collider2D::OnEnable()
 	{
 		Super::OnEnable();
-		tf_last_seen_version_ = transform_->GetVersion();
-		world_bounds_ = ComputeWorldBounds();
-
 		GetOwnerGameObject()->GetOwnerScene()->GetCollisionSystem2D()->RegisterCollider(this);
 
 		DEBUG_LOG("Collider2D::OnEnable() - Collider registered in CollisionSystem2D.");
@@ -40,6 +45,13 @@ namespace engine
 		Super::OnDisable();
 
 		GetOwnerGameObject()->GetOwnerScene()->GetCollisionSystem2D()->UnregisterCollider(this);
+	}
+
+	void Collider2D::OnTransformDirty(Transform* transform)
+	{
+		Super::OnTransformDirty(transform);
+		
+		collision_system_->SetWorldBoundsDirty(this);
 	}
 
 	void Collider2D::CollisionEnter2D(const Collision2D& col_info)
@@ -66,22 +78,8 @@ namespace engine
 	{
 		Super::OnLayerChanged(prev_layer, new_layer);
 
-		CollisionSystem2D* collision_system = GetOwnerGameObject()->GetOwnerScene()->GetCollisionSystem2D();
+		collision_system_->SetLayerDirty(this);
 
-		collision_system->UnregisterCollider(this);
-		collision_system->RegisterCollider(this);
-
-		DEBUG_LOG("Collider2D::OnLayerChanged() - Collider re-registered in CollisionSystem2D due to layer change.");
-	}
-
-
-	const AABB2D& Collider2D::GetWorldBounds() const
-	{
-		uint32 ver = transform_->GetVersion();
-		if (ver != tf_last_seen_version_) {
-			tf_last_seen_version_ = ver;
-			world_bounds_ = ComputeWorldBounds();
-		}
-		return world_bounds_;
+		DEBUG_LOG("Collider2D::OnLayerChanged()");
 	}
 }

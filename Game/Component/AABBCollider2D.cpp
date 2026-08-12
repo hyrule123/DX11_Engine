@@ -33,7 +33,7 @@ namespace engine
 		RenderManager::GetInst().DrawDebugRect(debug_data);
 #endif //NDEBUG
 	}
-	AABB2D AABBCollider2D::ComputeWorldBounds() const
+	AABB2D AABBCollider2D::GetWorldBounds() const
 	{
 		AABB2D ret;
 

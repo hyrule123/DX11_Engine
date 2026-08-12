@@ -29,4 +29,12 @@ namespace engine
 		kPresent,
 		kEND
 	};
+
+	enum class SubscribeType : uint32
+	{
+		kCollision,
+		kTransformDirty,
+		kLayerChanged,
+		kEND
+	};
 }

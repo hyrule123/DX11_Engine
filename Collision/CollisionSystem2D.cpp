@@ -11,6 +11,7 @@
 // Intersect 함수 선언부
 namespace
 {
+
 	using namespace engine;
 	class ::engine::Collider2D;
 
@@ -122,60 +123,56 @@ namespace engine
 	{
 		if (bucket_.empty())
 		{
-			SetBucketSize(kDefaultCollisionBucketSize);
+			SetBucketCount(kDefaultCollisionBucketSize);
 		}
 	}
-	void CollisionSystem2D::SetBucketSize(uint64 requested_size)
+	void CollisionSystem2D::SetBucketCount(uint64 requested_count)
 	{
-		//클램핑: 최소 2, 최대 kMaxCollisionBucketSize
-		const uint64 clamped = std::clamp(requested_size, 2ull, kMaxCollisionBucketSize);
+		//클램핑: 최소 2, 최대 kMaxCollisionBucketCount
+		const uint64 clamped = std::clamp(requested_count, 2ull, kMaxCollisionBucketCount);
 
 		// 알아서 가장 가까운 2의 거듭제곱으로 올려줌 (예: 2000 -> 2048)
-		bucket_size_ = std::bit_ceil(clamped);
+		bucket_count_ = std::bit_ceil(clamped);
 
 		// 버킷 배열 크기 조정 
 		// Start Index이므로 [0] = 0이어야 함. -> 한 칸 더 필요!
-		bucket_start_idx_.resize(bucket_size_ + 1);
-		bucket_cursor_.resize(bucket_size_ + 1);
+		bucket_start_idx_.resize(bucket_count_ + 1);
+		bucket_cursor_.resize(bucket_count_ + 1);
 
 		// 비트시프트 계산
-		bucket_size_bit_shifts_ = std::countr_zero(bucket_size_);
+		bucket_size_bit_shifts_ = std::countr_zero(bucket_count_);
 	}
 	void CollisionSystem2D::RegisterCollider(Collider2D* collider)
 	{
 		ASSERT(collider);
 
-		int32 registered_layer = collider->GetRegisteredLayer();
 		int32 index = collider->GetCollisionSystemIndex();
-		ASSERT_MESSAGE(registered_layer == -1 && index == -1, "Collider is already registered");
+		ASSERT_MESSAGE(index == kInvalidIndex, "Collider is already registered");
 
-		uint32 layer = collider->GetOwnerGameObject()->GetLayer();
-		colliders_in_layer_[layer].push_back(collider);
+		colliders_.push_back({ collider, });
+		colliders_.back().is_world_bound_dirty = true;
+		colliders_.back().is_layer_dirty = true;
 
-		// Collider2D의 배열에 저장된 자신의 layer과 index를 저장시킴
-		collider->SetRegisteredLayer((int32)layer);
-		collider->SetCollisionSystemIndex((int32)(colliders_in_layer_[layer].size() - 1));
+		collider->SetCollisionSystemIndex((int32)(colliders_.size() - 1));
 	}
 
 	void CollisionSystem2D::UnregisterCollider(Collider2D* collider)
 	{
 		ASSERT(collider);
 
-		int32 registered_layer = collider->GetRegisteredLayer();
 		int32 index = collider->GetCollisionSystemIndex();
-		ASSERT_MESSAGE(index != -1 && registered_layer != -1, "Collider is not registered");
+		ASSERT_MESSAGE(index != kInvalidIndex, "Collider is not registered");
 
 		// 저장된 포인터 주소가 다르면 뭔가 문제 있는거임
-		ASSERT(colliders_in_layer_[registered_layer][index] == collider);
+		ASSERT(colliders_[index].collider == collider);
 
 		//맨 뒤에 있는 collider를 현재 index로 옮기고, 맨 뒤에 있는 collider를 pop_back()으로 제거
-		colliders_in_layer_[registered_layer][index] = colliders_in_layer_[registered_layer].back();
-		colliders_in_layer_[registered_layer][index]->SetCollisionSystemIndex(index);
-		colliders_in_layer_[registered_layer].pop_back();
+		colliders_[index] = colliders_.back();
+		colliders_[index].collider->SetCollisionSystemIndex(index);
+		colliders_.pop_back();
 
 		// 원상복구
-		collider->SetCollisionSystemIndex(-1);
-		collider->SetRegisteredLayer(-1);
+		collider->SetCollisionSystemIndex(kInvalidIndex);
 
 		// 남아있는 contacts 제거
 		std::vector<ColliderPairID> contacts = collider->TakeContacts();
@@ -211,54 +208,56 @@ namespace engine
 		//충돌 감지 기간 동안에는 Collider 추가/제거 금지 가드 필요
 		// >> Event Queueing 방식으로 해결
 
-		uint32 colliders_count = 0;
-		for (const auto& layer : colliders_in_layer_)
-		{
-			colliders_count += (uint32)layer.size();
-		}
-
 		// 평균적으로 4개의 bucket에 걸쳐있다고 가정
-		staged_entries_.reserve(colliders_count * 4); 
+		staged_entries_.clear();
+		staged_entries_.reserve(colliders_.size() * 4);
 
 		//bucket_start_idx_ 초기화
 		std::fill(bucket_start_idx_.begin(), bucket_start_idx_.end(), 0);
 
 		// Pass 1: Staging buffer 채워넣기
-		for(uint32 i = 0; i < (uint32)colliders_in_layer_.size(); ++i)
+		//not null이 보장됨
+		for(uint32 i = 0; i < (uint32)colliders_.size(); ++i)
 		{
-			//not null이 보장됨
-			for (Collider2D* col : colliders_in_layer_[i])
+			if (colliders_[i].is_world_bound_dirty)
 			{
-				const AABB2D& bounds = col->GetWorldBounds();
+				colliders_[i].world_bounds = colliders_[i].collider->GetWorldBounds();
+				colliders_[i].is_world_bound_dirty = false;
+			}
+			if (colliders_[i].is_layer_dirty)
+			{
+				colliders_[i].layer = colliders_[i].collider->GetOwnerGameObject()->GetLayer();
+				colliders_[i].is_layer_dirty = false;
+			}
 
-				int32_2 cell_index_LB = ConvertWorldPosToCellIndex(bounds.left_bottom, cell_size_inv_);
+			const AABB2D& bounds = colliders_[i].world_bounds;
 
-				int32_2 cell_index_RT = ConvertWorldPosToCellIndex(bounds.right_top, cell_size_inv_);
+			int32_2 cell_index_LB = ConvertWorldPosToCellIndex(bounds.left_bottom, cell_size_inv_);
+			int32_2 cell_index_RT = ConvertWorldPosToCellIndex(bounds.right_top, cell_size_inv_);
 
-				const int64 cells = int64(cell_index_RT.x - cell_index_LB.x + 1) * (cell_index_RT.y - cell_index_LB.y + 1);
-				ASSERT_MESSAGE(cells <= kMaxCellsPerCollider, "콜라이더가 너무 많은 셀에 걸침");
+			const int64 cells = int64(cell_index_RT.x - cell_index_LB.x + 1) * (cell_index_RT.y - cell_index_LB.y + 1);
+			ASSERT_MESSAGE(cells <= kMaxCellsPerCollider, "콜라이더가 너무 많은 셀에 걸침");
 
-				for (int32 x = cell_index_LB.x; x <= cell_index_RT.x; ++x)
+			for (int32 x = cell_index_LB.x; x <= cell_index_RT.x; ++x)
+			{
+				for (int32 y = cell_index_LB.y; y <= cell_index_RT.y; ++y)
 				{
-					for (int32 y = cell_index_LB.y; y <= cell_index_RT.y; ++y)
-					{
-						uint32 bucket_index = GetBucketIndex(x, y, bucket_size_bit_shifts_);
-						staged_entries_.emplace_back(
-							GridEntry{
-							x,
-							y,
-							bucket_index,
-							(uint32)i,
-							col
-							}
-						);
+					uint32 bucket_index = GetBucketIndex(x, y, bucket_size_bit_shifts_);
+					staged_entries_.emplace_back(
+						GridEntry{
+						x,
+						y,
+						bucket_index,
+						colliders_[i].layer,
+						i
+						}
+					);
 
-						// 각 Bucket의 갯수를 카운트한다.
-						// 차후 '누적합' 진행 예정, 
-						// bucket의 start index이므로, [0] = 0이어야 함
-						// -> bucket_index + 1에 카운트 증가시켜야 함!
-						bucket_start_idx_[bucket_index + 1]++; 
-					}
+					// 각 Bucket의 갯수를 카운트한다.
+					// 차후 '누적합' 진행 예정, 
+					// bucket의 start index이므로, [0] = 0이어야 함
+					// -> bucket_index + 1에 카운트 증가시켜야 함!
+					bucket_start_idx_[bucket_index + 1]++;
 				}
 			}
 		}
@@ -271,6 +270,8 @@ namespace engine
 		bucket_cursor_ = bucket_start_idx_; // cursor_ 초기화
 
 		// Pass 3: bucket_ 채워넣기
+		// 참고: bucket_size와 bucket_count는 다르다. 
+		// bucket_size는 실제로 bucket_에 들어있는 entry의 갯수, bucket_count는 버킷의 갯수
 		bucket_.resize(staged_entries_.size());
 		for (const auto& entry : staged_entries_)
 		{
@@ -295,18 +296,18 @@ namespace engine
 		// 레이어 마스크 (SSOT - Scene에서 관리)
 		const std::array<std::bitset<kMaxLayers>, kMaxLayers>& collision_mask = owner_scene_->GetCollisionMask();
 
-		for (size_t bucket_idx = 0; bucket_idx < bucket_size_; ++bucket_idx) {
+		for (size_t bucket_idx = 0; bucket_idx < bucket_count_; ++bucket_idx) {
 			const uint32 begin = bucket_start_idx_[bucket_idx];
 			const uint32 end = bucket_start_idx_[bucket_idx + 1];
 
 			//같은 셀 내의 Collider2D들끼리 충돌 감지
 			for (uint32 i = begin; i < end; ++i) {
 				const GridEntry& e_i = bucket_[i];
-				const AABB2D& e_i_world_bound = e_i.collider->GetWorldBounds();
+				const AABB2D& e_i_world_bound = colliders_[e_i.colliders_index].world_bounds;
 
 				for (uint32 j = i + 1; j < end; ++j) {
 					const GridEntry& e_j = bucket_[j];
-					const AABB2D& e_j_world_bound = e_j.collider->GetWorldBounds();
+					const AABB2D& e_j_world_bound = colliders_[e_j.colliders_index].world_bounds;
 
 					// 1. 해시 충돌로 섞인 다른 셀 배제
 					if (e_i.cell_x != e_j.cell_x || e_i.cell_y != e_j.cell_y) { continue; }
@@ -336,22 +337,25 @@ namespace engine
 
 					// 5. Narrow Phase
 					float2 contact_point = {};
+
+					Collider2D* collider_i = colliders_[e_i.colliders_index].collider;
+					Collider2D* collider_j = colliders_[e_j.colliders_index].collider;
 					
-					bool is_trigger = e_i.collider->IsTrigger() || e_j.collider->IsTrigger();
+					bool is_trigger = collider_i->IsTrigger() || collider_j->IsTrigger();
 
 					// Trigger 시 contact_point 계산 필요 없음, nullptr 전달
 					float2* contact_point_ptr = is_trigger ? nullptr : &contact_point;
 
 					bool is_intersect = s_check_intersect_functions
-						[(int)e_i.collider->GetShape()][(int)e_j.collider->GetShape()]
+						[(int)collider_i->GetShape()][(int)collider_j->GetShape()]
 						(
-						e_i.collider,
-						e_j.collider,
+						collider_i,
+						collider_j,
 						contact_point_ptr
 						);
 
-					const uint32 collider_id_i = e_i.collider->GetInstanceID();
-					const uint32 collider_id_j = e_j.collider->GetInstanceID();
+					const uint32 collider_id_i = collider_i->GetInstanceID();
+					const uint32 collider_id_j = collider_j->GetInstanceID();
 
 					ColliderPairID id_pair{ collider_id_i, collider_id_j };
 
@@ -361,13 +365,13 @@ namespace engine
 
 						if (collider_id_i == id_pair.GetLo())
 						{
-							pair.lo = e_i.collider;
-							pair.hi = e_j.collider;
+							pair.lo = collider_i;
+							pair.hi = collider_j;
 						}
 						else
 						{
-							pair.lo = e_j.collider;
-							pair.hi = e_i.collider;
+							pair.lo = collider_j;
+							pair.hi = collider_i;
 						}
 						pair.touched_this_step_ = false;
 						pair.was_trigger_ = is_trigger;
@@ -382,11 +386,11 @@ namespace engine
 						if (inserted)
 						{
 							//Contacts 추가
-							pair.lo->AddContact(id_pair);
-							pair.hi->AddContact(id_pair);
+							it->second.lo->AddContact(id_pair);
+							it->second.hi->AddContact(id_pair);
 
 							// Enter Event 발행
-							enter_events_.push_back({ id_pair, pair.lo, pair.hi, contact_point, is_trigger });
+							enter_events_.push_back({ id_pair, it->second.lo, it->second.hi, contact_point, is_trigger });
 						}
 
 						// 삽입 실패 = 이미 존재하는 쌍
@@ -454,6 +458,24 @@ namespace engine
 		ASSERT(cell_size.x >= 1.0f && cell_size.y >= 1.0f);
 		cell_size_ = cell_size;
 		cell_size_inv_ = float2(1.0f / cell_size.x, 1.0f / cell_size.y);
+	}
+	void CollisionSystem2D::SetWorldBoundsDirty(Collider2D* collider)
+	{
+		ASSERT(collider);
+		int32 index = collider->GetCollisionSystemIndex();
+		if (index == kInvalidIndex) { return; }
+
+		ASSERT(collider == colliders_[index].collider);
+		colliders_[index].is_world_bound_dirty = true;
+	}
+	void CollisionSystem2D::SetLayerDirty(Collider2D * collider)
+	{
+		ASSERT(collider);
+		int32 index = collider->GetCollisionSystemIndex();
+		if (index == kInvalidIndex) { return; }
+
+		ASSERT(collider == colliders_[index].collider);
+		colliders_[index].is_layer_dirty = true;
 	}
 	void CollisionSystem2D::DispatchEnterEvent(EnterEvent2D e)
 	{

@@ -4,6 +4,7 @@
 #include <Engine/Game/Component/ComponentCategory.h>
 
 #include <Engine/Core/UtilMacro.h>
+#include <Engine/Core/Enum.h>
 
 #include <Engine/Collision/Collision.h>
 
@@ -25,16 +26,16 @@ namespace engine
 
         virtual void Init() override;
 
-        virtual void Awake();
-        virtual void OnEnable();
+        virtual void Awake() {}
+        virtual void OnEnable() {}
         virtual void BeginPlay();
 
         virtual void Update() {}
         virtual void FixedUpdate() {}
         virtual void LateUpdate() {}
 
-        virtual void OnDisable();
-        virtual void OnDestroy();
+        virtual void OnDisable() {}
+        virtual void OnDestroy() {}
 
         virtual void OnCollisionEnter2D(const Collision2D& _info) {}
         virtual void OnCollisionExit2D(Collider2D* other) {}
@@ -42,6 +43,7 @@ namespace engine
         virtual void OnTriggerEnter2D(Collider2D* other) {}
         virtual void OnTriggerExit2D(Collider2D* other) {}
 
+		virtual void OnTransformDirty(Transform* transform) {}
         virtual void OnLayerChanged(uint32 prev_layer, uint32 new_layer) {}
 
         ComponentCategory GetComponentCategory() const { return category_; }
@@ -75,16 +77,21 @@ namespace engine
         void Destroy();
         bool IsDestroyed() const { return is_destroyed_; }
 
-        void SubscribeCollisionEvents(bool subscribe);
+        void Subscribe(SubscribeType type);
+		void Unsubscribe(SubscribeType type);
+		void UnsubscribeAll();
 
     private:
+		void MarkAwaken() { has_awaken_ = true; }
+		void ReplaySubscriptions();
+
         void UpdateEnableState(bool is_active_in_hierarchy);
-        void RegisterCollisionListener();
-        void UnregisterCollisionListener();
 
         ComponentCategory category_ = {};
 
         GameObject* owner_game_object_ = {};
+
+        std::bitset<(size_t)SubscribeType::kEND> is_subscribing_ = {};
 
         bool has_initialized_ = false;
         bool has_awaken_ = false;
@@ -94,7 +101,7 @@ namespace engine
 
         bool has_collision_subscribed_ = false;
         bool has_collision_sub_registered_ = false;
-
+		
 		bool is_destroyed_ = false;
     };
 }

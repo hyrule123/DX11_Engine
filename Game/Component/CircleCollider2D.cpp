@@ -31,7 +31,7 @@ namespace engine
 		RenderManager::GetInst().DrawDebugCircle(debug_data);
 #endif
 	}
-	AABB2D CircleCollider2D::ComputeWorldBounds() const
+	AABB2D CircleCollider2D::GetWorldBounds() const
 	{
 		AABB2D ret;
 

@@ -11,7 +11,7 @@ namespace engine
     class Collider2D;
 
 	constexpr uint64 kDefaultCollisionBucketSize = 1ull << 14;
-	constexpr uint64 kMaxCollisionBucketSize = 1ull << 20;
+	constexpr uint64 kMaxCollisionBucketCount = 1ull << 20;
     constexpr int64 kMaxCellsPerCollider = 128;	//한 Collider가 차지할 수 있는 Cell의 최대 갯수
 
     // POD class

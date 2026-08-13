@@ -279,50 +279,36 @@ namespace engine
 			debug_rect_mesh_->SetBuffers(vb, ib);
 		}
 #pragma endregion // RECT MESH
+#pragma region CIRCLE MESH
 		{
 			debug_circle_mesh_ = std::make_unique<Mesh>();
 
-			//VERTEX BUFFER
+			//VERTEX BUFFER & INDEX BUFFER
 			s_ptr<VertexBuffer> vb = EntityManager::CreateEntity<VertexBuffer>();
+			s_ptr<IndexBuffer> ib = EntityManager::CreateEntity<IndexBuffer>();
+
 			std::vector<Vertex::Debug::Vertex> vertices;
+			std::vector<UINT> indices;
 
 			Vertex::Debug::Vertex v;
-			v.position = { 0.0f, 0.0f, 0.0f };	//중심점
-			vertices.push_back(v);
+			//v.position = { 0.0f, 0.0f, 0.0f };	//중심점
+			//vertices.push_back(v);
 
-			//32개 (vertex: 33개 index 0 ~ 32)
+			//32개 (vertex: 32개 index 0 ~ 31)
 			for (int32 i = 0; i <= 31; ++i)
 			{
 				float angle = (float)i / 32.0f * XM_2PI;
 				float x = cosf(angle) * 0.5f;
 				float y = sinf(angle) * 0.5f;
 				vertices.push_back({ {x, y, 0.0f} });
+				indices.push_back((UINT)i);
 			}
+			indices.push_back(0u);	//마지막에 0번으로 돌아가서 닫힌 원 만들기
 			vb->Create(vertices);
-
-			//INDEX BUFFER
-			s_ptr<IndexBuffer> ib = EntityManager::CreateEntity<IndexBuffer>();
-			std::vector<UINT> indices;
-
-			for (uint i = 0; i <= 30; ++i)
-			{
-				//CW
-				indices.push_back((UINT)0); //중심점
-				indices.push_back((UINT)(i + 2));
-				indices.push_back((UINT)(i + 1));
-			}
-			//마지막 피자 조각
-			indices.push_back((UINT)0);
-			indices.push_back((UINT)1);
-			indices.push_back((UINT)32);
-
 			ib->Create(indices, D3D11_PRIMITIVE_TOPOLOGY_LINESTRIP);
 
 			debug_circle_mesh_->SetBuffers(vb, ib);
 		}
-#pragma region CIRCLE MESH
-
-
 #pragma endregion // CIRCLE MESH
 
 #pragma region // GRAPHICS SHADER SET

@@ -16,7 +16,7 @@ namespace engine
 
 		virtual AABB2D GetWorldBounds() const override;
 
-		void SetRadius(float radius) { radius_ = radius; }
+        void SetRadius(float radius) { radius_ = radius; SetWorldBoundsDirty(); }
 		float GetRadius() const { return radius_; }
 
         float2 GetCenter() const;

@@ -48,8 +48,10 @@ namespace engine
 
 	protected:
 		Collider2D(const HashedStringView& concrete_class_name, ColliderShape2D shape);
-		
 
+		void SetWorldBoundsDirty();
+		
+		CollisionSystem2D* collision_system_ = {};
 		Transform* transform_ = {};
 
 	private:
@@ -65,8 +67,6 @@ namespace engine
 		const ColliderShape2D shape_ = {};
 		bool   is_trigger_ = {};
 		float2 offset_ = {};
-
-		CollisionSystem2D* collision_system_ = {};
 
 		// CollisionSystem2D의 배열에 저장된 Index
 		int32 collision_system_index_ = kInvalidIndex;

@@ -15,6 +15,10 @@ namespace engine
 		: Component(concrete_class_name, Collider2D::kComponentCategory)
 		, shape_(shape)
 	{}
+	void Collider2D::SetWorldBoundsDirty()
+	{
+		collision_system_->SetWorldBoundsDirty(this);
+	}
 	Collider2D::~Collider2D()
 	{}
 	void Collider2D::Init()
@@ -50,8 +54,7 @@ namespace engine
 	void Collider2D::OnTransformDirty(Transform* transform)
 	{
 		Super::OnTransformDirty(transform);
-		
-		collision_system_->SetWorldBoundsDirty(this);
+		SetWorldBoundsDirty();
 	}
 
 	void Collider2D::CollisionEnter2D(const Collision2D& col_info)

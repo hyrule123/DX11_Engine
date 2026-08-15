@@ -246,6 +246,12 @@
     <ClInclude Include="ThirdParty\ankerl\unordered_dense.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Resource\ComputeShader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\ComputePass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Core\pch.cpp">
@@ -417,6 +423,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Core\HandlePointer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\ComputeShader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\ComputePass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

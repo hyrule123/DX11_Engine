@@ -219,6 +219,8 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Resource\ComputePass.h" />
+    <ClInclude Include="Resource\ComputeShader.h" />
     <ClInclude Include="Core\HandlePointer.h" />
     <ClInclude Include="Game\SceneEntity.h" />
     <ClInclude Include="Game\Component\CircleCollider2D.h" />
@@ -298,6 +300,8 @@
     <ClInclude Include="Resource\Graphics\Shader\VertexShader.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Resource\ComputePass.cpp" />
+    <ClCompile Include="Resource\ComputeShader.cpp" />
     <ClCompile Include="Core\HandlePointer.cpp" />
     <ClCompile Include="Game\SceneEntity.cpp" />
     <ClCompile Include="Game\Component\CircleCollider2D.cpp" />

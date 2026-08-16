@@ -77,6 +77,24 @@ namespace engine
 
 		return true;
 	}
+
+	bool Texture2D::SaveToFile(const stdfs::path& res_path)
+	{
+		auto device = GraphicsDevice::GetInst().GetDevice();
+		auto context = GraphicsDevice::GetInst().GetContext();
+
+		DirectX::ScratchImage image;
+		DirectX::CaptureTexture(device, context, tex2D_buffer_.Get(), image);
+		DirectX::SaveToWICFile(
+			*image.GetImage(0, 0, 0), 
+			DirectX::WIC_FLAGS_NONE,
+			DirectX::GetWICCodec(DirectX::WIC_CODEC_PNG), 
+			res_path.wstring().c_str()
+		);
+
+		return false;
+	}
+
 	void Texture2D::BindSRV(ID3D11DeviceContext* context, UINT slot, ShaderStage::Flags stageflag)
 	{
 		if (stageflag & ShaderStage::kVS)

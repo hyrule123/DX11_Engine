@@ -25,6 +25,7 @@ namespace engine
         virtual ~Texture2D() override;
 
         virtual bool LoadFromFile(const stdfs::path& res_path) override;
+		bool SaveToFile(const stdfs::path& res_path);
 
         void BindSRV(
             ID3D11DeviceContext* context, 

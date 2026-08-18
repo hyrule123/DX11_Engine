@@ -252,6 +252,9 @@
     <ClInclude Include="Resource\ComputePass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Resource\Graphics\Buffer\TypedBuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Core\pch.cpp">
@@ -429,6 +432,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Resource\ComputePass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Graphics\Buffer\TypedBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

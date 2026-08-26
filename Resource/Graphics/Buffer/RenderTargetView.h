@@ -15,7 +15,7 @@ namespace engine
         virtual ~RenderTargetView() override;
 
         //기본적인(가장 많이 사용하는) 렌더타겟을 생성
-        bool CreateDefault(
+        bool CreateDefaultBuffer(
             uint32 width, 
             uint32 height,
             DXGI_FORMAT format

@@ -12,7 +12,7 @@ namespace engine
 	{}
 	RenderTargetView::~RenderTargetView()
 	{}
-	bool RenderTargetView::CreateDefault(uint32 width, uint32 height, DXGI_FORMAT format)
+	bool RenderTargetView::CreateDefaultBuffer(uint32 width, uint32 height, DXGI_FORMAT format)
 	{
 		// 내부에서 표준 DESC를 조립
 		D3D11_TEXTURE2D_DESC desc = {};

@@ -119,7 +119,7 @@ namespace engine
 		if (max_size > debug_buffer_->GetElementCount())
 		{
 			//벡터랑 버퍼 확장 타이밍 맞추기 위해 capacity() 사용
-			bool result = debug_buffer_->Resize(context, max_size, false);
+			bool result = debug_buffer_->Reserve(max_size);
 			ASSERT(result);
 		}
 
@@ -128,7 +128,8 @@ namespace engine
 		float dt = TimeManager::GetInst().GetDeltaTime();
 		if (false == debug_rect_data_.empty())
 		{
-			debug_buffer_->Upload(context, debug_rect_data_);
+			std::span debug_rect_span(debug_rect_data_);
+			debug_buffer_->Upload(context, debug_rect_span);
 			debug_buffer_->BindSRV(context, SLOT_T_PER_INSTANCE, ShaderStage::kVS | ShaderStage::kPS);
 
 			//Mesh Draw
@@ -151,7 +152,8 @@ namespace engine
 #pragma region //Debug Circle Draw
 		if (false == debug_circle_data_.empty())
 		{
-			debug_buffer_->Upload(context, debug_circle_data_);
+			std::span debug_circle_span(debug_circle_data_);
+			debug_buffer_->Upload(context, debug_circle_span);
 			debug_buffer_->BindSRV(context, SLOT_T_PER_INSTANCE, ShaderStage::kVS | ShaderStage::kPS);
 
 			//Mesh Draw
@@ -213,12 +215,7 @@ namespace engine
 	{
 		debug_buffer_ = std::make_unique<StructuredBuffer>();
 
-		StructuredBuffer::BufferFlag flag =
-			StructuredBuffer::BufferFlagBitMask::kSRV
-			|
-			StructuredBuffer::BufferFlagBitMask::kCPUDynamic;
-
-		bool result = debug_buffer_->Create<DebugInstanceData>(flag, 512);
+		bool result = debug_buffer_->CreateDynamicBuffer<DebugInstanceData>(512);
 		ASSERT(result);
 
 #pragma region //INPUT LAYOUT DESC

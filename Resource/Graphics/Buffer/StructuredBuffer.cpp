@@ -5,248 +5,186 @@
 
 #include <Engine/Core/DX11.h>
 
-
 namespace engine
 {
+    // 상수 버퍼 규칙
+    constexpr bool IsValidStride(uint32 stride)
+    {
+        return (stride > 0 && (stride % 4) == 0 && stride <= 2048);
+    }
+
 	StructuredBuffer::StructuredBuffer()
 		: Super(StructuredBuffer::kClassConcreteName)
 	{}
 	StructuredBuffer::~StructuredBuffer()
 	{}
-	bool StructuredBuffer::Create(BufferFlag flag, size_t elem_stride, size_t elem_count, void* initial_data)
-	{
-        // 1. 방어 코드: 크기가 0이거나 비정상적인 요청 차단
-        if (elem_stride == 0 || elem_count == 0)
+    bool StructuredBuffer::CreateImmutableBuffer(uint32 stride, const void* data, uint32 count)
+    {
+		return CreateBufferImpl(stride, count, D3D11_USAGE_IMMUTABLE,
+			D3D11_BIND_SHADER_RESOURCE, 0, data);
+    }
+    bool StructuredBuffer::CreateDynamicBuffer(uint32 stride, uint32 capacity)
+    {
+        return CreateBufferImpl(stride, capacity, D3D11_USAGE_DYNAMIC,
+			D3D11_BIND_SHADER_RESOURCE, D3D11_CPU_ACCESS_WRITE, nullptr);
+    }
+    bool StructuredBuffer::CreateDefaultBuffer(uint32 stride, uint32 capacity, bool need_uav)
+    {
+		return CreateBufferImpl(stride, capacity, D3D11_USAGE_DEFAULT, 
+			D3D11_BIND_SHADER_RESOURCE | (need_uav ? D3D11_BIND_UNORDERED_ACCESS : 0u),
+			0, nullptr);
+    }
+
+    bool StructuredBuffer::Reserve(uint32 new_capacity)
+    {
+        if (buffer_ == nullptr)
         {
-            ERROR_MESSAGE("데이터 포맷이 비정상입니다.");
+            ERROR_MESSAGE("버퍼가 생성되지 않았습니다.");
             return false;
         }
-
-        ComPtr<ID3D11Buffer>              buffer = {};
-        ComPtr<ID3D11ShaderResourceView>  SRV = {};
-        ComPtr<ID3D11UnorderedAccessView> UAV = {};
-
-        // 플래그 확인
-        bool is_srv = (flag & kSRV) != 0;
-        bool is_uav = (flag & kUAV) != 0;
-        bool is_dynamic = (flag & kCPUDynamic) != 0;
-
-        //하드웨어 제약 방어: DYNAMIC과 UAV는 동시에 켤 수 없음
-        if (is_dynamic && is_uav)
+        if (buffer_usage_ == D3D11_USAGE_IMMUTABLE)
         {
-            ERROR_MESSAGE("DYNAMIC과 UAV는 동시에 켤 수 없습니다.");
+            ERROR_MESSAGE("Immutable 버퍼는 재할당할 수 없습니다.");
             return false;
         }
+        // 이미 충분한 경우 return
+        if (new_capacity <= capacity_) { return true; }
 
-        // 버퍼 기본 설정
-        D3D11_BUFFER_DESC buffer_desc = {};
-        buffer_desc.ByteWidth = (UINT)(elem_stride * elem_count);
-        buffer_desc.StructureByteStride = (UINT)elem_stride;
-        buffer_desc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
+        D3D11_BUFFER_DESC desc = {};
+        buffer_->GetDesc(&desc);
 
-        // BindFlags 설정
-        buffer_desc.BindFlags = 0;
-        if (is_srv)
-        {
-            buffer_desc.BindFlags |= D3D11_BIND_SHADER_RESOURCE;
-        }
-        if (is_uav)
-        {
-            buffer_desc.BindFlags |= D3D11_BIND_UNORDERED_ACCESS;
-        }
+        desc.ByteWidth = stride_ * new_capacity;   // 이것만 바꿈
 
-        // CPU 접근 권한 및 Usage 설정
-        if (is_dynamic)
-        {
-            buffer_desc.Usage = D3D11_USAGE_DYNAMIC;
-            buffer_desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-        }
-        else
-        {
-            buffer_desc.Usage = D3D11_USAGE_DEFAULT;
-            buffer_desc.CPUAccessFlags = 0;
-        }
+        auto* device = GraphicsDevice::GetInst().GetDevice();
+        ComPtr<ID3D11Buffer> buffer;
 
-        // 초기 데이터(initial_data) 세팅
-        D3D11_SUBRESOURCE_DATA sub_data = {};
-        D3D11_SUBRESOURCE_DATA* p_sub_data = nullptr;
-        if (initial_data != nullptr)
+        HRESULT hr = device->CreateBuffer(&desc, nullptr, buffer.GetAddressOf());
+        if (FAILED(hr))
         {
-            sub_data.pSysMem = initial_data;
-            p_sub_data = &sub_data;
-        }
-
-		auto* device = GraphicsDevice::GetInst().GetDevice();
-        HRESULT hr = device->CreateBuffer(&buffer_desc, p_sub_data, buffer.GetAddressOf());
-        if (FAILED(hr)) 
-        { 
             HRESULT_ERROR_MESSAGE(hr);
             return false;
         }
 
-        // SRV 생성
-        if (is_srv)
-        {
-            D3D11_SHADER_RESOURCE_VIEW_DESC srv_desc = {};
-            srv_desc.Format = DXGI_FORMAT_UNKNOWN; // Structured Buffer 고정
-            srv_desc.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
-            srv_desc.Buffer.FirstElement = 0;
-            srv_desc.Buffer.NumElements = (UINT)elem_count;
+        ComPtr<ID3D11ShaderResourceView> srv;
+        ComPtr<ID3D11UnorderedAccessView> uav;
 
-            hr = device->CreateShaderResourceView(buffer.Get(), &srv_desc, SRV.GetAddressOf());
-            if (FAILED(hr))
-            {
-                HRESULT_ERROR_MESSAGE(hr);
-                return false;
-            }
+        // SRV와 UAV가 생성되어 있을 경우 재생성
+        if (SRV_)
+        {
+            srv = CreateSRVImpl(buffer.Get(), new_capacity);
+            if (!srv) { return false; }
+        }
+        if (UAV_)
+        {
+            uav = CreateUAVImpl(buffer.Get(), new_capacity);
+            if (!uav) { return false; }
         }
 
-        // UAV 생성
-        if (is_uav)
-        {
-            D3D11_UNORDERED_ACCESS_VIEW_DESC uav_desc = {};
-            uav_desc.Format = DXGI_FORMAT_UNKNOWN; // Structured Buffer 고정
-            uav_desc.ViewDimension = D3D11_UAV_DIMENSION_BUFFER;
-            uav_desc.Buffer.FirstElement = 0;
-            uav_desc.Buffer.NumElements = (UINT)elem_count;
-            uav_desc.Buffer.Flags = 0;
-
-            hr = device->CreateUnorderedAccessView(buffer.Get(), &uav_desc, UAV.GetAddressOf());
-            if (FAILED(hr))
-            {
-                HRESULT_ERROR_MESSAGE(hr);
-                return false;
-            }
-        }
-
-		buffer_ = std::move(buffer);
-		SRV_ = std::move(SRV);
-		UAV_ = std::move(UAV);
-        buffer_flag_ = flag;
-		elem_count_ = elem_count;
-		elem_stride_ = elem_stride;
-		total_byte_size_ = elem_stride * elem_count;
-
+        buffer_ = buffer;
+        SRV_ = srv;
+        UAV_ = uav;
+        capacity_ = new_capacity;
+        count_ = 0;
         return true;
-	}
+    }
 
-	bool StructuredBuffer::Resize( ID3D11DeviceContext* context, size_t new_count, bool preserve_data)
-	{
-        // 1. 방어 코드: 크기가 같거나 0이면 무시 (혹은 0일 때의 Clear 로직 필요 시 추가)
-        if (!buffer_ || new_count == 0)
-        {
-            ERROR_MESSAGE("버퍼가 생성되지 않았거나 새로운 크기가 0입니다.");
-            return true;
+    bool StructuredBuffer::CreateBufferImpl(uint32 stride, uint32 capacity, D3D11_USAGE buffer_usage, UINT bind_flags, UINT cpu_access, const void* init_data)
+    {
+        if (!IsValidStride(stride) || capacity == 0) 
+        { 
+			ERROR_MESSAGE("StructuredBuffer 생성 실패: stride가 4의 배수가 아니거나 0이거나, capacity가 0입니다.");
+            return false; 
         }
-
-        // 2. 버퍼 백업
-        ComPtr<ID3D11Buffer>              old_buffer = buffer_;
-        ComPtr<ID3D11ShaderResourceView>  old_SRV = SRV_;
-        ComPtr<ID3D11UnorderedAccessView> old_UAV = UAV_;
-        BufferFlag old_buffer_flag_ = buffer_flag_;
-        size_t old_elem_stride = elem_stride_;
-        size_t old_elem_count = elem_count_;
-		size_t old_total_byte_size = total_byte_size_;
-
-
-        // 3. 기존 세팅(flag, stride)을 그대로 사용하여 새로운 크기의 버퍼 생성
-        if (!Create(buffer_flag_, elem_stride_, new_count, nullptr))
+        if (buffer_usage == D3D11_USAGE_IMMUTABLE && init_data == nullptr)
         {
-            //실패 시 원복
-            buffer_ = old_buffer;
-            SRV_ = old_SRV;
-            UAV_ = old_UAV;
-            buffer_flag_ = old_buffer_flag_;
-            elem_stride_ = old_elem_stride;
-            elem_count_ = old_elem_count;
-            total_byte_size_ = old_total_byte_size;
+            ERROR_MESSAGE("data가 nullptr입니다. IMMUTABLE은 초기 데이터가 필수입니다.");
             return false;
         }
+		uint64 total_size = (uint64)(stride) * (uint64)(capacity);
+		if (total_size > std::numeric_limits<uint32>::max())
+		{
+			ERROR_MESSAGE("StructuredBuffer 생성 실패: 버퍼 크기가 UINT32 범위를 초과합니다.");
+			return false;
+		}
 
-        bool is_dynamic = (buffer_flag_ & kCPUDynamic) != 0;
+        D3D11_BUFFER_DESC desc = {};
+        desc.ByteWidth = (UINT)total_size;
+        desc.Usage = buffer_usage;
+        desc.BindFlags = bind_flags;
+        desc.CPUAccessFlags = cpu_access;
+        desc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
+        desc.StructureByteStride = stride;
 
-		ASSERT_MESSAGE(!(is_dynamic && preserve_data), "Dynamic 버퍼는 데이터를 보존하지 않으므로 preserve_data를 true로 설정할 수 없습니다.");
+        D3D11_SUBRESOURCE_DATA sub = {};
+        sub.pSysMem = init_data;
 
-        //Dynamic 모드가 아닐 경우 데이터 복사
-        if (!is_dynamic && preserve_data)
-        {
-            // 혹시나 사이즈를 '줄일 수도' 있으므로, min을 사용
-            size_t copy_count = std::min(elem_count_, new_count);
+        auto* device = GraphicsDevice::GetInst().GetDevice();
 
-            D3D11_BOX src_box = {};
-            src_box.left = 0;
-            src_box.right = (UINT)(copy_count * elem_stride_); // 복사할 바이트 크기
-            src_box.top = 0;
-            src_box.bottom = 1;
-            src_box.front = 0;
-            src_box.back = 1;
-
-            // 옛날 버퍼(old_buffer)의 src_box 영역만큼 떼어서 새 버퍼(buffer_)의 0번지부터 덮어씀
-            context->CopySubresourceRegion(buffer_.Get(), 0, 0, 0, 0, old_buffer.Get(), 0, &src_box);
+        ComPtr<ID3D11Buffer> buffer;
+        HRESULT hr = device->CreateBuffer(&desc,
+            init_data ? &sub : nullptr,
+            buffer.GetAddressOf());
+        if (FAILED(hr)) 
+        { 
+			HRESULT_ERROR_MESSAGE(hr);
+            return false; 
         }
 
-        //아마도 Create에서 바꿔놨을 테지만... 안전하게
-		elem_count_ = (UINT)new_count;
-		total_byte_size_ = (UINT)(elem_stride_ * elem_count_);
+		ComPtr<ID3D11ShaderResourceView> srv;
+		ComPtr<ID3D11UnorderedAccessView> uav;
+
+		if (desc.BindFlags & D3D11_BIND_SHADER_RESOURCE)
+		{
+			srv = CreateSRVImpl(buffer.Get(), capacity);
+			if (!srv) { return false; }
+		}
+		if (desc.BindFlags & D3D11_BIND_UNORDERED_ACCESS)
+		{
+			uav = CreateUAVImpl(buffer.Get(), capacity);
+			if (!uav) { return false; }
+		}
+
+        buffer_ = buffer;
+        SRV_ = srv;
+        UAV_ = uav;
+        stride_ = stride;
+        count_ = init_data ? capacity : 0;
+        capacity_ = capacity;
+        buffer_usage_ = buffer_usage;
 
         return true;
-	}
+    }
 
-	void StructuredBuffer::Upload(ID3D11DeviceContext* context, void* data, size_t elem_stride, size_t elem_count)
-	{
-        ASSERT(buffer_);
-        ASSERT(data);
-        ASSERT(0 < elem_count);
-		ASSERT(elem_stride == elem_stride_); // 업로드 데이터의 stride가 버퍼 stride와 일치해야 함
-		ASSERT(elem_count <= elem_count_); // 버퍼 사이즈보다 큰 데이터 업로드 시 에러 발생
-
-		size_t byte_size = elem_count * elem_stride_;
-
-        bool is_dynamic = (buffer_flag_ & kCPUDynamic) != 0;
-
-        // --- [케이스 A] DYNAMIC 버퍼 (Map / Unmap) ---
-        // CPU 쓰기에 최적화된 영역. 데이터를 통째로 덮어쓰는(DISCARD) 데 가장 빠릅니다.
-        if (is_dynamic)
-        {
-			void* mapped_data = MapForWriteDiscard(context);
-
-            // 확보한 GPU 공유 메모리 주소(pData)에 C++ 데이터를 밀어 넣음
-            memcpy(mapped_data, data, (UINT)byte_size);
-
-			UnMap(context);
-        }
-        // --- [케이스 B] DEFAULT 버퍼 (UpdateSubresource) ---
-        // VRAM 전용 영역. CPU가 직접 Map 할 수 없으므로 하드웨어 복사기에게 명령을 내립니다.
-        else
-        {
-            // 업로드할 크기가 전체 버퍼 크기와 완전히 동일하다면 Box 영역 지정(nullptr)을 생략해 최적화할 수 있습니다.
-            if (byte_size == total_byte_size_)
-            {
-                context->UpdateSubresource(buffer_.Get(), 0, nullptr, data, 0, 0);
-            }
-            else
-            {
-                // 부분 업데이트일 경우 메모리가 꼬이지 않도록 복사할 범위(Box)를 정확히 명시해야 합니다.
-                D3D11_BOX box = {};
-                box.left = 0;
-                box.right = (UINT)byte_size;
-                box.top = 0;
-                box.bottom = 1;
-                box.front = 0;
-                box.back = 1;
-
-                context->UpdateSubresource(buffer_.Get(), 0, &box, data, 0, 0);
-            }
-        }
-	}
-    void* StructuredBuffer::MapForWriteDiscard(ID3D11DeviceContext* context)
+    ComPtr<ID3D11ShaderResourceView> StructuredBuffer::CreateSRVImpl(ID3D11Buffer* buffer, uint32 capacity, uint32 start, uint32 count)
     {
-        ASSERT_MESSAGE(((buffer_flag_ & kCPUDynamic) != 0), "MapForWriteDiscard() can only be used with dynamic buffers.");
+        if (buffer == nullptr)
+        {
+            ERROR_MESSAGE("SRV 생성 실패: buffer가 nullptr입니다.");
+            return nullptr;
+        }
 
-        D3D11_MAPPED_SUBRESOURCE mapped_resource = {};
+        // Count == 0 -> 전체 범위
+        // 여기서 count를 전체 범위로 변경
+        if (count == 0)
+        {
+            count = (start < capacity) ? (capacity - start) : 0;
+        }
 
-        // 주의: DYNAMIC 구조화 버퍼는 오직 D3D11_MAP_WRITE_DISCARD만 허용됩니다.
-        HRESULT hr = context->Map(buffer_.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped_resource);
+        if (count == 0 || start >= capacity || count > capacity - start)
+        {
+            ERROR_MESSAGE("SRV 범위가 버퍼 용량을 초과했습니다.");
+            return nullptr;
+        }
+        ComPtr<ID3D11ShaderResourceView> srv;
+
+        D3D11_SHADER_RESOURCE_VIEW_DESC srv_desc = {};
+        srv_desc.Format = DXGI_FORMAT_UNKNOWN;
+        srv_desc.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
+        srv_desc.Buffer.FirstElement = (UINT)start;
+        srv_desc.Buffer.NumElements = (UINT)count;
+
+        auto* device = GraphicsDevice::GetInst().GetDevice();
+        HRESULT hr = device->CreateShaderResourceView(buffer, &srv_desc, srv.GetAddressOf());
 
         if (FAILED(hr))
         {
@@ -254,22 +192,170 @@ namespace engine
             return nullptr;
         }
 
-        return mapped_resource.pData;
+        return srv;
+    }
+    ComPtr<ID3D11UnorderedAccessView> StructuredBuffer::CreateUAVImpl(ID3D11Buffer* buffer, uint32 capacity, uint32 start, uint32 count)
+    {
+        if (buffer == nullptr)
+        {
+            ERROR_MESSAGE("UAV 생성 실패: buffer가 nullptr입니다.");
+            return nullptr;
+        }
+
+        // Count == 0 -> 전체 범위
+        // 여기서 count를 전체 범위로 변경
+        if (count == 0)
+        {
+            count = (start < capacity) ? (capacity - start) : 0;
+        }
+
+        //여전히 0이면 문제 있는거
+        if (count == 0 || start >= capacity || count > capacity - start)
+        {
+            ERROR_MESSAGE("UAV 범위가 버퍼 용량을 초과했습니다.");
+            return nullptr;
+        }
+
+        ComPtr<ID3D11UnorderedAccessView> uav;
+
+        D3D11_UNORDERED_ACCESS_VIEW_DESC uav_desc = {};
+        uav_desc.Format = DXGI_FORMAT_UNKNOWN;
+        uav_desc.ViewDimension = D3D11_UAV_DIMENSION_BUFFER;
+        uav_desc.Buffer.FirstElement = (UINT)start;
+        uav_desc.Buffer.NumElements = (UINT)count;
+        uav_desc.Buffer.Flags = 0; // APPEND / COUNTER 금지
+
+        auto* device = GraphicsDevice::GetInst().GetDevice();
+        HRESULT hr = device->CreateUnorderedAccessView(buffer, &uav_desc, uav.GetAddressOf());
+        if (FAILED(hr))
+        {
+            HRESULT_ERROR_MESSAGE(hr);
+            return nullptr;
+        }
+
+        return uav;
+    }
+
+    bool StructuredBuffer::Upload(ID3D11DeviceContext* context, void* data, uint32 elem_stride, uint32 elem_count)
+	{
+        if (data == nullptr)
+        {
+            ERROR_MESSAGE("data가 nullptr입니다.");
+            return false;
+        }
+        if (elem_stride != stride_)
+        {
+            ERROR_MESSAGE("stride가 버퍼 포맷과 불일치합니다.");
+            return false;
+        }
+        if (elem_count > capacity_)
+        {
+            ERROR_MESSAGE("capacity를 초과했습니다.");
+            return false;
+        }
+
+        switch (buffer_usage_)
+        {
+        case D3D11_USAGE_IMMUTABLE:
+        {
+            ERROR_MESSAGE("Immutable 버퍼는 업로드할 수 없습니다.");
+            return false;
+        }
+        case D3D11_USAGE_DEFAULT:
+        {
+            //참고: UpdateSubresource는 전체 갱신만 지원. 
+            //Box의는 16 byte 단위로 정렬되어야 하는 제약이 있음. 따라서 Default 버퍼는 전체 갱신만 지원하도록 제한.
+            if (elem_count != capacity_)
+            {
+                ERROR_MESSAGE("Default 버퍼는 전체 갱신만 지원합니다.");
+                return false;
+            }
+            context->UpdateSubresource(buffer_.Get(), 0, nullptr, data,
+                static_cast<UINT>(stride_ * capacity_), 0);
+            break;
+        }
+        case D3D11_USAGE_DYNAMIC:
+        {
+            // Dynamic 버퍼는 내부 데이터를 '전부 버림'
+            D3D11_MAPPED_SUBRESOURCE mapped = {};
+            if (FAILED(context->Map(buffer_.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped)))
+            {
+                ERROR_MESSAGE("Map 실패");
+                return false;
+            }
+            std::memcpy(mapped.pData, data, elem_stride * elem_count);
+            context->Unmap(buffer_.Get(), 0);
+            break;
+        }
+        case D3D11_USAGE_STAGING:
+        {
+            D3D11_MAPPED_SUBRESOURCE mapped = {};
+            if (FAILED(context->Map(buffer_.Get(), 0, D3D11_MAP_WRITE, 0, &mapped)))
+            {
+                ERROR_MESSAGE("Staging Map 실패 (cpu_write로 생성했는지 확인)");
+                return false;
+            }
+            std::memcpy(mapped.pData, data, elem_stride * elem_count);
+            context->Unmap(buffer_.Get(), 0);
+            break;
+        }
+        default:
+            ERROR_MESSAGE("지원되지 않는 BufferUsage입니다.");
+            return false;
+        }
+
+        count_ = elem_count;
+
+        return true;
+	}
+
+    MapScope StructuredBuffer::MapDynamic(ID3D11DeviceContext* context)
+    {
+        if((buffer_usage_ & D3D11_USAGE_DYNAMIC) == 0)
+        {
+            ERROR_MESSAGE("MapDynamic() can only be used with dynamic buffers.");
+            return MapScope();
+        }
+        return MapScope(context, buffer_.Get(), D3D11_MAP_WRITE_DISCARD);
     }
     void StructuredBuffer::UnMap(ID3D11DeviceContext* context)
     {
         context->Unmap(buffer_.Get(), 0);
     }
-    void StructuredBuffer::BindSRV(ID3D11DeviceContext* context, uint32 slot, ShaderStage::Flags stage_flag)
+    void StructuredBuffer::BindSRV(ID3D11DeviceContext* context, uint32 slot, ShaderStage::Flags stage_buffer_usage)
     {
-        ASSERT(!!SRV_);
-		if (stage_flag & ShaderStage::kVS)
+        ASSERT(nullptr != SRV_);
+		if (stage_buffer_usage & ShaderStage::kVS)
 		{
 			context->VSSetShaderResources(slot, 1, SRV_.GetAddressOf());
 		}
-		if (stage_flag & ShaderStage::kPS)
+		if (stage_buffer_usage & ShaderStage::kPS)
 		{
 			context->PSSetShaderResources(slot, 1, SRV_.GetAddressOf());
 		}
+    }
+    void StructuredBuffer::BindUAV(ID3D11DeviceContext* context, uint32 slot)
+    {
+        ASSERT(nullptr != UAV_);
+        context->CSSetUnorderedAccessViews(slot, 1, UAV_.GetAddressOf(), nullptr);
+    }
+
+    MapScope::MapScope(ID3D11DeviceContext* ctx, ID3D11Buffer* buf, D3D11_MAP type)
+        : context_(ctx), buffer_(buf)
+    {
+		HRESULT hr = context_->Map(buffer_, 0, type, 0, &mapped_);
+        if (FAILED(hr))
+        {
+			HRESULT_ERROR_MESSAGE(hr);
+			mapped_ok_ = false;
+		}
+        else
+        {
+            mapped_ok_ = true;
+        }
+    }
+    MapScope::~MapScope()
+    {
+        if (mapped_ok_) { context_->Unmap(buffer_, 0); }
     }
 }

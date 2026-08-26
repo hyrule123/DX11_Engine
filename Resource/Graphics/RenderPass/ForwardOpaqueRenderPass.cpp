@@ -61,9 +61,9 @@ namespace engine
 				}
 
 				//버퍼 사이즈 계산
-				size_t instances_count = span_end - i;
-				size_t instance_data_stride = render_queue_[i].renderer->GetInstanceDataStride(GetPassOrder());
-				size_t total_instance_data_size = instance_data_stride * instances_count;
+				const uint32 instances_count = (uint32)(span_end - i);
+				const uint32 instance_data_stride = (uint32)render_queue_[i].renderer->GetInstanceDataStride(GetPassOrder());
+				const uint32 total_instance_data_size = instance_data_stride * instances_count;
 
 				//구조화 버퍼 탐색 및 업로드
 				u_ptr<StructuredBuffer>& struct_buffer = instancing_data_buffers_[render_queue_[i].key];
@@ -73,33 +73,29 @@ namespace engine
 				{
 					struct_buffer = std::make_unique<StructuredBuffer>();
 
-					constexpr StructuredBuffer::BufferFlag flag = StructuredBuffer::kSRV | StructuredBuffer::kCPUDynamic;
-
-					bool result =
-						struct_buffer->Create(flag, instance_data_stride, instances_count);
-
+					bool result = struct_buffer->CreateDynamicBuffer(instance_data_stride, instances_count);
 					ASSERT(result);
 				}
 
 				// 사이즈 부족 시 2배 크기로 resize
-				if (struct_buffer->GetTotalByteSize() < total_instance_data_size)
+				if (instances_count > struct_buffer->GetCapacity())
 				{
-					bool result = struct_buffer->Resize(context, instances_count * 2, false);
+					bool result = struct_buffer->Reserve(instances_count * 2);
 					ASSERT(result);
 				}
 
 				{
 					ASSERT(struct_buffer->GetElementStride() == instance_data_stride);
 
+					MapScope map_scope = struct_buffer->MapDynamic(context);
+
 					uint8* mapped_data = 
-						static_cast<uint8*>(struct_buffer->MapForWriteDiscard(context));
+						static_cast<uint8*>(map_scope.Data());
 
 					for (size_t j = 0; j < instances_count; ++j)
 					{
 						render_queue_[i + j].renderer->WritePerObjData((mapped_data + j * instance_data_stride));
 					}
-
-					struct_buffer->UnMap(context);
 				}
 
 				struct_buffer->BindSRV(context, SLOT_T_PER_INSTANCE, ShaderStage::kVS | ShaderStage::kPS);

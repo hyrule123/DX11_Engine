@@ -20,6 +20,10 @@ namespace engine
         virtual void Bind(ID3D11DeviceContext* context) override;
         void Unbind(ID3D11DeviceContext* context);
 
+		std::array<UINT, 3> GetThreadGroupSize() const { return thread_group_size_; }
+
+		bool IsReady() const { return compute_shader_ != nullptr; }
+
     private:
         ComPtr<ID3D11ComputeShader> compute_shader_ = {};
 		std::array<UINT, 3> thread_group_size_ = {};

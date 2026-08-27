@@ -137,12 +137,12 @@ namespace engine
 		// SRV와 UAV가 생성되어 있을 경우 재생성
 		if (SRV_)
 		{
-			srv = CreateSRV(buffer.Get(), new_capacity);
+			srv = CreateSRV(buffer.Get(), format_, new_capacity);
 			if (!srv) { return false; }
 		}
 		if (UAV_)
 		{
-			uav = CreateUAV(buffer.Get(), new_capacity);
+			uav = CreateUAV(buffer.Get(), format_, new_capacity);
 			if (!uav) { return false; }
 		}
 
@@ -235,7 +235,7 @@ namespace engine
 		ComPtr<ID3D11ShaderResourceView> srv;
 		if (desc.BindFlags & D3D11_BIND_SHADER_RESOURCE)
 		{
-			srv = CreateSRV(buffer.Get(), capacity);
+			srv = CreateSRV(buffer.Get(), format, capacity);
 			if (!srv)
 			{
 				ERROR_MESSAGE("SRV 생성 실패");
@@ -246,7 +246,7 @@ namespace engine
 		ComPtr<ID3D11UnorderedAccessView> uav;
 		if (desc.BindFlags & D3D11_BIND_UNORDERED_ACCESS)
 		{
-			uav = CreateUAV(buffer.Get(), capacity);
+			uav = CreateUAV(buffer.Get(), format, capacity);
 			if (!uav)
 			{
 				ERROR_MESSAGE("UAV 생성 실패");
@@ -266,7 +266,7 @@ namespace engine
 		return true;
 	}
 
-	ComPtr<ID3D11ShaderResourceView> TypedBuffer::CreateSRV(ID3D11Buffer* buffer, uint32 capacity, uint32 start, uint32 count)
+	ComPtr<ID3D11ShaderResourceView> TypedBuffer::CreateSRV(ID3D11Buffer* buffer, DXGI_FORMAT format, uint32 capacity, uint32 start, uint32 count)
 	{
 		if (buffer == nullptr)
 		{
@@ -289,7 +289,7 @@ namespace engine
 		ComPtr<ID3D11ShaderResourceView> srv;
 
 		D3D11_SHADER_RESOURCE_VIEW_DESC srv_desc = {};
-		srv_desc.Format = format_;
+		srv_desc.Format = format;
 		srv_desc.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
 		srv_desc.Buffer.FirstElement = (UINT)start;
 		srv_desc.Buffer.NumElements = (UINT)count;
@@ -305,7 +305,7 @@ namespace engine
 
 		return srv;
 	}
-	ComPtr<ID3D11UnorderedAccessView> TypedBuffer::CreateUAV(ID3D11Buffer* buffer, uint32 capacity, uint32 start, uint32 count)
+	ComPtr<ID3D11UnorderedAccessView> TypedBuffer::CreateUAV(ID3D11Buffer* buffer, DXGI_FORMAT format, uint32 capacity, uint32 start, uint32 count)
 	{
 		if (buffer == nullptr)
 		{
@@ -330,7 +330,7 @@ namespace engine
 		ComPtr<ID3D11UnorderedAccessView> uav;
 
 		D3D11_UNORDERED_ACCESS_VIEW_DESC uav_desc = {};
-		uav_desc.Format = format_;
+		uav_desc.Format = format;
 		uav_desc.ViewDimension = D3D11_UAV_DIMENSION_BUFFER;
 		uav_desc.Buffer.FirstElement = (UINT)start;
 		uav_desc.Buffer.NumElements = (UINT)count;

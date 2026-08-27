@@ -33,6 +33,10 @@ namespace engine
 		// 로드 후 변하지 않는 데이터용.
 		// IMMUTABLE은 초기 데이터가 필수 — data가 null이면 생성이 실패
 		bool CreateImmutableBuffer(DXGI_FORMAT format, const void* data, uint32 count);
+		template <typename T>
+		bool CreateImmutableBuffer(DXGI_FORMAT format, std::span<const T> data) {
+			return CreateImmutableBuffer(format, data.data(), (uint32)data.size());
+		}
 
 		// CPU가 매 프레임 갱신하는 데이터용.
 		// WRITE_DISCARD가 어차피 전체를 버리므로
@@ -70,8 +74,8 @@ namespace engine
 		bool CreateBufferImpl(DXGI_FORMAT format, uint32 capacity, D3D11_USAGE buffer_usage, UINT bind_flags, UINT cpu_access_flags, const void* initial_data);
 
 		// count == 0이면 전체 범위. start + count <= capacity
-		ComPtr<ID3D11ShaderResourceView> CreateSRV(ID3D11Buffer* buffer, uint32 capacity , uint32 start = 0, uint32 count = 0);
-		ComPtr<ID3D11UnorderedAccessView> CreateUAV(ID3D11Buffer* buffer, uint32 capacity, uint32 start = 0, uint32 count = 0);
+		ComPtr<ID3D11ShaderResourceView> CreateSRV(ID3D11Buffer* buffer, DXGI_FORMAT format, uint32 capacity , uint32 start = 0, uint32 count = 0);
+		ComPtr<ID3D11UnorderedAccessView> CreateUAV(ID3D11Buffer* buffer, DXGI_FORMAT format, uint32 capacity, uint32 start = 0, uint32 count = 0);
 
         ComPtr<ID3D11Buffer> buffer_ = {};
 		ComPtr<ID3D11ShaderResourceView> SRV_ = {};

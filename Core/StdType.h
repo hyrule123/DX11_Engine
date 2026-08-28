@@ -16,6 +16,7 @@ namespace engine
 	using uint64 = std::uint64_t;
 
 	struct int32_2 { int32 x, y; };
+	struct uint32_2 { uint32 x, y; };
 
 	union RenderKey
 	{

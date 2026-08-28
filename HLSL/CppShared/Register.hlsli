@@ -8,6 +8,7 @@
 #define REG_T(slot_num) t##slot_num
 #define REG_B(slot_num) b##slot_num
 #define REG_S(slot_num) s##slot_num
+#define REG_U(slot_num) u##slot_num
 
 #endif //__HLSL
 
@@ -16,6 +17,7 @@
 #define REG_T(slot_num) slot_num
 #define REG_B(slot_num) slot_num
 #define REG_S(slot_num) slot_num
+#define REG_U(slot_num) slot_num
 
 #endif //__cplusplus
 

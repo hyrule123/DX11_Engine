@@ -58,7 +58,7 @@ namespace engine
 			img->GetImages(),
 			img->GetImageCount(),
 			meta,
-			shader_resource_view_.ReleaseAndGetAddressOf()
+			SRV_.ReleaseAndGetAddressOf()
 		);
 
 		if (FAILED(hr))
@@ -68,7 +68,7 @@ namespace engine
 		}
 
 		ComPtr<ID3D11Resource> temp = {};
-		shader_resource_view_->GetResource(temp.GetAddressOf());
+		SRV_->GetResource(temp.GetAddressOf());
 		temp.As(&tex2D_buffer_);
 		if (nullptr == tex2D_buffer_)
 		{
@@ -99,19 +99,19 @@ namespace engine
 	{
 		if (stageflag & ShaderStage::kVS)
 		{
-			context->VSSetShaderResources(slot, 1, shader_resource_view_.GetAddressOf());
+			context->VSSetShaderResources(slot, 1, SRV_.GetAddressOf());
 		}
 		if (stageflag & ShaderStage::kGS)
 		{
-			context->GSSetShaderResources(slot, 1, shader_resource_view_.GetAddressOf());
+			context->GSSetShaderResources(slot, 1, SRV_.GetAddressOf());
 		}
 		if (stageflag & ShaderStage::kPS)
 		{
-			context->PSSetShaderResources(slot, 1, shader_resource_view_.GetAddressOf());
+			context->PSSetShaderResources(slot, 1, SRV_.GetAddressOf());
 		}
 		if (stageflag & ShaderStage::kCS)
 		{
-			context->CSSetShaderResources(slot, 1, shader_resource_view_.GetAddressOf());
+			context->CSSetShaderResources(slot, 1, SRV_.GetAddressOf());
 		}
 	}
 
@@ -137,34 +137,129 @@ namespace engine
 	}
 
 	bool Texture2D::CreateTexture2D(
-		
 		D3D11_TEXTURE2D_DESC* desc,
 		const D3D11_SUBRESOURCE_DATA* initial_data
 	)
 	{
-		HRESULT hr = GraphicsDevice::GetInst().GetDevice()->CreateTexture2D(desc, initial_data, tex2D_buffer_.ReleaseAndGetAddressOf());
-
-		if (FAILED(hr))
+		if (desc == nullptr)
 		{
-			HRESULT_ERROR_MESSAGE(hr);
+			ERROR_MESSAGE("CreateTexture2D: desc is nullptr");
 			return false;
 		}
 
-		width_ = desc->Width;
-		height_ = desc->Height;
+		ComPtr<ID3D11Texture2D> tex = CreateTexture2DImpl(desc, initial_data);
+		ComPtr<ID3D11ShaderResourceView> srv = nullptr;
+		ComPtr<ID3D11UnorderedAccessView> uav = nullptr;
+		if (tex)
+		{
+			// 기본 SRV 생성
+			if(desc->BindFlags & D3D11_BIND_SHADER_RESOURCE)
+			{
+				srv = CreateSRVImpl(tex.Get(), nullptr);
+				if (srv == nullptr)
+				{
+					ERROR_MESSAGE("CreateTexture2D: Failed to create default SRV");
+					return false;
+				}
+			}
+			// 기본 UAV 생성
+			if (desc->BindFlags & D3D11_BIND_UNORDERED_ACCESS)
+			{
+				D3D11_UNORDERED_ACCESS_VIEW_DESC uav_desc = {};
+				uav_desc.Format = desc->Format;
+				uav_desc.ViewDimension = D3D11_UAV_DIMENSION_TEXTURE2D;
+				uav_desc.Texture2D.MipSlice = 0;
+				uav = CreateUAVImpl(tex.Get(), &uav_desc);
 
+				if (uav == nullptr)
+				{
+					ERROR_MESSAGE("CreateTexture2D: Failed to create default UAV");
+					return false;
+				}
+			}
+
+			tex2D_buffer_ = std::move(tex);
+			SRV_ = std::move(srv);
+			UAV_ = std::move(uav);
+			width_ = desc->Width;
+			height_ = desc->Height;
+		}
 		return true;
+	}
+	ComPtr<ID3D11Texture2D> Texture2D::CreateTexture2DImpl(D3D11_TEXTURE2D_DESC* desc, const D3D11_SUBRESOURCE_DATA* initial_data)
+	{
+		ComPtr<ID3D11Texture2D> tex;
+		HRESULT hr = GraphicsDevice::GetInst().GetDevice()->CreateTexture2D(desc, initial_data, tex.GetAddressOf());
+		if (FAILED(hr))
+		{
+			HRESULT_ERROR_MESSAGE(hr);
+			return nullptr;
+		}
+		return tex;
 	}
 	bool Texture2D::CreateSRV(D3D11_SHADER_RESOURCE_VIEW_DESC* srv_desc)
 	{
-		HRESULT hr = GraphicsDevice::GetInst().GetDevice()->CreateShaderResourceView(tex2D_buffer_.Get(), srv_desc, shader_resource_view_.GetAddressOf());
+		ComPtr<ID3D11ShaderResourceView> srv = CreateSRVImpl(tex2D_buffer_.Get(), srv_desc);
+		if (srv)
+		{
+			SRV_ = std::move(srv);
+			return true;
+		}
+		return false;
+	}
+	bool Texture2D::CreateUAV(D3D11_UNORDERED_ACCESS_VIEW_DESC* uav_desc)
+	{
+		ComPtr<ID3D11UnorderedAccessView> uav = CreateUAVImpl(tex2D_buffer_.Get(), uav_desc);
+		if (uav)
+		{
+			UAV_ = std::move(uav);
+			return true;
+		}
+		return false;
+	}
+	void Texture2D::BindUAV(ID3D11DeviceContext* context, UINT slot)
+	{
+		context->CSSetUnorderedAccessViews(slot, 1, UAV_.GetAddressOf(), nullptr);
+	}
+	void Texture2D::UnbindUAV(ID3D11DeviceContext* context, UINT slot)
+	{
+		ID3D11UnorderedAccessView* null_uav = nullptr;
+		context->CSSetUnorderedAccessViews(slot, 1, &null_uav, nullptr);
+	}
+	ComPtr<ID3D11ShaderResourceView> Texture2D::CreateSRVImpl(ID3D11Texture2D* texture, D3D11_SHADER_RESOURCE_VIEW_DESC* srv_desc)
+	{
+		if (texture == nullptr)
+		{
+			ERROR_MESSAGE("CreateSRVImpl: texture is nullptr");
+			return nullptr;
+		}
+		ComPtr<ID3D11ShaderResourceView> srv;
+		HRESULT hr = GraphicsDevice::GetInst().GetDevice()->CreateShaderResourceView(texture, srv_desc, srv.GetAddressOf());
 		if (FAILED(hr))
 		{
 			HRESULT_ERROR_MESSAGE(hr);
-			return false;
+			return nullptr;
 		}
-		return true;
+		return srv;
 	}
+
+	ComPtr<ID3D11UnorderedAccessView> Texture2D::CreateUAVImpl(ID3D11Texture2D* texture, D3D11_UNORDERED_ACCESS_VIEW_DESC* uav_desc)
+	{
+		if (texture == nullptr)
+		{
+			ERROR_MESSAGE("CreateUAVImpl: texture is nullptr");
+			return nullptr;
+		}
+		ComPtr<ID3D11UnorderedAccessView> uav;
+		HRESULT hr = GraphicsDevice::GetInst().GetDevice()->CreateUnorderedAccessView(texture, uav_desc, uav.GetAddressOf());
+		if (FAILED(hr))
+		{
+			HRESULT_ERROR_MESSAGE(hr);
+			return nullptr;
+		}
+		return uav;
+	}
+
 	bool Texture2D::Resize(uint32 width, uint32 height)
 	{
 		if (!tex2D_buffer_)
@@ -179,26 +274,29 @@ namespace engine
 		desc.Width = width;
 		desc.Height = height;
 
-		bool result = CreateTexture2D(&desc);
-		if (false == result)
+		ComPtr<ID3D11Texture2D> new_texture = CreateTexture2DImpl(&desc);
+		if (new_texture == nullptr)
 		{
-			ASSERT(false);
+			ERROR_MESSAGE("Texture2D Resize 실패: 새로운 텍스처 생성 실패");
 			return false;
 		}
 
-		if (shader_resource_view_)
+		ComPtr<ID3D11ShaderResourceView> new_srv;
+		if (SRV_)
 		{
 			D3D11_SHADER_RESOURCE_VIEW_DESC srv_desc = {};
-			shader_resource_view_->GetDesc(&srv_desc);
+			SRV_->GetDesc(&srv_desc);
 
-			result = CreateSRV(&srv_desc);
-			if (false == result)
+			new_srv = CreateSRVImpl(new_texture.Get(), &srv_desc);
+			if (new_srv == nullptr)
 			{
-				ASSERT(false);
+				ERROR_MESSAGE("Texture2D Resize 실패: 새로운 SRV 생성 실패");
 				return false;
 			}
 		}
 
+		tex2D_buffer_ = std::move(new_texture);
+		SRV_ = std::move(new_srv);
 		return true;
 	}
 	void Texture2D::SetTexture2D(ComPtr<ID3D11Texture2D> texture)

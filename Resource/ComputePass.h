@@ -2,10 +2,12 @@
 #include <Engine/Core/Entity.h>
 
 #include <Engine/Core/CoreMinimal.h>
-
 // ComputeShader: 코드(처리 방법)만 == Resource
 // ComputePass: ComputeShader + 데이터 준비 + 결과 저장
 // 스레드 그룹 계산, Bind - Dispatch - Unbind, UAV/SRV 바인딩 등등
+
+struct ID3D11DeviceContext;
+
 namespace engine
 {
     class ComputeShader;
@@ -17,8 +19,10 @@ namespace engine
 		ComputePass(const HashedStringView& concrete_class_name);
 		virtual ~ComputePass() override;
 
-        // Init에서 호출하세요
-		bool LoadComputeShader(const HashedStringView& res_key);
+		virtual void Init() final;
+        
+        // 자동 호출됨
+        virtual s_ptr<ComputeShader> LoadComputeShader() = 0;
 
 		void Execute(ID3D11DeviceContext* context);
 

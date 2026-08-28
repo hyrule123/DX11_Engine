@@ -2,9 +2,13 @@
 #include "ComputeShader.h"
 
 #include <Engine/Util/file_system.h>
+
 #include <Engine/Core/Debug.h>
+#include <Engine/Core/DX11.h>
 
 #include <Engine/Manager/GraphicsDevice.h>
+
+#pragma comment(lib, "dxguid.lib")
 
 namespace engine
 {

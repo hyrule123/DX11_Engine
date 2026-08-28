@@ -119,7 +119,7 @@ namespace engine
 		if (max_size > debug_buffer_->GetElementCount())
 		{
 			//벡터랑 버퍼 확장 타이밍 맞추기 위해 capacity() 사용
-			bool result = debug_buffer_->Reserve(max_size);
+			bool result = debug_buffer_->Reserve((uint32)max_size);
 			ASSERT(result);
 		}
 

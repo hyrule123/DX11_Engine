@@ -39,15 +39,25 @@ namespace engine
             ShaderStage::Flags stageflag = ShaderStage::kPS
         );
 
-        ComPtr<ID3D11ShaderResourceView> GetSRV() const { return shader_resource_view_; }
-        ID3D11ShaderResourceView* GetRawSRV() const { return shader_resource_view_.Get(); }
+        ComPtr<ID3D11ShaderResourceView> GetSRV() const { return SRV_; }
+        ID3D11ShaderResourceView* GetRawSRV() const { return SRV_.Get(); }
 
+        // BindFlag에 따라 기본 SRV, UAV가 생성됨.
         bool CreateTexture2D(
             D3D11_TEXTURE2D_DESC* desc,
             const D3D11_SUBRESOURCE_DATA* initial_data = nullptr
         );
+
+        // 기본 SRV/UAV는 생성되어 있음. 별도 설정으로 생성하길 원한다면 호출할 것
         bool CreateSRV(D3D11_SHADER_RESOURCE_VIEW_DESC* srv_desc);
 
+        // 기본 SRV/UAV는 생성되어 있음. 별도 설정으로 생성하길 원한다면 호출할 것
+		bool CreateUAV(D3D11_UNORDERED_ACCESS_VIEW_DESC* uav_desc);
+
+		void BindUAV(ID3D11DeviceContext* context, UINT slot);
+		void UnbindUAV(ID3D11DeviceContext* context, UINT slot);
+
+        // 상속 시 Super::Resize() 호출할 것
 		virtual bool Resize(uint32 width, uint32 height);
 
         uint32 GetWidth() const { return width_; }
@@ -57,8 +67,11 @@ namespace engine
         void SetTexture2D(ComPtr<ID3D11Texture2D> texture);
         ComPtr<ID3D11Texture2D> GetTexture2D() const { return tex2D_buffer_; }
 
+        void SetUAV(ComPtr<ID3D11UnorderedAccessView> unordered_access_view) {
+            UAV_ = std::move(unordered_access_view);
+        }
         void SetSRV(ComPtr<ID3D11ShaderResourceView> shader_resource_view) {
-            shader_resource_view_ = std::move(shader_resource_view);
+            SRV_ = std::move(shader_resource_view);
         }
 
         void SetSize(uint32 width, uint32 height) {
@@ -67,10 +80,17 @@ namespace engine
         }
 
         s_ptr<DirectX::ScratchImage> LoadScratchImageFromFile(const stdfs::path& res_path);
-
     private:
+		ComPtr<ID3D11Texture2D> CreateTexture2DImpl(
+			D3D11_TEXTURE2D_DESC* desc,
+			const D3D11_SUBRESOURCE_DATA* initial_data = nullptr
+		);
+		ComPtr<ID3D11ShaderResourceView> CreateSRVImpl(ID3D11Texture2D* texture, D3D11_SHADER_RESOURCE_VIEW_DESC* srv_desc);
+		ComPtr<ID3D11UnorderedAccessView> CreateUAVImpl(ID3D11Texture2D* texture, D3D11_UNORDERED_ACCESS_VIEW_DESC* uav_desc);
+
         ComPtr<ID3D11Texture2D>					tex2D_buffer_ = {};
-        ComPtr<ID3D11ShaderResourceView>		shader_resource_view_ = {};
+        ComPtr<ID3D11ShaderResourceView>		SRV_ = {};
+		ComPtr<ID3D11UnorderedAccessView>		UAV_ = {};
 
         UINT width_ = {};
         UINT height_ = {};

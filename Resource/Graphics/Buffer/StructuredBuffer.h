@@ -81,6 +81,7 @@ namespace engine
 
         //Dynamic 버퍼 모드에서만 사용 가능. 반드시 UnMap() 호출할것.
 		//WriteDiscard 모드로 맵핑되므로 기존 데이터는 모두 날아감.
+        //TODO: 이거 너무 위험함. 주소를 받아서 작성하는 방식으로 변경할것
         MapScope MapDynamic(ID3D11DeviceContext* context);
         void UnMap(ID3D11DeviceContext* context);
 

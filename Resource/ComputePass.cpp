@@ -15,10 +15,13 @@ namespace engine
 
 	ComputePass::~ComputePass()
 	{}
-	bool ComputePass::LoadComputeShader(const HashedStringView& res_key)
+	void ComputePass::Init()
 	{
-		compute_shader_ = ResourceManager::GetInst().LoadFromFile<ComputeShader>(res_key);
-		return compute_shader_ != nullptr;
+		Super::Init();
+
+		compute_shader_ = LoadComputeShader();
+
+		ASSERT(compute_shader_);
 	}
 	void ComputePass::Execute(ID3D11DeviceContext* context)
 	{

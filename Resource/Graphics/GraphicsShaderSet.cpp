@@ -41,10 +41,10 @@ namespace engine
 	bool GraphicsShaderSet::CreateInputLayout(const HashedStringView& layout_name)
 	{
 		s_ptr<InputLayoutDesc> desc = ResourceManager::GetInst().Find<InputLayoutDesc>(layout_name);
-		return CreateInputLayout(desc);
+		return CreateInputLayout(desc.get());
 	}
 
-	bool GraphicsShaderSet::CreateInputLayout(s_ptr<InputLayoutDesc> desc)
+	bool GraphicsShaderSet::CreateInputLayout(InputLayoutDesc* desc)
 	{
 		if (!vertex_shader_)
 		{
@@ -61,7 +61,7 @@ namespace engine
 		const auto& descs = desc->GetInputLayoutDesc();
 		const auto& byte_code = vertex_shader_->GetByteCode();
 
-		input_layout_ = desc->CreateInputLayout(vertex_shader_);
+		input_layout_ = desc->CreateInputLayout(vertex_shader_.get());
 
 		return (bool)input_layout_;
 	}

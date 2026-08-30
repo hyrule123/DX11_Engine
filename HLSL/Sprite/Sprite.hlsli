@@ -3,7 +3,7 @@
 
 #include <Engine/HLSL/CppShared/CoreMinimal.hlsli>
 
-struct alignas(16)     SpriteInstanceData
+struct alignas(16) SpriteInstanceData
 {
 	matrix world_mat;
 	uint sprite_frame_idx;

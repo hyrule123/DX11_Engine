@@ -85,14 +85,20 @@ namespace engine
 
 		DirectX::ScratchImage image;
 		DirectX::CaptureTexture(device, context, tex2D_buffer_.Get(), image);
-		DirectX::SaveToWICFile(
+		HRESULT result = DirectX::SaveToWICFile(
 			*image.GetImage(0, 0, 0), 
 			DirectX::WIC_FLAGS_NONE,
 			DirectX::GetWICCodec(DirectX::WIC_CODEC_PNG), 
 			res_path.wstring().c_str()
 		);
 
-		return false;
+		if (FAILED(result))
+		{
+			HRESULT_ERROR_MESSAGE(result);
+			return false;
+		}
+
+		return true;
 	}
 
 	void Texture2D::BindSRV(ID3D11DeviceContext* context, UINT slot, ShaderStage::Flags stageflag)

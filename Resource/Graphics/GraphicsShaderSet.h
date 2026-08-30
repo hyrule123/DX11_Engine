@@ -35,7 +35,7 @@ namespace engine
         void SetVertexShader(s_ptr<VertexShader> vertex_shader);
 
         bool CreateInputLayout(const HashedStringView& layout_desc_name);
-        bool CreateInputLayout(s_ptr<InputLayoutDesc> input_layout_desc);
+        bool CreateInputLayout(InputLayoutDesc* input_layout_desc);
 
         bool SetPixelShader(const HashedStringView& ps_name);
         void SetPixelShader(s_ptr<PixelShader> pixel_shader) {

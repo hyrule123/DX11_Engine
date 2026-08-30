@@ -315,7 +315,7 @@ namespace engine
 		debug_shader_set_->SetPerInstanceDataStride(sizeof(SpriteInstanceData));
 		//Shaders
 		debug_shader_set_->SetVertexShader("Shader/Debug_VS.cso"_hash);
-		debug_shader_set_->CreateInputLayout(input_layout_desc);
+		debug_shader_set_->CreateInputLayout(input_layout_desc.get());
 		debug_shader_set_->SetPixelShader("Shader/Debug_PS.cso"_hash);
 		debug_shader_set_->SetDepthStencilState(dss);
 #pragma endregion // GRAPHICS SHADER SET

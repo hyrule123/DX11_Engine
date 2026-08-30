@@ -101,8 +101,6 @@ namespace engine
         ComPtr<ID3D11ShaderResourceView> CreateSRVImpl(ID3D11Buffer* buffer, uint32 capacity, uint32 start = 0, uint32 count = 0);
         ComPtr<ID3D11UnorderedAccessView> CreateUAVImpl(ID3D11Buffer* buffer, uint32 capacity, uint32 start = 0, uint32 count = 0);
 
-
-
         ComPtr<ID3D11Buffer>              buffer_ = {};
         ComPtr<ID3D11ShaderResourceView>  SRV_ = {};
         ComPtr<ID3D11UnorderedAccessView> UAV_ = {};

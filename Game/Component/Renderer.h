@@ -44,6 +44,9 @@ namespace engine
         size_t GetInstanceDataStride(RenderPassOrder pass) const;
         virtual void WritePerObjData(void* ptr) = 0;
 
+    protected:
+        
+
     private:
         Transform* my_transform_ = {};
 

@@ -103,7 +103,7 @@ namespace engine
 		{
 			layout_desc->AddLayoutDesc(desc);
 		}
-		result = shader_set_->CreateInputLayout(layout_desc);
+		result = shader_set_->CreateInputLayout(layout_desc.get());
 		ASSERT(result);
 
 		s_ptr<PixelShader> ps = EntityManager::CreateEntity<PixelShader>();

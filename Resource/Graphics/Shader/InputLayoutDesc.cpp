@@ -15,7 +15,7 @@ namespace engine
 	{}
 	InputLayoutDesc::~InputLayoutDesc()
 	{}
-	ComPtr<ID3D11InputLayout> InputLayoutDesc::CreateInputLayout( s_ptr<VertexShader> vs)
+	ComPtr<ID3D11InputLayout> InputLayoutDesc::CreateInputLayout(VertexShader* vs)
 	{
 		ComPtr<ID3D11InputLayout> input_layout = nullptr;
 		auto* device = GraphicsDevice::GetInst().GetDevice();

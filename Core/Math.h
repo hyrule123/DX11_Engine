@@ -10,6 +10,7 @@ using float4 = engine::Vector4;
 using matrix = engine::Matrix;
 using uint = engine::uint32;
 using uint2 = engine::uint32_2;
+using int2 = engine::uint32_2;
 
 namespace engine
 {

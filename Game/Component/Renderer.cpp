@@ -6,8 +6,8 @@
 #include <Engine/Manager/ResourceManager.h>
 #include <Engine/Manager/TimeManager.h>
 
-#include <Engine/Resource/Graphics/Mesh.h>
-#include <Engine/Resource/Graphics/Material.h>
+#include <Engine/Resource/GPU/Mesh.h>
+#include <Engine/Resource/GPU/Material.h>
 
 #include <Engine/Game/Component/Transform.h>
 

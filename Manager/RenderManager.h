@@ -1,7 +1,7 @@
 #pragma once
 
-#include <Engine/Resource/Graphics/RenderPass/ForwardOpaqueRenderPass.h>
-#include <Engine/Resource/Graphics/RenderPass/PresentPass.h>
+#include <Engine/Resource/GPU/RenderPass/ForwardOpaqueRenderPass.h>
+#include <Engine/Resource/GPU/RenderPass/PresentPass.h>
 
 #include <Engine/Core/CoreMinimal.h>
 

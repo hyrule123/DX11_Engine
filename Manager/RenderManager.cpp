@@ -5,16 +5,16 @@
 #include <Engine/Game/Component/Renderer.h>
 #include <Engine/Game/Component/Transform.h>
 
-#include <Engine/Resource/Graphics/Buffer/ConstantBuffer.h>
-#include <Engine/Resource/Graphics/Buffer/StructuredBuffer.h>
-#include <Engine/Resource/Graphics/Buffer/VertexBuffer.h>
-#include <Engine/Resource/Graphics/Buffer/IndexBuffer.h>
-#include <Engine/Resource/Graphics/State/DepthStencilState.h>
-#include <Engine/Resource/Graphics/Mesh.h>
-#include <Engine/Resource/Graphics/GraphicsShaderSet.h>
+#include <Engine/Resource/GPU/Buffer/ConstantBuffer.h>
+#include <Engine/Resource/GPU/Buffer/StructuredBuffer.h>
+#include <Engine/Resource/GPU/Buffer/VertexBuffer.h>
+#include <Engine/Resource/GPU/Buffer/IndexBuffer.h>
+#include <Engine/Resource/GPU/State/DepthStencilState.h>
+#include <Engine/Resource/GPU/Mesh.h>
+#include <Engine/Resource/GPU/GraphicsShaderSet.h>
 
-#include <Engine/Resource/Graphics/Shader/InputLayoutDesc.h>
-#include <Engine/Resource/Graphics/Vertex.h>
+#include <Engine/Resource/GPU/Shader/InputLayoutDesc.h>
+#include <Engine/Resource/GPU/Vertex.h>
 
 #include <Engine/HLSL/CppShared/Struct.hlsli>
 #include <Engine/HLSL/CppShared/Register.hlsli>

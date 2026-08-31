@@ -4,12 +4,12 @@
 #include <Engine/Manager/GraphicsDevice.h>
 #include <Engine/Manager/ResourceManager.h>
 
-#include <Engine/Resource/Graphics/Shader/InputLayoutDesc.h>
-#include <Engine/Resource/Graphics/Shader/VertexShader.h>
-#include <Engine/Resource/Graphics/State/RasterizerState.h>
-#include <Engine/Resource/Graphics/Shader/PixelShader.h>
-#include <Engine/Resource/Graphics/State/DepthStencilState.h>
-#include <Engine/Resource/Graphics/State/BlendState.h>
+#include <Engine/Resource/GPU/Shader/InputLayoutDesc.h>
+#include <Engine/Resource/GPU/Shader/VertexShader.h>
+#include <Engine/Resource/GPU/State/RasterizerState.h>
+#include <Engine/Resource/GPU/Shader/PixelShader.h>
+#include <Engine/Resource/GPU/State/DepthStencilState.h>
+#include <Engine/Resource/GPU/State/BlendState.h>
 
 #include <Engine/Core/Debug.h>
 

@@ -4,9 +4,9 @@
 #include <Engine/Manager/ResourceManager.h>
 #include <Engine/Manager/RenderManager.h>
 
-#include <Engine/Resource/Graphics/Material.h>
-#include <Engine/Resource/Graphics/Mesh.h>
-#include <Engine/Resource/Graphics/Shader/VertexShader.h>
+#include <Engine/Resource/GPU/Material.h>
+#include <Engine/Resource/GPU/Mesh.h>
+#include <Engine/Resource/GPU/Shader/VertexShader.h>
 
 #include <Engine/Game/Component/Transform.h>
 

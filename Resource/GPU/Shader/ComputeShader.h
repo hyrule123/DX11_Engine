@@ -1,5 +1,5 @@
 #pragma once
-#include <Engine/Resource/Graphics/Shader/Shader.h>
+#include <Engine/Resource/GPU/Shader/Shader.h>
 
 #include <Engine/Core/CoreMinimal.h>
 

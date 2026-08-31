@@ -4,15 +4,15 @@
 #include <Engine/Manager/GraphicsDevice.h>
 #include <Engine/Manager/ResourceManager.h>
 
-#include <Engine/Resource/Graphics/GraphicsShaderSet.h>
-#include <Engine/Resource/Graphics/Material.h>
-#include <Engine/Resource/Graphics/Mesh.h>
-#include <Engine/Resource/Graphics/Buffer/VertexBuffer.h>
-#include <Engine/Resource/Graphics/Buffer/IndexBuffer.h>
-#include <Engine/Resource/Graphics/Vertex.h>
-#include <Engine/Resource/Graphics/State/RasterizerState.h>
-#include <Engine/Resource/Graphics/State/DepthStencilState.h>
-#include <Engine/Resource/Graphics/Shader/InputLayoutDesc.h>
+#include <Engine/Resource/GPU/GraphicsShaderSet.h>
+#include <Engine/Resource/GPU/Material.h>
+#include <Engine/Resource/GPU/Mesh.h>
+#include <Engine/Resource/GPU/Buffer/VertexBuffer.h>
+#include <Engine/Resource/GPU/Buffer/IndexBuffer.h>
+#include <Engine/Resource/GPU/Vertex.h>
+#include <Engine/Resource/GPU/State/RasterizerState.h>
+#include <Engine/Resource/GPU/State/DepthStencilState.h>
+#include <Engine/Resource/GPU/Shader/InputLayoutDesc.h>
 
 #include <Engine/Core/Math.h>
 #include <Engine/Core/Debug.h>

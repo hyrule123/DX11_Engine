@@ -3,9 +3,9 @@
 
 #include <Engine/Manager/RenderManager.h>
 
-#include <Engine/Resource/Graphics/Buffer/RenderTargetView.h>
-#include <Engine/Resource/Graphics/Buffer/DepthStencilView.h>
-#include <Engine/Resource/Graphics/RenderTargetGroup.h>
+#include <Engine/Resource/GPU/Buffer/RenderTargetView.h>
+#include <Engine/Resource/GPU/Buffer/DepthStencilView.h>
+#include <Engine/Resource/GPU/RenderTargetGroup.h>
 
 #include <Engine/Core/EngineMain.h>
 #include <Engine/Core/Constant.h>

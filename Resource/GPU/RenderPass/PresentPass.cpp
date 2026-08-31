@@ -4,16 +4,16 @@
 #include <Engine/Manager/GraphicsDevice.h>
 #include <Engine/Manager/ResourceManager.h>
 
-#include <Engine/Resource/Graphics/Shader/InputLayoutDesc.h>
-#include <Engine/Resource/Graphics/Shader/VertexShader.h>
-#include <Engine/Resource/Graphics/Shader/PixelShader.h>
-#include <Engine/Resource/Graphics/State/RasterizerState.h>
-#include <Engine/Resource/Graphics/Mesh.h>
-#include <Engine/Resource/Graphics/Buffer/VertexBuffer.h>
-#include <Engine/Resource/Graphics/Buffer/IndexBuffer.h>
+#include <Engine/Resource/GPU/Shader/InputLayoutDesc.h>
+#include <Engine/Resource/GPU/Shader/VertexShader.h>
+#include <Engine/Resource/GPU/Shader/PixelShader.h>
+#include <Engine/Resource/GPU/State/RasterizerState.h>
+#include <Engine/Resource/GPU/Mesh.h>
+#include <Engine/Resource/GPU/Buffer/VertexBuffer.h>
+#include <Engine/Resource/GPU/Buffer/IndexBuffer.h>
 
-#include <Engine/Resource/Graphics/RenderTargetGroup.h>
-#include <Engine/Resource/Graphics/GraphicsShaderSet.h>
+#include <Engine/Resource/GPU/RenderTargetGroup.h>
+#include <Engine/Resource/GPU/GraphicsShaderSet.h>
 
 #include <Engine/Core/Debug.h>
 

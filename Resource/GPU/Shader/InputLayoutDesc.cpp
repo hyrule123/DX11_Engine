@@ -1,7 +1,7 @@
 #include "Engine/Core/pch.h"
 #include "InputLayoutDesc.h"
 
-#include <Engine/Resource/Graphics/Shader/VertexShader.h>
+#include <Engine/Resource/GPU/Shader/VertexShader.h>
 
 #include <Engine/Manager/GraphicsDevice.h>
 

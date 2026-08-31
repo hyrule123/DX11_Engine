@@ -72,6 +72,7 @@ namespace engine
         s_ptr<DepthStencilState> depth_stencil_state_ = {};
 
 		size_t per_instance_data_stride_ = {};
+
         bool is_instancing_supported_ = {};
     };
 }

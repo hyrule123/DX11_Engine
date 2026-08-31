@@ -1,5 +1,5 @@
 #pragma once
-#include <Engine/Resource/Graphics/RenderPass/RenderPass.h>
+#include <Engine/Resource/GPU/RenderPass/RenderPass.h>
 
 #include <Engine/Core/StdType.h>
 

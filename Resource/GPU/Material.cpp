@@ -3,8 +3,8 @@
 
 #include <Engine/Manager/ResourceManager.h>
 
-#include <Engine/Resource/Graphics/GraphicsShaderSet.h>
-#include <Engine/Resource/Graphics/Buffer/Texture2D.h>
+#include <Engine/Resource/GPU/GraphicsShaderSet.h>
+#include <Engine/Resource/GPU/Buffer/Texture2D.h>
 
 #include <Engine/Core/Debug.h>
 

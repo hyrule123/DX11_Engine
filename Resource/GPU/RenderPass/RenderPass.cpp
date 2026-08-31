@@ -3,7 +3,7 @@
 
 #include <Engine/Core/DX11.h>
 
-#include <Engine/Resource/Graphics/RenderTargetGroup.h>
+#include <Engine/Resource/GPU/RenderTargetGroup.h>
 
 #include <Engine/Core/Debug.h>
 

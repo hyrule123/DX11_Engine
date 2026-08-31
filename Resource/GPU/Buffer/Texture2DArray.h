@@ -1,5 +1,5 @@
 #pragma once
-#include <Engine/Resource/Graphics/Buffer/Texture2D.h>
+#include <Engine/Resource/GPU/Buffer/Texture2D.h>
 
 struct ID3D11Device;
 

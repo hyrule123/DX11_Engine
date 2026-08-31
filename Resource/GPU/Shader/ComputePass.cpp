@@ -3,7 +3,7 @@
 
 #include <Engine/Manager/ResourceManager.h>
 
-#include <Engine/Resource/ComputeShader.h>
+#include <Engine/Resource/GPU/Shader/ComputeShader.h>
 
 #include <Engine/Core/Debug.h>
 

@@ -2,7 +2,7 @@
 #include "SpriteAnimation.h"
 
 #include <Engine/Resource/SpriteAnimClip.h>
-#include <Engine/Resource/Graphics/Buffer/Texture2DArray.h>
+#include <Engine/Resource/GPU/Buffer/Texture2DArray.h>
 
 #include <Engine/Core/Debug.h>
 

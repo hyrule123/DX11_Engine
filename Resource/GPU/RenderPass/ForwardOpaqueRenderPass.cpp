@@ -3,9 +3,9 @@
 
 #include <Engine/Game/Component/Renderer.h>
 
-#include <Engine/Resource/Graphics/Buffer/StructuredBuffer.h>
-#include <Engine/Resource/Graphics/Material.h>
-#include <Engine/Resource/Graphics/Mesh.h>
+#include <Engine/Resource/GPU/Buffer/StructuredBuffer.h>
+#include <Engine/Resource/GPU/Material.h>
+#include <Engine/Resource/GPU/Mesh.h>
 
 #include <Engine/Core/Debug.h>
 

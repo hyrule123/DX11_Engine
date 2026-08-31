@@ -100,7 +100,7 @@ namespace engine
 			// ------------------------------------------------------------------
 			dss_desc.DepthEnable = TRUE;                           // 깊이 테스트를 켭니다.
 			dss_desc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;  // 가려지지 않은 물체의 깊이 값을 깊이 버퍼에 기록합니다. (불투명 오브젝트용)
-			dss_desc.DepthFunc = D3D11_COMPARISON_GREATER_EQUAL;   // ReversedZ
+			dss_desc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
 
 			// ------------------------------------------------------------------
 			// 2. 스텐실(Stencil) 테스트 설정 (일반적인 기본 렌더링에서는 끕니다)

@@ -145,9 +145,7 @@ namespace engine
 		depth_buffer_desc.MipLevels = 1;               // 깊이 버퍼는 밉맵이 필요 없으므로 1 고정입니다.
 		depth_buffer_desc.ArraySize = 1;
 
-		// Reversed-Z 사용 시 f32 포맷 사용
-		// 차후 Stencil 버퍼 필요 시 버퍼 공간을 확장
-		depth_buffer_desc.Format = DXGI_FORMAT_D32_FLOAT;
+		depth_buffer_desc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
 		// 멀티샘플링 설정 (RTV 생성할 때 넣은 Count, Quality 값과 무조건 일치해야 에러가 안 납니다)
 		depth_buffer_desc.SampleDesc.Count = 1;
 		depth_buffer_desc.SampleDesc.Quality = 0;
@@ -165,8 +163,6 @@ namespace engine
 #pragma endregion DSV
 
 		swap_chain_RT_->SetDepthStencilView(dsv);
-
-
 
 		resolution_width_ = resolution_width;
 		resolution_height_ = resolution_height;
@@ -191,7 +187,7 @@ namespace engine
 		swap_chain_RT_->ClearRenderTargetView(context_.Get(), color);
 
 		// 2. 깊이/스텐실 버퍼 초기화
-		swap_chain_RT_->ClearDepthStencilView(context_.Get(), 0.0f, 0);
+		swap_chain_RT_->ClearDepthStencilView(context_.Get(), 1.0f, 0);
 	}
 
 	ComPtr<IDXGISwapChain> GraphicsDevice::CreateSwapChain(HWND hwnd, uint32 width, uint32 height)

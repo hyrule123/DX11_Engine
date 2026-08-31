@@ -46,8 +46,16 @@ namespace engine
 
 	struct DataBlock
 	{
-		void* ptr = {};
+		uint8* ptr = {};
 		size_t size = {};
+
+		bool IsValid() const { return (ptr != nullptr && size > 0); }
+		template <typename T>
+		void Write(const T& value) const
+		{
+			static_assert(std::is_trivially_copyable_v<T>);
+			if (ptr && sizeof(T) <= size) { memcpy(ptr, &value, sizeof(T)); }
+		}
 	};
 
 	// 스코프 내에서 특정 값의 임시 변경을 보장하는 유틸리티 클래스(가드)

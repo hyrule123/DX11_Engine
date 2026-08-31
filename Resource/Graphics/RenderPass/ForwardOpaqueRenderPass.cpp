@@ -87,14 +87,12 @@ namespace engine
 				{
 					ASSERT(struct_buffer->GetElementStride() == instance_data_stride);
 
-					MapScope map_scope = struct_buffer->MapDynamic(context);
+					MapScopeDynamic map_scope = struct_buffer->MapDynamic(context);
 
-					uint8* mapped_data = 
-						static_cast<uint8*>(map_scope.Data());
 
 					for (size_t j = 0; j < instances_count; ++j)
 					{
-						render_queue_[i + j].renderer->WritePerObjData((mapped_data + j * instance_data_stride));
+						render_queue_[i + j].renderer->WritePerObjData(map_scope.Allocate());
 					}
 				}
 

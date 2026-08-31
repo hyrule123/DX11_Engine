@@ -42,7 +42,7 @@ namespace engine
 		bool IsInstancingSupported(RenderPassOrder pass) const;
 
         size_t GetInstanceDataStride(RenderPassOrder pass) const;
-        virtual void WritePerObjData(void* ptr) = 0;
+        virtual void WritePerObjData(DataBlock data_block) = 0;
 
     protected:
         

@@ -58,10 +58,12 @@ namespace engine
 			opaque_pass->SubmitRenderItem(item);
 		}
 	}
-	void SpriteRenderer::WritePerObjData(void* ptr)
+	void SpriteRenderer::WritePerObjData(DataBlock data_block)
 	{
 		per_obj_data_.world_mat = GetTransform()->GetWorldMatrix();
-		memcpy(ptr, &per_obj_data_, sizeof(per_obj_data_));
+
+		ASSERT(data_block.IsValid());
+		data_block.Write(per_obj_data_);
 
 //#ifndef NDEBUG
 //		DebugInstanceData debug_data = {};

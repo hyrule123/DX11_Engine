@@ -11,6 +11,10 @@
 
 #include <cassert>
 
+#include <Engine/Core/StdType.h>
+
+static_assert(sizeof(UINT) == sizeof(uint32_t), "UINT과 uint32_t의 크기가 다릅니다. 사이즈를 일치시키세요.");
+
 constexpr UINT GetFormatByteSize(DXGI_FORMAT f)
 {
     switch (f)

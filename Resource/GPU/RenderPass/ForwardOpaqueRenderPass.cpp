@@ -101,6 +101,7 @@ namespace engine
 				//렌더링
 				Mesh* mesh = render_queue_[i].renderer->GetMesh().get();
 				ASSERT(mesh);
+				mesh->Bind(context);
 				mesh->Draw(context, instances_count);
 
 				//인덱스 이동

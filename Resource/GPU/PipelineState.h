@@ -16,13 +16,13 @@ namespace engine
     class BlendState;
     class DepthStencilState;
 
-    class GraphicsShaderSet :
+    class PipelineState :
         public Resource
     {
-        ENTITY_INFO(GraphicsShaderSet, Resource)
+        ENTITY_INFO(PipelineState, Resource)
     public:
-        GraphicsShaderSet();
-        virtual ~GraphicsShaderSet() override;
+        PipelineState();
+        virtual ~PipelineState() override;
 
 		bool IsReady() const { return (bool)input_layout_ && (bool)vertex_shader_; }
 

@@ -4,7 +4,7 @@
 namespace engine
 {
 	class Mesh;
-    class GraphicsShaderSet;
+    class PipelineState;
 	class RenderTargetGroup;
 
 	class PresentPass
@@ -28,7 +28,7 @@ namespace engine
 
     private:
 		u_ptr<Mesh> mesh_ = {};
-		u_ptr<GraphicsShaderSet> shader_set_ = {};
+		u_ptr<PipelineState> shader_set_ = {};
 		s_ptr<RenderTargetGroup> src_render_target_ = {};
     };
 }

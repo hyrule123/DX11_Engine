@@ -54,13 +54,7 @@
     <ClInclude Include="ThirdParty\DirectXTK\SimpleMath.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Resource\GPU\Buffer\VertexBuffer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Resource\GPU\Mesh.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Resource\GPU\Buffer\IndexBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Resource\GPU\Vertex.h">
@@ -114,7 +108,7 @@
     <ClInclude Include="Resource\GPU\Material.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Resource\GPU\GraphicsShaderSet.h">
+    <ClInclude Include="Resource\GPU\PipelineState.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Manager\TimeManager.h">
@@ -281,13 +275,7 @@
     <ClCompile Include="ThirdParty\DirectXTK\SimpleMath.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Resource\GPU\Buffer\VertexBuffer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Resource\GPU\Mesh.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Resource\GPU\Buffer\IndexBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Manager\SceneManager.cpp">
@@ -326,7 +314,7 @@
     <ClCompile Include="Resource\GPU\Material.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Resource\GPU\GraphicsShaderSet.cpp">
+    <ClCompile Include="Resource\GPU\PipelineState.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Manager\TimeManager.cpp">

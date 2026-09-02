@@ -9,11 +9,9 @@
 #include <Engine/Resource/GPU/Shader/PixelShader.h>
 #include <Engine/Resource/GPU/State/RasterizerState.h>
 #include <Engine/Resource/GPU/Mesh.h>
-#include <Engine/Resource/GPU/Buffer/VertexBuffer.h>
-#include <Engine/Resource/GPU/Buffer/IndexBuffer.h>
 
 #include <Engine/Resource/GPU/RenderTargetGroup.h>
-#include <Engine/Resource/GPU/GraphicsShaderSet.h>
+#include <Engine/Resource/GPU/PipelineState.h>
 
 #include <Engine/Core/Debug.h>
 
@@ -62,10 +60,8 @@ namespace engine
 		const stdfs::path& res_dir = res_mgr.GetResourceDir();
 
 		{
-			mesh_ = std::make_unique<Mesh>();
-
 			//VERTEX BUFFER
-			s_ptr<VertexBuffer> vb = EntityManager::CreateEntity<VertexBuffer>();
+			u_ptr<Mesh> mesh = EntityManager::CreateEntity<Mesh>();
 			std::vector<Present_Pass::Vertex> vertices;
 			vertices.resize(4);
 			vertices[0].position = { -1.0f, 1.0f, 0.5f };
@@ -78,19 +74,18 @@ namespace engine
 			vertices[2].UV = { 1.0f, 1.0f };
 			vertices[3].UV = { 0.0f, 1.0f };
 
-			bool result = vb->Create(vertices);
+			bool result = mesh->CreateVertexBuffer(vertices);
 			ASSERT(result);
 
 			//INDEX BUFFER
-			s_ptr<IndexBuffer> ib = EntityManager::CreateEntity<IndexBuffer>();
-			std::vector<UINT> indices = { 0, 1, 2, 0, 2, 3 };
-			result = ib->Create(indices, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+			std::vector<uint16> indices = { 0, 1, 2, 0, 2, 3 };
+			result = mesh->CreateIndexBuffer(indices, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 			ASSERT(result);
 
-			mesh_->SetBuffers(vb, ib);
+			mesh_ = std::move(mesh);
 		}
 
-		shader_set_ = std::make_unique<GraphicsShaderSet>();
+		shader_set_ = std::make_unique<PipelineState>();
 		shader_set_->SetPerInstanceDataStride(sizeof(PresentVSInput));
 		
 		s_ptr<VertexShader> vs = EntityManager::CreateEntity<VertexShader>();
@@ -128,6 +123,8 @@ namespace engine
 
 		// 스왑체인 렌더타겟을 바인딩
 		GraphicsDevice::GetInst().BindSwapChainRTV();
+
+		mesh_->Bind(context);
 
 		// 전용 Mesh를 사용하여 화면에 렌더링
 		mesh_->Draw(context, 1);

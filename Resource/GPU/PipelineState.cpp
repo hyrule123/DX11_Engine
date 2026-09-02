@@ -1,5 +1,5 @@
 #include "Engine/Core/pch.h"
-#include "GraphicsShaderSet.h"
+#include "PipelineState.h"
 
 #include <Engine/Manager/GraphicsDevice.h>
 #include <Engine/Manager/ResourceManager.h>
@@ -15,21 +15,21 @@
 
 namespace engine
 {
-	GraphicsShaderSet::GraphicsShaderSet()
-		: Super(GraphicsShaderSet::kClassConcreteName)
+	PipelineState::PipelineState()
+		: Super(PipelineState::kClassConcreteName)
 	{
 	}
 
-	GraphicsShaderSet::~GraphicsShaderSet()
+	PipelineState::~PipelineState()
 	{
 	}
 
-	bool GraphicsShaderSet::SetVertexShader(const HashedStringView& vs_name)
+	bool PipelineState::SetVertexShader(const HashedStringView& vs_name)
 	{
 		vertex_shader_ = ResourceManager::GetInst().LoadFromFile<VertexShader>(vs_name);
 		return (bool)vertex_shader_;
 	}
-	void GraphicsShaderSet::SetVertexShader(s_ptr<VertexShader> vertex_shader)
+	void PipelineState::SetVertexShader(s_ptr<VertexShader> vertex_shader)
 	{
 		if (!vertex_shader || !vertex_shader->IsReady())
 		{
@@ -38,13 +38,13 @@ namespace engine
 		}
 		vertex_shader_ = std::move(vertex_shader);
 	}
-	bool GraphicsShaderSet::CreateInputLayout(const HashedStringView& layout_name)
+	bool PipelineState::CreateInputLayout(const HashedStringView& layout_name)
 	{
 		s_ptr<InputLayoutDesc> desc = ResourceManager::GetInst().Find<InputLayoutDesc>(layout_name);
 		return CreateInputLayout(desc.get());
 	}
 
-	bool GraphicsShaderSet::CreateInputLayout(InputLayoutDesc* desc)
+	bool PipelineState::CreateInputLayout(InputLayoutDesc* desc)
 	{
 		if (!vertex_shader_)
 		{
@@ -66,27 +66,27 @@ namespace engine
 		return (bool)input_layout_;
 	}
 
-	bool GraphicsShaderSet::SetPixelShader(const HashedStringView& ps_name)
+	bool PipelineState::SetPixelShader(const HashedStringView& ps_name)
 	{
 		SetPixelShader(ResourceManager::GetInst().LoadFromFile<PixelShader>(ps_name));
 		return (bool)pixel_shader_;
 	}
-	bool GraphicsShaderSet::SetRasterizerState(const HashedStringView& rss_name)
+	bool PipelineState::SetRasterizerState(const HashedStringView& rss_name)
 	{
 		SetRasterizerState(ResourceManager::GetInst().Find<RasterizerState>(rss_name));
 		return (bool)rasterizer_state_;
 	}
-	bool GraphicsShaderSet::SetBlendState(const HashedStringView& bs_name)
+	bool PipelineState::SetBlendState(const HashedStringView& bs_name)
 	{
 		SetBlendState(ResourceManager::GetInst().Find<BlendState>(bs_name));
 		return (bool)blend_state_;
 	}
-	bool GraphicsShaderSet::SetDepthStencilState(const HashedStringView& ds_name)
+	bool PipelineState::SetDepthStencilState(const HashedStringView& ds_name)
 	{
 		SetDepthStencilState(ResourceManager::GetInst().Find<DepthStencilState>(ds_name));
 		return (bool)depth_stencil_state_;
 	}
-	void GraphicsShaderSet::Bind(ID3D11DeviceContext* context)
+	void PipelineState::Bind(ID3D11DeviceContext* context)
 	{
 		ASSERT(IsReady());
 
@@ -107,7 +107,7 @@ namespace engine
 		if (depth_stencil_state_) { depth_stencil_state_->Bind(context); }
 		else { context->OMSetDepthStencilState(nullptr, 1u); }
 	}
-	void GraphicsShaderSet::Clear(ID3D11DeviceContext* context)
+	void PipelineState::Clear(ID3D11DeviceContext* context)
 	{
 		context->IASetInputLayout(nullptr);
 		context->VSSetShader(nullptr, nullptr, 0u);

@@ -7,11 +7,9 @@
 
 #include <Engine/Resource/GPU/Buffer/ConstantBuffer.h>
 #include <Engine/Resource/GPU/Buffer/StructuredBuffer.h>
-#include <Engine/Resource/GPU/Buffer/VertexBuffer.h>
-#include <Engine/Resource/GPU/Buffer/IndexBuffer.h>
 #include <Engine/Resource/GPU/State/DepthStencilState.h>
 #include <Engine/Resource/GPU/Mesh.h>
-#include <Engine/Resource/GPU/GraphicsShaderSet.h>
+#include <Engine/Resource/GPU/PipelineState.h>
 
 #include <Engine/Resource/GPU/Shader/InputLayoutDesc.h>
 #include <Engine/Resource/GPU/Vertex.h>
@@ -133,6 +131,7 @@ namespace engine
 			debug_buffer_->BindSRV(context, SLOT_T_PER_INSTANCE, ShaderStage::kVS | ShaderStage::kPS);
 
 			//Mesh Draw
+			debug_rect_mesh_->Bind(context);
 			debug_rect_mesh_->Draw(context, (UINT)debug_rect_data_.size());
 
 			// 순회 돌면서 dt 감소 및 음수가 된 값들은 제거
@@ -157,6 +156,7 @@ namespace engine
 			debug_buffer_->BindSRV(context, SLOT_T_PER_INSTANCE, ShaderStage::kVS | ShaderStage::kPS);
 
 			//Mesh Draw
+			debug_circle_mesh_->Bind(context);
 			debug_circle_mesh_->Draw(context, (UINT)debug_circle_data_.size());
 
 			// 순회 돌면서 dt 감소 및 음수가 된 값들은 제거
@@ -251,65 +251,60 @@ namespace engine
 
 #pragma region RECT MESH
 		{
-			debug_rect_mesh_ = std::make_unique<Mesh>();
+			debug_rect_mesh_ = EntityManager::CreateEntity<Mesh>();
 
+			//Mesh
 			//VERTEX BUFFER
-			s_ptr<VertexBuffer> vb = EntityManager::CreateEntity<VertexBuffer>();
 			std::vector<Vertex::Debug::Vertex> vertices;
 			vertices.resize(4);
 			vertices[0].position = { -0.5f, 0.5f, 0.0f };
 			vertices[1].position = { 0.5f, 0.5f, 0.0f };
 			vertices[2].position = { 0.5f, -0.5f, 0.0f };
 			vertices[3].position = { -0.5f, -0.5f, 0.0f };
-			vb->Create(vertices);
+			bool result = debug_rect_mesh_->CreateVertexBuffer(vertices);
+			ASSERT(result);
 
 			//INDEX BUFFER
-			s_ptr<IndexBuffer> ib = EntityManager::CreateEntity<IndexBuffer>();
-			std::vector<UINT> indices;
+			std::vector<uint16> indices;
 			indices.push_back(0u);
 			indices.push_back(1u);
 			indices.push_back(2u);
 			indices.push_back(3u);
 			indices.push_back(0u);
-			ib->Create(indices, D3D11_PRIMITIVE_TOPOLOGY_LINESTRIP);
-
-			debug_rect_mesh_->SetBuffers(vb, ib);
+			result = debug_rect_mesh_->CreateIndexBuffer(indices, D3D11_PRIMITIVE_TOPOLOGY_LINESTRIP, {});
+			ASSERT(result);
 		}
 #pragma endregion // RECT MESH
 #pragma region CIRCLE MESH
 		{
-			debug_circle_mesh_ = std::make_unique<Mesh>();
+			debug_circle_mesh_ = EntityManager::CreateEntity<Mesh>();
 
-			//VERTEX BUFFER & INDEX BUFFER
-			s_ptr<VertexBuffer> vb = EntityManager::CreateEntity<VertexBuffer>();
-			s_ptr<IndexBuffer> ib = EntityManager::CreateEntity<IndexBuffer>();
-
+			//Mesh
 			std::vector<Vertex::Debug::Vertex> vertices;
-			std::vector<UINT> indices;
+			std::vector<uint16> indices;
 
 			Vertex::Debug::Vertex v;
 			//v.position = { 0.0f, 0.0f, 0.0f };	//중심점
 			//vertices.push_back(v);
 
 			//32개 (vertex: 32개 index 0 ~ 31)
-			for (int32 i = 0; i <= 31; ++i)
+			for (uint32 i = 0; i <= 31; ++i)
 			{
 				float angle = (float)i / 32.0f * XM_2PI;
 				float x = cosf(angle) * 0.5f;
 				float y = sinf(angle) * 0.5f;
 				vertices.push_back({ {x, y, 0.0f} });
-				indices.push_back((UINT)i);
+				indices.push_back((uint16)i);
 			}
 			indices.push_back(0u);	//마지막에 0번으로 돌아가서 닫힌 원 만들기
-			vb->Create(vertices);
-			ib->Create(indices, D3D11_PRIMITIVE_TOPOLOGY_LINESTRIP);
 
-			debug_circle_mesh_->SetBuffers(vb, ib);
+			debug_circle_mesh_->CreateVertexBuffer(vertices);
+			debug_circle_mesh_->CreateIndexBuffer(indices, D3D11_PRIMITIVE_TOPOLOGY_LINESTRIP, {});
 		}
 #pragma endregion // CIRCLE MESH
 
 #pragma region // GRAPHICS SHADER SET
-		debug_shader_set_ = std::make_unique<GraphicsShaderSet>();
+		debug_shader_set_ = std::make_unique<PipelineState>();
 
 		debug_shader_set_->SetInstancingSupport(true);
 		debug_shader_set_->SetPerInstanceDataStride(sizeof(SpriteInstanceData));

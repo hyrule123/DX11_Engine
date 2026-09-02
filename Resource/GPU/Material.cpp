@@ -3,7 +3,7 @@
 
 #include <Engine/Manager/ResourceManager.h>
 
-#include <Engine/Resource/GPU/GraphicsShaderSet.h>
+#include <Engine/Resource/GPU/PipelineState.h>
 #include <Engine/Resource/GPU/Buffer/Texture2D.h>
 
 #include <Engine/Core/Debug.h>
@@ -21,11 +21,11 @@ namespace engine
 
 	bool Material::SetShaderSet(const HashedStringView& shader_set_name, RenderPassOrder pass)
 	{
-		SetShaderSet(ResourceManager::GetInst().Find<GraphicsShaderSet>(shader_set_name), pass);
+		SetShaderSet(ResourceManager::GetInst().Find<PipelineState>(shader_set_name), pass);
 		return (bool)shader_sets_per_pass_[(size_t)pass];
 	}
 
-	void Material::SetShaderSet(s_ptr<GraphicsShaderSet> shader_set, RenderPassOrder pass)
+	void Material::SetShaderSet(s_ptr<PipelineState> shader_set, RenderPassOrder pass)
 	{
 		if (shader_set)
 		{
@@ -47,7 +47,7 @@ namespace engine
 		}
 		
 		DEBUG_BREAK
-		GraphicsShaderSet::Clear(context);
+		PipelineState::Clear(context);
 		return false;
 	}
 

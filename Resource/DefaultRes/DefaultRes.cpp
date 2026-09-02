@@ -4,11 +4,9 @@
 #include <Engine/Manager/GraphicsDevice.h>
 #include <Engine/Manager/ResourceManager.h>
 
-#include <Engine/Resource/GPU/GraphicsShaderSet.h>
+#include <Engine/Resource/GPU/PipelineState.h>
 #include <Engine/Resource/GPU/Material.h>
 #include <Engine/Resource/GPU/Mesh.h>
-#include <Engine/Resource/GPU/Buffer/VertexBuffer.h>
-#include <Engine/Resource/GPU/Buffer/IndexBuffer.h>
 #include <Engine/Resource/GPU/Vertex.h>
 #include <Engine/Resource/GPU/State/RasterizerState.h>
 #include <Engine/Resource/GPU/State/DepthStencilState.h>
@@ -137,12 +135,11 @@ namespace engine
 
 #pragma region //MESH
 		{
-			s_ptr<Mesh> msh = EntityManager::CreateEntity<Mesh>();
-			resmgr.AddResource("Mesh_Standard2D_Rect"_hash, msh);
-			resmgr.SetDefaultResource(msh);
+			s_ptr<Mesh> mesh = EntityManager::CreateEntity<Mesh>();
+			resmgr.AddResource("Mesh_Standard2D_Rect"_hash, mesh);
+			resmgr.SetDefaultResource(mesh);
 
 			//VERTEX BUFFER
-			s_ptr<VertexBuffer> vb = EntityManager::CreateEntity<VertexBuffer>();
 			std::vector<Vertex::Standard2D::Vertex> vertices;
 			vertices.resize(4);
 			vertices[0].position = { -0.5f, 0.5f, 0.0f };
@@ -155,19 +152,18 @@ namespace engine
 			vertices[2].UV = { 1.0f, 1.0f };
 			vertices[3].UV = { 0.0f, 1.0f };
 
-			vb->Create(vertices);
+			bool result = mesh->CreateVertexBuffer(vertices);
+			ASSERT(result);
 
 			//INDEX BUFFER
-			s_ptr<IndexBuffer> ib = EntityManager::CreateEntity<IndexBuffer>();
-			std::vector<UINT> indices = { 0, 1, 2, 0, 2, 3 };
-			ib->Create(indices, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-			msh->SetBuffers(vb, ib);
+			std::vector<uint32> indices = { 0, 1, 2, 0, 2, 3 };
+			result = mesh->CreateIndexBuffer(indices, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+			ASSERT(result);
 		}
 #pragma endregion //MESH
 		
 #pragma region //GRAPHICS SHADER SET
-		s_ptr<GraphicsShaderSet> shaderset = EntityManager::CreateEntity<GraphicsShaderSet>();
+		s_ptr<PipelineState> shaderset = EntityManager::CreateEntity<PipelineState>();
 		
 		shaderset->SetInstancingSupport(true);
 		shaderset->SetPerInstanceDataStride(sizeof(SpriteInstanceData));

@@ -77,6 +77,6 @@ namespace engine
         std::vector<DebugInstanceData> debug_rect_data_;
 		std::vector<DebugInstanceData> debug_circle_data_;
 		u_ptr<StructuredBuffer> debug_buffer_ = {};
-        u_ptr<GraphicsShaderSet> debug_shader_set_ = {};
+        u_ptr<PipelineState> debug_shader_set_ = {};
     };
 }

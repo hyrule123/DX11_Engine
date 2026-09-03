@@ -1,6 +1,8 @@
 #pragma once
 #include <Engine/Resource/Resource.h>
 
+#include <Engine/Resource/GPU/Buffer/ShaderResource.h>
+
 #include <Engine/Core/CoreMinimal.h>
 #include <Engine/Core/Constant.h>
 #include <Engine/Core/Enum.h>
@@ -15,8 +17,9 @@ namespace DirectX
 
 namespace engine
 {
-    class Texture2D :
-        public Resource
+    class Texture2D
+        : public Resource
+        , public ShaderResource
     {
         ENTITY_INFO(Texture2D, Resource)
     public:
@@ -88,9 +91,8 @@ namespace engine
 		ComPtr<ID3D11ShaderResourceView> CreateSRVImpl(ID3D11Texture2D* texture, D3D11_SHADER_RESOURCE_VIEW_DESC* srv_desc);
 		ComPtr<ID3D11UnorderedAccessView> CreateUAVImpl(ID3D11Texture2D* texture, D3D11_UNORDERED_ACCESS_VIEW_DESC* uav_desc);
 
+        ComPtr<ID3D11UnorderedAccessView>		UAV_ = {};
         ComPtr<ID3D11Texture2D>					tex2D_buffer_ = {};
-        ComPtr<ID3D11ShaderResourceView>		SRV_ = {};
-		ComPtr<ID3D11UnorderedAccessView>		UAV_ = {};
 
         UINT width_ = {};
         UINT height_ = {};

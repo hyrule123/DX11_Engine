@@ -219,6 +219,7 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Resource\GPU\Buffer\ShaderResource.h" />
     <ClInclude Include="Resource\GPU\Shader\ComputePass.h" />
     <ClInclude Include="Resource\GPU\Shader\ComputeShader.h" />
     <ClInclude Include="Core\HandlePointer.h" />

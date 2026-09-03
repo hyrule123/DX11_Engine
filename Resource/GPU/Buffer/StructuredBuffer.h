@@ -1,6 +1,8 @@
 #pragma once
 #include <Engine/Resource/Resource.h>
 
+#include <Engine/Resource/GPU/Buffer/ShaderResource.h>
+
 #include <Engine/Core/CoreMinimal.h>
 #include <Engine/Core/Enum.h>
 
@@ -52,8 +54,9 @@ namespace engine
         bool mapped_ok_ = false;
     };
 
-    class StructuredBuffer :
-        public Resource
+    class StructuredBuffer
+        : public Resource
+		, public ShaderResource
     {
         ENTITY_INFO(StructuredBuffer, Resource)
     public:
@@ -113,9 +116,8 @@ namespace engine
         ComPtr<ID3D11ShaderResourceView> CreateSRVImpl(ID3D11Buffer* buffer, uint32 capacity, uint32 start = 0, uint32 count = 0);
         ComPtr<ID3D11UnorderedAccessView> CreateUAVImpl(ID3D11Buffer* buffer, uint32 capacity, uint32 start = 0, uint32 count = 0);
 
-        ComPtr<ID3D11Buffer>              buffer_ = {};
-        ComPtr<ID3D11ShaderResourceView>  SRV_ = {};
         ComPtr<ID3D11UnorderedAccessView> UAV_ = {};
+        ComPtr<ID3D11Buffer>              buffer_ = {};
 
         //나중에 Staging Buffer 만드는 코드 필요할듯
 

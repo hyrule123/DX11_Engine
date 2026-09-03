@@ -7,7 +7,7 @@ namespace engine
 	//enum wrapping을 위한 namespace
 	namespace ShaderStage
 	{
-		enum Flag : uint32
+		enum Flag : uint8
 		{
 			kNone = 0,
 			kVS = 1 << 0,
@@ -17,10 +17,10 @@ namespace engine
 
 			kAllGraphics = kVS | kGS | kPS
 		};
-		using Flags = uint32;
+		using Flags = uint8;
 	}
 
-	enum class RenderPassOrder : uint32
+	enum class RenderPassOrder : uint8
 	{
 		kForwardOpaque = 0u,
 		kForwardAlphaTested,
@@ -30,7 +30,7 @@ namespace engine
 		kEND
 	};
 
-	enum class SubscribeType : uint32
+	enum class SubscribeType : uint8
 	{
 		kCollision,
 		kTransformDirty,

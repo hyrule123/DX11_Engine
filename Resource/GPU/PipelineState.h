@@ -1,6 +1,10 @@
 #pragma once
 #include <Engine/Resource/Resource.h>
 
+#include <Engine/Resource/GPU/Buffer/ShaderResource.h>
+
+#include <Engine/Core/CoreMinimal.h>
+#include <Engine/Core/Enum.h>
 
 struct ID3D11Device;
 struct ID3D11DeviceContext;
@@ -15,6 +19,20 @@ namespace engine
     class RasterizerState;
     class BlendState;
     class DepthStencilState;
+    class ConstantBuffer;
+
+	struct ConstantBufferBindingInfo
+	{
+		ShaderStage::Flags stage_flag = ShaderStage::kNone;
+		uint32 slot = 0u;
+		s_ptr<ConstantBuffer> constant_buffer = {};
+	};
+	struct ShaderResourceBindingInfo
+	{
+		ShaderStage::Flags stage_flag = ShaderStage::kNone;
+		uint32 slot = 0u;
+		s_ptr<ShaderResource> shader_resource = {};
+	};
 
     class PipelineState :
         public Resource
@@ -60,6 +78,12 @@ namespace engine
         void Bind(ID3D11DeviceContext* context);
 		static void Clear(ID3D11DeviceContext* context);
 
+		void AddConstantBufferBinding(uint32 slot, ShaderStage::Flags stage_flag, s_ptr<ConstantBuffer> constant_buffer);
+		void RemoveConstantBufferBinding(uint32 slot);
+
+		void AddShaderResourceBinding(uint32 slot, ShaderStage::Flags stage_flag, s_ptr<ShaderResource> shader_resource);
+        void RemoveShaderResourceBinding(uint32 slot);
+
     private:
         ComPtr<ID3D11InputLayout> input_layout_ = {};
 
@@ -71,8 +95,12 @@ namespace engine
 
         s_ptr<DepthStencilState> depth_stencil_state_ = {};
 
-		size_t per_instance_data_stride_ = {};
+        // Per Pipeline State
+		std::vector<ConstantBufferBindingInfo> constant_buffer_bindings_ = {};
+		std::vector<ShaderResourceBindingInfo> shader_resource_bindings_ = {};
 
+        // Per Instance
+		size_t per_instance_data_stride_ = {};
         bool is_instancing_supported_ = {};
     };
 }

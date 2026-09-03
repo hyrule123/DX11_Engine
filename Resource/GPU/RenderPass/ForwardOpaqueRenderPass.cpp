@@ -41,7 +41,7 @@ namespace engine
 				{
 					Material* mtrl = render_queue_[i].renderer->GetMaterial().get();
 					ASSERT(mtrl);
-					mtrl->BindShaderSet(context, GetPassOrder());
+					mtrl->BinePipelineState(context, GetPassOrder());
 					mtrl->BindTextures(context, ShaderStage::kPS);
 
 					prev_material_ID = cur_material_ID;

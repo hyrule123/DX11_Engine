@@ -249,6 +249,9 @@
     <ClInclude Include="Resource\GPU\Buffer\TypedBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Resource\GPU\Buffer\ShaderResource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Core\pch.cpp">

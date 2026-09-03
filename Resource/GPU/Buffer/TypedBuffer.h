@@ -1,6 +1,8 @@
 #pragma once
 #include <Engine/Resource/Resource.h>
 
+#include <Engine/Resource/GPU/Buffer/ShaderResource.h>
+
 #include <Engine/Core/SmartPointer.h>
 
 #include <Engine/Core/Enum.h>
@@ -22,8 +24,10 @@
 
 namespace engine
 {
-    class TypedBuffer :
-        public Resource
+    class TypedBuffer 
+		: public Resource 
+		, public ShaderResource
+
     {
 		ENTITY_INFO(TypedBuffer, Resource)
     public:
@@ -77,9 +81,10 @@ namespace engine
 		ComPtr<ID3D11ShaderResourceView> CreateSRV(ID3D11Buffer* buffer, DXGI_FORMAT format, uint32 capacity , uint32 start = 0, uint32 count = 0);
 		ComPtr<ID3D11UnorderedAccessView> CreateUAV(ID3D11Buffer* buffer, DXGI_FORMAT format, uint32 capacity, uint32 start = 0, uint32 count = 0);
 
-        ComPtr<ID3D11Buffer> buffer_ = {};
-		ComPtr<ID3D11ShaderResourceView> SRV_ = {};
+		// SRV: ShaderResource 상속
 		ComPtr<ID3D11UnorderedAccessView> UAV_ = {};
+
+        ComPtr<ID3D11Buffer> buffer_ = {};
 
 		D3D11_USAGE buffer_usage_ = {};
 		DXGI_FORMAT format_ = {};
@@ -87,5 +92,7 @@ namespace engine
 		uint32 count_ = {};
 		uint32 capacity_ = {};
     };
+
+
 }
 

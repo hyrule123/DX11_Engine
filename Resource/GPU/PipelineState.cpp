@@ -11,6 +11,9 @@
 #include <Engine/Resource/GPU/State/DepthStencilState.h>
 #include <Engine/Resource/GPU/State/BlendState.h>
 
+#include <Engine/Resource/GPU/Buffer/ShaderResource.h>
+#include <Engine/Resource/GPU/Buffer/ConstantBuffer.h>
+
 #include <Engine/Core/Debug.h>
 
 namespace engine
@@ -88,7 +91,11 @@ namespace engine
 	}
 	void PipelineState::Bind(ID3D11DeviceContext* context)
 	{
-		ASSERT(IsReady());
+		if (!IsReady()) 
+		{ 
+			DEBUG_MESSAGE("PipelineState is not ready. Ensure that the input layout and vertex shader are set before binding.");
+			return; 
+		}
 
 		context->IASetInputLayout(input_layout_.Get());
 
@@ -106,6 +113,33 @@ namespace engine
 
 		if (depth_stencil_state_) { depth_stencil_state_->Bind(context); }
 		else { context->OMSetDepthStencilState(nullptr, 1u); }
+
+		for (const auto& binding : constant_buffer_bindings_)
+		{
+			ASSERT(binding.constant_buffer != nullptr);
+
+			binding.constant_buffer->Bind(context, binding.stage_flag, binding.slot);
+		}
+
+		for (const auto& binding : shader_resource_bindings_)
+		{
+			ASSERT(binding.shader_resource != nullptr);
+
+			ID3D11ShaderResourceView* srv = binding.shader_resource->GetSRV();
+			if (srv == nullptr)
+			{
+				DEBUG_LOG("ShaderResourceView is nullptr for slot. Skipping binding.");
+				continue;
+			}
+
+			const auto stage = binding.stage_flag;
+			if (stage & ShaderStage::kVS) { context->VSSetShaderResources(binding.slot, 1, &srv); }
+			if (stage & ShaderStage::kGS) { context->GSSetShaderResources(binding.slot, 1, &srv); }
+			if (stage & ShaderStage::kPS) { context->PSSetShaderResources(binding.slot, 1, &srv); }
+
+			// CS는 Graphics Pipeline State에서 직접적으로 바인딩하지 않음.
+			//if (stage & ShaderStage::kCS) { context->CSSetShaderResources(binding.slot, 1, &srv); }
+		}
 	}
 	void PipelineState::Clear(ID3D11DeviceContext* context)
 	{
@@ -115,6 +149,87 @@ namespace engine
 		context->RSSetState(nullptr);
 		context->OMSetBlendState(nullptr, nullptr, 0xFFFFFFFF);
 		context->OMSetDepthStencilState(nullptr, 1u);
+	}
+
+	void PipelineState::AddConstantBufferBinding(uint32 slot, ShaderStage::Flags stage_flag, s_ptr<ConstantBuffer> constant_buffer)
+	{
+		if (constant_buffer == nullptr)
+		{
+			DEBUG_MESSAGE("ConstantBuffer is nullptr.");
+			return;
+		}
+		if (stage_flag == ShaderStage::kNone)
+		{
+			DEBUG_MESSAGE("Invalid stage_flag: ShaderStage::kNone");
+			return;
+		}
+		if (slot >= D3D11_COMMONSHADER_CONSTANT_BUFFER_API_SLOT_COUNT)
+		{
+			DEBUG_MESSAGE("Invalid slot");
+			return;
+		}
+
+		for (size_t i = 0; i < constant_buffer_bindings_.size(); ++i)
+		{
+			const auto& binding = constant_buffer_bindings_[i];
+
+			// 바인딩은 슬롯당 하나
+			if (binding.slot == slot)
+			{
+				ASSERT_MESSAGE(false, "ConstantBufferBinding already exists for the given slot");
+				return;
+			}
+		}
+		constant_buffer_bindings_.push_back({ stage_flag, slot, std::move(constant_buffer) });
+	}
+
+	void PipelineState::RemoveConstantBufferBinding(uint32 slot)
+	{
+		for (size_t i = 0; i < constant_buffer_bindings_.size(); ++i)
+		{
+			if (constant_buffer_bindings_[i].slot == slot)
+			{
+				std::swap(constant_buffer_bindings_[i], constant_buffer_bindings_.back());
+				constant_buffer_bindings_.pop_back();
+				return;
+			}
+		}
+		ERROR_MESSAGE("No ConstantBufferBinding found for the given slot to remove.");
+	}
+
+	void PipelineState::AddShaderResourceBinding(uint32 slot, ShaderStage::Flags stage_flag, s_ptr<ShaderResource> shader_resource)
+	{
+		if (shader_resource == nullptr)
+		{
+			ASSERT_MESSAGE(false, "ShaderResource is nullptr");
+			return;
+		}
+
+		for (size_t i = 0; i < shader_resource_bindings_.size(); ++i)
+		{
+			// 바인딩은 슬롯당 하나
+			const auto& binding = shader_resource_bindings_[i];
+			if (binding.slot == slot)
+			{
+				ASSERT_MESSAGE(false, "ShaderResourceBinding already exists for the given slot");
+				return;
+			}
+		}
+
+		shader_resource_bindings_.push_back({ stage_flag, slot, std::move(shader_resource) });
+	}
+	void PipelineState::RemoveShaderResourceBinding(uint32 slot)
+	{
+		for (size_t i = 0; i < shader_resource_bindings_.size(); ++i)
+		{
+			if (shader_resource_bindings_[i].slot == slot)
+			{
+				std::swap(shader_resource_bindings_[i], shader_resource_bindings_.back());
+				shader_resource_bindings_.pop_back();
+				return;
+			}
+		}
+		ERROR_MESSAGE("No ShaderResourceBinding found for the given slot to remove.");
 	}
 }
 

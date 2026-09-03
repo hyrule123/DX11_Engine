@@ -19,13 +19,13 @@ namespace engine
 	{
 	}
 
-	bool Material::SetShaderSet(const HashedStringView& shader_set_name, RenderPassOrder pass)
+	bool Material::SetPipelineState(RenderPassOrder pass, const HashedStringView& shader_set_name)
 	{
-		SetShaderSet(ResourceManager::GetInst().Find<PipelineState>(shader_set_name), pass);
+		SetPipelineState(pass, ResourceManager::GetInst().Find<PipelineState>(shader_set_name));
 		return (bool)shader_sets_per_pass_[(size_t)pass];
 	}
 
-	void Material::SetShaderSet(s_ptr<PipelineState> shader_set, RenderPassOrder pass)
+	void Material::SetPipelineState(RenderPassOrder pass, s_ptr<PipelineState> shader_set)
 	{
 		if (shader_set)
 		{
@@ -38,7 +38,7 @@ namespace engine
 		}
 	}
 
-	bool Material::BindShaderSet(ID3D11DeviceContext* context, RenderPassOrder pass)
+	bool Material::BinePipelineState(ID3D11DeviceContext* context, RenderPassOrder pass)
 	{
 		if (shader_sets_per_pass_[(size_t)pass]) 
 		{ 
@@ -56,20 +56,20 @@ namespace engine
 		Texture2D::BindSRVs(context, srv_cache_, stage_flag);
 	}
 
-	bool Material::SetTexture(const HashedStringView& texture_name, uint32 slot)
+	bool Material::SetTexture(uint32 slot, const HashedStringView& texture_name)
 	{
 		s_ptr<Texture2D> tex = 
 			ResourceManager::GetInst().LoadFromFile<Texture2D>(texture_name);
 
 		if (tex)
 		{
-			SetTexture(tex, slot);
+			SetTexture(slot, tex);
 			return true;
 		}
 
 		return false;
 	}
-	void Material::SetTexture(s_ptr<Texture2D> tex, uint32 slot)
+	void Material::SetTexture(uint32 slot, s_ptr<Texture2D> tex)
 	{
 		if ((size_t)slot < textures_.size()) {
 			textures_[slot] = tex;

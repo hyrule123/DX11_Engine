@@ -36,18 +36,22 @@ namespace engine
 			return (bool)shader_sets_per_pass_[(size_t)pass];
 		}
 
-        bool SetShaderSet(const HashedStringView& shader_set_name, RenderPassOrder pass);
-        void SetShaderSet(s_ptr<PipelineState> shader_set, RenderPassOrder pass);
-        bool BindShaderSet(ID3D11DeviceContext* context, RenderPassOrder pass);
+        bool SetPipelineState(RenderPassOrder pass, const HashedStringView& shader_set_name);
+        void SetPipelineState(RenderPassOrder pass, s_ptr<PipelineState> shader_set);
+        bool BinePipelineState(ID3D11DeviceContext* context, RenderPassOrder pass);
+		s_ptr<PipelineState> GetPipelineState(RenderPassOrder pass) const {
+            if (pass < RenderPassOrder::kEND) { return shader_sets_per_pass_[(size_t)pass]; }
+            return nullptr;
+		}
 
         void BindTextures(ID3D11DeviceContext* context, ShaderStage::Flags stage_flag);
 
-        bool SetTexture(const HashedStringView& texture_name, uint32 slot);
-        void SetTexture(s_ptr<Texture2D> tex, uint32 slot);
+        bool SetTexture(uint32 slot, const HashedStringView& texture_name);
+        void SetTexture(uint32 slot, s_ptr<Texture2D> tex);
         void SetTextures(const Textures& textures) {
             for (size_t i = 0; i < textures.size(); ++i)
             {
-                SetTexture(textures[i], (uint32)i);
+                SetTexture((uint32)i, textures[i]);
             }
         }
 

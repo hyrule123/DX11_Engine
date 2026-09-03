@@ -178,7 +178,7 @@ namespace engine
 
 		//MATERIAL
 		s_ptr<Material> material = EntityManager::CreateEntity<Material>();
-		material->SetShaderSet(shaderset, RenderPassOrder::kForwardOpaque);
+		material->SetPipelineState(RenderPassOrder::kForwardOpaque, shaderset);
 		resmgr.AddResource("Material_Sprite"_hash, material);
 		resmgr.SetDefaultResource(material);
 	}

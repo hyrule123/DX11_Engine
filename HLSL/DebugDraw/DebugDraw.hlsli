@@ -1,10 +1,11 @@
 #ifndef HLSL_DEBUG
 #define HLSL_DEBUG
 
-#include <Engine/HLSL/CppShared/CoreMinimal.hlsli>
-#include <Engine/HLSL/CppShared/Struct.hlsli>
+#include <Engine/HLSL/Core/CoreMinimal.hlsli>
+#include <Engine/HLSL/RenderPass.hlsli>
+#include <Engine/HLSL/Camera.hlsli>
 
-struct alignas(16)   DebugInstanceData
+struct alignas(16) DebugDrawPerInstanceData
 {
 	matrix world_mat;
 	float3 color;
@@ -13,7 +14,7 @@ struct alignas(16)   DebugInstanceData
 
 struct DebugVSInput
 {
-	float3 position SEMANTIC(POSITION)
+	float3 position SEMANTIC(POSITION);
 	
 #ifdef __HLSL
 	uint instance_ID : SV_InstanceID;
@@ -21,9 +22,8 @@ struct DebugVSInput
 };
 
 #ifdef __HLSL
-#include <Engine/HLSL/CommonConstBuffer.hlsli>
 
-StructuredBuffer<DebugInstanceData> g_debug_instance_data : register(SLOT_T_PER_INSTANCE);
+StructuredBuffer<DebugDrawPerInstanceData> g_debug_instance_data : register(REG_T_INSTANCE_BUFFER);
 
 struct VS_OUT
 {

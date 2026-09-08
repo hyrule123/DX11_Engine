@@ -36,10 +36,11 @@ namespace engine
 
 		// 로드 후 변하지 않는 데이터용.
 		// IMMUTABLE은 초기 데이터가 필수 — data가 null이면 생성이 실패
-		bool CreateImmutableBuffer(DXGI_FORMAT format, const void* data, uint32 count);
+		// elem_stride: 검증용
+		bool CreateImmutableBuffer(DXGI_FORMAT format, uint32 elem_stride, const void* data, uint32 count);
 		template <typename T>
 		bool CreateImmutableBuffer(DXGI_FORMAT format, std::span<const T> data) {
-			return CreateImmutableBuffer(format, data.data(), (uint32)data.size());
+			return CreateImmutableBuffer(format, (uint32)sizeof(T), data.data(), (uint32)data.size());
 		}
 
 		// CPU가 매 프레임 갱신하는 데이터용.
@@ -69,7 +70,7 @@ namespace engine
 
 		uint32 GetCapacity() const { return capacity_; }
 
-		void BindSRV(ID3D11DeviceContext* context, uint32 slot, ShaderStage::Flags stage_flag);
+		void BindSRV(ID3D11DeviceContext* context, ShaderStage::Flags stage_flag, uint32 slot);
 		void BindUAV(ID3D11DeviceContext* context, uint32 slot);
 
     private:

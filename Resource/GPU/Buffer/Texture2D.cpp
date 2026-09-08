@@ -101,44 +101,23 @@ namespace engine
 		return true;
 	}
 
-	void Texture2D::BindSRV(ID3D11DeviceContext* context, UINT slot, ShaderStage::Flags stageflag)
+	void Texture2D::BindSRV(ID3D11DeviceContext* context, ShaderStage::Flags stageflag, UINT slot)
 	{
-		if (stageflag & ShaderStage::kVS)
+		if (ShaderStage::HasFlag(stageflag, ShaderStage::Flags::Vertex))
 		{
 			context->VSSetShaderResources(slot, 1, SRV_.GetAddressOf());
 		}
-		if (stageflag & ShaderStage::kGS)
+		if (ShaderStage::HasFlag(stageflag, ShaderStage::Flags::Geometry))
 		{
 			context->GSSetShaderResources(slot, 1, SRV_.GetAddressOf());
 		}
-		if (stageflag & ShaderStage::kPS)
+		if (ShaderStage::HasFlag(stageflag, ShaderStage::Flags::Pixel))
 		{
 			context->PSSetShaderResources(slot, 1, SRV_.GetAddressOf());
 		}
-		if (stageflag & ShaderStage::kCS)
+		if (ShaderStage::HasFlag(stageflag, ShaderStage::Flags::Compute))
 		{
 			context->CSSetShaderResources(slot, 1, SRV_.GetAddressOf());
-		}
-	}
-
-	void Texture2D::BindSRVs(ID3D11DeviceContext* context, const std::array<ID3D11ShaderResourceView*, kMaxTextureCount>& texture_srvs, ShaderStage::Flags stageflag)
-	{
-		UINT texcount = (UINT)texture_srvs.size();
-		if (stageflag & ShaderStage::kVS)
-		{
-			context->VSSetShaderResources(0u, texcount, texture_srvs.data());
-		}
-		if (stageflag & ShaderStage::kGS)
-		{
-			context->GSSetShaderResources(0u, texcount, texture_srvs.data());
-		}
-		if (stageflag & ShaderStage::kPS)
-		{
-			context->PSSetShaderResources(0u, texcount, texture_srvs.data());
-		}
-		if (stageflag & ShaderStage::kCS)
-		{
-			context->CSSetShaderResources(0u, texcount, texture_srvs.data());
 		}
 	}
 

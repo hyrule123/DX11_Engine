@@ -12,7 +12,7 @@
 
 #include <Engine/Core/Debug.h>
 
-#include <Engine/HLSL/Debug/Debug.hlsli>
+#include <Engine/HLSL/DebugDraw/DebugDraw.hlsli>
 
 namespace engine
 {
@@ -58,7 +58,7 @@ namespace engine
 			opaque_pass->SubmitRenderItem(item);
 		}
 	}
-	void SpriteRenderer::WritePerObjData(DataBlock data_block)
+	void SpriteRenderer::WritePerInstanceData(DataBlock data_block)
 	{
 		per_obj_data_.world_mat = GetTransform()->GetWorldMatrix();
 

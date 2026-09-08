@@ -8,6 +8,10 @@
 
 #include <Engine/Core/Debug.h>
 
+#include <Engine/HLSL/Core/Register.hlsli>
+
+#include <utility>
+
 namespace engine
 {
 	Material::Material()
@@ -22,7 +26,7 @@ namespace engine
 	bool Material::SetPipelineState(RenderPassOrder pass, const HashedStringView& shader_set_name)
 	{
 		SetPipelineState(pass, ResourceManager::GetInst().Find<PipelineState>(shader_set_name));
-		return (bool)shader_sets_per_pass_[(size_t)pass];
+		return (bool)pipeline_states_per_pass[(size_t)pass];
 	}
 
 	void Material::SetPipelineState(RenderPassOrder pass, s_ptr<PipelineState> shader_set)
@@ -30,19 +34,19 @@ namespace engine
 		if (shader_set)
 		{
 			ASSERT(shader_set->IsReady());
-			shader_sets_per_pass_[(size_t)pass] = std::move(shader_set);
+			pipeline_states_per_pass[(size_t)pass] = std::move(shader_set);
 		}
 		else
 		{
-			shader_sets_per_pass_[(size_t)pass] = nullptr;
+			pipeline_states_per_pass[(size_t)pass] = nullptr;
 		}
 	}
 
-	bool Material::BinePipelineState(ID3D11DeviceContext* context, RenderPassOrder pass)
+	bool Material::BindPipelineState(ID3D11DeviceContext* context, RenderPassOrder pass)
 	{
-		if (shader_sets_per_pass_[(size_t)pass]) 
+		if (pipeline_states_per_pass[(size_t)pass]) 
 		{ 
-			shader_sets_per_pass_[(size_t)pass]->Bind(context); 
+			pipeline_states_per_pass[(size_t)pass]->Bind(context); 
 			return true; 
 		}
 		
@@ -53,7 +57,43 @@ namespace engine
 
 	void Material::BindTextures(ID3D11DeviceContext* context, ShaderStage::Flags stage_flag)
 	{
-		Texture2D::BindSRVs(context, srv_cache_, stage_flag);
+		std::array<ID3D11ShaderResourceView*, std::tuple_size_v<Textures>> srv = {};
+		for (size_t i = 0; i < textures_.size(); ++i)
+		{
+			if (textures_[i])
+			{
+				srv[i] = textures_[i]->GetRawSRV();
+			}
+		}
+
+		constexpr UINT max_tex_count = (UINT)std::tuple_size_v<Textures>;
+		if (ShaderStage::HasFlag(stage_flag, ShaderStage::Flags::Vertex))
+		{
+			context->VSSetShaderResources(REG_T_PER_MATERIAL_START, max_tex_count, srv.data());
+		}
+		if (ShaderStage::HasFlag(stage_flag, ShaderStage::Flags::Geometry))
+		{
+			context->GSSetShaderResources(REG_T_PER_MATERIAL_START, max_tex_count, srv.data());
+		}
+		if (ShaderStage::HasFlag(stage_flag, ShaderStage::Flags::Pixel))
+		{
+			context->PSSetShaderResources(REG_T_PER_MATERIAL_START, max_tex_count, srv.data());
+		}
+		if (ShaderStage::HasFlag(stage_flag, ShaderStage::Flags::Compute))
+		{
+			context->CSSetShaderResources(REG_T_PER_MATERIAL_START, max_tex_count, srv.data());
+		}
+	}
+
+	void Material::SetTexture(uint32 slot, s_ptr<Texture2D> tex)
+	{
+		int32 slot_idx = (int32)slot - (int32)REG_T_PER_MATERIAL_START;
+		if (slot_idx < 0 || MAX_TEXTURE_COUNT <= slot_idx)
+		{
+			ASSERT_RELEASE("Material::SetTexture() - Invalid slot index");
+			return;
+		}
+		textures_[slot_idx] = std::move(tex);
 	}
 
 	bool Material::SetTexture(uint32 slot, const HashedStringView& texture_name)
@@ -69,33 +109,19 @@ namespace engine
 
 		return false;
 	}
-	void Material::SetTexture(uint32 slot, s_ptr<Texture2D> tex)
-	{
-		if ((size_t)slot < textures_.size()) {
-			textures_[slot] = tex;
-			if (tex)
-			{
-				srv_cache_[slot] = tex->GetRawSRV();
-			}
-			else
-			{
-				srv_cache_[slot] = nullptr;
-			}
-		}
-	}
 	bool Material::IsInstancingSupported(RenderPassOrder pass) const
 	{
-		if (shader_sets_per_pass_[(size_t)pass])
+		if (pipeline_states_per_pass[(size_t)pass])
 		{
-			return shader_sets_per_pass_[(size_t)pass]->IsInstancingSupported();
+			return pipeline_states_per_pass[(size_t)pass]->IsInstancingSupported();
 		}
 		return false;
 	}
 	size_t Material::GetInstanceDataStride(RenderPassOrder pass) const
 	{
-		if (shader_sets_per_pass_[(size_t)pass])
+		if (pipeline_states_per_pass[(size_t)pass])
 		{
-			return shader_sets_per_pass_[(size_t)pass]->GetPerInstanceDataStride();
+			return pipeline_states_per_pass[(size_t)pass]->GetPerInstanceDataStride();
 		}
 		return 0;
 	}

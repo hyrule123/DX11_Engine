@@ -17,7 +17,7 @@ namespace engine
 		Super::LateUpdate();
 
 #ifndef NDEBUG
-		DebugInstanceData debug_data;
+		DebugDrawPerInstanceData debug_data;
 
 		float2 size = local_bounds_.GetSize();
 		debug_data.world_mat = DirectX::XMMatrixAffineTransformation(

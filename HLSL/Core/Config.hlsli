@@ -9,6 +9,8 @@
 
 #ifdef __HLSL
 #pragma pack_matrix(row_major)
-#endif
+#endif//__HLSL
+
+#define MAX_TEXTURE_COUNT 8
 
 #endif//HLSL_CONFIG

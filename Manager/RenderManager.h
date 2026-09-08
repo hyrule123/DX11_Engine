@@ -8,7 +8,7 @@
 #include <Engine/Core/Singleton.h>
 #include <Engine/Core/Enum.h>
 
-#include <Engine/HLSL/Debug/Debug.hlsli>
+#include <Engine/HLSL/DebugDraw/DebugDraw.hlsli>
 
 struct ID3D11SamplerState;
 
@@ -42,10 +42,10 @@ namespace engine
 		ForwardOpaqueRenderPass* GetOpaquePass() { return &forward_opaque_pass_; }
 		PresentPass* GetPresentPass() { return &present_pass_; }
 
-        void DrawDebugRect(const DebugInstanceData& debug_data) {
+        void DrawDebugRect(const DebugDrawPerInstanceData& debug_data) {
             debug_rect_data_.push_back(debug_data);
         }
-		void DrawDebugCircle(const DebugInstanceData& debug_data) {
+		void DrawDebugCircle(const DebugDrawPerInstanceData& debug_data) {
 			debug_circle_data_.push_back(debug_data);
 		}
 
@@ -58,7 +58,7 @@ namespace engine
 
         
 
-        s_ptr<ConstantBuffer> cb_per_pass_ = {};
+        s_ptr<ConstantBuffer> cb_per_pass_camera_ = {};
 
 		wh_ptr<Camera> main_cam_ = {};
         
@@ -74,8 +74,8 @@ namespace engine
 
 		u_ptr<Mesh> debug_rect_mesh_ = {};
 		u_ptr<Mesh> debug_circle_mesh_ = {};
-        std::vector<DebugInstanceData> debug_rect_data_;
-		std::vector<DebugInstanceData> debug_circle_data_;
+        std::vector<DebugDrawPerInstanceData> debug_rect_data_;
+		std::vector<DebugDrawPerInstanceData> debug_circle_data_;
 		u_ptr<StructuredBuffer> debug_buffer_ = {};
         u_ptr<PipelineState> debug_shader_set_ = {};
     };

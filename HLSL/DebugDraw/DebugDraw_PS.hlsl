@@ -1,4 +1,4 @@
-#include <Engine/HLSL/Debug/Debug.hlsli>
+#include <Engine/HLSL/DebugDraw/DebugDraw.hlsli>
 
 float4 main(VS_OUT inpos) : SV_TARGET
 {

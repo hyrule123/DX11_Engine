@@ -3,7 +3,7 @@
 #include <Engine/Core/Math.h>
 #include <Engine/Core/DX11.h>
 
-#include <Engine/HLSL/Debug/Debug.hlsli>
+#include <Engine/HLSL/DebugDraw/DebugDraw.hlsli>
 #include <Engine/HLSL/Sprite/Sprite.hlsli>
 
 #include <array>
@@ -12,7 +12,7 @@ namespace engine
 {
 	namespace Vertex
 	{
-		namespace Debug
+		namespace DebugDraw
 		{
 			using Vertex = DebugVSInput;
 

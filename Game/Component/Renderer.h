@@ -6,8 +6,6 @@
 #include <Engine/Core/CoreMinimal.h>
 #include <Engine/Core/Enum.h>
 
-#include <Engine/HLSL/CppShared/Struct.hlsli>
-
 namespace engine
 {
     class Transform;
@@ -42,7 +40,7 @@ namespace engine
 		bool IsInstancingSupported(RenderPassOrder pass) const;
 
         size_t GetInstanceDataStride(RenderPassOrder pass) const;
-        virtual void WritePerObjData(DataBlock data_block) = 0;
+        virtual void WritePerInstanceData(DataBlock data_block) = 0;
 
     protected:
         

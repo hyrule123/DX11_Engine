@@ -7,6 +7,7 @@
 #include <Engine/Core/Debug.h>
 
 #include <array>
+#include <utility>
 
 namespace engine
 {
@@ -45,14 +46,6 @@ namespace engine
 					viewport_.Height = (float)render_target_buffers_[i]->GetHeight();
 					size_found = true;
 				}
-
-				RTVs_ptr_cache_[i] = render_target_buffers_[i]->GetRawRTV();
-				SRVs_ptr_cache_[i] = render_target_buffers_[i]->GetRawSRV();
-			}
-			else
-			{
-				RTVs_ptr_cache_[i] = nullptr;
-				SRVs_ptr_cache_[i] = nullptr;
 			}
 		}
 
@@ -72,59 +65,88 @@ namespace engine
 #endif NDEBUG
 	}
 
-	void RenderTargetGroup::BindShaderResourceViews(ID3D11DeviceContext* context, ShaderStage::Flags stage_flags)
+	void RenderTargetGroup::BindShaderResourceViews(ID3D11DeviceContext* context, ShaderStage::Flags stage_flags, uint32 start_slot)
 	{
-		last_bound_stage_flags_ = stage_flags;
+		srv_bound_ = true;
 
-		UINT texcount = (UINT)SRVs_ptr_cache_.size();
-		if (stage_flags & ShaderStage::kVS)
+		constexpr size_t tex_count = std::tuple_size_v<RenderTargetArray>;
+		std::array<ID3D11ShaderResourceView*, tex_count> srvs = {};
+
+		for (size_t i = 0; i < render_target_buffers_.size(); ++i)
 		{
-			context->VSSetShaderResources(0u, texcount, SRVs_ptr_cache_.data());
+			if (render_target_buffers_[i])
+			{
+				srvs[i] = render_target_buffers_[i]->GetRawSRV();
+			}
 		}
-		if (stage_flags & ShaderStage::kGS)
+		
+		if (ShaderStage::HasFlag(stage_flags, ShaderStage::Flags::Vertex))
 		{
-			context->GSSetShaderResources(0u, texcount, SRVs_ptr_cache_.data());
+			context->VSSetShaderResources(start_slot, (UINT)tex_count, srvs.data());
 		}
-		if (stage_flags & ShaderStage::kPS)
+		if (ShaderStage::HasFlag(stage_flags, ShaderStage::Flags::Geometry))
 		{
-			context->PSSetShaderResources(0u, texcount, SRVs_ptr_cache_.data());
+			context->GSSetShaderResources(start_slot, (UINT)tex_count, srvs.data());
 		}
-		if (stage_flags & ShaderStage::kCS)
+		if (ShaderStage::HasFlag(stage_flags, ShaderStage::Flags::Pixel))
 		{
-			context->CSSetShaderResources(0u, texcount, SRVs_ptr_cache_.data());
+			context->PSSetShaderResources(start_slot, (UINT)tex_count, srvs.data());
+		}
+		if (ShaderStage::HasFlag(stage_flags, ShaderStage::Flags::Compute))
+		{
+			context->CSSetShaderResources(start_slot, (UINT)tex_count, srvs.data());
 		}
 	}
 
-	void RenderTargetGroup::UnBindShaderResourceViews(ID3D11DeviceContext* context)
+	void RenderTargetGroup::UnBindShaderResourceViews(ID3D11DeviceContext* context, ShaderStage::Flags stage_flags, uint32 start_slot)
 	{
-		constexpr std::array<ID3D11ShaderResourceView*, kMaxTextureCount> null_srvs = {};
+		constexpr size_t tex_count = std::tuple_size_v<RenderTargetArray>;
 
-		UINT texcount = (UINT)SRVs_ptr_cache_.size();
-		if (last_bound_stage_flags_ & ShaderStage::kVS)
+		std::array<ID3D11ShaderResourceView*, tex_count> null_srvs = {};
+
+		if (ShaderStage::HasFlag(stage_flags, ShaderStage::Flags::Vertex))
 		{
-			context->VSSetShaderResources(0u, kMaxTextureCount, null_srvs.data());
+			context->VSSetShaderResources(start_slot, (UINT)tex_count, null_srvs.data());
 		}
-		if (last_bound_stage_flags_ & ShaderStage::kGS)
+		if (ShaderStage::HasFlag(stage_flags, ShaderStage::Flags::Geometry))
 		{
-			context->GSSetShaderResources(0u, kMaxTextureCount, null_srvs.data());
+			context->GSSetShaderResources(start_slot, (UINT)tex_count, null_srvs.data());
 		}
-		if (last_bound_stage_flags_ & ShaderStage::kPS)
+		if (ShaderStage::HasFlag(stage_flags, ShaderStage::Flags::Pixel))
 		{
-			context->PSSetShaderResources(0u, kMaxTextureCount, null_srvs.data());
+			context->PSSetShaderResources(start_slot, (UINT)tex_count, null_srvs.data());
 		}
-		if (last_bound_stage_flags_ & ShaderStage::kCS)
+		if (ShaderStage::HasFlag(stage_flags, ShaderStage::Flags::Compute))
 		{
-			context->CSSetShaderResources(0u, kMaxTextureCount, null_srvs.data());
+			context->CSSetShaderResources(start_slot, (UINT)tex_count, null_srvs.data());
 		}
 
-		last_bound_stage_flags_ = ShaderStage::kNone;
+		srv_bound_ = false;
 	}
 
 	void RenderTargetGroup::BindOutputMerger(ID3D11DeviceContext* context)
 	{
+		// SRV 바인딩을 해제하지 않았을 경우 에러
+		/* 자동 언바인드 하지 않는 이유 
+		중간에 다른 SRV에서 바인딩이 일어날 수 있기 때문에, 에러를 발생시키고 처리 코드를 추가하도록 하는 게 더 안전함. SRV 바인딩 후 OM 바인딩 전에 반드시 UnBindShaderResourceViews를 호출하도록 강제.
+		*/
+		ASSERT_RELEASE(srv_bound_ == false);
+
 		ID3D11DepthStencilView* dsv = nullptr;
 		if (dsv_) { dsv = dsv_->GetRawDepthStencilView(); }
-		context->OMSetRenderTargets((UINT)kMaxRenderTargetCount, RTVs_ptr_cache_.data(), dsv);
+
+		constexpr size_t tex_count = std::tuple_size_v<RenderTargetArray>;
+		std::array<ID3D11RenderTargetView*, tex_count> rtvs = {};
+
+		for (size_t i = 0; i < render_target_buffers_.size(); ++i)
+		{
+			if (render_target_buffers_[i])
+			{
+				rtvs[i] = render_target_buffers_[i]->GetRawRTV();
+			}
+		}
+
+		context->OMSetRenderTargets((UINT)tex_count, rtvs.data(), dsv);
 		context->RSSetViewports(1, &viewport_);
 	}
 	void RenderTargetGroup::UnBindOutputMerger(ID3D11DeviceContext* context)
@@ -152,9 +174,8 @@ namespace engine
 	{
 		render_target_buffers_.fill(nullptr);
 		dsv_ = nullptr;
-		RTVs_ptr_cache_.fill(nullptr);
 	}
-	void RenderTargetGroup::Resize( uint32 width, uint32 height)
+	void RenderTargetGroup::Resize(uint32 width, uint32 height)
 	{
 		if (!requires_resize_) 
 		{ 

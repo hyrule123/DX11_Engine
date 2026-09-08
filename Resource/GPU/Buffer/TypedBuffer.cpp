@@ -16,13 +16,19 @@ namespace engine
 	TypedBuffer::~TypedBuffer()
 	{}
 
-	bool TypedBuffer::CreateImmutableBuffer(DXGI_FORMAT format, const void* data, uint32 count)
+	bool TypedBuffer::CreateImmutableBuffer(DXGI_FORMAT format, uint32 elem_stride, const void* data, uint32 count)
 	{
+		// IMMUTABLE은 초기 데이터 필수
 		if (nullptr == data) 
 		{ 
 			ERROR_MESSAGE("data가 nullptr입니다. IMMUTABLE은 초기 데이터가 필수입니다.");
 			return false; 
-		}   // IMMUTABLE은 초기 데이터 필수
+		}   
+		if(GetDXGIFormatByteStride(format) != (UINT)elem_stride)
+		{
+			ERROR_MESSAGE("stride가 버퍼 포맷과 불일치합니다.");
+			return false;
+		}
 		return CreateBufferImpl(format, count, D3D11_USAGE_IMMUTABLE,
 			D3D11_BIND_SHADER_RESOURCE, 0, data);
 	}
@@ -154,24 +160,24 @@ namespace engine
 		return true;
 	}
 
-	void TypedBuffer::BindSRV(ID3D11DeviceContext* context, uint32 slot, ShaderStage::Flags stage_flag)
+	void TypedBuffer::BindSRV(ID3D11DeviceContext* context, ShaderStage::Flags stage_flag, uint32 slot)
 	{
 		ASSERT(context);
 		ASSERT(SRV_);
 
-		if (stage_flag & ShaderStage::kVS)
+		if (ShaderStage::HasFlag(stage_flag, ShaderStage::Flags::Vertex))
 		{
 			context->VSSetShaderResources(slot, 1, SRV_.GetAddressOf());
 		}
-		if (stage_flag & ShaderStage::kGS)
+		if (ShaderStage::HasFlag(stage_flag, ShaderStage::Flags::Geometry))
 		{
 			context->GSSetShaderResources(slot, 1, SRV_.GetAddressOf());
 		}
-		if (stage_flag & ShaderStage::kPS)
+		if (ShaderStage::HasFlag(stage_flag, ShaderStage::Flags::Pixel))
 		{
 			context->PSSetShaderResources(slot, 1, SRV_.GetAddressOf());
 		}
-		if (stage_flag & ShaderStage::kCS)
+		if (ShaderStage::HasFlag(stage_flag, ShaderStage::Flags::Compute))
 		{
 			context->CSSetShaderResources(slot, 1, SRV_.GetAddressOf());
 		}
@@ -187,7 +193,7 @@ namespace engine
 
 	bool TypedBuffer::ValidateParameters(DXGI_FORMAT format, uint32 capacity)
 	{
-		const uint32 elem_stride = GetFormatByteSize(format);
+		const uint32 elem_stride = GetDXGIFormatByteStride(format);
 		if (elem_stride == 0)
 		{
 			ERROR_MESSAGE("지원되지 않는 DXGI_FORMAT입니다.");
@@ -210,7 +216,7 @@ namespace engine
 	{
 		if (false == ValidateParameters(format, capacity)) { return false; }
 
-		const uint32 stride = GetFormatByteSize(format);
+		const uint32 stride = GetDXGIFormatByteStride(format);
 
 		D3D11_BUFFER_DESC desc = {};
 		desc.ByteWidth = (UINT)(stride * capacity);

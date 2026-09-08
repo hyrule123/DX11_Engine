@@ -5,6 +5,8 @@
 #include <Engine/Core/Constant.h>
 #include <Engine/Core/Enum.h>
 
+#include <Engine/HLSL/Core/Config.hlsli>
+
 #include <array>
 
 struct ID3D11DeviceContext;
@@ -21,7 +23,7 @@ namespace engine
         ENTITY_INFO(Material, Resource)
 
     public:
-        using Textures = std::array<s_ptr<Texture2D>, kMaxTextureCount>;
+        using Textures = std::array<s_ptr<Texture2D>, MAX_TEXTURE_COUNT>;
 
         Material();
         Material(const Material& other) = default;
@@ -33,37 +35,33 @@ namespace engine
         }
 
 		bool IsReady(RenderPassOrder pass) const {
-			return (bool)shader_sets_per_pass_[(size_t)pass];
+			return (bool)pipeline_states_per_pass[(size_t)pass];
 		}
 
         bool SetPipelineState(RenderPassOrder pass, const HashedStringView& shader_set_name);
         void SetPipelineState(RenderPassOrder pass, s_ptr<PipelineState> shader_set);
-        bool BinePipelineState(ID3D11DeviceContext* context, RenderPassOrder pass);
+        bool BindPipelineState(ID3D11DeviceContext* context, RenderPassOrder pass);
 		s_ptr<PipelineState> GetPipelineState(RenderPassOrder pass) const {
-            if (pass < RenderPassOrder::kEND) { return shader_sets_per_pass_[(size_t)pass]; }
+            if (pass < RenderPassOrder::kEND) { return pipeline_states_per_pass[(size_t)pass]; }
             return nullptr;
 		}
 
-        void BindTextures(ID3D11DeviceContext* context, ShaderStage::Flags stage_flag);
+        // Material Start slot으로부터 8장 연속으로 바인딩함. 슬롯 주의
+        void BindTextures(ID3D11DeviceContext* context, ShaderStage::Flags stage_flag = ShaderStage::Flags::Pixel);
 
         bool SetTexture(uint32 slot, const HashedStringView& texture_name);
         void SetTexture(uint32 slot, s_ptr<Texture2D> tex);
-        void SetTextures(const Textures& textures) {
-            for (size_t i = 0; i < textures.size(); ++i)
-            {
-                SetTexture((uint32)i, textures[i]);
-            }
-        }
+        void SetTextures(const Textures& textures) { textures_ = textures; }
 
 		bool IsInstancingSupported(RenderPassOrder pass) const;
         size_t GetInstanceDataStride(RenderPassOrder pass) const;
 
     private:
         Textures textures_ = {};
-        std::array<ID3D11ShaderResourceView*, kMaxTextureCount> srv_cache_ = {};
+        // TODO: 이후 Per Material 버퍼 추가 필요 시 추가해야 함
 
 		std::array<s_ptr<PipelineState>, (size_t)RenderPassOrder::kEND> 
-            shader_sets_per_pass_ = {};
+            pipeline_states_per_pass = {};
     };
 }
 

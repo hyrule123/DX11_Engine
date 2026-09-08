@@ -32,7 +32,9 @@ namespace engine
             Upload(context, &data, sizeof(T));
         }
 
-        void Bind(ID3D11DeviceContext* context, ShaderStage::Flags flag, UINT slot);
+        void Bind(ID3D11DeviceContext* context, ShaderStage::Flags flag, uint32 slot);
+
+		ID3D11Buffer* GetRawBuffer() const { return buffer_.Get(); }
 
     private:
         ComPtr<ID3D11Buffer> buffer_ = {};

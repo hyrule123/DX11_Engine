@@ -32,14 +32,8 @@ namespace engine
 
         void BindSRV(
             ID3D11DeviceContext* context, 
-            UINT slot, 
-            ShaderStage::Flags stageflag = ShaderStage::kPS
-        );
-
-        static void BindSRVs(
-            ID3D11DeviceContext* context,
-            const std::array<ID3D11ShaderResourceView*, kMaxTextureCount>& texture_srvs,
-            ShaderStage::Flags stageflag = ShaderStage::kPS
+            ShaderStage::Flags stageflag, 
+            UINT slot
         );
 
         ComPtr<ID3D11ShaderResourceView> GetSRV() const { return SRV_; }
@@ -58,7 +52,7 @@ namespace engine
 		bool CreateUAV(D3D11_UNORDERED_ACCESS_VIEW_DESC* uav_desc);
 
 		void BindUAV(ID3D11DeviceContext* context, UINT slot);
-		void UnbindUAV(ID3D11DeviceContext* context, UINT slot);
+		static void UnbindUAV(ID3D11DeviceContext* context, UINT slot);
 
         // 상속 시 Super::Resize() 호출할 것
 		virtual bool Resize(uint32 width, uint32 height);

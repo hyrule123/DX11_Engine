@@ -219,6 +219,8 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Util\GPUBufferBindingTable.h" />
+    <ClInclude Include="Util\DX11UtilFuncs.h" />
     <ClInclude Include="Resource\GPU\Buffer\ShaderResource.h" />
     <ClInclude Include="Resource\GPU\Shader\ComputePass.h" />
     <ClInclude Include="Resource\GPU\Shader\ComputeShader.h" />
@@ -300,6 +302,8 @@
     <ClInclude Include="Resource\GPU\Shader\VertexShader.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Util\GPUBufferBindingTable.cpp" />
+    <ClCompile Include="Util\DX11UtilFuncs.cpp" />
     <ClCompile Include="Resource\GPU\Shader\ComputePass.cpp" />
     <ClCompile Include="Resource\GPU\Shader\ComputeShader.cpp" />
     <ClCompile Include="Core\HandlePointer.cpp" />
@@ -371,38 +375,39 @@
     <Image Include="icon1.ico" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="HLSL\Camera.hlsli" />
     <None Include="HLSL\CommonSampler.hlsli" />
-    <None Include="HLSL\CppShared\Config.hlsli" />
-    <None Include="HLSL\CppShared\CoreMinimal.hlsli" />
-    <None Include="HLSL\CppShared\Struct.hlsli" />
-    <None Include="HLSL\CppShared\Type.hlsli" />
-    <None Include="HLSL\Debug\Debug.hlsli" />
-    <None Include="HLSL\CppShared\Register.hlsli" />
-    <None Include="HLSL\CommonConstBuffer.hlsli" />
-    <None Include="HLSL\Present\Present.hlsli" />
+    <None Include="HLSL\Core\Config.hlsli" />
+    <None Include="HLSL\Core\CoreMinimal.hlsli" />
+    <None Include="HLSL\Core\Type.hlsli" />
+    <None Include="HLSL\DebugDraw\DebugDraw.hlsli" />
+    <None Include="HLSL\Core\Register.hlsli" />
+    <None Include="HLSL\ForwardOpaquePass.hlsli" />
+    <None Include="HLSL\PresentPass\PresentPass.hlsli" />
+    <None Include="HLSL\RenderPass.hlsli" />
     <None Include="HLSL\Sprite\Sprite.hlsli" />
     <None Include="ThirdParty\DirectXTK\SimpleMath.inl" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="HLSL\Debug\Debug_PS.hlsl">
+    <FxCompile Include="HLSL\DebugDraw\DebugDraw_PS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
     </FxCompile>
-    <FxCompile Include="HLSL\Debug\Debug_VS.hlsl">
+    <FxCompile Include="HLSL\DebugDraw\DebugDraw_VS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
     </FxCompile>
-    <FxCompile Include="HLSL\Present\Present_PS.hlsl">
+    <FxCompile Include="HLSL\PresentPass\PresentPass_PS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
     </FxCompile>
-    <FxCompile Include="HLSL\Present\Present_VS.hlsl">
+    <FxCompile Include="HLSL\PresentPass\PresentPass_VS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>

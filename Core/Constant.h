@@ -14,7 +14,6 @@ namespace engine
 	constexpr float kDefaultFixedDeltaTime = 1.0f / 60.0f;
 	constexpr uint32 kDefaultMaxStepCount = 3u;
 
-	constexpr uint32 kMaxTextureCount = 8u;
 	constexpr uint32 kMaxRenderTargetCount = 8u;
 
 	constexpr float kDefaultBlendFactor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };

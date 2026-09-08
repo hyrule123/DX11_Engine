@@ -17,7 +17,7 @@ namespace engine
 		Super::LateUpdate();
 
 #ifndef NDEBUG
-		DebugInstanceData debug_data;
+		DebugDrawPerInstanceData debug_data;
 
 		debug_data.world_mat = DirectX::XMMatrixAffineTransformation(
 			float3(radius_ * 2.0f, radius_ * 2.0f, 1.0f),

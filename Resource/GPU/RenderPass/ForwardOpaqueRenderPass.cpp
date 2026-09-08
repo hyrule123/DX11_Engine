@@ -9,7 +9,7 @@
 
 #include <Engine/Core/Debug.h>
 
-#include <Engine/HLSL/CppShared/Register.hlsli>
+#include <Engine/HLSL/ForwardOpaquePass.hlsli>
 
 #include <algorithm>
 #include <limits>
@@ -21,7 +21,7 @@ namespace engine
 	{}
 	ForwardOpaqueRenderPass::~ForwardOpaqueRenderPass()
 	{}
-	void ForwardOpaqueRenderPass::Execute( ID3D11DeviceContext* context)
+	void ForwardOpaqueRenderPass::Execute(ID3D11DeviceContext* context)
 	{
 		BindRenderTargetGroup(context);
 
@@ -41,8 +41,8 @@ namespace engine
 				{
 					Material* mtrl = render_queue_[i].renderer->GetMaterial().get();
 					ASSERT(mtrl);
-					mtrl->BinePipelineState(context, GetPassOrder());
-					mtrl->BindTextures(context, ShaderStage::kPS);
+					mtrl->BindPipelineState(context, GetPassOrder());
+					mtrl->BindTextures(context, ShaderStage::Flags::Pixel);
 
 					prev_material_ID = cur_material_ID;
 				}
@@ -61,42 +61,45 @@ namespace engine
 				}
 
 				//버퍼 사이즈 계산
-				const uint32 instances_count = (uint32)(span_end - i);
 				const uint32 instance_data_stride = (uint32)render_queue_[i].renderer->GetInstanceDataStride(GetPassOrder());
-				const uint32 total_instance_data_size = instance_data_stride * instances_count;
+				const uint32 instances_count = (uint32)(span_end - i);
 
-				//구조화 버퍼 탐색 및 업로드
-				u_ptr<StructuredBuffer>& struct_buffer = instancing_data_buffers_[render_queue_[i].key];
-
-				//캐시에 없을 시 새로 생성
-				if (!struct_buffer)
+				// Per Instance Data가 0이 아닐 경우 StructuredBuffer를 탐색 및 업로드
+				if (instance_data_stride > 0)
 				{
-					struct_buffer = std::make_unique<StructuredBuffer>();
+					//구조화 버퍼 탐색 및 업로드
+					u_ptr<StructuredBuffer>& struct_buffer = instancing_data_buffers_[render_queue_[i].key];
 
-					bool result = struct_buffer->CreateDynamicBuffer(instance_data_stride, instances_count);
-					ASSERT(result);
-				}
-
-				// 사이즈 부족 시 2배 크기로 resize
-				if (instances_count > struct_buffer->GetCapacity())
-				{
-					bool result = struct_buffer->Reserve(instances_count * 2);
-					ASSERT(result);
-				}
-
-				{
-					ASSERT(struct_buffer->GetElementStride() == instance_data_stride);
-
-					MapScopeDynamic map_scope = struct_buffer->MapDynamic(context);
-
-
-					for (size_t j = 0; j < instances_count; ++j)
+					//캐시에 없을 시 새로 생성
+					if (!struct_buffer)
 					{
-						render_queue_[i + j].renderer->WritePerObjData(map_scope.Allocate());
-					}
-				}
+						struct_buffer = std::make_unique<StructuredBuffer>();
 
-				struct_buffer->BindSRV(context, SLOT_T_PER_INSTANCE, ShaderStage::kVS | ShaderStage::kPS);
+						bool result = struct_buffer->CreateDynamicBuffer(instance_data_stride, instances_count);
+						ASSERT(result);
+					}
+
+					// 사이즈 부족 시 2배 크기로 resize
+					if (instances_count > struct_buffer->GetCapacity())
+					{
+						bool result = struct_buffer->Reserve(instances_count * 2);
+						ASSERT(result);
+					}
+
+					{
+						ASSERT(struct_buffer->GetElementStride() == instance_data_stride);
+
+						MapScopeDynamic map_scope = struct_buffer->MapDynamic(context);
+
+
+						for (size_t j = 0; j < instances_count; ++j)
+						{
+							render_queue_[i + j].renderer->WritePerInstanceData(map_scope.Allocate());
+						}
+					}
+
+					struct_buffer->BindSRV(context, ShaderStage::Flags::Vertex | ShaderStage::Flags::Pixel, REG_T_INSTANCE_BUFFER);
+				}
 
 				//렌더링
 				Mesh* mesh = render_queue_[i].renderer->GetMesh().get();

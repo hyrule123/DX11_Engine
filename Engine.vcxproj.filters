@@ -252,6 +252,12 @@
     <ClInclude Include="Resource\GPU\Buffer\ShaderResource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Util\DX11UtilFuncs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Util\GPUBufferBindingTable.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Core\pch.cpp">
@@ -428,6 +434,12 @@
     <ClCompile Include="Resource\GPU\Buffer\TypedBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Util\DX11UtilFuncs.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Util\GPUBufferBindingTable.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Engine.rc">
@@ -443,23 +455,24 @@
     <None Include="ThirdParty\DirectXTK\SimpleMath.inl">
       <Filter>Header Files</Filter>
     </None>
-    <None Include="HLSL\Debug\Debug.hlsli" />
-    <None Include="HLSL\CppShared\Type.hlsli" />
-    <None Include="HLSL\CppShared\Register.hlsli" />
-    <None Include="HLSL\CppShared\Struct.hlsli" />
-    <None Include="HLSL\CppShared\CoreMinimal.hlsli" />
-    <None Include="HLSL\CppShared\Config.hlsli" />
-    <None Include="HLSL\CommonConstBuffer.hlsli" />
+    <None Include="HLSL\DebugDraw\DebugDraw.hlsli" />
+    <None Include="HLSL\Core\Type.hlsli" />
+    <None Include="HLSL\Core\Register.hlsli" />
+    <None Include="HLSL\Core\CoreMinimal.hlsli" />
+    <None Include="HLSL\Core\Config.hlsli" />
     <None Include="HLSL\Sprite\Sprite.hlsli" />
     <None Include="HLSL\CommonSampler.hlsli" />
-    <None Include="HLSL\Present\Present.hlsli" />
+    <None Include="HLSL\PresentPass\PresentPass.hlsli" />
+    <None Include="HLSL\Camera.hlsli" />
+    <None Include="HLSL\ForwardOpaquePass.hlsli" />
+    <None Include="HLSL\RenderPass.hlsli" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="HLSL\Debug\Debug_PS.hlsl" />
-    <FxCompile Include="HLSL\Debug\Debug_VS.hlsl" />
+    <FxCompile Include="HLSL\DebugDraw\DebugDraw_PS.hlsl" />
+    <FxCompile Include="HLSL\DebugDraw\DebugDraw_VS.hlsl" />
     <FxCompile Include="HLSL\Sprite\Sprite_VS.hlsl" />
     <FxCompile Include="HLSL\Sprite\Sprite_PS.hlsl" />
-    <FxCompile Include="HLSL\Present\Present_VS.hlsl" />
-    <FxCompile Include="HLSL\Present\Present_PS.hlsl" />
+    <FxCompile Include="HLSL\PresentPass\PresentPass_VS.hlsl" />
+    <FxCompile Include="HLSL\PresentPass\PresentPass_PS.hlsl" />
   </ItemGroup>
 </Project>

@@ -11,7 +11,7 @@
 
 #include <Engine/Core/Debug.h>
 
-#include <Engine/HLSL/CppShared/Register.hlsli>
+#include <Engine/HLSL/Core/Register.hlsli>
 
 namespace engine
 {

@@ -15,7 +15,7 @@
 
 #include <Engine/Core/Debug.h>
 
-#include <Engine/HLSL/Present/Present.hlsli>
+#include <Engine/HLSL/PresentPass/PresentPass.hlsli>
 
 #include <array>
 
@@ -69,10 +69,10 @@ namespace engine
 			vertices[2].position = { 1.0f, -1.0f, 0.5f };
 			vertices[3].position = { -1.0f, -1.0f, 0.5f };
 
-			vertices[0].UV = { 0.0f, 0.0f };
-			vertices[1].UV = { 1.0f, 0.0f };
-			vertices[2].UV = { 1.0f, 1.0f };
-			vertices[3].UV = { 0.0f, 1.0f };
+			vertices[0].uv = { 0.0f, 0.0f };
+			vertices[1].uv = { 1.0f, 0.0f };
+			vertices[2].uv = { 1.0f, 1.0f };
+			vertices[3].uv = { 0.0f, 1.0f };
 
 			bool result = mesh->CreateVertexBuffer(vertices);
 			ASSERT(result);
@@ -89,7 +89,7 @@ namespace engine
 		shader_set_->SetPerInstanceDataStride(sizeof(PresentVSInput));
 		
 		s_ptr<VertexShader> vs = EntityManager::CreateEntity<VertexShader>();
-		bool result = vs->LoadFromFile(res_dir / L"Shader/Present_VS.cso");
+		bool result = vs->LoadFromFile(res_dir / L"Shader/PresentPass_VS.cso");
 		ASSERT(result);
 		shader_set_->SetVertexShader(vs);
 
@@ -102,7 +102,7 @@ namespace engine
 		ASSERT(result);
 
 		s_ptr<PixelShader> ps = EntityManager::CreateEntity<PixelShader>();
-		result = ps->LoadFromFile(res_dir / L"Shader/Present_PS.cso");
+		result = ps->LoadFromFile(res_dir / L"Shader/PresentPass_PS.cso");
 		ASSERT(result);
 		shader_set_->SetPixelShader(ps);
 
@@ -116,7 +116,7 @@ namespace engine
 		src_render_target_->UnBindOutputMerger(context);
 
 		// 이전 렌더패스에서 렌더링된 결과를 PresentPass에서 사용하기 위해 SRV로 바인딩
-		src_render_target_->BindShaderResourceViews(context, ShaderStage::kPS);
+		src_render_target_->BindShaderResourceViews(context, ShaderStage::Flags::Pixel, REG_T_SRC_RENDERTARGET);
 
 		// 전용 ShderSet 바인딩
 		shader_set_->Bind(context);
@@ -129,7 +129,7 @@ namespace engine
 		// 전용 Mesh를 사용하여 화면에 렌더링
 		mesh_->Draw(context, 1);
 
-		src_render_target_->UnBindShaderResourceViews(context);
+		src_render_target_->UnBindShaderResourceViews(context, ShaderStage::Flags::Pixel, REG_T_SRC_RENDERTARGET);
 		src_render_target_->ClearRenderTargetView(context, { 0.0f, 0.0f, 0.0f, 0.0f });
 		src_render_target_->ClearDepthStencilView(context, 1.0f, 0);
 	}

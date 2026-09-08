@@ -29,16 +29,14 @@ namespace engine
         virtual ~RenderTargetGroup() override;
 
         void SetRenderTargets(const RenderTargetArray& rtv_arr);
-        void SetDepthStencilView(s_ptr<DepthStencilView> dsv) { 
-            dsv_ = std::move(dsv);
-        }
+        void SetDepthStencilView(s_ptr<DepthStencilView> dsv) { dsv_ = std::move(dsv); }
 
-		void BindShaderResourceViews(ID3D11DeviceContext* context, ShaderStage::Flags stage_flags);
-		void UnBindShaderResourceViews(ID3D11DeviceContext* context);
+		// start_slot으로부터 8장의 RenderTargetView를 동시에 바인딩함.
+		void BindShaderResourceViews(ID3D11DeviceContext* context, ShaderStage::Flags stage_flags, uint32 start_slot);
+		void UnBindShaderResourceViews(ID3D11DeviceContext* context, ShaderStage::Flags stage_flags, uint32 start_slot);
 
         void BindOutputMerger(ID3D11DeviceContext* context);
 		void UnBindOutputMerger(ID3D11DeviceContext* context);
-
 
         void ClearRenderTargetView(ID3D11DeviceContext* context, std::array<float, 4> clear_color);
         void ClearDepthStencilView(ID3D11DeviceContext* context, float depth, uint8 stencil);
@@ -46,7 +44,7 @@ namespace engine
         void Reset();
 
 		void SetRequiresResize(bool requires_resize) { requires_resize_ = requires_resize; }
-		void Resize( uint32 width, uint32 height);
+		void Resize(uint32 width, uint32 height);
 
         //기본 Texture Size로 설정됨. override용
 		const D3D11_VIEWPORT& GetViewport() const { return viewport_; }
@@ -56,14 +54,11 @@ namespace engine
         RenderTargetArray render_target_buffers_ = {};
         s_ptr<DepthStencilView> dsv_ = {};
 
-		std::array<ID3D11ShaderResourceView*, kMaxRenderTargetCount> SRVs_ptr_cache_ = {};
-        std::array<ID3D11RenderTargetView*, kMaxRenderTargetCount> RTVs_ptr_cache_ = {};
-
         D3D11_VIEWPORT viewport_ = {};
 
         bool requires_resize_ = {};
 
-		ShaderStage::Flags last_bound_stage_flags_ = {};
+		bool srv_bound_ = false;
     };
 }
 

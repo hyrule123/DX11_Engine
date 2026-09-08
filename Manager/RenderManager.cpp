@@ -14,8 +14,8 @@
 #include <Engine/Resource/GPU/Shader/InputLayoutDesc.h>
 #include <Engine/Resource/GPU/Vertex.h>
 
-#include <Engine/HLSL/CppShared/Struct.hlsli>
-#include <Engine/HLSL/CppShared/Register.hlsli>
+#include <Engine/HLSL/Core/Register.hlsli>
+#include <Engine/HLSL/DebugDraw/DebugDraw.hlsli>
 
 #include <Engine/Manager/GraphicsDevice.h>
 #include <Engine/Manager/TimeManager.h>
@@ -37,8 +37,8 @@ namespace engine
 		auto* context = GraphicsDevice::GetInst().GetContext();
 
 		//CONSTANT BUFFERS
-		cb_per_pass_ = EntityManager::CreateEntity<ConstantBuffer>();
-		cb_per_pass_->Create<PerPass>();
+		cb_per_pass_camera_ = EntityManager::CreateEntity<ConstantBuffer>();
+		cb_per_pass_camera_->Create<CameraData>();
 
 		CreateSamplerStates(context);
 		BindPSSamplerStates(context);
@@ -58,12 +58,12 @@ namespace engine
 		auto* context = GraphicsDevice::GetInst().GetContext();
 
 		//Per Pass ( = Camera )
-		PerPass per_pass_data = {};
-		per_pass_data.view_mat = main_cam->GetViewMatrix();
-		per_pass_data.proj_mat = main_cam->GetProjMatrix();
+		CameraData cam_data = {};
+		cam_data.view_mat = main_cam->GetViewMatrix();
+		cam_data.proj_mat = main_cam->GetProjMatrix();
 
-		cb_per_pass_->Upload(context, per_pass_data);
-		cb_per_pass_->Bind(context, ShaderStage::kAllGraphics, SLOT_B_PER_PASS);
+		cb_per_pass_camera_->Upload(context, cam_data);
+		cb_per_pass_camera_->Bind(context, ShaderStage::Flags::AllGraphics, REG_B_CAMERA);
 
 		//Render Pass 별 렌더링
 		forward_opaque_pass_.Execute(context);
@@ -102,12 +102,12 @@ namespace engine
 		}
 
 		//Per Pass ( = Camera )
-		PerPass per_pass_data = {};
-		per_pass_data.view_mat = cam->GetViewMatrix();
-		per_pass_data.proj_mat = cam->GetProjMatrix();
+		CameraData cam_data = {};
+		cam_data.view_mat = cam->GetViewMatrix();
+		cam_data.proj_mat = cam->GetProjMatrix();
 
-		cb_per_pass_->Upload(context, per_pass_data);
-		cb_per_pass_->Bind(context, ShaderStage::kAllGraphics, SLOT_B_PER_PASS);
+		cb_per_pass_camera_->Upload(context, cam_data);
+		cb_per_pass_camera_->Bind(context, ShaderStage::Flags::AllGraphics, REG_B_CAMERA);
 
 		//Shader Set Bind
 		debug_shader_set_->Bind(context);
@@ -128,7 +128,7 @@ namespace engine
 		{
 			std::span debug_rect_span(debug_rect_data_);
 			debug_buffer_->Upload(context, debug_rect_span);
-			debug_buffer_->BindSRV(context, SLOT_T_PER_INSTANCE, ShaderStage::kVS | ShaderStage::kPS);
+			debug_buffer_->BindSRV(context, ShaderStage::Flags::Vertex | ShaderStage::Flags::Pixel, REG_T_INSTANCE_BUFFER);
 
 			//Mesh Draw
 			debug_rect_mesh_->Bind(context);
@@ -153,7 +153,7 @@ namespace engine
 		{
 			std::span debug_circle_span(debug_circle_data_);
 			debug_buffer_->Upload(context, debug_circle_span);
-			debug_buffer_->BindSRV(context, SLOT_T_PER_INSTANCE, ShaderStage::kVS | ShaderStage::kPS);
+			debug_buffer_->BindSRV(context, ShaderStage::Flags::Vertex | ShaderStage::Flags::Pixel, REG_T_INSTANCE_BUFFER);
 
 			//Mesh Draw
 			debug_circle_mesh_->Bind(context);
@@ -172,9 +172,9 @@ namespace engine
 		}
 #pragma endregion //Debug Circle Draw
 	}
-	void RenderManager::CreateSamplerStates( ID3D11DeviceContext* context)
+	void RenderManager::CreateSamplerStates(ID3D11DeviceContext* context)
 	{
-		sampler_states_.resize(SLOT_S_END);
+		sampler_states_.resize(REG_S_END);
 
 		//SAMPLERS
 		ComPtr<ID3D11SamplerState> point = {};
@@ -199,7 +199,7 @@ namespace engine
 		{
 			HRESULT_ERROR_MESSAGE(hr);
 		}
-		sampler_states_[SLOT_S_POINT_CLAMP] = point;
+		sampler_states_[REG_S_POINT_CLAMP] = point;
 	}
 	void RenderManager::BindPSSamplerStates(ID3D11DeviceContext* context)
 	{
@@ -215,13 +215,13 @@ namespace engine
 	{
 		debug_buffer_ = std::make_unique<StructuredBuffer>();
 
-		bool result = debug_buffer_->CreateDynamicBuffer<DebugInstanceData>(512);
+		bool result = debug_buffer_->CreateDynamicBuffer<DebugDrawPerInstanceData>(512);
 		ASSERT(result);
 
 #pragma region //INPUT LAYOUT DESC
 		s_ptr<InputLayoutDesc> input_layout_desc = EntityManager::CreateEntity<InputLayoutDesc>();
 
-		for (const auto& desc : Vertex::Debug::kInputLayoutDescs)
+		for (const auto& desc : Vertex::DebugDraw::kInputLayoutDescs)
 		{
 			input_layout_desc->AddLayoutDesc(desc);
 		}
@@ -255,7 +255,7 @@ namespace engine
 
 			//Mesh
 			//VERTEX BUFFER
-			std::vector<Vertex::Debug::Vertex> vertices;
+			std::vector<Vertex::DebugDraw::Vertex> vertices;
 			vertices.resize(4);
 			vertices[0].position = { -0.5f, 0.5f, 0.0f };
 			vertices[1].position = { 0.5f, 0.5f, 0.0f };
@@ -280,10 +280,10 @@ namespace engine
 			debug_circle_mesh_ = EntityManager::CreateEntity<Mesh>();
 
 			//Mesh
-			std::vector<Vertex::Debug::Vertex> vertices;
+			std::vector<Vertex::DebugDraw::Vertex> vertices;
 			std::vector<uint16> indices;
 
-			Vertex::Debug::Vertex v;
+			Vertex::DebugDraw::Vertex v;
 			//v.position = { 0.0f, 0.0f, 0.0f };	//중심점
 			//vertices.push_back(v);
 
@@ -309,9 +309,9 @@ namespace engine
 		debug_shader_set_->SetInstancingSupport(true);
 		debug_shader_set_->SetPerInstanceDataStride(sizeof(SpriteInstanceData));
 		//Shaders
-		debug_shader_set_->SetVertexShader("Shader/Debug_VS.cso"_hash);
+		debug_shader_set_->SetVertexShader("Shader/DebugDraw_VS.cso"_hash);
 		debug_shader_set_->CreateInputLayout(input_layout_desc.get());
-		debug_shader_set_->SetPixelShader("Shader/Debug_PS.cso"_hash);
+		debug_shader_set_->SetPixelShader("Shader/DebugDraw_PS.cso"_hash);
 		debug_shader_set_->SetDepthStencilState(dss);
 #pragma endregion // GRAPHICS SHADER SET
 	}

@@ -82,7 +82,7 @@ namespace engine
 
 	bool Mesh::CreateIndexBuffer(const void* p_data, DXGI_FORMAT format, uint32 data_count, D3D11_PRIMITIVE_TOPOLOGY topology, std::vector<SubMesh> sub_meshes)
 	{
-		UINT data_stride = GetFormatByteSize(format);
+		UINT data_stride = GetDXGIFormatByteStride(format);
 
 		if (data_stride == 0)
 		{

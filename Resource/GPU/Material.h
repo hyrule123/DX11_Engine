@@ -49,8 +49,8 @@ namespace engine
         // Material Start slot으로부터 8장 연속으로 바인딩함. 슬롯 주의
         void BindTextures(ID3D11DeviceContext* context, ShaderStage::Flags stage_flag = ShaderStage::Flags::Pixel);
 
-        bool SetTexture(uint32 slot, const HashedStringView& texture_name);
-        void SetTexture(uint32 slot, s_ptr<Texture2D> tex);
+        bool SetTexture(RegisterT slot, const HashedStringView& texture_name);
+        void SetTexture(RegisterT slot, s_ptr<Texture2D> tex);
         void SetTextures(const Textures& textures) { textures_ = textures; }
 
 		bool IsInstancingSupported(RenderPassOrder pass) const;

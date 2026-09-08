@@ -51,8 +51,8 @@ namespace engine
         // 기본 SRV/UAV는 생성되어 있음. 별도 설정으로 생성하길 원한다면 호출할 것
 		bool CreateUAV(D3D11_UNORDERED_ACCESS_VIEW_DESC* uav_desc);
 
-		void BindUAV(ID3D11DeviceContext* context, UINT slot);
-		static void UnbindUAV(ID3D11DeviceContext* context, UINT slot);
+		void BindUAV(ID3D11DeviceContext* context, RegisterU slot);
+		static void UnbindUAV(ID3D11DeviceContext* context, RegisterU slot);
 
         // 상속 시 Super::Resize() 호출할 것
 		virtual bool Resize(uint32 width, uint32 height);

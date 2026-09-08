@@ -32,8 +32,8 @@ namespace engine
         void SetDepthStencilView(s_ptr<DepthStencilView> dsv) { dsv_ = std::move(dsv); }
 
 		// start_slot으로부터 8장의 RenderTargetView를 동시에 바인딩함.
-		void BindShaderResourceViews(ID3D11DeviceContext* context, ShaderStage::Flags stage_flags, uint32 start_slot);
-		void UnBindShaderResourceViews(ID3D11DeviceContext* context, ShaderStage::Flags stage_flags, uint32 start_slot);
+		void BindShaderResourceViews(ID3D11DeviceContext* context, ShaderStage::Flags stage_flags, RegisterT start_slot);
+		void UnBindShaderResourceViews(ID3D11DeviceContext* context, ShaderStage::Flags stage_flags, RegisterT start_slot);
 
         void BindOutputMerger(ID3D11DeviceContext* context);
 		void UnBindOutputMerger(ID3D11DeviceContext* context);

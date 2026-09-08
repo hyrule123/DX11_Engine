@@ -85,9 +85,9 @@ namespace engine
 		}
 	}
 
-	void Material::SetTexture(uint32 slot, s_ptr<Texture2D> tex)
+	void Material::SetTexture(RegisterT slot, s_ptr<Texture2D> tex)
 	{
-		int32 slot_idx = (int32)slot - (int32)REG_T_PER_MATERIAL_START;
+		int32 slot_idx = (int32)slot.Get() - (int32)REG_T_PER_MATERIAL_START;
 		if (slot_idx < 0 || MAX_TEXTURE_COUNT <= slot_idx)
 		{
 			ASSERT_RELEASE("Material::SetTexture() - Invalid slot index");
@@ -96,7 +96,7 @@ namespace engine
 		textures_[slot_idx] = std::move(tex);
 	}
 
-	bool Material::SetTexture(uint32 slot, const HashedStringView& texture_name)
+	bool Material::SetTexture(RegisterT slot, const HashedStringView& texture_name)
 	{
 		s_ptr<Texture2D> tex = 
 			ResourceManager::GetInst().LoadFromFile<Texture2D>(texture_name);

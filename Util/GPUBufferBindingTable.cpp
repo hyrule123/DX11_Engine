@@ -20,10 +20,10 @@ namespace engine
 		ASSERT_RELEASE_MESSAGE((uint64)srv_slot_start_ + (uint64)srv_slot_count_ <= (uint64)D3D11_COMMONSHADER_INPUT_RESOURCE_SLOT_COUNT, "srv_slot_count가 D3D11 입력 리소스 슬롯 수를 초과합니다.");
 	}
 
-	void GPUBufferBindingTable::AddConstantBuffer(ShaderStage::Flags stage_flag, uint32 slot, s_ptr<ConstantBuffer> buffer)
+	void GPUBufferBindingTable::AddConstantBuffer(ShaderStage::Flags stage_flag, RegisterB slot, s_ptr<ConstantBuffer> buffer)
 	{
-		const uint32 idx = slot - cb_slot_start_;
-		if (slot < cb_slot_start_ || idx >= cb_slot_count_)
+		const uint32 idx = slot.Get() - cb_slot_start_;
+		if (slot.Get() < cb_slot_start_ || idx >= cb_slot_count_)
 		{
 			ASSERT_MESSAGE(false, "CB 슬롯 범위 초과");
 			return;
@@ -49,10 +49,10 @@ namespace engine
 		cb_bindings_[idx] = { stage_flag, buffer };
 	}
 
-	void GPUBufferBindingTable::RemoveConstantBuffer(uint32 slot)
+	void GPUBufferBindingTable::RemoveConstantBuffer(RegisterB slot)
 	{
-		const uint32 idx = slot - cb_slot_start_;
-		if (slot < cb_slot_start_ || idx >= cb_slot_count_)
+		const uint32 idx = slot.Get() - cb_slot_start_;
+		if (slot.Get() < cb_slot_start_ || idx >= cb_slot_count_)
 		{
 			ASSERT_MESSAGE(false, "CB 슬롯 범위 초과");
 			return;
@@ -65,10 +65,10 @@ namespace engine
 		cb_bindings_[idx] = { ShaderStage::Flags::None, nullptr };
 	}
 
-	void GPUBufferBindingTable::AddShaderResource(ShaderStage::Flags stage_flag, uint32 slot, s_ptr<ShaderResource> buffer)
+	void GPUBufferBindingTable::AddShaderResource(ShaderStage::Flags stage_flag, RegisterT slot, s_ptr<ShaderResource> buffer)
 	{
-		const uint32 idx = slot - srv_slot_start_;
-		if (slot < srv_slot_start_ || idx >= srv_slot_count_)
+		const uint32 idx = slot.Get() - srv_slot_start_;
+		if (slot.Get() < srv_slot_start_ || idx >= srv_slot_count_)
 		{
 			ASSERT_MESSAGE(false, "SRV 슬롯 범위 초과");
 			return;
@@ -94,10 +94,10 @@ namespace engine
 		srv_bindings_[idx] = { stage_flag, buffer };
 	}
 
-	void GPUBufferBindingTable::RemoveShaderResource(uint32 slot)
+	void GPUBufferBindingTable::RemoveShaderResource(RegisterT slot)
 	{
-		const uint32 idx = slot - srv_slot_start_;
-		if (slot < srv_slot_start_ || idx >= srv_slot_count_)
+		const uint32 idx = slot.Get() - srv_slot_start_;
+		if (slot.Get() < srv_slot_start_ || idx >= srv_slot_count_)
 		{
 			ASSERT_MESSAGE(false, "SRV 슬롯 범위 초과");
 			return;

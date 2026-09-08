@@ -199,7 +199,7 @@ namespace engine
 		{
 			HRESULT_ERROR_MESSAGE(hr);
 		}
-		sampler_states_[REG_S_POINT_CLAMP] = point;
+		sampler_states_[REG_S_POINT_CLAMP.Get()] = point;
 	}
 	void RenderManager::BindPSSamplerStates(ID3D11DeviceContext* context)
 	{

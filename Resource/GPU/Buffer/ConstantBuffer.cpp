@@ -86,23 +86,23 @@ namespace engine
 		context->Unmap(buffer_.Get(), 0);
 	}
 
-	void ConstantBuffer::Bind(ID3D11DeviceContext* context, ShaderStage::Flags flag, uint32 slot)
+	void ConstantBuffer::Bind(ID3D11DeviceContext* context, ShaderStage::Flags flag, RegisterB slot)
 	{
 		if (ShaderStage::HasFlag(flag, ShaderStage::Flags::Vertex))
 		{
-			context->VSSetConstantBuffers((UINT)slot, 1u, buffer_.GetAddressOf());
+			context->VSSetConstantBuffers((UINT)slot.Get(), 1u, buffer_.GetAddressOf());
 		}
 		if (ShaderStage::HasFlag(flag, ShaderStage::Flags::Geometry))
 		{
-			context->GSSetConstantBuffers((UINT)slot, 1u, buffer_.GetAddressOf());
+			context->GSSetConstantBuffers((UINT)slot.Get(), 1u, buffer_.GetAddressOf());
 		}
 		if (ShaderStage::HasFlag(flag, ShaderStage::Flags::Pixel))
 		{
-			context->PSSetConstantBuffers((UINT)slot, 1u, buffer_.GetAddressOf());
+			context->PSSetConstantBuffers((UINT)slot.Get(), 1u, buffer_.GetAddressOf());
 		}
 		if (ShaderStage::HasFlag(flag, ShaderStage::Flags::Compute))
 		{
-			context->CSSetConstantBuffers((UINT)slot, 1u, buffer_.GetAddressOf());
+			context->CSSetConstantBuffers((UINT)slot.Get(), 1u, buffer_.GetAddressOf());
 		}
 	}
 }

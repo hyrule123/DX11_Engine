@@ -160,35 +160,35 @@ namespace engine
 		return true;
 	}
 
-	void TypedBuffer::BindSRV(ID3D11DeviceContext* context, ShaderStage::Flags stage_flag, uint32 slot)
+	void TypedBuffer::BindSRV(ID3D11DeviceContext* context, ShaderStage::Flags stage_flag, RegisterT slot)
 	{
 		ASSERT(context);
 		ASSERT(SRV_);
 
 		if (ShaderStage::HasFlag(stage_flag, ShaderStage::Flags::Vertex))
 		{
-			context->VSSetShaderResources(slot, 1, SRV_.GetAddressOf());
+			context->VSSetShaderResources(slot.Get(), 1, SRV_.GetAddressOf());
 		}
 		if (ShaderStage::HasFlag(stage_flag, ShaderStage::Flags::Geometry))
 		{
-			context->GSSetShaderResources(slot, 1, SRV_.GetAddressOf());
+			context->GSSetShaderResources(slot.Get(), 1, SRV_.GetAddressOf());
 		}
 		if (ShaderStage::HasFlag(stage_flag, ShaderStage::Flags::Pixel))
 		{
-			context->PSSetShaderResources(slot, 1, SRV_.GetAddressOf());
+			context->PSSetShaderResources(slot.Get(), 1, SRV_.GetAddressOf());
 		}
 		if (ShaderStage::HasFlag(stage_flag, ShaderStage::Flags::Compute))
 		{
-			context->CSSetShaderResources(slot, 1, SRV_.GetAddressOf());
+			context->CSSetShaderResources(slot.Get(), 1, SRV_.GetAddressOf());
 		}
 	}
 
-	void TypedBuffer::BindUAV(ID3D11DeviceContext * context, uint32 slot)
+	void TypedBuffer::BindUAV(ID3D11DeviceContext * context, RegisterT slot)
 	{
 		ASSERT(context);
 		ASSERT(UAV_);
 
-		context->CSSetUnorderedAccessViews(slot, 1, UAV_.GetAddressOf(), nullptr);
+		context->CSSetUnorderedAccessViews(slot.Get(), 1, UAV_.GetAddressOf(), nullptr);
 	}
 
 	bool TypedBuffer::ValidateParameters(DXGI_FORMAT format, uint32 capacity)

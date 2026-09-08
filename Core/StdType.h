@@ -88,4 +88,24 @@ namespace engine
 
 	template <typename T>
 	ScopedValue(T&, T) -> ScopedValue<T>;
+
+	enum class RegisterType : uint8 { T, B, S, U };
+
+	template <RegisterType Type>
+	struct RegisterSlot
+	{
+		uint32 slot_num;
+		constexpr explicit RegisterSlot(uint32 slot_num) : slot_num(slot_num) {}
+		constexpr uint32 Get() const { return slot_num; }
+
+		friend constexpr bool operator==(RegisterSlot a, RegisterSlot b)
+		{
+			return a.slot_num == b.slot_num;
+		}
+	};
+
+	using RegisterT = RegisterSlot<RegisterType::T>;
+	using RegisterB = RegisterSlot<RegisterType::B>;
+	using RegisterS = RegisterSlot<RegisterType::S>;
+	using RegisterU = RegisterSlot<RegisterType::U>;
 }

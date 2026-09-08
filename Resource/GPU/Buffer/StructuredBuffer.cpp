@@ -323,22 +323,22 @@ namespace engine
     {
         context->Unmap(buffer_.Get(), 0);
     }
-    void StructuredBuffer::BindSRV(ID3D11DeviceContext* context, ShaderStage::Flags stage_buffer_usage, uint32 slot)
+    void StructuredBuffer::BindSRV(ID3D11DeviceContext* context, ShaderStage::Flags stage_buffer_usage, RegisterT slot)
     {
         ASSERT(nullptr != SRV_);
 		if (ShaderStage::HasFlag(stage_buffer_usage, ShaderStage::Flags::Vertex))
 		{
-			context->VSSetShaderResources(slot, 1, SRV_.GetAddressOf());
+			context->VSSetShaderResources(slot.Get(), 1, SRV_.GetAddressOf());
 		}
 		if (ShaderStage::HasFlag(stage_buffer_usage, ShaderStage::Flags::Pixel))
 		{
-			context->PSSetShaderResources(slot, 1, SRV_.GetAddressOf());
+			context->PSSetShaderResources(slot.Get(), 1, SRV_.GetAddressOf());
 		}
     }
-    void StructuredBuffer::BindUAV(ID3D11DeviceContext* context, uint32 slot)
+    void StructuredBuffer::BindUAV(ID3D11DeviceContext* context, RegisterU slot)
     {
         ASSERT(nullptr != UAV_);
-        context->CSSetUnorderedAccessViews(slot, 1, UAV_.GetAddressOf(), nullptr);
+        context->CSSetUnorderedAccessViews(slot.Get(), 1, UAV_.GetAddressOf(), nullptr);
     }
     MapScopeDynamic::MapScopeDynamic(ID3D11DeviceContext* ctx, ID3D11Buffer* buf, uint32 stride, uint32 capacity)
 		: context_(ctx), buffer_(buf), stride_(stride), capacity_(capacity)

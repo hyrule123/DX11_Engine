@@ -202,14 +202,14 @@ namespace engine
 		}
 		return false;
 	}
-	void Texture2D::BindUAV(ID3D11DeviceContext* context, UINT slot)
+	void Texture2D::BindUAV(ID3D11DeviceContext* context, RegisterU slot)
 	{
-		context->CSSetUnorderedAccessViews(slot, 1, UAV_.GetAddressOf(), nullptr);
+		context->CSSetUnorderedAccessViews(slot.Get(), 1, UAV_.GetAddressOf(), nullptr);
 	}
-	void Texture2D::UnbindUAV(ID3D11DeviceContext* context, UINT slot)
+	void Texture2D::UnbindUAV(ID3D11DeviceContext* context, RegisterU slot)
 	{
 		ID3D11UnorderedAccessView* null_uav = nullptr;
-		context->CSSetUnorderedAccessViews(slot, 1, &null_uav, nullptr);
+		context->CSSetUnorderedAccessViews(slot.Get(), 1, &null_uav, nullptr);
 	}
 	ComPtr<ID3D11ShaderResourceView> Texture2D::CreateSRVImpl(ID3D11Texture2D* texture, D3D11_SHADER_RESOURCE_VIEW_DESC* srv_desc)
 	{

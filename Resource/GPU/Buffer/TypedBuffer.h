@@ -70,8 +70,8 @@ namespace engine
 
 		uint32 GetCapacity() const { return capacity_; }
 
-		void BindSRV(ID3D11DeviceContext* context, ShaderStage::Flags stage_flag, uint32 slot);
-		void BindUAV(ID3D11DeviceContext* context, uint32 slot);
+		void BindSRV(ID3D11DeviceContext* context, ShaderStage::Flags stage_flag, RegisterT slot);
+		void BindUAV(ID3D11DeviceContext* context, RegisterT slot);
 
     private:
 		bool ValidateParameters(DXGI_FORMAT format, uint32 capacity);

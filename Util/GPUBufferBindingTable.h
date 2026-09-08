@@ -28,11 +28,11 @@ namespace engine
 		GPUBufferBindingTable(GPUBufferBindingTable&&) = delete;
 		GPUBufferBindingTable& operator=(GPUBufferBindingTable&&) = delete;
 
-		void AddConstantBuffer(ShaderStage::Flags stage_flag, uint32 slot, s_ptr<ConstantBuffer> buffer);
-		void RemoveConstantBuffer(uint32 slot);
+		void AddConstantBuffer(ShaderStage::Flags stage_flag, RegisterB slot, s_ptr<ConstantBuffer> buffer);
+		void RemoveConstantBuffer(RegisterB slot);
 
-		void AddShaderResource(ShaderStage::Flags stage_flag, uint32 slot, s_ptr<ShaderResource> buffer);
-		void RemoveShaderResource(uint32 slot);
+		void AddShaderResource(ShaderStage::Flags stage_flag, RegisterT slot, s_ptr<ShaderResource> buffer);
+		void RemoveShaderResource(RegisterT slot);
 
 		void Bind(ID3D11DeviceContext* context) const {
 			BindCBImpl(context);

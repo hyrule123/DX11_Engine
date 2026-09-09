@@ -56,7 +56,7 @@ namespace engine
         void SetTextures(const Textures& textures) { textures_ = textures; }
 
 		bool IsInstancingSupported(RenderPassOrder pass) const;
-        size_t GetInstanceDataStride(RenderPassOrder pass) const;
+        size_t GetPerObjectDataStride(RenderPassOrder pass) const;
 
     private:
 		MaterialID material_ID_;    // RenderKey에 패킹되는 Material 고유 ID. ScopedID로 관리됨

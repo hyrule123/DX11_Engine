@@ -6,6 +6,7 @@
 
 #include <Engine/Core/DX11.h>
 #include <Engine/Core/Debug.h>
+#include <Engine/Core/Constant.h>
 
 namespace engine
 {
@@ -126,6 +127,11 @@ namespace engine
 		else
 		{
 			// 비어있지 않다면 SubMesh 검증
+			if(sub_meshes.size() > kMaxSubMeshCount)
+			{
+				ERROR_MESSAGE("SubMesh 개수가 최대치를 초과했습니다.");
+				return false;
+			}
 			for (const SubMesh& sm : sub_meshes)
 			{
 				if (sm.index_start + sm.index_count > data_count)

@@ -39,37 +39,54 @@ namespace engine
 		Super::LateUpdate();
 	}
 
-	bool Renderer::SetMaterial(const HashedStringView& mtrl_name)
-	{
-		material_ = ResourceManager::GetInst().Find<Material>(mtrl_name);
-		return (nullptr != material_);
-	}
+
 	bool Renderer::SetMesh(const HashedStringView& mesh_name)
 	{
-		mesh_ = ResourceManager::GetInst().Find<Mesh>(mesh_name);
-		return (nullptr != mesh_);
+		s_ptr<Mesh> mesh = ResourceManager::GetInst().Find<Mesh>(mesh_name);
+		if (mesh)
+		{
+			SetMesh(mesh);
+			return true;
+		}
+		return false;
 	}
 
-	bool Renderer::IsInstancingSupported(RenderPassOrder pass) const
+	void Renderer::SetMesh(s_ptr<Mesh> mesh)
 	{
-		if (!material_)
+		mesh_ = std::move(mesh);
+		materials_.clear();
+		if (mesh_)
+		{	
+			materials_.resize(mesh_->GetSubMeshCount());
+		}
+	}
+
+	bool Renderer::SetMaterial(size_t submesh_idx, s_ptr<Material> material)
+	{
+		if (mesh_ == nullptr)
 		{
-			ASSERT_MESSAGE(false, "Material이 nullptr");
+			ERROR_MESSAGE("Material을 먼저 설정하세요.");
+			return false;
+		}
+		if (submesh_idx >= materials_.size())
+		{
+			ASSERT_MESSAGE(false, "submesh index가 범위를 벗어남");
 			return false;
 		}
 
-		return material_->IsInstancingSupported(pass);
+		materials_[submesh_idx] = std::move(material);
+		return true;
 	}
 
-	size_t Renderer::GetInstanceDataStride(RenderPassOrder pass) const
+	bool Renderer::SetMaterial(size_t submesh_idx, const HashedStringView& mtrl_name)
 	{
-		if (!material_)
+		s_ptr<Material> material = ResourceManager::GetInst().Find<Material>(mtrl_name);
+		if (material)
 		{
-			ASSERT_MESSAGE(false, "Material이 nullptr");
-			return 0;
+			SetMaterial(submesh_idx, material);
+			return true;
 		}
-
-		return material_->GetInstanceDataStride(pass);
+		return false;
 	}
 }
 

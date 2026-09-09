@@ -33,6 +33,9 @@ namespace engine
         void Render();
         void FrameEnd();
 
+		void RegisterRenderer(Renderer* renderer);
+		void UnRegisterRenderer(Renderer* renderer);
+
 		void SetMainCamera(wh_ptr<Camera> cam) { main_cam_ = cam; }
         wh_ptr<Camera> GetMainCamera() const { return main_cam_; }
 
@@ -56,8 +59,6 @@ namespace engine
         void BindPSSamplerStates(ID3D11DeviceContext* context);
         void CreateDebugRenderObjects(ID3D11DeviceContext* context);
 
-        
-
         s_ptr<ConstantBuffer> cb_per_pass_camera_ = {};
 
 		wh_ptr<Camera> main_cam_ = {};
@@ -65,7 +66,10 @@ namespace engine
         //Slot에 꽃아두고 계속 사용
         std::vector<ComPtr<ID3D11SamplerState>> sampler_states_ = {};
 
-        //Render Pass
+        //Render Passes
+        // 공통 함수 호출을 위한 포인터 저장소
+		std::array<RenderPass*, (size_t)RenderPassOrder::kEND> render_passes_ = {};
+
         ForwardOpaqueRenderPass forward_opaque_pass_ = {};
 		PresentPass present_pass_ = {};
 

@@ -36,6 +36,14 @@ namespace engine
 	{
 		auto* context = GraphicsDevice::GetInst().GetContext();
 
+		render_passes_[(size_t)RenderPassOrder::kForwardOpaque] = &forward_opaque_pass_;
+		render_passes_[(size_t)RenderPassOrder::kPresent] = &present_pass_;
+
+		for (RenderPass* render_pass : render_passes_)
+		{
+			ASSERT_MESSAGE(render_pass != nullptr, "RenderPass is nullptr");
+		}
+
 		//CONSTANT BUFFERS
 		cb_per_pass_camera_ = EntityManager::CreateEntity<ConstantBuffer>();
 		cb_per_pass_camera_->Create<CameraData>();
@@ -82,6 +90,12 @@ namespace engine
 		//일단은 하지 않음
 		//render_queue_.clear();
 	}
+
+	void RenderManager::RegisterRenderer(Renderer* renderer)
+	{}
+
+	void RenderManager::UnRegisterRenderer(Renderer * renderer)
+	{}
 
 	void RenderManager::OnScreenSizeChange(uint32 width, uint32 height)
 	{

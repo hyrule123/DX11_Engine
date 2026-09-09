@@ -39,7 +39,7 @@ namespace engine
 				//이전 Material과 다를 경우 Material 미리 바인딩
 				if (prev_material_ID != cur_material_ID)
 				{
-					Material* mtrl = render_queue_[i].renderer->GetMaterial().get();
+					Material* mtrl = render_queue_[i].renderer->GetMaterial(0).get();
 					ASSERT(mtrl);
 					mtrl->BindPipelineState(context, GetPassOrder());
 					mtrl->BindTextures(context, ShaderStage::Flags::Pixel);
@@ -61,7 +61,7 @@ namespace engine
 				}
 
 				//버퍼 사이즈 계산
-				const uint32 instance_data_stride = (uint32)render_queue_[i].renderer->GetInstanceDataStride(GetPassOrder());
+				const uint32 instance_data_stride = (uint32)render_queue_[i].renderer->GetMaterial(0)->GetPerObjectDataStride(GetPassOrder());
 				const uint32 instances_count = (uint32)(span_end - i);
 
 				// Per Instance Data가 0이 아닐 경우 StructuredBuffer를 탐색 및 업로드
@@ -94,7 +94,7 @@ namespace engine
 
 						for (size_t j = 0; j < instances_count; ++j)
 						{
-							render_queue_[i + j].renderer->WritePerInstanceData(map_scope.Allocate());
+							render_queue_[i + j].renderer->WritePerObjectData(map_scope.Allocate());
 						}
 					}
 

@@ -1,6 +1,7 @@
 #pragma once
 #include <Engine/Core/StdType.h>
 #include <Engine/Core/Debug.h>
+#include <Engine/Core/Constant.h>
 
 #include <vector>
 
@@ -146,10 +147,7 @@ namespace engine {
     class Material;
     class Mesh;
 
-    inline constexpr uint32 kMaterialIDBits = 28;
-    inline constexpr uint32 kMeshIDBits = 28;
-    inline constexpr uint32 kSubMeshIndexBits = 8;
-    inline constexpr uint32 kMaxSubMeshCount = 1u << kSubMeshIndexBits;
+    // 실제 상수값은 Core/Constants.h
 
     static_assert(kMaterialIDBits + kMeshIDBits + kSubMeshIndexBits <= 64,
         "RenderKey layout overflows uint64.");

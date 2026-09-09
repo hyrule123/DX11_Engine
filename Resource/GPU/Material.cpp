@@ -120,7 +120,7 @@ namespace engine
 		}
 		return false;
 	}
-	size_t Material::GetInstanceDataStride(RenderPassOrder pass) const
+	size_t Material::GetPerObjectDataStride(RenderPassOrder pass) const
 	{
 		if (pipeline_states_per_pass[(size_t)pass])
 		{

@@ -24,4 +24,9 @@ namespace engine
 	constexpr uint32 kMaxDrainLoopCount = 8u;
 
 	constexpr int32 kInvalidIndex = -1;
+
+	inline constexpr uint32 kMaterialIDBits = 28;
+	inline constexpr uint32 kMeshIDBits = 28;
+	inline constexpr uint32 kSubMeshIndexBits = 8;
+	inline constexpr uint32 kMaxSubMeshCount = 1u << kSubMeshIndexBits;
 }

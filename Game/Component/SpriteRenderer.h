@@ -19,7 +19,7 @@ namespace engine
         virtual void Awake() override;
 		virtual void LateUpdate() override;
 
-        virtual void WritePerInstanceData(DataBlock data_block) final;
+        virtual void WritePerObjectData(DataBlock data_block) final;
 
 		void SetFrameIndex(uint32 frame_index) { per_obj_data_.sprite_frame_idx = frame_index; }
 		void SetFlipLeftRight(bool flip) { per_obj_data_.flip_left_right = (BOOL)flip; }

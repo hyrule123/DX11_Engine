@@ -66,9 +66,6 @@ namespace engine
 	enum class RenderPassOrder : uint8
 	{
 		kForwardOpaque = 0u,
-		kForwardAlphaTested,
-		kForwardTransparent,
-		kUI,
 		kPresent,
 		kEND
 	};

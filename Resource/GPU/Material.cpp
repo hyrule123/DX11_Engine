@@ -8,6 +8,8 @@
 
 #include <Engine/Core/Debug.h>
 
+#include <Engine/Util/IDAllocator.h>
+
 #include <Engine/HLSL/Core/Register.hlsli>
 
 #include <utility>
@@ -16,6 +18,7 @@ namespace engine
 {
 	Material::Material()
 		: Resource(Material::kClassConcreteName)
+		, material_ID_()	// 기본 생성자에서 발급됨(RAII)
 	{
 	}
 

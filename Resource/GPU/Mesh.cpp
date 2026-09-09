@@ -11,6 +11,7 @@ namespace engine
 {
 	Mesh::Mesh()
 		: Resource(Mesh::kClassConcreteName)
+		, mesh_ID_()	// 기본 생성자에서 자동 발급됨(RAII)
 	{}
 	Mesh::~Mesh()
 	{}

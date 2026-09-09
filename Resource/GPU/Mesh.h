@@ -3,6 +3,8 @@
 
 #include <Engine/Core/DX11.h>
 
+#include <Engine/Util/IDAllocator.h>
+
 namespace engine
 {
     class Mesh
@@ -47,6 +49,8 @@ namespace engine
 		bool CreateIndexBuffer(const void* p_data, DXGI_FORMAT format, uint32 data_count, D3D11_PRIMITIVE_TOPOLOGY topology, std::vector<SubMesh> sub_meshes = {});
 
 	private:
+		MeshID mesh_ID_;    // RenderKey에 패킹되는 Mesh 고유 ID. ScopedID로 관리됨
+
 #pragma region VERTEX
 		uint32 vb_data_stride_ = {};
 		uint32 vb_data_count_ = {};

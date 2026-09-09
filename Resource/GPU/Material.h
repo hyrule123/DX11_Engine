@@ -5,6 +5,8 @@
 #include <Engine/Core/Constant.h>
 #include <Engine/Core/Enum.h>
 
+#include <Engine/Util/IDAllocator.h>
+
 #include <Engine/HLSL/Core/Config.hlsli>
 
 #include <array>
@@ -57,7 +59,10 @@ namespace engine
         size_t GetInstanceDataStride(RenderPassOrder pass) const;
 
     private:
+		MaterialID material_ID_;    // RenderKey에 패킹되는 Material 고유 ID. ScopedID로 관리됨
+
         Textures textures_ = {};
+
         // TODO: 이후 Per Material 버퍼 추가 필요 시 추가해야 함
 
 		std::array<s_ptr<PipelineState>, (size_t)RenderPassOrder::kEND> 

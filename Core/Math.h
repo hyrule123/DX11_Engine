@@ -1,4 +1,5 @@
 #pragma once
+#define NOMINMAX
 
 #include <Engine/ThirdParty/DirectXTK/SimpleMath.h>
 #include <Engine/Core/StdType.h>

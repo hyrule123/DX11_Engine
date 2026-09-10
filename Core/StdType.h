@@ -1,4 +1,5 @@
 #pragma once
+#define NOMINMAX
 #include <cstdint>
 #include <unordered_map>
 #include <string>
@@ -108,4 +109,6 @@ namespace engine
 	using RegisterB = RegisterSlot<RegisterType::B>;
 	using RegisterS = RegisterSlot<RegisterType::S>;
 	using RegisterU = RegisterSlot<RegisterType::U>;
+
+
 }

@@ -44,26 +44,12 @@ namespace engine
 
 		constexpr Flags EnumToFlag(Enum stage)
 		{
-			ASSERT_RELEASE(stage < Enum::kEND);
+			ASSERT(stage < Enum::kEND);
 			return static_cast<Flags>(1 << static_cast<uint8>(stage));
-		}
-
-		constexpr Enum FlagToEnum(Flags stage_flag)
-		{
-			for (uint8 i = 0; i < static_cast<uint8>(Enum::kEND); ++i)
-			{
-				Enum stage = static_cast<Enum>(i);
-				if (HasFlag(stage_flag, EnumToFlag(stage)))
-				{
-					return stage;
-				}
-			}
-			ASSERT_RELEASE(false && "Invalid ShaderStage::Flags");
-			return Enum::kEND;
 		}
 	}
 
-	enum class RenderPassOrder : uint8
+	enum class RenderPassOrder : uint32
 	{
 		kForwardOpaque = 0u,
 		kPresent,

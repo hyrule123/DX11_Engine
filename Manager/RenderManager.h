@@ -10,6 +10,8 @@
 
 #include <Engine/HLSL/DebugDraw/DebugDraw.hlsli>
 
+#include <bitset>
+
 struct ID3D11SamplerState;
 
 namespace engine
@@ -34,7 +36,10 @@ namespace engine
         void FrameEnd();
 
 		void RegisterRenderer(Renderer* renderer);
+		void RefreshRenderer(Renderer* renderer);
 		void UnRegisterRenderer(Renderer* renderer);
+
+		void MarkBoundsDirty(const Renderer* renderer);
 
 		void SetMainCamera(wh_ptr<Camera> cam) { main_cam_ = cam; }
         wh_ptr<Camera> GetMainCamera() const { return main_cam_; }
@@ -53,6 +58,8 @@ namespace engine
 		}
 
     private:
+		std::bitset<(size_t)RenderPassOrder::kEND> GetRenderPassFlags(Renderer* renderer) const;
+
         void DebugDraw(ID3D11DeviceContext* context);
 
         void CreateSamplerStates(ID3D11DeviceContext* context);

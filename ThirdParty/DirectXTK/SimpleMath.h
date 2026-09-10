@@ -1,5 +1,6 @@
-
 #pragma once
+#define NOMINMAX
+
 #if __has_include("DirectXMath.h")
 // In this case, DirectXMath is coming from Windows SDK.
 //	It is better to use this on Windows as some Windows libraries could depend on the same 
@@ -8,11 +9,6 @@
 #include <DirectXPackedVector.h>
 #include <DirectXCollision.h>
 #endif
-#ifndef WIN32_LEAN_AND_MEAN
-#define WIN32_LEAN_AND_MEAN
-#define NOMINMAX
-#endif
-#include <Windows.h>
 
 namespace engine
 {

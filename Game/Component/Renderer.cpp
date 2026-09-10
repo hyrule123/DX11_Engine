@@ -1,10 +1,8 @@
 #include "Engine/Core/pch.h"
 #include "Renderer.h"
 
-#include <Engine/Manager/GraphicsDevice.h>
 #include <Engine/Manager/RenderManager.h>
 #include <Engine/Manager/ResourceManager.h>
-#include <Engine/Manager/TimeManager.h>
 
 #include <Engine/Resource/GPU/Mesh.h>
 #include <Engine/Resource/GPU/Material.h>
@@ -13,12 +11,15 @@
 
 #include <Engine/Core/UtilMacro.h>
 #include <Engine/Core/Debug.h>
+#include <Engine/Core/Constant.h>
 
 namespace engine
 {
 	Renderer::Renderer(const HashedStringView& concrete_class_name)
 		: Component(concrete_class_name, ComponentCategory::kRenderer)
-	{}
+	{
+		renderer_slots_.fill(kInvalidIdx32);
+	}
 
 	Renderer::~Renderer()
 	{
@@ -34,11 +35,18 @@ namespace engine
 
 		my_transform_ = GetComponent<Transform>();
 	}
-	void Renderer::LateUpdate()
+	void Renderer::OnEnable()
 	{
-		Super::LateUpdate();
-	}
+		Super::OnEnable();
 
+		RenderManager::GetInst().RegisterRenderer(this);
+	}
+	void Renderer::OnDisable()
+	{
+		Super::OnDisable();
+
+		RenderManager::GetInst().UnRegisterRenderer(this);
+	}
 
 	bool Renderer::SetMesh(const HashedStringView& mesh_name)
 	{

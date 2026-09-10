@@ -26,6 +26,7 @@ namespace engine
 
     public:
         using Textures = std::array<s_ptr<Texture2D>, MAX_TEXTURE_COUNT>;
+		using PipelineStatesPerPass = std::array<s_ptr<PipelineState>, (size_t)RenderPassOrder::kEND>;
 
         Material();
         Material(const Material& other) = default;
@@ -47,6 +48,7 @@ namespace engine
             if (pass < RenderPassOrder::kEND) { return pipeline_states_per_pass[(size_t)pass]; }
             return nullptr;
 		}
+		const PipelineStatesPerPass& GetPipelineStates() const { return pipeline_states_per_pass; }
 
         // Material Start slot으로부터 8장 연속으로 바인딩함. 슬롯 주의
         void BindTextures(ID3D11DeviceContext* context, ShaderStage::Flags stage_flag = ShaderStage::Flags::Pixel);
@@ -65,8 +67,7 @@ namespace engine
 
         // TODO: 이후 Per Material 버퍼 추가 필요 시 추가해야 함
 
-		std::array<s_ptr<PipelineState>, (size_t)RenderPassOrder::kEND> 
-            pipeline_states_per_pass = {};
+        PipelineStatesPerPass pipeline_states_per_pass = {};
     };
 }
 

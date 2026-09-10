@@ -9,6 +9,7 @@
 #include <Engine/Resource/GPU/Buffer/StructuredBuffer.h>
 #include <Engine/Resource/GPU/State/DepthStencilState.h>
 #include <Engine/Resource/GPU/Mesh.h>
+#include <Engine/Resource/GPU/Material.h>
 #include <Engine/Resource/GPU/PipelineState.h>
 
 #include <Engine/Resource/GPU/Shader/InputLayoutDesc.h>
@@ -21,6 +22,8 @@
 #include <Engine/Manager/TimeManager.h>
 
 #include <Engine/Core/Debug.h>
+
+#include <bitset>
 
 
 namespace engine
@@ -92,10 +95,51 @@ namespace engine
 	}
 
 	void RenderManager::RegisterRenderer(Renderer* renderer)
+	{
+		ASSERT(renderer);
+
+#ifndef NDEBUG
+		s_ptr<Mesh> mesh = renderer->GetMesh();
+		ASSERT(mesh);
+#endif//NDEBUG
+
+		std::bitset<(size_t)RenderPassOrder::kEND> render_pass_flags = GetRenderPassFlags(renderer);
+		for (size_t i = 0; i < render_pass_flags.size(); ++i)
+		{
+			if (render_pass_flags[i])
+			{
+				uint32 slot = render_passes_[i]->AddRenderer(renderer);
+				renderer->SetRenderSlot((RenderPassOrder)i, slot);
+			}
+		}
+	}
+
+	void RenderManager::RefreshRenderer(Renderer* renderer)
 	{}
 
-	void RenderManager::UnRegisterRenderer(Renderer * renderer)
-	{}
+	void RenderManager::UnRegisterRenderer(Renderer* renderer)
+	{
+		ASSERT(renderer);
+
+		const auto& renderer_slots = renderer->GetRenderSlots();
+		for (size_t i = 0; i < renderer_slots.size(); ++i)
+		{
+			if (renderer_slots[i] == kInvalidIdx32) { continue; }
+			render_passes_[i]->RemoveRenderer(renderer_slots[i]);
+		}
+		renderer->ClearRenderSlots();
+	}
+
+	void RenderManager::MarkBoundsDirty(const Renderer* renderer)
+	{
+		ASSERT(renderer);
+		const auto& renderer_slots = renderer->GetRenderSlots();
+		for (size_t i = 0; i < renderer_slots.size(); ++i)
+		{
+			if(renderer_slots[i] == kInvalidIdx32) { continue; }
+			render_passes_[i]->MarkDirty(renderer_slots[i]);
+		}
+	}
 
 	void RenderManager::OnScreenSizeChange(uint32 width, uint32 height)
 	{
@@ -105,6 +149,33 @@ namespace engine
 	void RenderManager::OnClearContextStates()
 	{
 		BindPSSamplerStates(GraphicsDevice::GetInst().GetContext());
+	}
+
+	std::bitset<(size_t)RenderPassOrder::kEND> RenderManager::GetRenderPassFlags(Renderer* renderer) const
+	{
+		static_assert((size_t)RenderPassOrder::kEND == std::tuple_size_v<Material::PipelineStatesPerPass>);
+
+		ASSERT_RELEASE(renderer);
+
+		const std::vector<s_ptr<Material>>& materials = renderer->GetMaterials();
+		
+		// 사용 중인 RenderPass 분석
+		std::bitset<(size_t)RenderPassOrder::kEND> render_pass_flags = {};
+		for (const auto& mtrl : materials)
+		{
+			if (mtrl == nullptr) { continue; }
+
+			const Material::PipelineStatesPerPass& pipeline_states = mtrl->GetPipelineStates();
+			for (size_t i = 0; i < pipeline_states.size(); ++i)
+			{
+				if (pipeline_states[i]) { render_pass_flags[i] = true; }
+			}
+
+			// 전부 켜졌을 경우 더이상 확인할 필요 없음
+			if (render_pass_flags.all()) { break; }
+		}
+
+		return render_pass_flags;
 	}
 	void RenderManager::DebugDraw(ID3D11DeviceContext* context)
 	{

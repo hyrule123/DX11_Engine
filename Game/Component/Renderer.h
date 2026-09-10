@@ -2,7 +2,6 @@
 
 #include <Engine/Game/Component/Component.h>
 
-#include <Engine/Core/UtilMacro.h>
 #include <Engine/Core/CoreMinimal.h>
 #include <Engine/Core/Enum.h>
 
@@ -24,10 +23,13 @@ namespace engine
 
         virtual void Init() override;
         virtual void Awake() override;
-        virtual void LateUpdate() = 0;
+        virtual void OnEnable() override;
+        virtual void OnDisable() override;
 
-		void SetRenderID(RenderPassOrder pass, uint32 id) { renderer_id[(size_t)pass] = id; }
-		uint32 GetRenderID(RenderPassOrder pass) const { return renderer_id[(size_t)pass]; }
+		void SetRenderSlot(RenderPassOrder pass, uint32 id) { renderer_slots_[(size_t)pass] = id; }
+		uint32 GetRenderSlot(RenderPassOrder pass) const { return renderer_slots_[(size_t)pass]; }
+		const std::array<uint32, (size_t)RenderPassOrder::kEND>& GetRenderSlots() const { return renderer_slots_; }
+		void ClearRenderSlots() { renderer_slots_.fill(kInvalidIdx32); }
 
         Transform* GetTransform() const { return my_transform_; }
 
@@ -51,7 +53,7 @@ namespace engine
         
 
     private:
-		std::array<uint32, (size_t)RenderPassOrder::kEND> renderer_id = {}; // RendererManager에서 발급(Pass 별)
+		std::array<uint32, (size_t)RenderPassOrder::kEND> renderer_slots_; // RendererManager에서 발급(Pass 별), MAX로 초기화
 
         Transform* my_transform_ = {};
 

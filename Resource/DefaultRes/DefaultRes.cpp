@@ -152,7 +152,13 @@ namespace engine
 			vertices[2].uv = { 1.0f, 1.0f };
 			vertices[3].uv = { 0.0f, 1.0f };
 
-			bool result = mesh->CreateVertexBuffer(vertices);
+			AABB3D bounds;
+			for (const auto& v : vertices)
+			{
+				bounds.Encapsulate(v.position);
+			}
+
+			bool result = mesh->CreateVertexBuffer(vertices, bounds);
 			ASSERT(result);
 
 			//INDEX BUFFER

@@ -1,5 +1,5 @@
 #pragma once
-#include <Engine/Resource/GPU/RenderPass/RenderPass.h>
+#include <Engine/Render/RenderPass/RenderPass.h>
 
 #include <Engine/Core/StdType.h>
 
@@ -39,12 +39,14 @@ namespace engine
 			render_queue_.push_back(item);
         }
 
-		virtual void Execute(ID3D11DeviceContext* context) final;
+		virtual void Execute(ID3D11DeviceContext* context, const RenderPassContext& pass_context) final;
 
     private:
 		std::vector<RenderItem> render_queue_ = {};
 
 		std::unordered_map<RenderKey, u_ptr<StructuredBuffer>, RenderKeyHasher> instancing_data_buffers_ = {};
+
+        std::vector<uint32> culled_renderers_ = {};
     };
 }
 

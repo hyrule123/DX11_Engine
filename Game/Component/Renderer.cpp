@@ -13,6 +13,8 @@
 #include <Engine/Core/Debug.h>
 #include <Engine/Core/Constant.h>
 
+#include <Engine/Collision/Geometry2D.h>
+
 namespace engine
 {
 	Renderer::Renderer(const HashedStringView& concrete_class_name)
@@ -25,26 +27,21 @@ namespace engine
 	{
 
 	}
-	void Renderer::Init()
-	{
-		Super::Init();
-	}
 	void Renderer::Awake()
 	{
 		Super::Awake();
-
 		my_transform_ = GetComponent<Transform>();
 	}
 	void Renderer::OnEnable()
 	{
 		Super::OnEnable();
-
+		Subscribe(SubscribeType::kTransformDirty);
 		RenderManager::GetInst().RegisterRenderer(this);
 	}
 	void Renderer::OnDisable()
 	{
 		Super::OnDisable();
-
+		Unsubscribe(SubscribeType::kTransformDirty);
 		RenderManager::GetInst().UnRegisterRenderer(this);
 	}
 
@@ -95,6 +92,16 @@ namespace engine
 			return true;
 		}
 		return false;
+	}
+
+	AABB2D Renderer::ComputeWorldBounds2D() const
+	{
+		ASSERT(mesh_ && my_transform_);
+
+		const AABB3D& local_bounds = mesh_->GetLocalBounds();
+		const matrix world_mat = my_transform_->GetWorldMatrix();
+
+		return geometry_2d::TransformBoundsTo2D(local_bounds, world_mat);
 	}
 }
 

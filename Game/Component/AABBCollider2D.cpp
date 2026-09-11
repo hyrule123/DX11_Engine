@@ -39,8 +39,8 @@ namespace engine
 
 		float3 pos = transform_->GetWorldPosition();
 
-		ret.left_bottom = local_bounds_.left_bottom + float2(pos.x, pos.y);
-		ret.right_top = local_bounds_.right_top + float2(pos.x, pos.y);
+		ret.min = local_bounds_.min + float2(pos.x, pos.y);
+		ret.max = local_bounds_.max + float2(pos.x, pos.y);
 
 		return ret;
 	}

@@ -68,7 +68,10 @@ namespace engine
         void SetEnable(bool enable) {
             if (is_enabled_ == enable) { return; }
             is_enabled_ = enable;
-            UpdateEnableState(GetOwnerGameObject()->IsActiveInHierarchy());
+            if (GameObject* owner = GetOwnerGameObject())
+            {
+                UpdateEnableState(owner->IsActiveInHierarchy());
+            }
         }
 
         // Destroy 로직 순서는 Unity의 것을 따름

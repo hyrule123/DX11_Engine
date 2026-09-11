@@ -11,6 +11,8 @@
 
 #include <Engine/Core/Debug.h>
 
+#include <Engine/Collision/Geometry2D.h>
+
 #include <Engine/HLSL/Core/Register.hlsli>
 
 namespace engine
@@ -70,6 +72,24 @@ namespace engine
 			proj_mat_ = matrix::CreateOrthographicLH(desc.viewport_width, desc.viewport_height, desc.near_z, desc.far_z);
 		}
 		proj_mat_desc_ = desc;
+	}
+
+	AABB2D Camera::ComputeViewBounds2D() const
+	{
+		ASSERT_MESSAGE(proj_mat_desc_.proj_mode == ProjectionMode::Orthographic, "Ortho 카메라만 호출하세요.");
+
+		constexpr float kMarginRatio = 0.505f; // 약간의 여유를 두어 한두픽셀 잘리는 것을 방지
+		const float half_width = proj_mat_desc_.viewport_width * kMarginRatio;
+		const float half_height = proj_mat_desc_.viewport_height * kMarginRatio;
+
+		const AABB3D local_bounds = {
+			{-half_width, -half_height, proj_mat_desc_.near_z},
+			{half_width, half_height, proj_mat_desc_.near_z}
+		};
+
+		const matrix world_mat = my_transform_->GetWorldMatrix();
+		
+		return geometry_2d::TransformBoundsTo2D(local_bounds, world_mat);
 	}
 
 	void Camera::CreateViewMatrix()

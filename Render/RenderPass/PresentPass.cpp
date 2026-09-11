@@ -74,7 +74,12 @@ namespace engine
 			vertices[2].uv = { 1.0f, 1.0f };
 			vertices[3].uv = { 0.0f, 1.0f };
 
-			bool result = mesh->CreateVertexBuffer(vertices);
+			AABB3D bounds;
+			for (const auto& v : vertices)
+			{
+				bounds.Encapsulate(v.position);
+			}
+			bool result = mesh->CreateVertexBuffer(vertices, bounds);
 			ASSERT(result);
 
 			//INDEX BUFFER
@@ -109,7 +114,7 @@ namespace engine
 		shader_set_->SetRasterizerState("RSS_Solid_Back"_hash);
 		shader_set_->SetDepthStencilState("DSS_Default"_hash);
 	}
-	void PresentPass::Execute(ID3D11DeviceContext * context)
+	void PresentPass::Execute(ID3D11DeviceContext * context, const RenderPassContext& pass_context)
 	{
 		if (!src_render_target_) { return; }
 

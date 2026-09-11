@@ -1,6 +1,8 @@
 #include "Engine/Core/pch.h"
 #include "ForwardOpaqueRenderPass.h"
 
+#include <Engine/Manager/RenderManager.h>
+
 #include <Engine/Game/Component/Renderer.h>
 
 #include <Engine/Resource/GPU/Buffer/StructuredBuffer.h>
@@ -10,6 +12,10 @@
 #include <Engine/Core/Debug.h>
 
 #include <Engine/HLSL/ForwardOpaquePass.hlsli>
+
+#include <Engine/Collision/Geometry2D.h>
+
+#include <Engine/Render/Culling.h>
 
 #include <algorithm>
 #include <limits>
@@ -21,8 +27,15 @@ namespace engine
 	{}
 	ForwardOpaqueRenderPass::~ForwardOpaqueRenderPass()
 	{}
-	void ForwardOpaqueRenderPass::Execute(ID3D11DeviceContext* context)
+	void ForwardOpaqueRenderPass::Execute(ID3D11DeviceContext* context, const RenderPassContext& pass_context)
 	{
+		// 테스트
+		culled_renderers_.clear();
+		
+		culling::CullRenderers2D(pass_context.view_bounds_2d, GetRegisteredRenderers(), culled_renderers_);
+
+
+		// 기존 코드
 		BindRenderTargetGroup(context);
 
 		std::sort(render_queue_.begin(), render_queue_.end());

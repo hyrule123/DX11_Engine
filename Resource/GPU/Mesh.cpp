@@ -48,7 +48,7 @@ namespace engine
 		return false;
 	}
 
-	bool Mesh::CreateVertexBuffer(const void* data, uint32 data_stride, uint32 data_count)
+	bool Mesh::CreateVertexBuffer(const void* data, uint32 data_stride, uint32 data_count, const AABB3D& local_bounds)
 	{
 		if (nullptr == data)
 		{
@@ -78,6 +78,7 @@ namespace engine
 		vertex_buffer_ = vb;
 		vb_data_stride_ = data_stride;
 		vb_data_count_ = data_count;
+		local_bounds_ = local_bounds;
 
 		return true;
 	}

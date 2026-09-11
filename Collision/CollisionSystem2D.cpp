@@ -8,10 +8,11 @@
 #include <Engine/Game/GameObject.h>
 #include <Engine/Game/Scene.h>
 
+#include <Engine/Collision/Geometry2D.h>
+
 // Intersect 함수 선언부
 namespace
 {
-
 	using namespace engine;
 	class ::engine::Collider2D;
 
@@ -90,12 +91,7 @@ namespace
 		return static_cast<uint32>(k >> (64 - bucket_bit_shifts));   // 상위 비트 취득
 	}
 
-	bool CheckIntersect_AABB_AABB(const AABB2D& a, const AABB2D& b)
-	{
-		const bool x_overlap = (a.left_bottom.x <= b.right_top.x) && (a.right_top.x >= b.left_bottom.x);
-		const bool y_overlap = (a.left_bottom.y <= b.right_top.y) && (a.right_top.y >= b.left_bottom.y);
-		return x_overlap && y_overlap;
-	}
+
 }
 
 
@@ -232,8 +228,8 @@ namespace engine
 
 			const AABB2D& bounds = colliders_[i].world_bounds;
 
-			int32_2 cell_index_LB = ConvertWorldPosToCellIndex(bounds.left_bottom, cell_size_inv_);
-			int32_2 cell_index_RT = ConvertWorldPosToCellIndex(bounds.right_top, cell_size_inv_);
+			int32_2 cell_index_LB = ConvertWorldPosToCellIndex(bounds.min, cell_size_inv_);
+			int32_2 cell_index_RT = ConvertWorldPosToCellIndex(bounds.max, cell_size_inv_);
 
 			const int64 cells = int64(cell_index_RT.x - cell_index_LB.x + 1) * (cell_index_RT.y - cell_index_LB.y + 1);
 			ASSERT_MESSAGE(cells <= kMaxCellsPerCollider, "콜라이더가 너무 많은 셀에 걸침");
@@ -316,7 +312,7 @@ namespace engine
 					if (false == collision_mask[e_i.layer][e_j.layer]) { continue; }
 
 					// 3. AABB 겹침 확인, 안 겹칠 시 early-out
-					if(false == CheckIntersect_AABB_AABB(
+					if(false == geometry_2d::Overlap(
 						e_i_world_bound,
 						e_j_world_bound
 					)) 
@@ -326,8 +322,8 @@ namespace engine
 					// 겹침이 확인되었을 경우 - 겹치는 영역의 Left Bottom Index를 계산 후
 					// 해당 인덱스와 동일한 셀에서만 처리 진행
 					float2 overlap_left_bottom = float2(
-						std::max(e_i_world_bound.left_bottom.x, e_j_world_bound.left_bottom.x),
-						std::max(e_i_world_bound.left_bottom.y, e_j_world_bound.left_bottom.y)
+						std::max(e_i_world_bound.min.x, e_j_world_bound.min.x),
+						std::max(e_i_world_bound.min.y, e_j_world_bound.min.y)
 					);
 
 					int32_2 overlap_cell_index = ConvertWorldPosToCellIndex(overlap_left_bottom, cell_size_inv_);
@@ -526,16 +522,18 @@ namespace
 		const AABB2D& bound_1 = in_aabb1->GetWorldBounds();
 		const AABB2D& bound_2 = in_aabb2->GetWorldBounds();
 
-		if (!CheckIntersect_AABB_AABB(bound_1, bound_2))
+		if (!geometry_2d::Overlap(bound_1, bound_2)) 
+		{ 
 			return false;
+		}
 
 		if (out_contact_point)
 		{
 			const AABB2D contact_area{
-				{ std::max(bound_1.left_bottom.x, bound_2.left_bottom.x),
-				  std::max(bound_1.left_bottom.y, bound_2.left_bottom.y) },
-				{ std::min(bound_1.right_top.x,   bound_2.right_top.x),
-				  std::min(bound_1.right_top.y,   bound_2.right_top.y) }
+				{ std::max(bound_1.min.x, bound_2.min.x),
+				  std::max(bound_1.min.y, bound_2.min.y) },
+				{ std::min(bound_1.max.x,   bound_2.max.x),
+				  std::min(bound_1.max.y,   bound_2.max.y) }
 			};
 			*out_contact_point = contact_area.GetCenter();
 		}
@@ -559,7 +557,7 @@ namespace
 
 		// 가장 가까운 점을 구함(clamp 사용 시 바로 구하기 가능)
 		float2 closest = circle_center;
-		closest.Clamp(bounds.left_bottom, bounds.right_top);
+		closest.Clamp(bounds.min, bounds.max);
 
 		// 가장 가까운 꼭지점에서 원의 중심까지의 거리 제곱이 반지름 제곱보다 작거나 같으면 충돌
 		const float dist_sq = (circle_center - closest).LengthSquared();
@@ -579,16 +577,16 @@ namespace
 			// closest point가 원의 중심과 동일, 탈출 비용이 가장 싼 변 위의 점을 찾아야 함
 			else
 			{
-				const float to_left = circle_center.x - bounds.left_bottom.x;
-				const float to_right = bounds.right_top.x - circle_center.x;
-				const float to_bottom = circle_center.y - bounds.left_bottom.y;
-				const float to_top = bounds.right_top.y - circle_center.y;
+				const float to_left = circle_center.x - bounds.min.x;
+				const float to_right = bounds.max.x - circle_center.x;
+				const float to_bottom = circle_center.y - bounds.min.y;
+				const float to_top = bounds.max.y - circle_center.y;
 
 				float min_dist = to_left;
-				float2 face_point = { bounds.left_bottom.x, circle_center.y };
-				if (to_right < min_dist) { min_dist = to_right;  face_point = { bounds.right_top.x,   circle_center.y }; }
-				if (to_bottom < min_dist) { min_dist = to_bottom; face_point = { circle_center.x, bounds.left_bottom.y }; }
-				if (to_top < min_dist) { min_dist = to_top;    face_point = { circle_center.x, bounds.right_top.y }; }
+				float2 face_point = { bounds.min.x, circle_center.y };
+				if (to_right < min_dist) { min_dist = to_right;  face_point = { bounds.max.x,   circle_center.y }; }
+				if (to_bottom < min_dist) { min_dist = to_bottom; face_point = { circle_center.x, bounds.min.y }; }
+				if (to_top < min_dist) { min_dist = to_top;    face_point = { circle_center.x, bounds.max.y }; }
 
 				*out_contact_point = face_point;   // 탈출 비용이 가장 싼 변 위의 점
 			}

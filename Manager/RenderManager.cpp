@@ -76,14 +76,16 @@ namespace engine
 		cb_per_pass_camera_->Upload(context, cam_data);
 		cb_per_pass_camera_->Bind(context, ShaderStage::Flags::AllGraphics, REG_B_CAMERA);
 
+		RenderPassContext pass_context = {};
+		pass_context.view_bounds_2d = main_cam->ComputeViewBounds2D();
+
 		//Render Pass 별 렌더링
-		forward_opaque_pass_.Execute(context);
+		forward_opaque_pass_.Execute(context, pass_context);
 
 		if (present_pass_.IsSet())
 		{
-			present_pass_.Execute(context);
+			present_pass_.Execute(context, pass_context);
 		}
-
 		
 		//Debug Draw
 		DebugDraw(context);
@@ -346,7 +348,14 @@ namespace engine
 			vertices[1].position = { 0.5f, 0.5f, 0.0f };
 			vertices[2].position = { 0.5f, -0.5f, 0.0f };
 			vertices[3].position = { -0.5f, -0.5f, 0.0f };
-			bool result = debug_rect_mesh_->CreateVertexBuffer(vertices);
+
+			AABB3D bounds;
+			for (const auto& v : vertices)
+			{
+				bounds.Encapsulate(v.position);
+			}
+
+			bool result = debug_rect_mesh_->CreateVertexBuffer(vertices, bounds);
 			ASSERT(result);
 
 			//INDEX BUFFER
@@ -383,7 +392,12 @@ namespace engine
 			}
 			indices.push_back(0u);	//마지막에 0번으로 돌아가서 닫힌 원 만들기
 
-			debug_circle_mesh_->CreateVertexBuffer(vertices);
+			AABB3D bounds;
+			for (const auto& v : vertices)
+			{
+				bounds.Encapsulate(v.position);
+			}
+			debug_circle_mesh_->CreateVertexBuffer(vertices, bounds);
 			debug_circle_mesh_->CreateIndexBuffer(indices, D3D11_PRIMITIVE_TOPOLOGY_LINESTRIP, {});
 		}
 #pragma endregion // CIRCLE MESH

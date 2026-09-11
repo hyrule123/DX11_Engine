@@ -33,14 +33,17 @@ namespace engine
         virtual void LateUpdate() override;
 
         const matrix& GetViewMatrix() const { return view_mat_; }
+        const matrix& GetProjMatrix() const { return proj_mat_; }
 
-        ProjectionMatrixDesc GetProjectionMatrixDesc() const { return proj_mat_desc_; }
+        const ProjectionMatrixDesc& GetProjectionMatrixDesc() const { return proj_mat_desc_; }
 
 		float GetViewportWidth() const { return proj_mat_desc_.viewport_width; }
 		float GetViewportHeight() const { return proj_mat_desc_.viewport_height; }
 
         void CreateProjMatrix(ProjectionMatrixDesc desc);
-        const matrix& GetProjMatrix() const { return proj_mat_; }
+        
+
+		AABB2D ComputeViewBounds2D() const;
 
     private:
         void CreateViewMatrix();

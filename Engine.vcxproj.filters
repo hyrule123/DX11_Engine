@@ -186,13 +186,13 @@
     <ClInclude Include="Resource\GPU\Shader\InputLayoutDesc.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Resource\GPU\RenderPass\ForwardOpaqueRenderPass.h">
+    <ClInclude Include="Render\RenderPass\ForwardOpaqueRenderPass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Resource\GPU\Buffer\StructuredBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Resource\GPU\RenderPass\RenderPass.h">
+    <ClInclude Include="Render\RenderPass\RenderPass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Util\StringHashTable.h">
@@ -210,7 +210,7 @@
     <ClInclude Include="Game\Component\AIContext.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Resource\GPU\RenderPass\PresentPass.h">
+    <ClInclude Include="Render\RenderPass\PresentPass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Collision\CollisionSystem2D.h">
@@ -259,6 +259,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Util\IDAllocator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Render\Culling.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Render\RenderTypes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Collision\Geometry2D.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -389,13 +398,13 @@
     <ClCompile Include="Resource\GPU\Shader\InputLayoutDesc.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Resource\GPU\RenderPass\ForwardOpaqueRenderPass.cpp">
+    <ClCompile Include="Render\RenderPass\ForwardOpaqueRenderPass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Resource\GPU\Buffer\StructuredBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Resource\GPU\RenderPass\RenderPass.cpp">
+    <ClCompile Include="Render\RenderPass\RenderPass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Game\Component\HFSM.cpp">
@@ -407,7 +416,7 @@
     <ClCompile Include="Game\Component\BlackBoard.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Resource\GPU\RenderPass\PresentPass.cpp">
+    <ClCompile Include="Render\RenderPass\PresentPass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Collision\CollisionSystem2D.cpp">
@@ -441,6 +450,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Util\GPUBufferBindingTable.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Render\Culling.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Collision\Geometry2D.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

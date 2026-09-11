@@ -4,7 +4,9 @@
 #include <Engine/Core/CoreMinimal.h>
 #include <Engine/Core/Enum.h>
 
-#include <Engine/Collision/Collision.h>	//AABB2D
+#include <Engine/Render/RenderTypes.h>
+
+#include <span>
 
 struct ID3D11Device;
 struct ID3D11DeviceContext;
@@ -14,12 +16,7 @@ namespace engine
 	class RenderTargetGroup;
 	class Renderer;
 
-	struct RendererInfo
-	{
-		Renderer* renderer;
-		AABB2D world_bounds;
-		bool is_dirty;
-	};
+
 
 	class RenderPass
 	{
@@ -29,7 +26,7 @@ namespace engine
 
 		virtual void Init(ID3D11DeviceContext* context) {};
 
-		virtual void Execute(ID3D11DeviceContext* context) = 0;
+		virtual void Execute(ID3D11DeviceContext* context, const RenderPassContext& pass_context) = 0;
 
 		RenderPassOrder GetPassOrder() const { return pass_order_; }
 
@@ -46,12 +43,15 @@ namespace engine
 			registered_renderers_[renderer_slot].is_dirty = true;
 		}
 
+		// 
+		std::span<RendererInfo2D> GetRegisteredRenderers() { return std::span<RendererInfo2D>(registered_renderers_); }
+
 	private:
 		RenderTargetGroup* GetRenderTargetGroup() const { return render_target_group_.get(); }
 
 		RenderPassOrder pass_order_;
 		s_ptr<RenderTargetGroup> render_target_group_ = {};
 
-		std::vector<RendererInfo> registered_renderers_ = {};
+		std::vector<RendererInfo2D> registered_renderers_ = {};
 	};
 }

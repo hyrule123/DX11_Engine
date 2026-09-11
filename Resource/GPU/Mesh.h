@@ -5,6 +5,8 @@
 
 #include <Engine/Util/IDAllocator.h>
 
+#include <Engine/Collision/Collision.h>
+
 namespace engine
 {
     class Mesh
@@ -31,12 +33,10 @@ namespace engine
 
 		virtual bool LoadFromFile(const stdfs::path& path) override;
 
-		bool CreateVertexBuffer(const void* data, uint32 data_stride, uint32 data_count);
-
 		template <typename T>
-		bool CreateVertexBuffer(const std::vector<T>& vertices)
+		bool CreateVertexBuffer(const std::vector<T>& vertices, const AABB3D& local_bounds)
 		{
-			return CreateVertexBuffer(vertices.data(), (uint32)sizeof(T), (uint32)vertices.size());
+			return CreateVertexBuffer(vertices.data(), (uint32)sizeof(T), (uint32)vertices.size(), local_bounds);
 		}
 
 		bool CreateIndexBuffer(const std::vector<uint16>& indices, D3D11_PRIMITIVE_TOPOLOGY topology, std::vector<SubMesh> sub_meshes = {}) {
@@ -49,6 +49,11 @@ namespace engine
 		bool CreateIndexBuffer(const void* p_data, DXGI_FORMAT format, uint32 data_count, D3D11_PRIMITIVE_TOPOLOGY topology, std::vector<SubMesh> sub_meshes = {});
 
 		size_t GetSubMeshCount() const { return sub_meshes_.size(); }
+
+		const AABB3D& GetLocalBounds() const { return local_bounds_; }
+
+	private:
+		bool CreateVertexBuffer(const void* data, uint32 data_stride, uint32 data_count, const AABB3D& bounds);
 
 	private:
 		MeshID mesh_ID_;    // RenderKey에 패킹되는 Mesh 고유 ID. ScopedID로 관리됨
@@ -69,6 +74,8 @@ namespace engine
 
 		std::vector<SubMesh> sub_meshes_ = {};
 #pragma endregion INDEX
+
+		AABB3D local_bounds_ = {};
     };
 }
 

@@ -21,7 +21,6 @@ namespace engine
         Renderer(const HashedStringView& concrete_class_name);
         virtual ~Renderer() override;
 
-        virtual void Init() override;
         virtual void Awake() override;
         virtual void OnEnable() override;
         virtual void OnDisable() override;
@@ -49,6 +48,8 @@ namespace engine
         s_ptr<Mesh> GetMesh() const { return mesh_; }
 
         virtual void WritePerObjectData(DataBlock data_block) = 0;
+
+        AABB2D ComputeWorldBounds2D() const;
     protected:
         
 

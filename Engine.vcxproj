@@ -219,6 +219,9 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Collision\Geometry2D.h" />
+    <ClInclude Include="Render\Culling.h" />
+    <ClInclude Include="Render\RenderTypes.h" />
     <ClInclude Include="Util\IDAllocator.h" />
     <ClInclude Include="Util\GPUBufferBindingTable.h" />
     <ClInclude Include="Util\DX11UtilFuncs.h" />
@@ -236,13 +239,13 @@
     <ClInclude Include="Game\Component\BlackBoard.h" />
     <ClInclude Include="Game\Component\HFSM.h" />
     <ClInclude Include="Game\Component\HFSMState.h" />
-    <ClInclude Include="Resource\GPU\RenderPass\PresentPass.h" />
+    <ClInclude Include="Render\RenderPass\PresentPass.h" />
     <ClInclude Include="ThirdParty\ankerl\unordered_dense.h" />
     <ClInclude Include="ThirdParty\ankerl\unordered_dense_stl.h" />
     <ClInclude Include="Resource\GPU\Buffer\TypedBuffer.h" />
     <ClInclude Include="Util\StringHashTable.h" />
-    <ClInclude Include="Resource\GPU\RenderPass\ForwardOpaqueRenderPass.h" />
-    <ClInclude Include="Resource\GPU\RenderPass\RenderPass.h" />
+    <ClInclude Include="Render\RenderPass\ForwardOpaqueRenderPass.h" />
+    <ClInclude Include="Render\RenderPass\RenderPass.h" />
     <ClInclude Include="Resource\GPU\Shader\InputLayoutDesc.h" />
     <ClInclude Include="Resource\SpriteAnimation.h" />
     <ClInclude Include="Game\Component\SpriteAnimator.h" />
@@ -303,6 +306,8 @@
     <ClInclude Include="Resource\GPU\Shader\VertexShader.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Collision\Geometry2D.cpp" />
+    <ClCompile Include="Render\Culling.cpp" />
     <ClCompile Include="Util\GPUBufferBindingTable.cpp" />
     <ClCompile Include="Util\DX11UtilFuncs.cpp" />
     <ClCompile Include="Resource\GPU\Shader\ComputePass.cpp" />
@@ -316,9 +321,9 @@
     <ClCompile Include="Game\Component\BlackBoard.cpp" />
     <ClCompile Include="Game\Component\HFSM.cpp" />
     <ClCompile Include="Game\Component\HFSMState.cpp" />
-    <ClCompile Include="Resource\GPU\RenderPass\PresentPass.cpp" />
-    <ClCompile Include="Resource\GPU\RenderPass\ForwardOpaqueRenderPass.cpp" />
-    <ClCompile Include="Resource\GPU\RenderPass\RenderPass.cpp" />
+    <ClCompile Include="Render\RenderPass\PresentPass.cpp" />
+    <ClCompile Include="Render\RenderPass\ForwardOpaqueRenderPass.cpp" />
+    <ClCompile Include="Render\RenderPass\RenderPass.cpp" />
     <ClCompile Include="Resource\GPU\Shader\InputLayoutDesc.cpp" />
     <ClCompile Include="Resource\SpriteAnimation.cpp" />
     <ClCompile Include="Game\Component\SpriteAnimator.cpp" />

@@ -70,9 +70,11 @@ namespace engine
         float2 GetCenter()      const noexcept { return (min + max) * 0.5f; }
         float2 GetHalfExtents() const noexcept { return (max - min) * 0.5f; }
         float2 GetSize()        const noexcept { return (max - min); }
-		void SetSize(float2 size)  noexcept { 
-            min -= size * 0.5f; 
-            max += size * 0.5f; 
+
+        // Size > 0
+		void SetSize(float2 size)  noexcept {
+            min = -(size * 0.5f);
+            max = size * 0.5f; 
         }
 
 		bool Overlaps(const AABB2D& other) const noexcept

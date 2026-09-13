@@ -231,10 +231,9 @@ namespace engine
 
 			//Mesh Draw
 			debug_rect_mesh_->Bind(context);
-			debug_rect_mesh_->Draw(context, (UINT)debug_rect_data_.size());
+			debug_rect_mesh_->Draw(context, (uint32)debug_rect_data_.size());
 
 			// 순회 돌면서 dt 감소 및 음수가 된 값들은 제거
-			
 			for (int32 i = (int32)debug_rect_data_.size() - 1; i >= 0; --i)
 			{
 				debug_rect_data_[i].left_time -= dt;

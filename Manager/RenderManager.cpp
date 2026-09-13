@@ -169,6 +169,28 @@ namespace engine
 		BindPSSamplerStates(GraphicsDevice::GetInst().GetContext());
 	}
 
+	StructuredBuffer* RenderManager::AcquireInstanceBuffer(uint32 byte_stride, uint32 elem_count)
+	{
+		u_ptr<StructuredBuffer>& buffer = instance_buffer_per_stride_[byte_stride];
+
+		if (buffer == nullptr)
+		{
+			buffer = EntityManager::CreateEntity<StructuredBuffer>();
+			bool result = buffer->CreateDynamicBuffer(byte_stride, elem_count);
+			ASSERT_RELEASE(result);
+		}
+
+		if (elem_count > buffer->GetCapacity())
+		{
+			// 1.5배 or 그보다 클 경우 elem_count만큼 확장
+			const uint32 grown = buffer->GetCapacity() + buffer->GetCapacity() / 2;
+			bool result = buffer->Reserve(std::max(grown, elem_count));
+			ASSERT_RELEASE(result);
+		}
+
+		return buffer.get();
+	}
+
 	void RenderManager::DebugDraw(ID3D11DeviceContext* context)
 	{
 		Camera* cam = main_cam_.get();

@@ -8,6 +8,7 @@
 #include <Engine/Resource/GPU/Buffer/StructuredBuffer.h>
 #include <Engine/Resource/GPU/Material.h>
 #include <Engine/Resource/GPU/Mesh.h>
+#include <Engine/Resource/GPU/PipelineState.h>
 
 #include <Engine/Core/Debug.h>
 
@@ -16,6 +17,8 @@
 #include <Engine/Collision/Geometry2D.h>
 
 #include <Engine/Render/Culling.h>
+
+#include <Engine/Util/IDAllocator.h>
 
 #include <algorithm>
 #include <limits>
@@ -41,12 +44,11 @@ namespace engine
 		{
 			const std::vector<SubMeshRenderData>& all_submeshes_data = registered_renderers[slot].renderer->GetAllSubMeshRenderData();
 
-			for (size_t i = 0; i < all_submeshes_data.size(); ++i)
+			for (const auto& submesh_data : all_submeshes_data)
 			{
-				const SubMeshRenderData& submesh_data = all_submeshes_data[i];
 				if (submesh_data.pass_flags.Has(GetPassOrder()))
 				{
-					render_queue_.push_back({ .key = submesh_data.key, .renderer = registered_renderers[slot].renderer, .submesh_idx = (uint8)i });
+					render_queue_.push_back({ .key = submesh_data.key, .renderer = registered_renderers[slot].renderer });
 				}
 			}
 		}
@@ -56,91 +58,72 @@ namespace engine
 
 		BindRenderTargetGroup(context);
 
-		if (!render_queue_.empty())
+		uint32 prev_material_id = kInvalidID;
+		uint32 prev_mesh_id = kInvalidID;
+		PipelineState* prev_pipeline_state = nullptr;
+
+		uint32 i = 0;
+		while (i < render_queue_.size())
 		{
-			uint32 prev_material_ID = std::numeric_limits<uint32>::max();
+			const RenderItem& item = render_queue_[i];
 
-			for (size_t i = 0; i < render_queue_.size(); ++i)
+			const uint32 material_id = item.key.GetMaterialID();
+			const uint32 mesh_id = item.key.GetMeshID();
+			const uint8 submesh_idx = item.key.GetSubMeshIndex();
+
+			uint32 span_end = i + 1;
+			while (span_end < render_queue_.size() && item.key == render_queue_[span_end].key)
 			{
-				uint32 cur_material_ID = render_queue_[i].key.GetMaterialID();
-				uint32 cur_mesh_ID = render_queue_[i].key.GetMeshID();
-
-				//이전 Material과 다를 경우 Material 미리 바인딩
-				if (prev_material_ID != cur_material_ID)
-				{
-					Material* mtrl = render_queue_[i].renderer->GetMaterial(0).get();
-					ASSERT(mtrl);
-					mtrl->BindPipelineState(context, GetPassOrder());
-					mtrl->BindTextures(context, ShaderStage::Flags::Pixel);
-
-					prev_material_ID = cur_material_ID;
-				}
-
-				//현재 Pair의 끝을 순회돌면서 탐색
-				size_t span_end = i + 1;
-				while (span_end < render_queue_.size())
-				{
-					if (cur_material_ID != render_queue_[span_end].key.GetMaterialID()
-						||
-						cur_mesh_ID != render_queue_[span_end].key.GetMeshID())
-					{
-						break;
-					}
-					++span_end;
-				}
-
-				//버퍼 사이즈 계산
-				const uint32 instance_data_stride = (uint32)render_queue_[i].renderer->GetMaterial(0)->GetPerObjectDataStride(GetPassOrder());
-				const uint32 instances_count = (uint32)(span_end - i);
-
-				// Per Instance Data가 0이 아닐 경우 StructuredBuffer를 탐색 및 업로드
-				if (instance_data_stride > 0)
-				{
-					//구조화 버퍼 탐색 및 업로드
-					u_ptr<StructuredBuffer>& struct_buffer = instancing_data_buffers_[render_queue_[i].key];
-
-					//캐시에 없을 시 새로 생성
-					if (!struct_buffer)
-					{
-						struct_buffer = std::make_unique<StructuredBuffer>();
-
-						bool result = struct_buffer->CreateDynamicBuffer(instance_data_stride, instances_count);
-						ASSERT(result);
-					}
-
-					// 사이즈 부족 시 2배 크기로 resize
-					if (instances_count > struct_buffer->GetCapacity())
-					{
-						bool result = struct_buffer->Reserve(instances_count * 2);
-						ASSERT(result);
-					}
-
-					{
-						ASSERT(struct_buffer->GetElementStride() == instance_data_stride);
-
-						MapScopeDynamic map_scope = struct_buffer->MapDynamic(context);
-
-
-						for (size_t j = 0; j < instances_count; ++j)
-						{
-							render_queue_[i + j].renderer->WritePerObjectData(map_scope.Allocate());
-						}
-					}
-
-					struct_buffer->BindSRV(context, ShaderStage::Flags::Vertex | ShaderStage::Flags::Pixel, REG_T_INSTANCE_BUFFER);
-				}
-
-				//렌더링
-				Mesh* mesh = render_queue_[i].renderer->GetMesh().get();
-				ASSERT(mesh);
-				mesh->Bind(context);
-				mesh->Draw(context, instances_count);
-
-				//인덱스 이동
-				i = span_end - 1;
+				++span_end;
 			}
-		}
 
-		render_queue_.clear();
+			const uint32 instances_count = (uint32)(span_end - i);
+
+			Material* mtrl = item.renderer->GetMaterial(submesh_idx).get();
+			ASSERT(mtrl);
+
+			if (prev_material_id != material_id)
+			{
+				PipelineState* pipeline_state = mtrl->GetPipelineState(GetPassOrder()).get();
+				if (prev_pipeline_state != pipeline_state)
+				{
+					pipeline_state->Bind(context);
+					prev_pipeline_state = pipeline_state;
+				}
+				mtrl->BindTextures(context, ShaderStage::Flags::Pixel);
+				prev_material_id = material_id;
+			}
+
+			const uint32 instance_data_stride = (uint32)mtrl->GetPerObjectDataStride(GetPassOrder());
+
+			if (instance_data_stride > 0)
+			{
+				StructuredBuffer* instance_buffer = RenderManager::GetInst().AcquireInstanceBuffer(instance_data_stride, instances_count);
+
+				ASSERT(instance_buffer);
+
+				{
+					MapScopeDynamic map_scope = instance_buffer->MapDynamic(context);
+					for (size_t j = i; j < span_end; ++j)
+					{
+						render_queue_[j].renderer->WritePerObjectData(map_scope.Allocate());
+					}
+				}
+
+				instance_buffer->BindSRV(context, ShaderStage::Flags::Vertex | ShaderStage::Flags::Pixel, REG_T_INSTANCE_BUFFER);
+			}
+
+			Mesh* mesh = item.renderer->GetMesh().get();
+			ASSERT(mesh);
+
+			if (prev_mesh_id != mesh_id)
+			{
+				mesh->Bind(context);
+				prev_mesh_id = mesh_id;
+			}
+			mesh->Draw(context, instances_count, submesh_idx);
+
+			i = span_end;
+		}
 	}
 }

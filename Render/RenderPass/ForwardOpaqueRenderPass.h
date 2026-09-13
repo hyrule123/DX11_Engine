@@ -23,7 +23,6 @@ namespace engine
         {
             RenderKey key = {};
             Renderer* renderer = {};
-            uint8 submesh_idx = {};
 
 			auto operator<=>(const RenderItem& other) const {
 				return key <=> other.key;
@@ -44,8 +43,6 @@ namespace engine
 
     private:
 		std::vector<RenderItem> render_queue_ = {};
-
-		std::unordered_map<RenderKey, u_ptr<StructuredBuffer>, RenderKeyHasher> instancing_data_buffers_ = {};
 
         std::vector<uint32> culled_renderers_ = {};
     };

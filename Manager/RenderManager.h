@@ -57,8 +57,9 @@ namespace engine
 			debug_circle_data_.push_back(debug_data);
 		}
 
-    private:
+		StructuredBuffer* AcquireInstanceBuffer(uint32 byte_stride, uint32 elem_count);
 
+    private:
         void DebugDraw(ID3D11DeviceContext* context);
 
         void CreateSamplerStates(ID3D11DeviceContext* context);
@@ -68,6 +69,9 @@ namespace engine
         s_ptr<ConstantBuffer> cb_per_pass_camera_ = {};
 
 		wh_ptr<Camera> main_cam_ = {};
+
+		// Key: byte stride, Value: StructuredBuffer
+		std::unordered_map<uint32, u_ptr<StructuredBuffer>> instance_buffer_per_stride_ = {};
         
         //Slot에 꽃아두고 계속 사용
         std::vector<ComPtr<ID3D11SamplerState>> sampler_states_ = {};

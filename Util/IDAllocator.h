@@ -18,12 +18,13 @@ namespace engine {
     //
     // 스레드 안전성 없음 — 단일 스레드 리소스 로딩 전제.
     // 직접 쓰지 않고 아래 ScopedID를 통해서만 사용한다.
+    constexpr uint32 kInvalidID = 0;
+
     template <typename Tag, uint32 kBitWidth>
     class IDAllocator {
     public:
         using IDType = uint32;
 
-        static constexpr IDType kInvalidID = 0;
         // ID 0을 무효값으로 예약하므로 실제 발급 가능한 최대치는 (2^n - 1).
         static constexpr IDType kMaxID = (kBitWidth >= 32)
             ? 0xFFFFFFFFu

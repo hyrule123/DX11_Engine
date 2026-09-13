@@ -16,8 +16,6 @@ namespace engine
 	class RenderTargetGroup;
 	class Renderer;
 
-
-
 	class RenderPass
 	{
 	public:

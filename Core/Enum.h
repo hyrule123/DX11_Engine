@@ -18,6 +18,38 @@
 
 namespace engine
 {
+	// Enum To Flags
+	template <typename EnumT, typename StorageT>
+	class EnumFlags
+	{
+	public:
+		static_assert(std::is_enum_v<EnumT>);
+		static_assert((size_t)EnumT::kCount <= sizeof(StorageT) * 8,
+			"열거자 개수가 저장 타입 비트 폭을 초과했습니다.");
+
+		constexpr EnumFlags() = default;
+		constexpr explicit EnumFlags(EnumT e) : bits_(ToBit(e)) {}
+
+		constexpr bool Has(EnumT e) const { return (bits_ & ToBit(e)) != 0; }
+		constexpr void Set(EnumT e) { bits_ |= ToBit(e); }
+		constexpr void Clear(EnumT e) { bits_ &= ~ToBit(e); }
+
+		constexpr bool None() const { return bits_ == 0; }
+		constexpr bool Any()  const { return bits_ != 0; }
+
+		constexpr EnumFlags& operator|=(EnumFlags o) { bits_ |= o.bits_; return *this; }
+		constexpr EnumFlags operator|(EnumFlags o) const { return EnumFlags(bits_ | o.bits_); }
+		constexpr bool operator==(const EnumFlags&) const = default;
+
+		static constexpr EnumFlags All() { return EnumFlags(StorageT((StorageT{ 1 } << (StorageT)EnumT::kCount) - 1)); }
+
+	private:
+		static constexpr StorageT ToBit(EnumT e) { return StorageT{ 1 } << (StorageT)e; }
+
+		constexpr explicit EnumFlags(StorageT raw) : bits_(raw) {}
+		StorageT bits_ = 0;
+	};
+
 	//enum wrapping을 위한 namespace
 	namespace ShaderStage
 	{
@@ -48,13 +80,6 @@ namespace engine
 			return static_cast<Flags>(1 << static_cast<uint8>(stage));
 		}
 	}
-
-	enum class RenderPassOrder : uint32
-	{
-		kForwardOpaque = 0u,
-		kPresent,
-		kEND
-	};
 
 	enum class SubscribeType : uint8
 	{

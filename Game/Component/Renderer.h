@@ -3,7 +3,9 @@
 #include <Engine/Game/Component/Component.h>
 
 #include <Engine/Core/CoreMinimal.h>
-#include <Engine/Core/Enum.h>
+
+#include <Engine/Render/RenderTypes.h>
+
 
 namespace engine
 {
@@ -27,7 +29,7 @@ namespace engine
 
 		void SetRenderSlot(RenderPassOrder pass, uint32 id) { renderer_slots_[(size_t)pass] = id; }
 		uint32 GetRenderSlot(RenderPassOrder pass) const { return renderer_slots_[(size_t)pass]; }
-		const std::array<uint32, (size_t)RenderPassOrder::kEND>& GetRenderSlots() const { return renderer_slots_; }
+		const std::array<uint32, (size_t)RenderPassOrder::kCount>& GetRenderSlots() const { return renderer_slots_; }
 		void ClearRenderSlots() { renderer_slots_.fill(kInvalidIdx32); }
 
         Transform* GetTransform() const { return my_transform_; }
@@ -50,16 +52,32 @@ namespace engine
         virtual void WritePerObjectData(DataBlock data_block) = 0;
 
         AABB2D ComputeWorldBounds2D() const;
-    protected:
-        
+
+		SubMeshRenderData GetSubMeshRenderData(size_t submesh_idx) const {
+			ASSERT(submesh_idx < submesh_render_data_.size());
+			return submesh_render_data_[submesh_idx];
+		}
+		const std::vector<SubMeshRenderData>& GetAllSubMeshRenderData() const { return submesh_render_data_; }
+
+		RenderPassFlags GetRenderPassFlags() const {
+            RenderPassFlags flags = {};
+			for (const auto& submesh_data : submesh_render_data_) {
+				flags |= submesh_data.pass_flags;
+			}
+			return flags;
+		}
 
     private:
-		std::array<uint32, (size_t)RenderPassOrder::kEND> renderer_slots_; // RendererManager에서 발급(Pass 별), MAX로 초기화
+        void BuildSubMeshRenderData();
 
+    private:
         Transform* my_transform_ = {};
 
 		std::vector<s_ptr<Material>> materials_ = {};
         s_ptr<Mesh> mesh_ = {};
+
+        std::array<uint32, (size_t)RenderPassOrder::kCount> renderer_slots_; // RendererManager에서 발급(Pass 별), MAX로 초기화
+        std::vector<SubMeshRenderData> submesh_render_data_;
     };
 }
 

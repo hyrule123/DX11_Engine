@@ -24,11 +24,6 @@ namespace engine
 
 	constexpr int32 kInvalidIndex = -1;
 
-	constexpr uint32 kMaterialIDBits = 28;
-	constexpr uint32 kMeshIDBits = 28;
-	constexpr uint32 kSubMeshIndexBits = 8;
-	constexpr uint32 kMaxSubMeshCount = 1u << kSubMeshIndexBits;
-
 	constexpr uint32 kInvalidIdx32 = std::numeric_limits<uint32>::max();
 	constexpr uint64 kInvalidIdx64 = std::numeric_limits<uint64>::max();
 }

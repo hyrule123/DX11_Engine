@@ -3,7 +3,7 @@
 
 #include <Engine/Core/DX11.h>
 
-#include <Engine/Util/IDAllocator.h>
+#include <Engine/Render/RenderTypes.h>
 
 #include <Engine/Collision/Collision.h>
 
@@ -51,6 +51,8 @@ namespace engine
 		size_t GetSubMeshCount() const { return sub_meshes_.size(); }
 
 		const AABB3D& GetLocalBounds() const { return local_bounds_; }
+
+		MeshID GetMeshID() const { return mesh_ID_; }
 
 	private:
 		bool CreateVertexBuffer(const void* data, uint32 data_stride, uint32 data_count, const AABB3D& bounds);

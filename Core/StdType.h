@@ -19,31 +19,7 @@ namespace engine
 	struct int32_2 { int32 x, y; };
 	struct uint32_2 { uint32 x, y; };
 
-	union RenderKey
-	{
-		struct
-		{
-			uint32 material_id;
-			uint32 mesh_id;
-		};
-		uint64 key = {};
 
-		auto operator<=>(const RenderKey& other) const {
-			return key <=> other.key;
-		}
-		auto operator==(const RenderKey& other) const {
-			return key == other.key;
-		}
-	};
-
-	struct RenderKeyHasher
-	{
-		using is_transparent = void;
-		size_t operator()(const RenderKey& key) const noexcept
-		{
-			return std::hash<uint64>{}(key.key);
-		}
-	};
 
 	struct DataBlock
 	{

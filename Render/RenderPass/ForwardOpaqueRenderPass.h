@@ -23,6 +23,7 @@ namespace engine
         {
             RenderKey key = {};
             Renderer* renderer = {};
+            uint8 submesh_idx = {};
 
 			auto operator<=>(const RenderItem& other) const {
 				return key <=> other.key;

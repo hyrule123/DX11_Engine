@@ -58,7 +58,6 @@ namespace engine
 		}
 
     private:
-		std::bitset<(size_t)RenderPassOrder::kEND> GetRenderPassFlags(Renderer* renderer) const;
 
         void DebugDraw(ID3D11DeviceContext* context);
 
@@ -75,7 +74,7 @@ namespace engine
 
         //Render Passes
         // 공통 함수 호출을 위한 포인터 저장소
-		std::array<RenderPass*, (size_t)RenderPassOrder::kEND> render_passes_ = {};
+		std::array<RenderPass*, (size_t)RenderPassOrder::kCount> render_passes_ = {};
 
         ForwardOpaqueRenderPass forward_opaque_pass_ = {};
 		PresentPass present_pass_ = {};

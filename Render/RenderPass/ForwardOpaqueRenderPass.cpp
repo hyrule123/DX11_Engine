@@ -23,22 +23,38 @@
 namespace engine
 {
 	ForwardOpaqueRenderPass::ForwardOpaqueRenderPass()
-		: Super(RenderPassOrder::kForwardOpaque)
+		: Super(RenderPassOrder::ForwardOpaque)
 	{}
 	ForwardOpaqueRenderPass::~ForwardOpaqueRenderPass()
 	{}
 	void ForwardOpaqueRenderPass::Execute(ID3D11DeviceContext* context, const RenderPassContext& pass_context)
 	{
-		// 테스트
 		culled_renderers_.clear();
+		render_queue_.clear();
 		
-		culling::CullRenderers2D(pass_context.view_bounds_2d, GetRegisteredRenderers(), culled_renderers_);
+		// 컬링 시행
+		std::span<RendererInfo2D> registered_renderers = GetRegisteredRenderers();
+		culling::CullRenderers2D(pass_context.view_bounds_2d, registered_renderers, culled_renderers_);
 
+		// 컬링된 렌더러들에 대해 전개하고 등록한다.
+		for (uint32 slot : culled_renderers_)
+		{
+			const std::vector<SubMeshRenderData>& all_submeshes_data = registered_renderers[slot].renderer->GetAllSubMeshRenderData();
 
-		// 기존 코드
-		BindRenderTargetGroup(context);
+			for (size_t i = 0; i < all_submeshes_data.size(); ++i)
+			{
+				const SubMeshRenderData& submesh_data = all_submeshes_data[i];
+				if (submesh_data.pass_flags.Has(GetPassOrder()))
+				{
+					render_queue_.push_back({ .key = submesh_data.key, .renderer = registered_renderers[slot].renderer, .submesh_idx = (uint8)i });
+				}
+			}
+		}
 
+		// RenderKey 기준으로 정렬
 		std::sort(render_queue_.begin(), render_queue_.end());
+
+		BindRenderTargetGroup(context);
 
 		if (!render_queue_.empty())
 		{
@@ -46,8 +62,8 @@ namespace engine
 
 			for (size_t i = 0; i < render_queue_.size(); ++i)
 			{
-				uint32 cur_material_ID = render_queue_[i].key.material_id;
-				uint32 cur_mesh_ID = render_queue_[i].key.mesh_id;
+				uint32 cur_material_ID = render_queue_[i].key.GetMaterialID();
+				uint32 cur_mesh_ID = render_queue_[i].key.GetMeshID();
 
 				//이전 Material과 다를 경우 Material 미리 바인딩
 				if (prev_material_ID != cur_material_ID)
@@ -64,9 +80,9 @@ namespace engine
 				size_t span_end = i + 1;
 				while (span_end < render_queue_.size())
 				{
-					if (cur_material_ID != render_queue_[span_end].key.material_id
+					if (cur_material_ID != render_queue_[span_end].key.GetMaterialID()
 						||
-						cur_mesh_ID != render_queue_[span_end].key.mesh_id)
+						cur_mesh_ID != render_queue_[span_end].key.GetMeshID())
 					{
 						break;
 					}

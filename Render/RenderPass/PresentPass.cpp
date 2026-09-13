@@ -50,7 +50,7 @@ namespace engine
 	}
 
 	PresentPass::PresentPass()
-		: Super(RenderPassOrder::kPresent)
+		: Super(RenderPassOrder::Present)
 	{}
 	PresentPass::~PresentPass()
 	{}

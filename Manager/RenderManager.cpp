@@ -39,8 +39,8 @@ namespace engine
 	{
 		auto* context = GraphicsDevice::GetInst().GetContext();
 
-		render_passes_[(size_t)RenderPassOrder::kForwardOpaque] = &forward_opaque_pass_;
-		render_passes_[(size_t)RenderPassOrder::kPresent] = &present_pass_;
+		render_passes_[(size_t)RenderPassOrder::ForwardOpaque] = &forward_opaque_pass_;
+		render_passes_[(size_t)RenderPassOrder::Present] = &present_pass_;
 
 		for (RenderPass* render_pass : render_passes_)
 		{
@@ -105,13 +105,29 @@ namespace engine
 		ASSERT(mesh);
 #endif//NDEBUG
 
-		std::bitset<(size_t)RenderPassOrder::kEND> render_pass_flags = GetRenderPassFlags(renderer);
-		for (size_t i = 0; i < render_pass_flags.size(); ++i)
+		RenderPassFlags render_pass_flags = renderer->GetRenderPassFlags();
+
+		for (uint32 i = 0; i < (uint32)RenderPassOrder::kCount; ++i)
 		{
-			if (render_pass_flags[i])
+			RenderPassOrder pass_order = (RenderPassOrder)i;
+			if (render_pass_flags.Has(pass_order))
 			{
 				uint32 slot = render_passes_[i]->AddRenderer(renderer);
-				renderer->SetRenderSlot((RenderPassOrder)i, slot);
+				renderer->SetRenderSlot(pass_order, slot);
+			}
+			else
+			{
+				renderer->SetRenderSlot(pass_order, kInvalidIdx32);
+			}
+		}
+		
+		for (uint32 i = 0; i < (uint32)RenderPassOrder::kCount; ++i)
+		{
+			RenderPassOrder pass_order = (RenderPassOrder)i;
+			if (render_pass_flags.Has(pass_order))
+			{
+				uint32 slot = render_passes_[i]->AddRenderer(renderer);
+				renderer->SetRenderSlot(pass_order, slot);
 			}
 		}
 	}
@@ -153,32 +169,6 @@ namespace engine
 		BindPSSamplerStates(GraphicsDevice::GetInst().GetContext());
 	}
 
-	std::bitset<(size_t)RenderPassOrder::kEND> RenderManager::GetRenderPassFlags(Renderer* renderer) const
-	{
-		static_assert((size_t)RenderPassOrder::kEND == std::tuple_size_v<Material::PipelineStatesPerPass>);
-
-		ASSERT_RELEASE(renderer);
-
-		const std::vector<s_ptr<Material>>& materials = renderer->GetMaterials();
-		
-		// 사용 중인 RenderPass 분석
-		std::bitset<(size_t)RenderPassOrder::kEND> render_pass_flags = {};
-		for (const auto& mtrl : materials)
-		{
-			if (mtrl == nullptr) { continue; }
-
-			const Material::PipelineStatesPerPass& pipeline_states = mtrl->GetPipelineStates();
-			for (size_t i = 0; i < pipeline_states.size(); ++i)
-			{
-				if (pipeline_states[i]) { render_pass_flags[i] = true; }
-			}
-
-			// 전부 켜졌을 경우 더이상 확인할 필요 없음
-			if (render_pass_flags.all()) { break; }
-		}
-
-		return render_pass_flags;
-	}
 	void RenderManager::DebugDraw(ID3D11DeviceContext* context)
 	{
 		Camera* cam = main_cam_.get();

@@ -136,23 +136,4 @@ namespace engine {
     private:
         IDType id_;
     };
-
-    // ---------------------------------------------------------------------------
-    // RenderKey 대응 별칭 — Tag는 전방 선언만으로 충분하다.
-    //
-    // 비트 폭은 이곳이 유일한 출처다. 패킹에 쓰이는 시프트/마스크는
-    // RenderKey 쪽에서 이 상수로부터 유도하며, 어디에도 리터럴을 두지 않는다.
-    // ---------------------------------------------------------------------------
-
-    class Material;
-    class Mesh;
-
-    // 실제 상수값은 Core/Constants.h
-
-    static_assert(kMaterialIDBits + kMeshIDBits + kSubMeshIndexBits <= 64,
-        "RenderKey layout overflows uint64.");
-
-    using MaterialID = ScopedID<Material, kMaterialIDBits>;
-    using MeshID = ScopedID<Mesh, kMeshIDBits>;
-
 }  // namespace engine

@@ -5,6 +5,8 @@
 #include <Engine/Core/Constant.h>
 #include <Engine/Core/Enum.h>
 
+#include <Engine/Render/RenderTypes.h>
+
 #include <Engine/Util/IDAllocator.h>
 
 #include <Engine/HLSL/Core/Config.hlsli>
@@ -26,7 +28,7 @@ namespace engine
 
     public:
         using Textures = std::array<s_ptr<Texture2D>, MAX_TEXTURE_COUNT>;
-		using PipelineStatesPerPass = std::array<s_ptr<PipelineState>, (size_t)RenderPassOrder::kEND>;
+		using PipelineStatesPerPass = std::array<s_ptr<PipelineState>, (size_t)RenderPassOrder::kCount>;
 
         Material();
         Material(const Material& other) = default;
@@ -45,7 +47,7 @@ namespace engine
         void SetPipelineState(RenderPassOrder pass, s_ptr<PipelineState> shader_set);
         bool BindPipelineState(ID3D11DeviceContext* context, RenderPassOrder pass);
 		s_ptr<PipelineState> GetPipelineState(RenderPassOrder pass) const {
-            if (pass < RenderPassOrder::kEND) { return pipeline_states_per_pass[(size_t)pass]; }
+            if (pass < RenderPassOrder::kCount) { return pipeline_states_per_pass[(size_t)pass]; }
             return nullptr;
 		}
 		const PipelineStatesPerPass& GetPipelineStates() const { return pipeline_states_per_pass; }
@@ -59,6 +61,8 @@ namespace engine
 
 		bool IsInstancingSupported(RenderPassOrder pass) const;
         size_t GetPerObjectDataStride(RenderPassOrder pass) const;
+
+		MaterialID GetMaterialID() const { return material_ID_; }
 
     private:
 		MaterialID material_ID_;    // RenderKey에 패킹되는 Material 고유 ID. ScopedID로 관리됨

@@ -64,6 +64,8 @@ namespace engine
 		{	
 			materials_.resize(mesh_->GetSubMeshCount());
 		}
+
+		BuildSubMeshRenderData();
 	}
 
 	bool Renderer::SetMaterial(size_t submesh_idx, s_ptr<Material> material)
@@ -80,6 +82,9 @@ namespace engine
 		}
 
 		materials_[submesh_idx] = std::move(material);
+
+		BuildSubMeshRenderData();
+
 		return true;
 	}
 
@@ -102,6 +107,26 @@ namespace engine
 		const matrix world_mat = my_transform_->GetWorldMatrix();
 
 		return geometry_2d::TransformBoundsTo2D(local_bounds, world_mat);
+	}
+	void Renderer::BuildSubMeshRenderData()
+	{
+		submesh_render_data_.assign(materials_.size(), SubMeshRenderData{});   // kInvalidKey로 채움
+		if (!mesh_) return;
+		for (size_t i = 0; i < materials_.size(); ++i) {
+			if (materials_[i] == nullptr) { continue; }
+
+			const auto& pso_per_pass = materials_[i]->GetPipelineStates();
+
+			RenderPassFlags pass_flags = {};
+			for (size_t j = 0; j < pso_per_pass.size(); ++j)
+			{
+				if (pso_per_pass[j])
+				{
+					pass_flags.Set((RenderPassOrder)j);
+				}
+			}
+			submesh_render_data_[i] = SubMeshRenderData{RenderKey(materials_[i]->GetMaterialID(), mesh_->GetMeshID(), (uint8)i), pass_flags};
+		}
 	}
 }
 

@@ -115,7 +115,7 @@ namespace engine
 		if (cb_bindings_.empty()) { return; }
 
 		// 실제로 사용된 ShaderStage 플래그를 계산
-		ShaderStage::Flags used_stage_flags = ShaderStage::Flags::None;
+		ShaderStage::Flags used_stage_flags = {};
 		for (size_t i = 0; i < cb_bindings_.size(); ++i)
 		{
 			used_stage_flags |= cb_bindings_[i].stage_flag;

@@ -101,7 +101,7 @@ namespace engine
 		ASSERT(renderer);
 
 #ifndef NDEBUG
-		s_ptr<Mesh> mesh = renderer->GetMesh();
+		Mesh* mesh = renderer->GetMesh();
 		ASSERT(mesh);
 #endif//NDEBUG
 

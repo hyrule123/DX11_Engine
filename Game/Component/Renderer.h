@@ -44,10 +44,10 @@ namespace engine
 
         bool IsRenderReady() const { return (!materials_.empty() && mesh_); }
 
-        s_ptr<Material> GetMaterial(size_t submesh_idx) const { return (submesh_idx < materials_.size()) ? materials_.at(submesh_idx) : nullptr; }
+        Material* GetMaterial(size_t submesh_idx) const { return (submesh_idx < materials_.size()) ? materials_.at(submesh_idx).get() : nullptr; }
 		const std::vector<s_ptr<Material>>& GetMaterials() const { return materials_; }
 
-        s_ptr<Mesh> GetMesh() const { return mesh_; }
+        Mesh* GetMesh() const { return mesh_.get(); }
 
         virtual void WritePerObjectData(DataBlock data_block) = 0;
 

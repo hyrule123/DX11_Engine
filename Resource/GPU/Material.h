@@ -46,8 +46,8 @@ namespace engine
         bool SetPipelineState(RenderPassOrder pass, const HashedStringView& shader_set_name);
         void SetPipelineState(RenderPassOrder pass, s_ptr<PipelineState> shader_set);
         bool BindPipelineState(ID3D11DeviceContext* context, RenderPassOrder pass);
-		s_ptr<PipelineState> GetPipelineState(RenderPassOrder pass) const {
-            if (pass < RenderPassOrder::kCount) { return pipeline_states_per_pass[(size_t)pass]; }
+		PipelineState* GetPipelineState(RenderPassOrder pass) const {
+            if (pass < RenderPassOrder::kCount) { return pipeline_states_per_pass[(size_t)pass].get(); }
             return nullptr;
 		}
 		const PipelineStatesPerPass& GetPipelineStates() const { return pipeline_states_per_pass; }

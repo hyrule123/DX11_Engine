@@ -34,7 +34,7 @@ namespace engine
 	{
 		Super::Awake();
 
-		s_ptr<Material> mtrl = GetMaterial(0);
+		Material* mtrl = GetMaterial(0);
 		ASSERT(mtrl);
 		ASSERT(sizeof(per_obj_data_) == mtrl->GetPerObjectDataStride(render_pass_mode_));
 	}

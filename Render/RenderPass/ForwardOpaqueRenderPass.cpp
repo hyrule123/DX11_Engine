@@ -79,12 +79,12 @@ namespace engine
 
 			const uint32 instances_count = (uint32)(span_end - i);
 
-			Material* mtrl = item.renderer->GetMaterial(submesh_idx).get();
+			Material* mtrl = item.renderer->GetMaterial(submesh_idx);
 			ASSERT(mtrl);
 
 			if (prev_material_id != material_id)
 			{
-				PipelineState* pipeline_state = mtrl->GetPipelineState(GetPassOrder()).get();
+				PipelineState* pipeline_state = mtrl->GetPipelineState(GetPassOrder());
 				if (prev_pipeline_state != pipeline_state)
 				{
 					pipeline_state->Bind(context);
@@ -113,7 +113,7 @@ namespace engine
 				instance_buffer->BindSRV(context, ShaderStage::Flags::Vertex | ShaderStage::Flags::Pixel, REG_T_INSTANCE_BUFFER);
 			}
 
-			Mesh* mesh = item.renderer->GetMesh().get();
+			Mesh* mesh = item.renderer->GetMesh();
 			ASSERT(mesh);
 
 			if (prev_mesh_id != mesh_id)

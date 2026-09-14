@@ -103,7 +103,7 @@ namespace engine
 		{
 			current_state_ = iter->second.get();
 		}
-		ASSERT_MESSAGE(current_state_, "State not found");
+		ASSERT_F(current_state_, "State not found");
 	}
 
 	void HFSM::ValidateStates() const

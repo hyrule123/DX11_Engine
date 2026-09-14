@@ -110,7 +110,7 @@ namespace engine
 			}
 		}
 		// 최대 pass 도달 시 확인 필요(debug)
-		ASSERT_MESSAGE(pass_count < kMaxDrainLoopCount, "Destroy Pass Count exceeded. Possible infinite loop in destruction.");
+		ASSERT_F(pass_count < kMaxDrainLoopCount, "Destroy Pass Count exceeded. Possible infinite loop in destruction.");
 
 		//nullptr인 항목들 제거
 		std::erase_if(
@@ -142,7 +142,7 @@ namespace engine
 	}
 	void Scene::SetCollisionMask(uint32 layer_a, uint32 layer_b, bool can_collide)
 	{
-		ASSERT_MESSAGE(layer_a < kMaxLayers && layer_b < kMaxLayers, "Layer index out of bounds");
+		ASSERT_F(layer_a < kMaxLayers && layer_b < kMaxLayers, "Layer index out of bounds");
 
 		collision_mask_[layer_a][layer_b] = can_collide;
 		collision_mask_[layer_b][layer_a] = can_collide; // Ensure symmetry

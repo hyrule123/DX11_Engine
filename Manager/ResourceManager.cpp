@@ -51,8 +51,8 @@ namespace engine
 		auto iter = resources_.find(res_key);
 		if (iter != resources_.end()) 
 		{ 
-			DEBUG_MESSAGE("Resource already exists");
-			return false; 
+			ASSERT_F(false, "Resource already exists");
+			return false;
 		}
 
 		resources_.insert(res_key, std::move(resource));

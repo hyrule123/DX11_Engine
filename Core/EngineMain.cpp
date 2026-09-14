@@ -159,7 +159,7 @@ namespace engine
         bool result = static_cast<bool>(RegisterClassExW(&wcex));
         if (!result)
         {
-            ASSERT_RELEASE_MESSAGE(false, "Failed to register window class!");
+            CHECK_F(false, "Failed to register window class!");
             return false;
         }
 
@@ -171,7 +171,7 @@ namespace engine
 			CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, nullptr, nullptr, hInstance, nullptr);
         if (!h_wnd_)
         {
-			ASSERT_RELEASE_MESSAGE(false, "Failed to create HWND!");
+			CHECK_F(false, "Failed to create HWND!");
             return false;
         }
 
@@ -182,7 +182,7 @@ namespace engine
         result = GameEngine::GetInst().Init();
         if (false == result)
         {
-            ASSERT_RELEASE_MESSAGE(result, "Failed to initialize game engine!");
+            CHECK_F(result, "Failed to initialize game engine!");
             return false;
         }
 

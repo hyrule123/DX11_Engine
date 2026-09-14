@@ -28,14 +28,14 @@ namespace engine
 		bool result = CreateDeviceAndContext();
 		if (false == result)
 		{
-			ASSERT_RELEASE(false);
+			CHECK(false);
 			return false;
 		}
 
 		result = SetResolution(EngineMain::GetInst().GetScreenWidth(), EngineMain::GetInst().GetScreenHeight());
 		if (false == result)
 		{
-			ASSERT_RELEASE(false);
+			CHECK(false);
 			return false;
 		}
 
@@ -74,7 +74,7 @@ namespace engine
 
 		if (FAILED(result))
 		{
-			HRESULT_ERROR_MESSAGE(result);
+			ERR_MSG_HRESULT(result);
 			return false;
 		}
 
@@ -108,7 +108,7 @@ namespace engine
 			swap_chain_ = CreateSwapChain(hwnd, resolution_width, resolution_height);
 			if (nullptr == swap_chain_)
 			{
-				ASSERT_RELEASE_MESSAGE(false, "Failed to create Swap Chain!");
+				CHECK_F(false, "Failed to create Swap Chain!");
 				return false;
 			}
 		}
@@ -118,7 +118,7 @@ namespace engine
 			hr = swap_chain_->ResizeBuffers(0, resolution_width, resolution_height, DXGI_FORMAT_UNKNOWN, 0);
 			if (FAILED(hr))
 			{
-				HRESULT_ERROR_MESSAGE(hr);
+				ERR_MSG_HRESULT(hr);
 				return false;
 			}
 		}
@@ -130,7 +130,7 @@ namespace engine
 		bool result = rt->CreateForSwapchain(swap_chain_);
 		if (!result)
 		{
-			ASSERT_RELEASE_MESSAGE(false, "Failed to create Render Target");
+			CHECK_F(false, "Failed to create Render Target");
 			return false;
 		}
 		swap_chain_RT_->SetRenderTargets({ rt, });
@@ -156,10 +156,10 @@ namespace engine
 		depth_buffer_desc.MiscFlags = 0;
 
 		result = dsv->CreateTexture2D(&depth_buffer_desc);
-		ASSERT_RELEASE(result);
+		CHECK(result);
 
 		result = dsv->CreateDSV(nullptr);
-		ASSERT_RELEASE(result);
+		CHECK(result);
 #pragma endregion DSV
 
 		swap_chain_RT_->SetDepthStencilView(dsv);
@@ -194,7 +194,7 @@ namespace engine
 	{
 		if (nullptr == device_ || NULL == hwnd)
 		{
-			ERROR_MESSAGE("D3D11 Device is not created yet!");
+			ERR_MSG("D3D11 Device is not created yet!");
 			return nullptr;
 		}
 
@@ -205,7 +205,7 @@ namespace engine
 		hr = device_->QueryInterface(__uuidof(IDXGIDevice), (void**)pDXGIDevice.GetAddressOf());
 		if (FAILED(hr)) 
 		{
-			HRESULT_ERROR_MESSAGE(hr);
+			ERR_MSG_HRESULT(hr);
 			return nullptr; 
 		}
 
@@ -214,7 +214,7 @@ namespace engine
 		hr = pDXGIDevice->GetAdapter(pDXGIAdapter.GetAddressOf());
 		if (FAILED(hr))
 		{
-			HRESULT_ERROR_MESSAGE(hr);
+			ERR_MSG_HRESULT(hr);
 			return nullptr;
 		}
 
@@ -223,7 +223,7 @@ namespace engine
 		hr = pDXGIAdapter->GetParent(__uuidof(IDXGIFactory), (void**)pDXGIFactory.GetAddressOf());
 		if (FAILED(hr))
 		{
-			HRESULT_ERROR_MESSAGE(hr);
+			ERR_MSG_HRESULT(hr);
 			return nullptr;
 		}
 
@@ -250,7 +250,7 @@ namespace engine
 		hr = pDXGIFactory->CreateSwapChain(device_.Get(), &sd, swap_chain.ReleaseAndGetAddressOf());
 		if (FAILED(hr))
 		{
-			HRESULT_ERROR_MESSAGE(hr);
+			ERR_MSG_HRESULT(hr);
 			return nullptr;
 		}
 		

@@ -219,7 +219,9 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Core\Detail\Assert.h" />
     <ClInclude Include="Collision\Geometry2D.h" />
+    <ClInclude Include="Core\Detail\EngineLog.h" />
     <ClInclude Include="Render\Culling.h" />
     <ClInclude Include="Render\RenderTypes.h" />
     <ClInclude Include="Util\IDAllocator.h" />
@@ -306,7 +308,9 @@
     <ClInclude Include="Resource\GPU\Shader\VertexShader.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Core\Detail\Assert.cpp" />
     <ClCompile Include="Collision\Geometry2D.cpp" />
+    <ClCompile Include="Core\Detail\EngineLog.cpp" />
     <ClCompile Include="Render\Culling.cpp" />
     <ClCompile Include="Util\GPUBufferBindingTable.cpp" />
     <ClCompile Include="Util\DX11UtilFuncs.cpp" />

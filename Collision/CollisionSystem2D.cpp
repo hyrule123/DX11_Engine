@@ -143,7 +143,7 @@ namespace engine
 		ASSERT(collider);
 
 		int32 index = collider->GetCollisionSystemIndex();
-		ASSERT_MESSAGE(index == kInvalidIndex, "Collider is already registered");
+		ASSERT_F(index == kInvalidIndex, "Collider is already registered");
 
 		colliders_.push_back({ collider, });
 		colliders_.back().is_world_bound_dirty = true;
@@ -157,7 +157,7 @@ namespace engine
 		ASSERT(collider);
 
 		int32 index = collider->GetCollisionSystemIndex();
-		ASSERT_MESSAGE(index != kInvalidIndex, "Collider is not registered");
+		ASSERT_F(index != kInvalidIndex, "Collider is not registered");
 
 		// 저장된 포인터 주소가 다르면 뭔가 문제 있는거임
 		ASSERT(colliders_[index].collider == collider);
@@ -175,7 +175,7 @@ namespace engine
 		for (ColliderPairID pair_id : contacts)
 		{
 			auto it = collisions_.find(pair_id);
-			ASSERT_MESSAGE(it != collisions_.end(), "ColliderPairID not found in collisions_");
+			ASSERT_F(it != collisions_.end(), "ColliderPairID not found in collisions_");
 
 			// Exit 데이터 꺼내고, Contact에서 제거
 			ExitEvent2D exit_event{ pair_id, it->second.lo, it->second.hi, it->second.was_trigger_ };
@@ -198,8 +198,8 @@ namespace engine
 
 	void CollisionSystem2D::FixedUpdate()
 	{
-		ASSERT_MESSAGE(enter_events_.empty(), "이게 왜 남아있지? 확인");
-		ASSERT_MESSAGE(exit_events_.empty(), "이게 왜 남아있지? 확인");
+		ASSERT_F(enter_events_.empty(), "enter_events must empty");
+		ASSERT_F(exit_events_.empty(), "exit_events must empty");
 
 		//충돌 감지 기간 동안에는 Collider 추가/제거 금지 가드 필요
 		// >> Event Queueing 방식으로 해결
@@ -232,7 +232,7 @@ namespace engine
 			int32_2 cell_index_RT = ConvertWorldPosToCellIndex(bounds.max, cell_size_inv_);
 
 			const int64 cells = int64(cell_index_RT.x - cell_index_LB.x + 1) * (cell_index_RT.y - cell_index_LB.y + 1);
-			ASSERT_MESSAGE(cells <= kMaxCellsPerCollider, "콜라이더가 너무 많은 셀에 걸침");
+			ASSERT_F(cells <= kMaxCellsPerCollider, "Collider spans too many cells");
 
 			for (int32 x = cell_index_LB.x; x <= cell_index_RT.x; ++x)
 			{

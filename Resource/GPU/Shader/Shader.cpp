@@ -20,7 +20,7 @@ namespace engine
 
 		if (bytecode.empty())
 		{
-			ERROR_MESSAGE_A((std::string("Failed to load shader from file: ") +  path.string()).c_str());
+			ERR_MSG("Failed to Load Shader From file: {}", path.string());
 			return false;
 		}
 

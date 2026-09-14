@@ -270,6 +270,12 @@
     <ClInclude Include="Collision\Geometry2D.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Core\Detail\Assert.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Detail\EngineLog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Core\pch.cpp">
@@ -456,6 +462,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Collision\Geometry2D.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Detail\Assert.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Detail\EngineLog.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

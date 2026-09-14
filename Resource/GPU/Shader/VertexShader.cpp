@@ -27,7 +27,7 @@ namespace engine
 
 		if (FAILED(hr))
 		{
-			HRESULT_ERROR_MESSAGE(hr);
+			ERR_MSG_HRESULT(hr);
 			return false;
 		}
 

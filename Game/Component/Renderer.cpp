@@ -72,12 +72,12 @@ namespace engine
 	{
 		if (mesh_ == nullptr)
 		{
-			ERROR_MESSAGE("Material을 먼저 설정하세요.");
+			ERR_MSG("Material을 먼저 설정하세요.");
 			return false;
 		}
 		if (submesh_idx >= materials_.size())
 		{
-			ASSERT_MESSAGE(false, "submesh index가 범위를 벗어남");
+			ASSERT_F(false, "submesh index가 범위를 벗어남");
 			return false;
 		}
 

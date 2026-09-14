@@ -21,8 +21,7 @@ namespace engine
 	}
 	Transform::~Transform()
 	{
-		std::string log_msg = "Transform 실제 소멸자 호출!!, FrameCount: " + std::to_string(GameEngine::GetInst().GetFrameCount()) + ")";
-		DEBUG_LOG_A(log_msg.c_str());
+		DEBUG_LOG("Transform Destructor called, FrameCount: {}", GameEngine::GetInst().GetFrameCount());
 	}
 
 	void Transform::LateUpdate()
@@ -35,8 +34,7 @@ namespace engine
 	{
 		Super::OnDisable();
 
-		std::string log_msg = "Transform OnDisable 호출!!, FrameCount: " + std::to_string(GameEngine::GetInst().GetFrameCount()) + ")";
-		DEBUG_LOG_A(log_msg.c_str());
+		DEBUG_LOG("Transform OnDisable called, FrameCount: {}", GameEngine::GetInst().GetFrameCount());
 	}
 	void Transform::OnDestroy()
 	{

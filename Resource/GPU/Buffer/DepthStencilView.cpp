@@ -20,7 +20,7 @@ namespace engine
 		auto tex = GetTexture2D();
 		if (!tex)
 		{
-			ERROR_MESSAGE("Texture를 먼저 만드세요");
+			ERR_MSG("Texture를 먼저 만드세요");
 			return false;
 		}
 
@@ -29,7 +29,7 @@ namespace engine
 
 		if (FAILED(hr))
 		{
-			HRESULT_ERROR_MESSAGE(hr);
+			ERR_MSG_HRESULT(hr);
 			return false;
 		}
 

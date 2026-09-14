@@ -17,12 +17,12 @@ namespace engine
 	{
 		if (stride == 0)
 		{
-			ERROR_MESSAGE("stride가 0입니다.");
+			ERR_MSG("stride가 0입니다.");
 			return false;
 		}
 		if ((stride % 16) != 0)
 		{
-			ERROR_MESSAGE("Constant Buffer에 사용할 데이터는 반드시 16바이트 정렬이 되어 있어야 합니다.");
+			ERR_MSG("Constant Buffer에 사용할 데이터는 반드시 16바이트 정렬이 되어 있어야 합니다.");
 			return false;
 		}
 
@@ -39,7 +39,7 @@ namespace engine
 
 		if (FAILED(hr))
 		{
-			HRESULT_ERROR_MESSAGE(hr);
+			ERR_MSG_HRESULT(hr);
 			return false;
 		}
 		
@@ -77,7 +77,7 @@ namespace engine
 
 		if (FAILED(hr))
 		{
-			HRESULT_ERROR_MESSAGE(hr);
+			ERR_MSG_HRESULT(hr);
 			return;
 		}
 

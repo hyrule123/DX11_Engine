@@ -28,7 +28,7 @@ namespace engine
 		bool tex_result = CreateTexture2D(&desc);
 		if (!tex_result)
 		{
-			ERROR_MESSAGE("텍스처 생성 실패!!");
+			ERR_MSG("텍스처 생성 실패!!");
 			return false;
 		}
 
@@ -39,14 +39,14 @@ namespace engine
 		auto tex = GetTexture2D();
 		if (!tex)
 		{
-			ERROR_MESSAGE("Texture를 먼저 만드세요");
+			ERR_MSG("Texture를 먼저 만드세요");
 			return false;
 		}
 
 		HRESULT hr = GraphicsDevice::GetInst().GetDevice()->CreateRenderTargetView(tex.Get(), rtv_desc, render_target_view_.ReleaseAndGetAddressOf());
 		if (FAILED(hr))
 		{
-			HRESULT_ERROR_MESSAGE(hr);
+			ERR_MSG_HRESULT(hr);
 			return false;
 		}
 
@@ -59,7 +59,7 @@ namespace engine
 		HRESULT hr = swap_chain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)back_buffer.GetAddressOf());
 		if (FAILED(hr))
 		{
-			HRESULT_ERROR_MESSAGE(hr);
+			ERR_MSG_HRESULT(hr);
 			return false;
 		}
 		SetTexture2D(back_buffer);
@@ -69,7 +69,7 @@ namespace engine
 		hr = GraphicsDevice::GetInst().GetDevice()->CreateRenderTargetView(back_buffer.Get(), nullptr, render_target_view_.GetAddressOf());
 		if (FAILED(hr))
 		{
-			HRESULT_ERROR_MESSAGE(hr);
+			ERR_MSG_HRESULT(hr);
 			return false;
 		}
 			

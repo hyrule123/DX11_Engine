@@ -27,7 +27,7 @@ namespace engine
 	{
 		if (compute_shader_ == nullptr || compute_shader_->IsReady() == false)
 		{
-			DEBUG_MESSAGE("ComputeShader가 준비되지 않았습니다.");
+			ASSERT(false);
 			return;
 		}
 
@@ -38,12 +38,12 @@ namespace engine
 		{
 			if (threads_per_group[i] == 0)
 			{
-				DEBUG_MESSAGE("ComputeShader의 thread group size가 0입니다.");
+				ASSERT_F(false, "Group size of ComputeShader was 0.");
 				return;
 			}
 			if (thread_count[i] == 0)
 			{
-				DEBUG_MESSAGE("ComputePass의 thread count가 0입니다.");
+				ASSERT_F(false, "Thread count of ComputePass was 0.");
 				return;
 			}
 

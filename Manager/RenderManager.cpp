@@ -44,7 +44,7 @@ namespace engine
 
 		for (RenderPass* render_pass : render_passes_)
 		{
-			ASSERT_MESSAGE(render_pass != nullptr, "RenderPass is nullptr");
+			ASSERT_F(render_pass != nullptr, "RenderPass is nullptr");
 		}
 
 		//CONSTANT BUFFERS
@@ -62,7 +62,7 @@ namespace engine
 		Camera* main_cam = main_cam_.get();
 		if (main_cam == nullptr) 
 		{ 
-			ERROR_MESSAGE("Main Camera 없음");
+			ERR_MSG("Main Camera 없음");
 			return;
 		}
 
@@ -177,7 +177,7 @@ namespace engine
 		{
 			buffer = EntityManager::CreateEntity<StructuredBuffer>();
 			bool result = buffer->CreateDynamicBuffer(byte_stride, elem_count);
-			ASSERT_RELEASE(result);
+			CHECK(result);
 		}
 
 		if (elem_count > buffer->GetCapacity())
@@ -185,7 +185,7 @@ namespace engine
 			// 1.5배 or 그보다 클 경우 elem_count만큼 확장
 			const uint32 grown = buffer->GetCapacity() + buffer->GetCapacity() / 2;
 			bool result = buffer->Reserve(std::max(grown, elem_count));
-			ASSERT_RELEASE(result);
+			CHECK(result);
 		}
 
 		return buffer.get();
@@ -295,7 +295,7 @@ namespace engine
 		HRESULT hr = device->CreateSamplerState(&sampler_desc, point.GetAddressOf());
 		if (FAILED(hr))
 		{
-			HRESULT_ERROR_MESSAGE(hr);
+			ERR_MSG_HRESULT(hr);
 		}
 		sampler_states_[REG_S_POINT_CLAMP.Get()] = point;
 	}
@@ -344,7 +344,7 @@ namespace engine
 		// 2. State 객체 생성
 		if (false == dss->Create(dss_desc))
 		{
-			ASSERT_RELEASE(false);
+			CHECK(false);
 		}
 
 #pragma region RECT MESH

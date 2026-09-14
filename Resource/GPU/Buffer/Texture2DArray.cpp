@@ -24,7 +24,7 @@ namespace engine
 		ComPtr<ID3D11Texture2D> atlas_tex = GetTexture2D();
         if (!atlas_tex)
         {
-            ERROR_MESSAGE("이미지를 먼저 로드하세요");
+            ERR_MSG("이미지를 먼저 로드하세요");
             return false;
         }
 
@@ -54,7 +54,7 @@ namespace engine
         HRESULT hr = device->CreateTexture2D(&sprite_desc, nullptr, &sprite_tex);
         if (FAILED(hr))
         {
-            HRESULT_ERROR_MESSAGE(hr);
+            ERR_MSG_HRESULT(hr);
             return false;
         }
 
@@ -95,7 +95,7 @@ namespace engine
 
         if (FAILED(hr))
         {
-            HRESULT_ERROR_MESSAGE(hr);
+            ERR_MSG_HRESULT(hr);
             return false;
         }
 

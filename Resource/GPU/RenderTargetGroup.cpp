@@ -58,7 +58,7 @@ namespace engine
 				if (viewport_.Width != (float)render_target_buffers_[i]->GetWidth() ||
 					viewport_.Height != (float)render_target_buffers_[i]->GetHeight())
 				{
-					ASSERT_MESSAGE(false, "Size mismatch in RenderTargetGroup");
+					ASSERT_F(false, "Size mismatch in RenderTargetGroup");
 				}
 			}
 		}
@@ -130,7 +130,7 @@ namespace engine
 		/* 자동 언바인드 하지 않는 이유 
 		중간에 다른 SRV에서 바인딩이 일어날 수 있기 때문에, 에러를 발생시키고 처리 코드를 추가하도록 하는 게 더 안전함. SRV 바인딩 후 OM 바인딩 전에 반드시 UnBindShaderResourceViews를 호출하도록 강제.
 		*/
-		ASSERT_RELEASE(srv_bound_ == false);
+		CHECK(srv_bound_ == false);
 
 		ID3D11DepthStencilView* dsv = nullptr;
 		if (dsv_) { dsv = dsv_->GetRawDepthStencilView(); }
@@ -179,8 +179,7 @@ namespace engine
 	{
 		if (!requires_resize_) 
 		{ 
-			std::string msg = "No resize needed for RenderTargetGroup";
-			DEBUG_LOG_A(msg.c_str());
+			DEBUG_LOG("No resize needed for RenderTargetGroup");
 			return;
 		}
 

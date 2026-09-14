@@ -21,7 +21,7 @@ namespace engine
 	{
 		if (false == IsReady())
 		{
-			DEBUG_MESSAGE("Mesh가 준비되지 않았습니다.");
+			ASSERT_F(false, "Mesh has not been initialized.");
 			return;
 		}
 
@@ -71,7 +71,7 @@ namespace engine
 
 		if (FAILED(hr))
 		{
-			HRESULT_ERROR_MESSAGE(hr);
+			ERR_MSG_HRESULT(hr);
 			return false;
 		}
 
@@ -89,12 +89,12 @@ namespace engine
 
 		if (data_stride == 0)
 		{
-			ERROR_MESSAGE("지원하지 않는 DXGI_FORMAT입니다.");
+			ERR_MSG("지원하지 않는 DXGI_FORMAT입니다.");
 			return false;
 		}
 		if (data_count == 0)
 		{
-			ERROR_MESSAGE("인덱스 데이터 개수가 0입니다.");
+			ERR_MSG("인덱스 데이터 개수가 0입니다.");
 			return false;
 		}
 
@@ -114,7 +114,7 @@ namespace engine
 
 		if (FAILED(hr))
 		{
-			HRESULT_ERROR_MESSAGE(hr);
+			ERR_MSG_HRESULT(hr);
 			return false;
 		}
 
@@ -130,14 +130,14 @@ namespace engine
 			// 비어있지 않다면 SubMesh 검증
 			if(sub_meshes.size() > kMaxSubMeshCount)
 			{
-				ERROR_MESSAGE("SubMesh 개수가 최대치를 초과했습니다.");
+				ERR_MSG("SubMesh 개수가 최대치를 초과했습니다.");
 				return false;
 			}
 			for (const SubMesh& sm : sub_meshes)
 			{
 				if (sm.index_start + sm.index_count > data_count)
 				{
-					ERROR_MESSAGE("SubMesh 범위가 인덱스 버퍼를 벗어납니다.");
+					ERR_MSG("SubMesh 범위가 인덱스 버퍼를 벗어납니다.");
 					return false;
 				}
 			}

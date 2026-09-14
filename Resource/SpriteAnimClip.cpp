@@ -14,12 +14,12 @@ namespace engine
 	{
 		if (frame_indices.empty())
 		{
-			ERROR_MESSAGE("프레임이 비어 있습니다.");
+			ERR_MSG("프레임이 비어 있습니다.");
 			return;
 		}
 		if (total_duration <= 0.0f)
 		{
-			ERROR_MESSAGE("Total Duration은 양수여야 합니다.");
+			ERR_MSG("Total Duration은 양수여야 합니다.");
 			return;
 		}
 
@@ -37,7 +37,7 @@ namespace engine
 		{
 			if (f.duration <= 0.0f)
 			{
-				ERROR_MESSAGE("Duration에 음수값이 있습니다. 확인하세요.");
+				ERR_MSG("Duration에 음수값이 있습니다. 확인하세요.");
 				return;
 			}
 			total_duration_ += f.duration;

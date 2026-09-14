@@ -53,7 +53,7 @@ namespace engine
 
 			if (false == rss->Create(rs_desc))
 			{
-				ASSERT_RELEASE(false);
+				CHECK(false);
 			}
 		}
 
@@ -77,7 +77,7 @@ namespace engine
 
 			if (!rss_wireframe->Create(rsDesc))
 			{
-				ASSERT_RELEASE(false);
+				CHECK(false);
 			}
 		}
 	}
@@ -108,7 +108,7 @@ namespace engine
 			// 2. State 객체 생성
 			if (false == dss->Create(dss_desc))
 			{
-				ASSERT_RELEASE(false);
+				CHECK(false);
 			}
 		}
 	}

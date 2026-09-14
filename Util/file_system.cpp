@@ -13,7 +13,7 @@ namespace engine::file_system
         std::ifstream file(file_path, std::ios::binary | std::ios::ate);
         
         if (false == file.is_open()) {
-            ERROR_MESSAGE("파일 열기 실패!!");
+            ERR_MSG("파일 열기 실패!!");
             return {};
         }
 
@@ -37,7 +37,7 @@ namespace engine::file_system
         
         if (false == of.is_open())
         {
-			ERROR_MESSAGE("파일 열기 실패!!");
+			ERR_MSG("파일 열기 실패!!");
 			return false;
         }
 

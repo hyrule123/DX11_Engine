@@ -23,7 +23,7 @@ namespace engine
 		HRESULT hr = device->CreateRasterizerState(&desc, raw_rss.GetAddressOf());
 		if (FAILED(hr))
 		{
-			HRESULT_ERROR_MESSAGE(hr);
+			ERR_MSG_HRESULT(hr);
 			return false;
 		}
 

@@ -39,7 +39,7 @@ namespace engine
 	{
 		if (!vertex_shader || !vertex_shader->IsReady())
 		{
-			ASSERT_MESSAGE(false, "VertexShader is not ready");
+			ASSERT_F(false, "VertexShader is not ready");
 			return;
 		}
 		vertex_shader_ = std::move(vertex_shader);
@@ -54,13 +54,13 @@ namespace engine
 	{
 		if (!vertex_shader_)
 		{
-			ASSERT_MESSAGE(false, "VertexShader is not ready");
+			ASSERT_F(false, "VertexShader is not ready");
 			return false;
 		}
 
 		if (!desc || !desc->IsReady())
 		{
-			ASSERT_MESSAGE(false, "InputLayoutDesc is not ready");
+			ASSERT_F(false, "InputLayoutDesc is not ready");
 			return false;
 		}
 
@@ -96,7 +96,7 @@ namespace engine
 	{
 		if (!IsReady()) 
 		{ 
-			DEBUG_MESSAGE("PipelineState is not ready. Ensure that the input layout and vertex shader are set before binding.");
+			ASSERT_F(false, "PipelineState is not ready. Ensure that the input layout and vertex shader are set before binding.");
 			return; 
 		}
 

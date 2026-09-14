@@ -76,7 +76,7 @@ namespace engine
 
 	AABB2D Camera::ComputeViewBounds2D() const
 	{
-		ASSERT_MESSAGE(proj_mat_desc_.proj_mode == ProjectionMode::Orthographic, "Ortho 카메라만 호출하세요.");
+		ASSERT_F(proj_mat_desc_.proj_mode == ProjectionMode::Orthographic, "Ortho 카메라만 호출하세요.");
 
 		constexpr float kMarginRatio = 0.505f; // 약간의 여유를 두어 한두픽셀 잘리는 것을 방지
 		const float half_width = proj_mat_desc_.viewport_width * kMarginRatio;

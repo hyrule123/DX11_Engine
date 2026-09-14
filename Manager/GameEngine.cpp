@@ -34,7 +34,7 @@ namespace engine
 
 		if (GraphicsDevice::GetInst().Init() == false)
 		{
-			ASSERT_RELEASE(false);
+			CHECK(false);
 			return false;
 		}
 		ResourceManager::GetInst().Init();

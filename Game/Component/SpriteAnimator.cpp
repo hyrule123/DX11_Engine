@@ -28,10 +28,10 @@ namespace engine
 	{
 		Super::Awake();
 		renderer_ = GetComponent<SpriteRenderer>();
-		ASSERT_MESSAGE(renderer_, "SpriteRenderer가 존재하지 않습니다.");
+		ASSERT_F(renderer_, "SpriteRenderer가 존재하지 않습니다.");
 		
-		ASSERT_MESSAGE(anim_, "Sprite Animation이 존재하지 않습니다.");
-		ASSERT_MESSAGE(anim_->IsReady(), "Sprite Animation이 준비되지 않았습니다.");
+		ASSERT_F(anim_, "Sprite Animation이 존재하지 않습니다.");
+		ASSERT_F(anim_->IsReady(), "Sprite Animation이 준비되지 않았습니다.");
 	}
 	void SpriteAnimator::LateUpdate()
 	{

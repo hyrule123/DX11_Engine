@@ -1,97 +1,75 @@
 #pragma once
-#include <Engine/Core/Windows.h>
-#include <cassert>
+#include <Engine/Core/Detail/Assert.h>
+#include <Engine/Core/Detail/EngineLog.h>
 
-#define ASSERT(_expression) assert(_expression)
 
-#ifdef _DEBUG
+#ifndef ENGINE_ASSERT_ENABLED
+#ifdef NDEBUG
+#define ENGINE_ASSERT_ENABLED 0
+#else
+#define ENGINE_ASSERT_ENABLED 1
+#endif //NDEBUG
+#endif //ENGINE_ASSERT_ENABLED
 
-#define ASSERT_RELEASE(_expression) assert(_expression)
+#pragma region ASSERTION API
+#define CHECK(_expression) ENGINE_CHECK_IMPL(_expression)
+#define CHECK_F(_expression, ...) ENGINE_CHECK_MSG_IMPL(_expression, __VA_ARGS__)
 
-#define ASSERT_MESSAGE(_expression, _c_str) \
-	do \
-	{ \
-		if (!(_expression)) \
-		{ _wassert(L ## #_expression##"\n\n"##_c_str , _CRT_WIDE(__FILE__), (unsigned)(__LINE__)); } \
-	} \
-	while (false)
+#if ENGINE_ASSERT_ENABLED
 
-#define ASSERT_RELEASE_MESSAGE(_expression, _c_str) ASSERT_MESSAGE(_expression, _c_str)
+#define ASSERT(_expression) ENGINE_ASSERT_IMPL(_expression)
+#define ASSERT_F(_expression, ...) ENGINE_ASSERT_MSG_IMPL(_expression, __VA_ARGS__)
 
-#define ERROR_MESSAGE_W(_c_str) \
-	do { MessageBoxW(nullptr, _c_str, nullptr, MB_OK | MB_ICONERROR); __debugbreak(); } while(false)
-#define ERROR_MESSAGE_A(_c_str) \
-	do { MessageBoxA(nullptr, _c_str, nullptr, MB_OK | MB_ICONERROR); __debugbreak(); } while(false)
+#else  // ENGINE_ASSERT_ENABLED
 
-#define DEBUG_MESSAGE_W(_c_str) \
-	do { MessageBoxW(nullptr, _c_str, nullptr, MB_OK | MB_ICONINFORMATION); __debugbreak(); } while(false)
-#define DEBUG_MESSAGE_A(_c_str) \
-	do { MessageBoxA(nullptr, _c_str, nullptr, MB_OK | MB_ICONINFORMATION); __debugbreak(); } while(false)
+#define ASSERT(_expression) ENGINE_SKIP_CHECK_IMPL(_expression)
+#define ASSERT_F(_expression, ...) ENGINE_SKIP_CHECK_MSG_IMPL(_expression, __VA_ARGS__)
 
-#define DEBUG_LOG_A(_str) OutputDebugStringA(_str); OutputDebugStringA("\n");
-#define DEBUG_LOG_W(_wStr) OutputDebugStringW(_wStr); OutputDebugStringW(L"\n");
-#define DEBUG_LOG(_str) DEBUG_LOG_W(L ## _str)
+#endif  // ENGINE_ASSERT_ENABLED
 
-#define DEBUG_BREAK ::__debugbreak();
+// -----------------------------------------------------------------------------
+// 게이트
+//   ENGINE_LOG_ENABLED: DEBUG_LOG 전용 스위치.
+//   _DEBUG는 MSVC 전용이라 NDEBUG에서 유도한다 (ASSERT 쪽과 동일한 방침).
+//   LOG / ERR_MSG는 이 게이트 밖에 있다.
+// -----------------------------------------------------------------------------
+#if !defined(ENGINE_LOG_ENABLED)
+#if defined(NDEBUG)
+#define ENGINE_LOG_ENABLED 0
+#else
+#define ENGINE_LOG_ENABLED 1
+#endif
+#endif
 
-#else //RELEASE
+// 출력단이 붙어 있으면 로깅. 빌드 구성과 무관하게 항상 존재한다.
+#define LOG(...) ENGINE_LOG_IMPL(__VA_ARGS__)
 
-#define ASSERT (void)0
+// Debug 빌드에서만 LOG. Release에서는 몸통이 사라진다.
+#if ENGINE_LOG_ENABLED
+#define DEBUG_LOG(...) ENGINE_LOG_IMPL(__VA_ARGS__)
+#else
+#define DEBUG_LOG(...) ENGINE_SKIP_LOG_IMPL(__VA_ARGS__)
+#endif
 
-#define ASSERT_MESSAGE (void)0
+// 무조건 MessageBox 표시. 억제 없음, 매번 표시.
+// 확인 후 실행은 계속된다 (중단하지 않는다).
+// 호출 시점 판단은 개발자에게 맡긴다 — 아래 주의사항 참고.
+#define ERR_MSG(...)                                                           \
+    do                                                                         \
+    {                                                                          \
+        if (::engine::log::OnErrorMessage(                                     \
+                __FILE__, __LINE__,                                            \
+                ::engine::log::FormatString(__VA_ARGS__)))                    \
+        {                                                                      \
+            ENGINE_DEBUG_BREAK;                                                \
+        }                                                                      \
+    } while (false)
 
-#define ASSERT_RELEASE (_expression) \
-	do \
-	{ \
-		if(!(_expression)) \
-		{ \
-		MessageBoxW(nullptr, L## #_expression, L"Assertion Failed!", MB_OK | MB_ICONERROR);\
-		std::abort();\
-		} \
-	}\
-	while(false)
-
-#define ASSERT_RELEASE_MESSAGE(_expression, _c_str) \
-	do \
-	{ \
-		if(!(_expression)) \
-		{ \
-		MessageBoxW(nullptr, L## #_expression##"\n\n"##_c_str, L"Assertion Failed!", MB_OK | MB_ICONERROR);\
-		std::abort();\
-		} \
-	}\
-	while(false)
-
-#define ERROR_MESSAGE_W(_c_str) MessageBoxW(nullptr, _c_str, nullptr, MB_OK | MB_ICONERROR)
-#define ERROR_MESSAGE_A(_c_str) MessageBoxA(nullptr, _c_str, nullptr, MB_OK | MB_ICONERROR)
-
-#define ERROR_MESSAGE_W(_c_str) MessageBoxW(nullptr, _c_str, nullptr, MB_OK | MB_ICONERROR)
-#define ERROR_MESSAGE_A(_c_str) MessageBoxA(nullptr, _c_str, nullptr, MB_OK | MB_ICONERROR)
-
-#define DEBUG_MESSAGE_W(_c_str) (void)0
-#define DEBUG_MESSAGE_A(_c_str) (void)0
-
-#define DEBUG_LOG(_c_str) (void)0
-#define DEBUG_LOG_A(_str) (void)0
-#define DEBUG_LOG_W(_wStr) (void)0
-
-#define DEBUG_BREAK (void)0
-
-#endif _DEBUG
-
-#define NOTIFICATION_W(_c_str) MessageBoxW(nullptr, _c_str, L"Notification", MB_OK)
-#define NOTIFICATION_A(_c_str) MessageBoxA(nullptr, _c_str, "Notification", MB_OK)
-
-#define ERROR_MESSAGE(_literalString) ERROR_MESSAGE_W(L##_literalString)
-#define NOTIFICATION(_literalString) NOTIFICATION_W(L##_literalString)
-#define DEBUG_MESSAGE(_literalString) DEBUG_MESSAGE_W(L##_literalString)
-
-#define SAFE_DELETE(_ptr) if (_ptr) { delete _ptr; _ptr = nullptr; }
-#define SAFE_DELETE_ARRAY(_ptr_arr) if (_ptr_arr) { delete[] _ptr_arr; _ptr_arr = nullptr; }
-
-// #include <system_error> 필요
-#define HRESULT_ERROR_MESSAGE(_hresult) \
-	do { \
-		std::string err = std::system_category().message(_hresult); \
-		ERROR_MESSAGE_A(err.c_str()); \
-	} while(false)
+#define ERR_MSG_HRESULT(_hresult)                                              \
+    do                                                                         \
+    {                                                                          \
+        if (::engine::log::HResultErrorMessage(__FILE__, __LINE__, _hresult)) \
+        {                                                                      \
+            ENGINE_DEBUG_BREAK;                                                \
+        }                                                                      \
+    } while (false)                             

@@ -21,12 +21,12 @@ namespace engine
 		// IMMUTABLE은 초기 데이터 필수
 		if (nullptr == data) 
 		{ 
-			ERROR_MESSAGE("data가 nullptr입니다. IMMUTABLE은 초기 데이터가 필수입니다.");
+			ERR_MSG("data가 nullptr입니다. IMMUTABLE은 초기 데이터가 필수입니다.");
 			return false; 
 		}   
 		if(GetDXGIFormatByteStride(format) != (UINT)elem_stride)
 		{
-			ERROR_MESSAGE("stride가 버퍼 포맷과 불일치합니다.");
+			ERR_MSG("stride가 버퍼 포맷과 불일치합니다.");
 			return false;
 		}
 		return CreateBufferImpl(format, count, D3D11_USAGE_IMMUTABLE,
@@ -50,17 +50,17 @@ namespace engine
 	{
 		if (data == nullptr)
 		{
-			ERROR_MESSAGE("data가 nullptr입니다.");
+			ERR_MSG("data가 nullptr입니다.");
 			return false;
 		}
 		if (elem_stride != stride_)
 		{
-			ERROR_MESSAGE("stride가 버퍼 포맷과 불일치합니다.");
+			ERR_MSG("stride가 버퍼 포맷과 불일치합니다.");
 			return false;
 		}
 		if (elem_count > capacity_)
 		{
-			ERROR_MESSAGE("capacity를 초과했습니다.");
+			ERR_MSG("capacity를 초과했습니다.");
 			return false;
 		}
 
@@ -68,7 +68,7 @@ namespace engine
 		{
 		case D3D11_USAGE_IMMUTABLE:
 		{
-			ERROR_MESSAGE("Immutable 버퍼는 업로드할 수 없습니다.");
+			ERR_MSG("Immutable 버퍼는 업로드할 수 없습니다.");
 			return false;
 		}
 		case D3D11_USAGE_DEFAULT:
@@ -77,7 +77,7 @@ namespace engine
 			//Box의는 16 byte 단위로 정렬되어야 하는 제약이 있음. 따라서 Default 버퍼는 전체 갱신만 지원하도록 제한.
 			if (elem_count != capacity_)
 			{
-				ERROR_MESSAGE("Default 버퍼는 전체 갱신만 지원합니다.");
+				ERR_MSG("Default 버퍼는 전체 갱신만 지원합니다.");
 				return false;
 			}
 			context->UpdateSubresource(buffer_.Get(), 0, nullptr, data,
@@ -90,7 +90,7 @@ namespace engine
 			D3D11_MAPPED_SUBRESOURCE mapped = {};
 			if (FAILED(context->Map(buffer_.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped)))
 			{
-				ERROR_MESSAGE("Map 실패");
+				ERR_MSG("Map 실패");
 				return false;
 			}
 			std::memcpy(mapped.pData, data, elem_stride * elem_count);
@@ -98,7 +98,7 @@ namespace engine
 			break;
 		}
 		default:
-			ERROR_MESSAGE("지원되지 않는 BufferUsage입니다.");
+			ERR_MSG("지원되지 않는 BufferUsage입니다.");
 			return false;
 		}
 
@@ -111,12 +111,12 @@ namespace engine
 	{
 		if (buffer_ == nullptr)
 		{
-			ERROR_MESSAGE("버퍼가 생성되지 않았습니다.");
+			ERR_MSG("버퍼가 생성되지 않았습니다.");
 			return false;
 		}
 		if (buffer_usage_ == D3D11_USAGE_IMMUTABLE)
 		{
-			ERROR_MESSAGE("Immutable 버퍼는 재할당할 수 없습니다.");
+			ERR_MSG("Immutable 버퍼는 재할당할 수 없습니다.");
 			return false;
 		}
 		// 이미 충분한 경우 return
@@ -133,7 +133,7 @@ namespace engine
 		HRESULT hr = device->CreateBuffer(&desc, nullptr, buffer.GetAddressOf());
 		if (FAILED(hr))
 		{
-			HRESULT_ERROR_MESSAGE(hr);
+			ERR_MSG_HRESULT(hr);
 			return false;
 		}
 
@@ -196,17 +196,17 @@ namespace engine
 		const uint32 elem_stride = GetDXGIFormatByteStride(format);
 		if (elem_stride == 0)
 		{
-			ERROR_MESSAGE("지원되지 않는 DXGI_FORMAT입니다.");
+			ERR_MSG("지원되지 않는 DXGI_FORMAT입니다.");
 			return false;
 		}
 		if (capacity == 0)
 		{
-			ERROR_MESSAGE("capacity는 1 이상이어야 합니다.");
+			ERR_MSG("capacity는 1 이상이어야 합니다.");
 			return false;
 		}
 		if ((uint64)elem_stride * (uint64)capacity > (uint64)(std::numeric_limits<uint32>::max()))
 		{
-			ERROR_MESSAGE("버퍼 크기가 UINT32 범위를 초과합니다.");
+			ERR_MSG("버퍼 크기가 UINT32 범위를 초과합니다.");
 			return false;
 		}
 		return true;
@@ -234,7 +234,7 @@ namespace engine
 		HRESULT hr = device->CreateBuffer(&desc, initial_data ? &sd : nullptr, buffer.GetAddressOf());
 		if (FAILED(hr))
 		{
-			HRESULT_ERROR_MESSAGE(hr);
+			ERR_MSG_HRESULT(hr);
 			return false;
 		}
 
@@ -244,7 +244,7 @@ namespace engine
 			srv = CreateSRV(buffer.Get(), format, capacity);
 			if (!srv)
 			{
-				ERROR_MESSAGE("SRV 생성 실패");
+				ERR_MSG("SRV 생성 실패");
 				return false;
 			}
 		}
@@ -255,7 +255,7 @@ namespace engine
 			uav = CreateUAV(buffer.Get(), format, capacity);
 			if (!uav)
 			{
-				ERROR_MESSAGE("UAV 생성 실패");
+				ERR_MSG("UAV 생성 실패");
 				return false;
 			}
 		}
@@ -276,7 +276,7 @@ namespace engine
 	{
 		if (buffer == nullptr)
 		{
-			ERROR_MESSAGE("SRV 생성 실패: buffer가 nullptr입니다.");
+			ERR_MSG("SRV 생성 실패: buffer가 nullptr입니다.");
 			return nullptr;
 		}
 
@@ -289,7 +289,7 @@ namespace engine
 
 		if (count == 0 || start >= capacity || count > capacity - start)
 		{
-			ERROR_MESSAGE("SRV 범위가 버퍼 용량을 초과했습니다.");
+			ERR_MSG("SRV 범위가 버퍼 용량을 초과했습니다.");
 			return nullptr;
 		}
 		ComPtr<ID3D11ShaderResourceView> srv;
@@ -305,7 +305,7 @@ namespace engine
 
 		if (FAILED(hr))
 		{
-			HRESULT_ERROR_MESSAGE(hr);
+			ERR_MSG_HRESULT(hr);
 			return nullptr;
 		}
 
@@ -315,7 +315,7 @@ namespace engine
 	{
 		if (buffer == nullptr)
 		{
-			ERROR_MESSAGE("UAV 생성 실패: buffer가 nullptr입니다.");
+			ERR_MSG("UAV 생성 실패: buffer가 nullptr입니다.");
 			return nullptr;
 		}
 
@@ -329,7 +329,7 @@ namespace engine
 		//여전히 0이면 문제 있는거
 		if (count == 0 || start >= capacity || count > capacity - start)
 		{
-			ERROR_MESSAGE("UAV 범위가 버퍼 용량을 초과했습니다.");
+			ERR_MSG("UAV 범위가 버퍼 용량을 초과했습니다.");
 			return nullptr;
 		}
 
@@ -346,7 +346,7 @@ namespace engine
 		HRESULT hr = device->CreateUnorderedAccessView(buffer, &uav_desc, uav.GetAddressOf());
 		if (FAILED(hr))
 		{
-			HRESULT_ERROR_MESSAGE(hr);
+			ERR_MSG_HRESULT(hr);
 			return nullptr;
 		}
 

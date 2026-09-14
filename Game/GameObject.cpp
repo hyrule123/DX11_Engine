@@ -182,7 +182,7 @@ namespace engine
 		}
 
 		// 최대 pass 도달 시 확인 필요(debug)
-		ASSERT_MESSAGE(pass_count < kMaxDrainLoopCount, "Destroy Pass Count exceeded. Possible infinite loop in destruction.");
+		ASSERT_F(pass_count < kMaxDrainLoopCount, "Destroy Pass Count exceeded. Possible infinite loop in destruction.");
 
 		//Other Components는 vector이므로 nullptr들인 항목은 제거
 		std::erase_if(
@@ -303,14 +303,14 @@ namespace engine
 
 		if (is_calling_set_layer_)
 		{
-			ASSERT_MESSAGE(false, "OnLayerChanged()에서 SetLayer()를 호출하면 안됨");
+			ASSERT_F(false, "OnLayerChanged()에서 SetLayer()를 호출하면 안됨");
 			return;
 		}
 		is_calling_set_layer_ = true;
 
 		if(kMaxLayers <= layer)
 		{
-			ASSERT_MESSAGE(false, "layer 값이 유효 범위를 벗어났습니다.");
+			ASSERT_F(false, "layer 값이 유효 범위를 벗어났습니다.");
 			is_calling_set_layer_ = false;
 			return;
 		}
@@ -502,7 +502,7 @@ namespace engine
 			}
 			else
 			{
-				ASSERT_MESSAGE(false, "컴포넌트 중복 추가됨. 확인 필요.");
+				ASSERT_F(false, "컴포넌트 중복 추가됨. 확인 필요.");
 				ret = nullptr;
 			}
 		}

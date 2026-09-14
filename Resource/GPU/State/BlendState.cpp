@@ -17,7 +17,7 @@ namespace engine
 		HRESULT hr = GraphicsDevice::GetInst().GetDevice()->CreateBlendState(&desc, blend_state_.ReleaseAndGetAddressOf());
 		if (FAILED(hr))
 		{
-			HRESULT_ERROR_MESSAGE(hr);
+			ERR_MSG_HRESULT(hr);
 			return false;
 		}
 

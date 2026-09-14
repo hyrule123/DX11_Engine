@@ -53,7 +53,7 @@ namespace engine
 			return true; 
 		}
 		
-		DEBUG_BREAK
+		ASSERT_F(false, "PipelineState is not set for the given RenderPassOrder.");
 		PipelineState::Clear(context);
 		return false;
 	}
@@ -93,7 +93,7 @@ namespace engine
 		int32 slot_idx = (int32)slot.Get() - (int32)REG_T_PER_MATERIAL_START;
 		if (slot_idx < 0 || MAX_TEXTURE_COUNT <= slot_idx)
 		{
-			ASSERT_RELEASE("Material::SetTexture() - Invalid slot index");
+			CHECK("Material::SetTexture() - Invalid slot index");
 			return;
 		}
 		textures_[slot_idx] = std::move(tex);

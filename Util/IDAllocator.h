@@ -44,16 +44,16 @@ namespace engine {
                 return id;
             }
 
-            ASSERT_MESSAGE(next_id_ <= kMaxID, "ID space exhausted.");
+            ASSERT_F(next_id_ <= kMaxID, "ID space exhausted.");
             const IDType id = next_id_++;
             MarkAlive(id, true);
             return id;
         }
 
         static void Release(IDType id) {
-            ASSERT_MESSAGE(id != kInvalidID, "Releasing an invalid ID.");
-            ASSERT_MESSAGE(id < next_id_, "Releasing an ID that was never issued.");
-            ASSERT_MESSAGE(IsAlive(id), "Double release detected.");
+            ASSERT_F(id != kInvalidID, "Releasing an invalid ID.");
+            ASSERT_F(id < next_id_, "Releasing an ID that was never issued.");
+            ASSERT_F(IsAlive(id), "Double release detected.");
 
             MarkAlive(id, false);
             FreeList().push_back(id);

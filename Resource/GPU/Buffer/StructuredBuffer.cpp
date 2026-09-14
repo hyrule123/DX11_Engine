@@ -39,12 +39,12 @@ namespace engine
     {
         if (buffer_ == nullptr)
         {
-            ERROR_MESSAGE("버퍼가 생성되지 않았습니다.");
+            ERR_MSG("버퍼가 생성되지 않았습니다.");
             return false;
         }
         if (buffer_usage_ == D3D11_USAGE_IMMUTABLE)
         {
-            ERROR_MESSAGE("Immutable 버퍼는 재할당할 수 없습니다.");
+            ERR_MSG("Immutable 버퍼는 재할당할 수 없습니다.");
             return false;
         }
         // 이미 충분한 경우 return
@@ -61,7 +61,7 @@ namespace engine
         HRESULT hr = device->CreateBuffer(&desc, nullptr, buffer.GetAddressOf());
         if (FAILED(hr))
         {
-            HRESULT_ERROR_MESSAGE(hr);
+            ERR_MSG_HRESULT(hr);
             return false;
         }
 
@@ -92,18 +92,18 @@ namespace engine
     {
         if (!IsValidStride(stride) || capacity == 0) 
         { 
-			ERROR_MESSAGE("StructuredBuffer 생성 실패: stride가 4의 배수가 아니거나 0이거나, capacity가 0입니다.");
+			ERR_MSG("StructuredBuffer 생성 실패: stride가 4의 배수가 아니거나 0이거나, capacity가 0입니다.");
             return false; 
         }
         if (buffer_usage == D3D11_USAGE_IMMUTABLE && init_data == nullptr)
         {
-            ERROR_MESSAGE("data가 nullptr입니다. IMMUTABLE은 초기 데이터가 필수입니다.");
+            ERR_MSG("data가 nullptr입니다. IMMUTABLE은 초기 데이터가 필수입니다.");
             return false;
         }
 		uint64 total_size = (uint64)(stride) * (uint64)(capacity);
 		if (total_size > std::numeric_limits<uint32>::max())
 		{
-			ERROR_MESSAGE("StructuredBuffer 생성 실패: 버퍼 크기가 UINT32 범위를 초과합니다.");
+			ERR_MSG("StructuredBuffer 생성 실패: 버퍼 크기가 UINT32 범위를 초과합니다.");
 			return false;
 		}
 
@@ -126,7 +126,7 @@ namespace engine
             buffer.GetAddressOf());
         if (FAILED(hr)) 
         { 
-			HRESULT_ERROR_MESSAGE(hr);
+			ERR_MSG_HRESULT(hr);
             return false; 
         }
 
@@ -159,7 +159,7 @@ namespace engine
     {
         if (buffer == nullptr)
         {
-            ERROR_MESSAGE("SRV 생성 실패: buffer가 nullptr입니다.");
+            ERR_MSG("SRV 생성 실패: buffer가 nullptr입니다.");
             return nullptr;
         }
 
@@ -172,7 +172,7 @@ namespace engine
 
         if (count == 0 || start >= capacity || count > capacity - start)
         {
-            ERROR_MESSAGE("SRV 범위가 버퍼 용량을 초과했습니다.");
+            ERR_MSG("SRV 범위가 버퍼 용량을 초과했습니다.");
             return nullptr;
         }
         ComPtr<ID3D11ShaderResourceView> srv;
@@ -188,7 +188,7 @@ namespace engine
 
         if (FAILED(hr))
         {
-            HRESULT_ERROR_MESSAGE(hr);
+            ERR_MSG_HRESULT(hr);
             return nullptr;
         }
 
@@ -198,7 +198,7 @@ namespace engine
     {
         if (buffer == nullptr)
         {
-            ERROR_MESSAGE("UAV 생성 실패: buffer가 nullptr입니다.");
+            ERR_MSG("UAV 생성 실패: buffer가 nullptr입니다.");
             return nullptr;
         }
 
@@ -212,7 +212,7 @@ namespace engine
         //여전히 0이면 문제 있는거
         if (count == 0 || start >= capacity || count > capacity - start)
         {
-            ERROR_MESSAGE("UAV 범위가 버퍼 용량을 초과했습니다.");
+            ERR_MSG("UAV 범위가 버퍼 용량을 초과했습니다.");
             return nullptr;
         }
 
@@ -229,7 +229,7 @@ namespace engine
         HRESULT hr = device->CreateUnorderedAccessView(buffer, &uav_desc, uav.GetAddressOf());
         if (FAILED(hr))
         {
-            HRESULT_ERROR_MESSAGE(hr);
+            ERR_MSG_HRESULT(hr);
             return nullptr;
         }
 
@@ -240,17 +240,17 @@ namespace engine
 	{
         if (data == nullptr)
         {
-            ERROR_MESSAGE("data가 nullptr입니다.");
+            ERR_MSG("data가 nullptr입니다.");
             return false;
         }
         if (elem_stride != stride_)
         {
-            ERROR_MESSAGE("stride가 버퍼 포맷과 불일치합니다.");
+            ERR_MSG("stride가 버퍼 포맷과 불일치합니다.");
             return false;
         }
         if (elem_count > capacity_)
         {
-            ERROR_MESSAGE("capacity를 초과했습니다.");
+            ERR_MSG("capacity를 초과했습니다.");
             return false;
         }
 
@@ -258,7 +258,7 @@ namespace engine
         {
         case D3D11_USAGE_IMMUTABLE:
         {
-            ERROR_MESSAGE("Immutable 버퍼는 업로드할 수 없습니다.");
+            ERR_MSG("Immutable 버퍼는 업로드할 수 없습니다.");
             return false;
         }
         case D3D11_USAGE_DEFAULT:
@@ -267,7 +267,7 @@ namespace engine
             //Box의는 16 byte 단위로 정렬되어야 하는 제약이 있음. 따라서 Default 버퍼는 전체 갱신만 지원하도록 제한.
             if (elem_count != capacity_)
             {
-                ERROR_MESSAGE("Default 버퍼는 전체 갱신만 지원합니다.");
+                ERR_MSG("Default 버퍼는 전체 갱신만 지원합니다.");
                 return false;
             }
             context->UpdateSubresource(buffer_.Get(), 0, nullptr, data,
@@ -280,7 +280,7 @@ namespace engine
             D3D11_MAPPED_SUBRESOURCE mapped = {};
             if (FAILED(context->Map(buffer_.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped)))
             {
-                ERROR_MESSAGE("Map 실패");
+                ERR_MSG("Map 실패");
                 return false;
             }
             std::memcpy(mapped.pData, data, elem_stride * elem_count);
@@ -292,7 +292,7 @@ namespace engine
             D3D11_MAPPED_SUBRESOURCE mapped = {};
             if (FAILED(context->Map(buffer_.Get(), 0, D3D11_MAP_WRITE, 0, &mapped)))
             {
-                ERROR_MESSAGE("Staging Map 실패 (cpu_write로 생성했는지 확인)");
+                ERR_MSG("Staging Map 실패 (cpu_write로 생성했는지 확인)");
                 return false;
             }
             std::memcpy(mapped.pData, data, elem_stride * elem_count);
@@ -300,7 +300,7 @@ namespace engine
             break;
         }
         default:
-            ERROR_MESSAGE("지원되지 않는 BufferUsage입니다.");
+            ERR_MSG("지원되지 않는 BufferUsage입니다.");
             return false;
         }
 
@@ -313,7 +313,7 @@ namespace engine
     {
         if((buffer_usage_ & D3D11_USAGE_DYNAMIC) == 0)
         {
-            ERROR_MESSAGE("MapDynamic() can only be used with dynamic buffers.");
+            ERR_MSG("MapDynamic() can only be used with dynamic buffers.");
             return MapScopeDynamic();
         }
 		count_ = 0; // 맵핑 시 기존 데이터는 모두 날아감
@@ -347,7 +347,7 @@ namespace engine
         HRESULT hr = context_->Map(buffer_, 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped);
         if (FAILED(hr))
         {
-            HRESULT_ERROR_MESSAGE(hr);
+            ERR_MSG_HRESULT(hr);
             mapped_ok_ = false;
         }
         else

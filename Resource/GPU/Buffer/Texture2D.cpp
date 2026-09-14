@@ -7,7 +7,7 @@
 #pragma comment (lib, "DirectXTex/Lib/x64/Debug/DirectXTex.lib")
 #endif
 
-#if defined(_WIN64) && defined(_NDEBUG)
+#if defined(_WIN64) && defined(NDEBUG)
 #pragma comment (lib, "DirectXTex/Lib/x64/Release/DirectXTex.lib")
 #endif
 
@@ -41,7 +41,7 @@ namespace engine
 
 		if (false == res_path.has_extension())
 		{
-			ERROR_MESSAGE("확장자가 없어 로딩 실패");
+			ERR_MSG("확장자가 없어 로딩 실패");
 			return false; 
 		}
 
@@ -63,7 +63,7 @@ namespace engine
 
 		if (FAILED(hr))
 		{
-			HRESULT_ERROR_MESSAGE(hr);
+			ERR_MSG_HRESULT(hr);
 			return false;
 		}
 
@@ -94,7 +94,7 @@ namespace engine
 
 		if (FAILED(result))
 		{
-			HRESULT_ERROR_MESSAGE(result);
+			ERR_MSG_HRESULT(result);
 			return false;
 		}
 
@@ -128,7 +128,7 @@ namespace engine
 	{
 		if (desc == nullptr)
 		{
-			ERROR_MESSAGE("CreateTexture2D: desc is nullptr");
+			ERR_MSG("CreateTexture2D: desc is nullptr");
 			return false;
 		}
 
@@ -143,7 +143,7 @@ namespace engine
 				srv = CreateSRVImpl(tex.Get(), nullptr);
 				if (srv == nullptr)
 				{
-					ERROR_MESSAGE("CreateTexture2D: Failed to create default SRV");
+					ERR_MSG("CreateTexture2D: Failed to create default SRV");
 					return false;
 				}
 			}
@@ -158,7 +158,7 @@ namespace engine
 
 				if (uav == nullptr)
 				{
-					ERROR_MESSAGE("CreateTexture2D: Failed to create default UAV");
+					ERR_MSG("CreateTexture2D: Failed to create default UAV");
 					return false;
 				}
 			}
@@ -177,7 +177,7 @@ namespace engine
 		HRESULT hr = GraphicsDevice::GetInst().GetDevice()->CreateTexture2D(desc, initial_data, tex.GetAddressOf());
 		if (FAILED(hr))
 		{
-			HRESULT_ERROR_MESSAGE(hr);
+			ERR_MSG_HRESULT(hr);
 			return nullptr;
 		}
 		return tex;
@@ -215,14 +215,14 @@ namespace engine
 	{
 		if (texture == nullptr)
 		{
-			ERROR_MESSAGE("CreateSRVImpl: texture is nullptr");
+			ERR_MSG("CreateSRVImpl: texture is nullptr");
 			return nullptr;
 		}
 		ComPtr<ID3D11ShaderResourceView> srv;
 		HRESULT hr = GraphicsDevice::GetInst().GetDevice()->CreateShaderResourceView(texture, srv_desc, srv.GetAddressOf());
 		if (FAILED(hr))
 		{
-			HRESULT_ERROR_MESSAGE(hr);
+			ERR_MSG_HRESULT(hr);
 			return nullptr;
 		}
 		return srv;
@@ -232,14 +232,14 @@ namespace engine
 	{
 		if (texture == nullptr)
 		{
-			ERROR_MESSAGE("CreateUAVImpl: texture is nullptr");
+			ERR_MSG("CreateUAVImpl: texture is nullptr");
 			return nullptr;
 		}
 		ComPtr<ID3D11UnorderedAccessView> uav;
 		HRESULT hr = GraphicsDevice::GetInst().GetDevice()->CreateUnorderedAccessView(texture, uav_desc, uav.GetAddressOf());
 		if (FAILED(hr))
 		{
-			HRESULT_ERROR_MESSAGE(hr);
+			ERR_MSG_HRESULT(hr);
 			return nullptr;
 		}
 		return uav;
@@ -249,7 +249,7 @@ namespace engine
 	{
 		if (!tex2D_buffer_)
 		{
-			DEBUG_MESSAGE("Texture2D가 존재하지 않습니다. Resize를 수행할 수 없습니다.");
+			ASSERT_F(false, "Texture2D does not exist. Cannot perform Resize.");
 			return false;
 		}
 
@@ -262,7 +262,7 @@ namespace engine
 		ComPtr<ID3D11Texture2D> new_texture = CreateTexture2DImpl(&desc);
 		if (new_texture == nullptr)
 		{
-			ERROR_MESSAGE("Texture2D Resize 실패: 새로운 텍스처 생성 실패");
+			ERR_MSG("Texture2D Resize 실패: 새로운 텍스처 생성 실패");
 			return false;
 		}
 
@@ -275,7 +275,7 @@ namespace engine
 			new_srv = CreateSRVImpl(new_texture.Get(), &srv_desc);
 			if (new_srv == nullptr)
 			{
-				ERROR_MESSAGE("Texture2D Resize 실패: 새로운 SRV 생성 실패");
+				ERR_MSG("Texture2D Resize 실패: 새로운 SRV 생성 실패");
 				return false;
 			}
 		}
@@ -322,7 +322,7 @@ namespace engine
 
 		if (FAILED(hr))
 		{
-			HRESULT_ERROR_MESSAGE(hr);
+			ERR_MSG_HRESULT(hr);
 			return nullptr;
 		}
 

@@ -101,21 +101,21 @@ namespace engine
 		return true;
 	}
 
-	void Texture2D::BindSRV(ID3D11DeviceContext* context, ShaderStage::Flags stageflag, UINT slot)
+	void Texture2D::BindSRV(ID3D11DeviceContext* context, ShaderStageFlags stage_flags, UINT slot)
 	{
-		if (ShaderStage::HasFlag(stageflag, ShaderStage::Flags::Vertex))
+		if (stage_flags.Test(ShaderStage::Vertex))
 		{
 			context->VSSetShaderResources(slot, 1, SRV_.GetAddressOf());
 		}
-		if (ShaderStage::HasFlag(stageflag, ShaderStage::Flags::Geometry))
+		if (stage_flags.Test(ShaderStage::Geometry))
 		{
 			context->GSSetShaderResources(slot, 1, SRV_.GetAddressOf());
 		}
-		if (ShaderStage::HasFlag(stageflag, ShaderStage::Flags::Pixel))
+		if (stage_flags.Test(ShaderStage::Pixel))
 		{
 			context->PSSetShaderResources(slot, 1, SRV_.GetAddressOf());
 		}
-		if (ShaderStage::HasFlag(stageflag, ShaderStage::Flags::Compute))
+		if (stage_flags.Test(ShaderStage::Compute))
 		{
 			context->CSSetShaderResources(slot, 1, SRV_.GetAddressOf());
 		}

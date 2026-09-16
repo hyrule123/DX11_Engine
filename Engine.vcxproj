@@ -222,6 +222,7 @@
     <ClInclude Include="Core\Detail\Assert.h" />
     <ClInclude Include="Collision\Geometry2D.h" />
     <ClInclude Include="Core\Detail\EngineLog.h" />
+    <ClInclude Include="Util\EnumFlags.h" />
     <ClInclude Include="Render\Culling.h" />
     <ClInclude Include="Render\RenderTypes.h" />
     <ClInclude Include="Util\IDAllocator.h" />

@@ -74,7 +74,7 @@ namespace engine
 		cam_data.proj_mat = main_cam->GetProjMatrix();
 
 		cb_per_pass_camera_->Upload(context, cam_data);
-		cb_per_pass_camera_->Bind(context, ShaderStage::Flags::AllGraphics, REG_B_CAMERA);
+		cb_per_pass_camera_->Bind(context, kShaderStageAllGraphicsFlags, REG_B_CAMERA);
 
 		RenderPassContext pass_context = {};
 		pass_context.view_bounds_2d = main_cam->ComputeViewBounds2D();
@@ -110,7 +110,7 @@ namespace engine
 		for (uint32 i = 0; i < (uint32)RenderPassOrder::kCount; ++i)
 		{
 			RenderPassOrder pass_order = (RenderPassOrder)i;
-			if (render_pass_flags.Has(pass_order))
+			if (render_pass_flags.Test(pass_order))
 			{
 				uint32 slot = render_passes_[i]->AddRenderer(renderer);
 				renderer->SetRenderSlot(pass_order, slot);
@@ -124,7 +124,7 @@ namespace engine
 		for (uint32 i = 0; i < (uint32)RenderPassOrder::kCount; ++i)
 		{
 			RenderPassOrder pass_order = (RenderPassOrder)i;
-			if (render_pass_flags.Has(pass_order))
+			if (render_pass_flags.Test(pass_order))
 			{
 				uint32 slot = render_passes_[i]->AddRenderer(renderer);
 				renderer->SetRenderSlot(pass_order, slot);
@@ -206,7 +206,7 @@ namespace engine
 		cam_data.proj_mat = cam->GetProjMatrix();
 
 		cb_per_pass_camera_->Upload(context, cam_data);
-		cb_per_pass_camera_->Bind(context, ShaderStage::Flags::AllGraphics, REG_B_CAMERA);
+		cb_per_pass_camera_->Bind(context, kShaderStageAllGraphicsFlags, REG_B_CAMERA);
 
 		//Shader Set Bind
 		debug_shader_set_->Bind(context);
@@ -227,7 +227,7 @@ namespace engine
 		{
 			std::span debug_rect_span(debug_rect_data_);
 			debug_buffer_->Upload(context, debug_rect_span);
-			debug_buffer_->BindSRV(context, ShaderStage::Flags::Vertex | ShaderStage::Flags::Pixel, REG_T_INSTANCE_BUFFER);
+			debug_buffer_->BindSRV(context, ShaderStage::Vertex | ShaderStage::Pixel, REG_T_INSTANCE_BUFFER);
 
 			//Mesh Draw
 			debug_rect_mesh_->Bind(context);
@@ -251,7 +251,7 @@ namespace engine
 		{
 			std::span debug_circle_span(debug_circle_data_);
 			debug_buffer_->Upload(context, debug_circle_span);
-			debug_buffer_->BindSRV(context, ShaderStage::Flags::Vertex | ShaderStage::Flags::Pixel, REG_T_INSTANCE_BUFFER);
+			debug_buffer_->BindSRV(context, ShaderStage::Vertex | ShaderStage::Pixel, REG_T_INSTANCE_BUFFER);
 
 			//Mesh Draw
 			debug_circle_mesh_->Bind(context);

@@ -121,7 +121,7 @@ namespace engine
 		src_render_target_->UnBindOutputMerger(context);
 
 		// 이전 렌더패스에서 렌더링된 결과를 PresentPass에서 사용하기 위해 SRV로 바인딩
-		src_render_target_->BindShaderResourceViews(context, ShaderStage::Flags::Pixel, REG_T_SRC_RENDERTARGET);
+		src_render_target_->BindShaderResourceViews(context, ShaderStage::Pixel, REG_T_SRC_RENDERTARGET);
 
 		// 전용 ShderSet 바인딩
 		shader_set_->Bind(context);
@@ -134,7 +134,7 @@ namespace engine
 		// 전용 Mesh를 사용하여 화면에 렌더링
 		mesh_->Draw(context, 1);
 
-		src_render_target_->UnBindShaderResourceViews(context, ShaderStage::Flags::Pixel, REG_T_SRC_RENDERTARGET);
+		src_render_target_->UnBindShaderResourceViews(context, ShaderStage::Pixel, REG_T_SRC_RENDERTARGET);
 		src_render_target_->ClearRenderTargetView(context, { 0.0f, 0.0f, 0.0f, 0.0f });
 		src_render_target_->ClearDepthStencilView(context, 1.0f, 0);
 	}

@@ -28,8 +28,20 @@ namespace engine
 		Present,
 		kCount
 	};
-	using RenderPassFlags = EnumFlags<RenderPassOrder, uint32>;
-	// Flags<RenderPassOrder>
+	ENABLE_ENUM_FLAGS(RenderPassFlags, RenderPassOrder, uint32);
+
+	enum class ShaderStage : uint8
+	{
+		Vertex = 0,
+		Geometry,
+		Pixel,
+		Compute,
+		kCount
+	};
+	ENABLE_ENUM_FLAGS(ShaderStageFlags, ShaderStage, uint8);
+	constexpr ShaderStageFlags kShaderStageAllFlags = ShaderStageFlags::Full();
+	constexpr ShaderStageFlags kShaderStageAllGraphicsFlags = ShaderStage::Vertex | ShaderStage::Geometry | ShaderStage::Pixel;
+
 
 	// ---------------------------------------------------------------------------
 	// RenderKey 대응 별칭 — Tag는 전방 선언만으로 충분하다.

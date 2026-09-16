@@ -70,7 +70,7 @@ namespace engine
 
 		uint32 GetCapacity() const { return capacity_; }
 
-		void BindSRV(ID3D11DeviceContext* context, ShaderStage::Flags stage_flag, RegisterT slot);
+		void BindSRV(ID3D11DeviceContext* context, ShaderStageFlags stage_flag, RegisterT slot);
 		void BindUAV(ID3D11DeviceContext* context, RegisterT slot);
 
     private:

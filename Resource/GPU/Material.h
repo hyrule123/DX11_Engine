@@ -53,7 +53,7 @@ namespace engine
 		const PipelineStatesPerPass& GetPipelineStates() const { return pipeline_states_per_pass; }
 
         // Material Start slot으로부터 8장 연속으로 바인딩함. 슬롯 주의
-        void BindTextures(ID3D11DeviceContext* context, ShaderStage::Flags stage_flag = ShaderStage::Flags::Pixel);
+        void BindTextures(ID3D11DeviceContext* context, ShaderStageFlags stage_flag = ShaderStageFlags(ShaderStage::Pixel));
 
         bool SetTexture(RegisterT slot, const HashedStringView& texture_name);
         void SetTexture(RegisterT slot, s_ptr<Texture2D> tex);

@@ -67,14 +67,14 @@ namespace engine
         void Bind(ID3D11DeviceContext* context);
 		static void Clear(ID3D11DeviceContext* context);
 
-        void AddConstantBufferBinding(ShaderStage::Flags stage_flag, RegisterB slot, s_ptr<ConstantBuffer> constant_buffer) {
+        void AddConstantBufferBinding(ShaderStageFlags stage_flag, RegisterB slot, s_ptr<ConstantBuffer> constant_buffer) {
 			per_pipeline_buffer_binding_table_.AddConstantBuffer(stage_flag, slot, constant_buffer);
         }
         void RemoveConstantBufferBinding(RegisterB slot) {
 			per_pipeline_buffer_binding_table_.RemoveConstantBuffer(slot);
         }
 
-		void AddShaderResourceBinding(ShaderStage::Flags stage_flag, RegisterT slot, s_ptr<ShaderResource> shader_resource) {
+		void AddShaderResourceBinding(ShaderStageFlags stage_flag, RegisterT slot, s_ptr<ShaderResource> shader_resource) {
 			per_pipeline_buffer_binding_table_.AddShaderResource(stage_flag, slot, shader_resource);
 		}
         void RemoveShaderResourceBinding(RegisterT slot) {

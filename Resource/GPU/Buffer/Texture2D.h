@@ -32,7 +32,7 @@ namespace engine
 
         void BindSRV(
             ID3D11DeviceContext* context, 
-            ShaderStage::Flags stageflag, 
+            ShaderStageFlags stageflag, 
             UINT slot
         );
 

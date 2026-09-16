@@ -323,14 +323,14 @@ namespace engine
     {
         context->Unmap(buffer_.Get(), 0);
     }
-    void StructuredBuffer::BindSRV(ID3D11DeviceContext* context, ShaderStage::Flags stage_buffer_usage, RegisterT slot)
+    void StructuredBuffer::BindSRV(ID3D11DeviceContext* context, ShaderStageFlags stage_buffer_usage, RegisterT slot)
     {
         ASSERT(nullptr != SRV_);
-		if (ShaderStage::HasFlag(stage_buffer_usage, ShaderStage::Flags::Vertex))
+		if (stage_buffer_usage.Test(ShaderStage::Vertex))
 		{
 			context->VSSetShaderResources(slot.Get(), 1, SRV_.GetAddressOf());
 		}
-		if (ShaderStage::HasFlag(stage_buffer_usage, ShaderStage::Flags::Pixel))
+		if (stage_buffer_usage.Test(ShaderStage::Pixel))
 		{
 			context->PSSetShaderResources(slot.Get(), 1, SRV_.GetAddressOf());
 		}

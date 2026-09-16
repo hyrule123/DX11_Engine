@@ -46,7 +46,7 @@ namespace engine
 
 			for (const auto& submesh_data : all_submeshes_data)
 			{
-				if (submesh_data.pass_flags.Has(GetPassOrder()))
+				if (submesh_data.pass_flags.Test(GetPassOrder()))
 				{
 					render_queue_.push_back({ .key = submesh_data.key, .renderer = registered_renderers[slot].renderer });
 				}
@@ -90,7 +90,7 @@ namespace engine
 					pipeline_state->Bind(context);
 					prev_pipeline_state = pipeline_state;
 				}
-				mtrl->BindTextures(context, ShaderStage::Flags::Pixel);
+				mtrl->BindTextures(context, ShaderStage::Pixel);
 				prev_material_id = material_id;
 			}
 
@@ -110,7 +110,7 @@ namespace engine
 					}
 				}
 
-				instance_buffer->BindSRV(context, ShaderStage::Flags::Vertex | ShaderStage::Flags::Pixel, REG_T_INSTANCE_BUFFER);
+				instance_buffer->BindSRV(context, ShaderStage::Vertex | ShaderStage::Pixel, REG_T_INSTANCE_BUFFER);
 			}
 
 			Mesh* mesh = item.renderer->GetMesh();

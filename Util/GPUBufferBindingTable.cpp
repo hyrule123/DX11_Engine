@@ -20,7 +20,7 @@ namespace engine
 		CHECK_F((uint64)srv_slot_start_ + (uint64)srv_slot_count_ <= (uint64)D3D11_COMMONSHADER_INPUT_RESOURCE_SLOT_COUNT, "srv_slot_count가 D3D11 입력 리소스 슬롯 수를 초과합니다.");
 	}
 
-	void GPUBufferBindingTable::AddConstantBuffer(ShaderStage::Flags stage_flag, RegisterB slot, s_ptr<ConstantBuffer> buffer)
+	void GPUBufferBindingTable::AddConstantBuffer(ShaderStageFlags stage_flag, RegisterB slot, s_ptr<ConstantBuffer> buffer)
 	{
 		const uint32 idx = slot.Get() - cb_slot_start_;
 		if (slot.Get() < cb_slot_start_ || idx >= cb_slot_count_)
@@ -62,10 +62,10 @@ namespace engine
 			ASSERT_F(false, "해당 슬롯에 등록된 CB 버퍼가 없습니다.");
 			return;
 		}
-		cb_bindings_[idx] = { ShaderStage::Flags::None, nullptr };
+		cb_bindings_[idx] = { ShaderStageFlags(), nullptr };
 	}
 
-	void GPUBufferBindingTable::AddShaderResource(ShaderStage::Flags stage_flag, RegisterT slot, s_ptr<ShaderResource> buffer)
+	void GPUBufferBindingTable::AddShaderResource(ShaderStageFlags stage_flag, RegisterT slot, s_ptr<ShaderResource> buffer)
 	{
 		const uint32 idx = slot.Get() - srv_slot_start_;
 		if (slot.Get() < srv_slot_start_ || idx >= srv_slot_count_)
@@ -107,7 +107,7 @@ namespace engine
 			ASSERT_F(false, "해당 슬롯에 등록된 SRV 버퍼가 없습니다.");
 			return;
 		}
-		srv_bindings_[idx] = { ShaderStage::Flags::None, nullptr };
+		srv_bindings_[idx] = { ShaderStageFlags(), nullptr};
 	}
 
 	void GPUBufferBindingTable::BindCBImpl(ID3D11DeviceContext * context) const
@@ -115,26 +115,25 @@ namespace engine
 		if (cb_bindings_.empty()) { return; }
 
 		// 실제로 사용된 ShaderStage 플래그를 계산
-		ShaderStage::Flags used_stage_flags = {};
+		ShaderStageFlags used_stage_flags = {};
 		for (size_t i = 0; i < cb_bindings_.size(); ++i)
 		{
 			used_stage_flags |= cb_bindings_[i].stage_flag;
 		}
 
 		std::array<ID3D11Buffer*, kMaxBufferPerBindingTable> bind_ptr;
-		for (uint8 i = 0; i < (uint8)ShaderStage::Enum::kEND; ++i)
+		for (uint8 i = 0; i < (uint8)ShaderStage::kCount; ++i)
 		{
-			const ShaderStage::Enum stage = static_cast<ShaderStage::Enum>(i);
-			const ShaderStage::Flags stage_flag = ShaderStage::EnumToFlag(stage);
+			const ShaderStage stage = static_cast<ShaderStage>(i);
 
 			// 실제 사용된 ShaderStage에 대해서만 바인딩 수행
-			if (ShaderStage::HasFlag(used_stage_flags, stage_flag) == false) { continue; }
+			if (used_stage_flags.Test(stage) == false) { continue; }
 			
 			// 각 ShaderStage에 대해 바인딩할 ConstantBuffer를 준비, 바인딩할 constant buffer의 최대 개수도 같이 계산
 			uint32 max_cb_count = 0u;
 			for (uint32 j = 0; j < (uint32)cb_bindings_.size(); ++j)
 			{
-				if (ShaderStage::HasFlag(cb_bindings_[j].stage_flag, stage_flag))
+				if (cb_bindings_[j].stage_flag.Test(stage))
 				{
 					bind_ptr[j] = cb_bindings_[j].buffer->GetRawBuffer();
 					max_cb_count = j + 1;
@@ -147,16 +146,16 @@ namespace engine
 
 			switch(stage)
 			{
-				case ShaderStage::Enum::Vertex:
+				case ShaderStage::Vertex:
 					context->VSSetConstantBuffers(cb_slot_start_, max_cb_count, bind_ptr.data());
 					break;
-				case ShaderStage::Enum::Geometry:
+				case ShaderStage::Geometry:
 					context->GSSetConstantBuffers(cb_slot_start_, max_cb_count, bind_ptr.data());
 					break;
-				case ShaderStage::Enum::Pixel:
+				case ShaderStage::Pixel:
 					context->PSSetConstantBuffers(cb_slot_start_, max_cb_count, bind_ptr.data());
 					break;
-				case ShaderStage::Enum::Compute:
+				case ShaderStage::Compute:
 					context->CSSetConstantBuffers(cb_slot_start_, max_cb_count, bind_ptr.data());
 					break;
 				default:
@@ -171,22 +170,21 @@ namespace engine
 		if (srv_bindings_.empty()) { return; }
 
 		// 실제로 사용된 ShaderStage 플래그를 계산
-		ShaderStage::Flags used_stage_flags = ShaderStage::Flags::None;
+		ShaderStageFlags used_stage_flags = {};
 		for (size_t i = 0; i < srv_bindings_.size(); ++i)
 		{
 			used_stage_flags |= srv_bindings_[i].stage_flag;
 		}
 		std::array<ID3D11ShaderResourceView*, kMaxBufferPerBindingTable> bind_ptr;
-		for (uint8 i = 0; i < (uint8)ShaderStage::Enum::kEND; ++i)
+		for (uint8 i = 0; i < (uint8)ShaderStage::kCount; ++i)
 		{
-			const ShaderStage::Enum stage = static_cast<ShaderStage::Enum>(i);
-			const ShaderStage::Flags stage_flag = ShaderStage::EnumToFlag(stage);
+			const ShaderStage stage = static_cast<ShaderStage>(i);
 			// 실제 사용된 ShaderStage에 대해서만 바인딩 수행
-			if (ShaderStage::HasFlag(used_stage_flags, stage_flag) == false) { continue; }
+			if (used_stage_flags.Test(stage) == false) { continue; }
 			uint32 max_srv_count = 0u;
 			for (uint32 j = 0; j < (uint32)srv_bindings_.size(); ++j)
 			{
-				if (ShaderStage::HasFlag(srv_bindings_[j].stage_flag, stage_flag))
+				if (srv_bindings_[j].stage_flag.Test(stage))
 				{
 					bind_ptr[j] = srv_bindings_[j].buffer->GetSRV();
 					max_srv_count = j + 1;
@@ -198,16 +196,16 @@ namespace engine
 			}
 			switch (stage)
 			{
-			case ShaderStage::Enum::Vertex:
+			case ShaderStage::Vertex:
 				context->VSSetShaderResources(srv_slot_start_, max_srv_count, bind_ptr.data());
 				break;
-			case ShaderStage::Enum::Geometry:
+			case ShaderStage::Geometry:
 				context->GSSetShaderResources(srv_slot_start_, max_srv_count, bind_ptr.data());
 				break;
-			case ShaderStage::Enum::Pixel:
+			case ShaderStage::Pixel:
 				context->PSSetShaderResources(srv_slot_start_, max_srv_count, bind_ptr.data());
 				break;
-			case ShaderStage::Enum::Compute:
+			case ShaderStage::Compute:
 				context->CSSetShaderResources(srv_slot_start_, max_srv_count, bind_ptr.data());
 				break;
 			default:

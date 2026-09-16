@@ -1,6 +1,12 @@
 #pragma once
-
 #include <Engine/Core/Windows.h>
+#include <Engine/Core/StdType.h>
+#include <Engine/Core/Enum.h>
+#include <Engine/Core/SmartPointer.h>
+
+#include <Engine/Render/RenderTypes.h>
+
+#include <cassert>
 
 //DirectX
 #include <d3d11.h>
@@ -8,12 +14,6 @@
 
 #include <d3dcompiler.h>
 #pragma comment (lib, "d3dcompiler.lib")
-
-#include <cassert>
-
-#include <Engine/Core/StdType.h>
-#include <Engine/Core/Enum.h>
-#include <Engine/Core/SmartPointer.h>
 
 namespace engine
 {
@@ -35,13 +35,13 @@ namespace engine
 	class ShaderResource;
 	struct ConstantBufferBindingInfo
 	{
-		ShaderStage::Flags stage_flag = ShaderStage::Flags::None;
+		ShaderStageFlags stage_flag = {};
 		uint32 slot = 0u;
 		s_ptr<ConstantBuffer> constant_buffer = {};
 	};
 	struct ShaderResourceBindingInfo
 	{
-		ShaderStage::Flags stage_flag = ShaderStage::Flags::None;
+		ShaderStageFlags stage_flag = {};
 		uint32 slot = 0u;
 		s_ptr<ShaderResource> shader_resource = {};
 	};

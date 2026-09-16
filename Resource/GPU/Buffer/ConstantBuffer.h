@@ -1,7 +1,7 @@
 #pragma once
-
 #include <Engine/Core/CoreMinimal.h>
-#include <Engine/Core/Enum.h>
+
+#include <Engine/Render/RenderTypes.h>
 
 #include <Engine/Resource/Resource.h>
 
@@ -32,7 +32,7 @@ namespace engine
             Upload(context, &data, sizeof(T));
         }
 
-        void Bind(ID3D11DeviceContext* context, ShaderStage::Flags flag, RegisterB slot);
+        void Bind(ID3D11DeviceContext* context, ShaderStageFlags flag, RegisterB slot);
 
 		ID3D11Buffer* GetRawBuffer() const { return buffer_.Get(); }
 

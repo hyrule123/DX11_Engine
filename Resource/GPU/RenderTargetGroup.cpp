@@ -65,7 +65,7 @@ namespace engine
 #endif NDEBUG
 	}
 
-	void RenderTargetGroup::BindShaderResourceViews(ID3D11DeviceContext* context, ShaderStage::Flags stage_flags, RegisterT start_slot)
+	void RenderTargetGroup::BindShaderResourceViews(ID3D11DeviceContext* context, ShaderStageFlags stage_flags, RegisterT start_slot)
 	{
 		srv_bound_ = true;
 
@@ -80,43 +80,43 @@ namespace engine
 			}
 		}
 		
-		if (ShaderStage::HasFlag(stage_flags, ShaderStage::Flags::Vertex))
+		if (stage_flags.Test(ShaderStage::Vertex))
 		{
 			context->VSSetShaderResources(start_slot.Get(), (UINT)tex_count, srvs.data());
 		}
-		if (ShaderStage::HasFlag(stage_flags, ShaderStage::Flags::Geometry))
+		if (stage_flags.Test(ShaderStage::Geometry))
 		{
 			context->GSSetShaderResources(start_slot.Get(), (UINT)tex_count, srvs.data());
 		}
-		if (ShaderStage::HasFlag(stage_flags, ShaderStage::Flags::Pixel))
+		if (stage_flags.Test(ShaderStage::Pixel))
 		{
 			context->PSSetShaderResources(start_slot.Get(), (UINT)tex_count, srvs.data());
 		}
-		if (ShaderStage::HasFlag(stage_flags, ShaderStage::Flags::Compute))
+		if (stage_flags.Test(ShaderStage::Compute))
 		{
 			context->CSSetShaderResources(start_slot.Get(), (UINT)tex_count, srvs.data());
 		}
 	}
 
-	void RenderTargetGroup::UnBindShaderResourceViews(ID3D11DeviceContext* context, ShaderStage::Flags stage_flags, RegisterT start_slot)
+	void RenderTargetGroup::UnBindShaderResourceViews(ID3D11DeviceContext* context, ShaderStageFlags stage_flags, RegisterT start_slot)
 	{
 		constexpr size_t tex_count = std::tuple_size_v<RenderTargetArray>;
 
 		std::array<ID3D11ShaderResourceView*, tex_count> null_srvs = {};
 
-		if (ShaderStage::HasFlag(stage_flags, ShaderStage::Flags::Vertex))
+		if (stage_flags.Test(ShaderStage::Vertex))
 		{
 			context->VSSetShaderResources(start_slot.Get(), (UINT)tex_count, null_srvs.data());
 		}
-		if (ShaderStage::HasFlag(stage_flags, ShaderStage::Flags::Geometry))
+		if (stage_flags.Test(ShaderStage::Geometry))
 		{
 			context->GSSetShaderResources(start_slot.Get(), (UINT)tex_count, null_srvs.data());
 		}
-		if (ShaderStage::HasFlag(stage_flags, ShaderStage::Flags::Pixel))
+		if (stage_flags.Test(ShaderStage::Pixel))
 		{
 			context->PSSetShaderResources(start_slot.Get(), (UINT)tex_count, null_srvs.data());
 		}
-		if (ShaderStage::HasFlag(stage_flags, ShaderStage::Flags::Compute))
+		if (stage_flags.Test(ShaderStage::Compute))
 		{
 			context->CSSetShaderResources(start_slot.Get(), (UINT)tex_count, null_srvs.data());
 		}

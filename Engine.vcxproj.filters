@@ -276,6 +276,9 @@
     <ClInclude Include="Core\Detail\EngineLog.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Util\EnumFlags.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Core\pch.cpp">

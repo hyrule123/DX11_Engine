@@ -160,24 +160,24 @@ namespace engine
 		return true;
 	}
 
-	void TypedBuffer::BindSRV(ID3D11DeviceContext* context, ShaderStage::Flags stage_flag, RegisterT slot)
+	void TypedBuffer::BindSRV(ID3D11DeviceContext* context, ShaderStageFlags stage_flag, RegisterT slot)
 	{
 		ASSERT(context);
 		ASSERT(SRV_);
 
-		if (ShaderStage::HasFlag(stage_flag, ShaderStage::Flags::Vertex))
+		if (stage_flag.Test(ShaderStage::Vertex))
 		{
 			context->VSSetShaderResources(slot.Get(), 1, SRV_.GetAddressOf());
 		}
-		if (ShaderStage::HasFlag(stage_flag, ShaderStage::Flags::Geometry))
+		if (stage_flag.Test(ShaderStage::Geometry))
 		{
 			context->GSSetShaderResources(slot.Get(), 1, SRV_.GetAddressOf());
 		}
-		if (ShaderStage::HasFlag(stage_flag, ShaderStage::Flags::Pixel))
+		if (stage_flag.Test(ShaderStage::Pixel))
 		{
 			context->PSSetShaderResources(slot.Get(), 1, SRV_.GetAddressOf());
 		}
-		if (ShaderStage::HasFlag(stage_flag, ShaderStage::Flags::Compute))
+		if (stage_flag.Test(ShaderStage::Compute))
 		{
 			context->CSSetShaderResources(slot.Get(), 1, SRV_.GetAddressOf());
 		}

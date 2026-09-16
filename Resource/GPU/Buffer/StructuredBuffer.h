@@ -100,7 +100,7 @@ namespace engine
         MapScopeDynamic MapDynamic(ID3D11DeviceContext* context);
         void UnMap(ID3D11DeviceContext* context);
 
-        void BindSRV(ID3D11DeviceContext* context, ShaderStage::Flags stage_flag, RegisterT slot);
+        void BindSRV(ID3D11DeviceContext* context, ShaderStageFlags stage_flag, RegisterT slot);
 		void BindUAV(ID3D11DeviceContext* context, RegisterU slot);
 
         uint32 GetElementStride() const { return stride_; }

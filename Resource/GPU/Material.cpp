@@ -58,7 +58,7 @@ namespace engine
 		return false;
 	}
 
-	void Material::BindTextures(ID3D11DeviceContext* context, ShaderStage::Flags stage_flag)
+	void Material::BindTextures(ID3D11DeviceContext* context, ShaderStageFlags stage_flag)
 	{
 		std::array<ID3D11ShaderResourceView*, std::tuple_size_v<Textures>> srv = {};
 		for (size_t i = 0; i < textures_.size(); ++i)
@@ -70,19 +70,19 @@ namespace engine
 		}
 
 		constexpr UINT max_tex_count = (UINT)std::tuple_size_v<Textures>;
-		if (ShaderStage::HasFlag(stage_flag, ShaderStage::Flags::Vertex))
+		if (stage_flag.Test(ShaderStage::Vertex))
 		{
 			context->VSSetShaderResources(REG_T_PER_MATERIAL_START, max_tex_count, srv.data());
 		}
-		if (ShaderStage::HasFlag(stage_flag, ShaderStage::Flags::Geometry))
+		if (stage_flag.Test(ShaderStage::Geometry))
 		{
 			context->GSSetShaderResources(REG_T_PER_MATERIAL_START, max_tex_count, srv.data());
 		}
-		if (ShaderStage::HasFlag(stage_flag, ShaderStage::Flags::Pixel))
+		if (stage_flag.Test(ShaderStage::Pixel))
 		{
 			context->PSSetShaderResources(REG_T_PER_MATERIAL_START, max_tex_count, srv.data());
 		}
-		if (ShaderStage::HasFlag(stage_flag, ShaderStage::Flags::Compute))
+		if (stage_flag.Test(ShaderStage::Compute))
 		{
 			context->CSSetShaderResources(REG_T_PER_MATERIAL_START, max_tex_count, srv.data());
 		}

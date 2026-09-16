@@ -1,7 +1,7 @@
 #pragma once
-#include <Engine/Core/StdType.h>
+#include <Engine/Core/CoreTypes.h>
 #include <Engine/Core/Debug.h>
-#include <Engine/Core/Constant.h>
+#include <Engine/Core/Constants.h>
 
 #include <vector>
 

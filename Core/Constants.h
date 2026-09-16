@@ -1,5 +1,5 @@
 #pragma once
-#include <Engine/Core/StdType.h>
+#include <Engine/Core/CoreTypes.h>
 
 namespace engine
 {

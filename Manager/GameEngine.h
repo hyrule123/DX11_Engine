@@ -1,8 +1,8 @@
 #pragma once
 
 #include <Engine/Core/Singleton.h>
-#include <Engine/Core/StdType.h>
-#include <Engine/Core/Constant.h>
+#include <Engine/Core/CoreTypes.h>
+#include <Engine/Core/Constants.h>
 
 namespace engine
 {

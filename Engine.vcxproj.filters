@@ -24,7 +24,7 @@
     <ClInclude Include="Core\Singleton.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Core\StdType.h">
+    <ClInclude Include="Core\CoreTypes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Core\Debug.h">
@@ -33,7 +33,7 @@
     <ClInclude Include="Core\EngineMain.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Core\Constant.h">
+    <ClInclude Include="Core\Constants.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Manager\GraphicsDevice.h">

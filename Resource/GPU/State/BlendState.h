@@ -2,7 +2,7 @@
 #include <Engine/Resource/Resource.h>
 
 #include <Engine/Core/CoreMinimal.h>
-#include <Engine/Core/Constant.h>
+#include <Engine/Core/Constants.h>
 #include <Engine/Core/DX11.h>
 
 struct ID3D11Device;

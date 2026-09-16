@@ -1,6 +1,6 @@
 #pragma once
 #include <Engine/Core/Windows.h>
-#include <Engine/Core/StdType.h>
+#include <Engine/Core/CoreTypes.h>
 #include <Engine/Core/Enum.h>
 #include <Engine/Core/SmartPointer.h>
 

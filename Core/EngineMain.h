@@ -4,7 +4,7 @@
 
 #include <Engine/Core/Windows.h>
 
-#include <Engine/Core/StdType.h>
+#include <Engine/Core/CoreTypes.h>
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 

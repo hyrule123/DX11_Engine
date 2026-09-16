@@ -4,7 +4,7 @@
 #include <Engine/Resource/GPU/Buffer/ShaderResource.h>
 
 #include <Engine/Core/CoreMinimal.h>
-#include <Engine/Core/Constant.h>
+#include <Engine/Core/Constants.h>
 #include <Engine/Core/Enum.h>
 #include <Engine/Core/DX11.h>
 

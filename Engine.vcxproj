@@ -267,7 +267,7 @@
     <ClInclude Include="Core\UtilMacro.h" />
     <ClInclude Include="Core\Windows.h" />
     <ClInclude Include="Game\Component\Component.h" />
-    <ClInclude Include="Core\Constant.h" />
+    <ClInclude Include="Core\Constants.h" />
     <ClInclude Include="Core\EngineMain.h" />
     <ClInclude Include="Core\Entity.h" />
     <ClInclude Include="Game\Component\ComponentCategory.h" />
@@ -304,7 +304,7 @@
     <ClInclude Include="Resource\Resource.h" />
     <ClInclude Include="Resource\GPU\Shader\Shader.h" />
     <ClInclude Include="Core\Singleton.h" />
-    <ClInclude Include="Core\StdType.h" />
+    <ClInclude Include="Core\CoreTypes.h" />
     <ClInclude Include="Util\file_system.h" />
     <ClInclude Include="Resource\GPU\Shader\VertexShader.h" />
   </ItemGroup>

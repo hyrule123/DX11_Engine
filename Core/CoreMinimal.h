@@ -5,7 +5,7 @@
 #endif
 
 #include <Engine/Core/SmartPointer.h>
-#include <Engine/Core/StdType.h>
+#include <Engine/Core/CoreTypes.h>
 #include <Engine/Core/UtilMacro.h>
 
 #include <filesystem>

@@ -15,7 +15,7 @@
 
 #ifdef __cplusplus
 
-// Include StdType.h
+// Include Types.h
 #define REG_T(slot_num) ::engine::RegisterT(slot_num)
 #define REG_B(slot_num) ::engine::RegisterB(slot_num)
 #define REG_S(slot_num) ::engine::RegisterS(slot_num)

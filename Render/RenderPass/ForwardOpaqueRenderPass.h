@@ -1,7 +1,7 @@
 #pragma once
 #include <Engine/Render/RenderPass/RenderPass.h>
 
-#include <Engine/Core/StdType.h>
+#include <Engine/Core/CoreTypes.h>
 
 struct ID3D11Device;
 struct ID3D11DeviceContext;

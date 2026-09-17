@@ -35,9 +35,8 @@ namespace engine
         void Render();
         void FrameEnd();
 
-		void RegisterRenderer(Renderer* renderer);
 		void RefreshRenderer(Renderer* renderer);
-		void UnRegisterRenderer(Renderer* renderer);
+		void UnregisterRenderer(Renderer* renderer);
 
 		void MarkBoundsDirty(const Renderer* renderer);
 

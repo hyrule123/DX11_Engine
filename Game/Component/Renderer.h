@@ -27,8 +27,11 @@ namespace engine
         virtual void OnEnable() override;
         virtual void OnDisable() override;
 
-		void SetRenderSlot(RenderPassOrder pass, uint32 id) { renderer_slots_[(size_t)pass] = id; }
+        // RenderSlot Invalid == kInvalidIdx32
+        void SetRenderSlot(RenderPassOrder pass, uint32 id) { ASSERT(id != kInvalidIdx32); renderer_slots_[(size_t)pass] = id; }
+		void InvalidateRenderSlot(RenderPassOrder pass) { renderer_slots_[(size_t)pass] = kInvalidIdx32; }
 		uint32 GetRenderSlot(RenderPassOrder pass) const { return renderer_slots_[(size_t)pass]; }
+		bool IsValidRenderSlot(RenderPassOrder pass) const { return (renderer_slots_[(size_t)pass] != kInvalidIdx32); }
 		const std::array<uint32, (size_t)RenderPassOrder::kCount>& GetRenderSlots() const { return renderer_slots_; }
 		void ClearRenderSlots() { renderer_slots_.fill(kInvalidIdx32); }
 

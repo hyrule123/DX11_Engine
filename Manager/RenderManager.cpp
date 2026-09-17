@@ -96,46 +96,38 @@ namespace engine
 		//render_queue_.clear();
 	}
 
-	void RenderManager::RegisterRenderer(Renderer* renderer)
+	void RenderManager::RefreshRenderer(Renderer* renderer)
 	{
+		//이 함수가 수정하는 대상: Renderer -> std::array<uint32, (size_t)RenderPassOrder::kCount> renderer_slots_;
 		ASSERT(renderer);
 
-#ifndef NDEBUG
-		Mesh* mesh = renderer->GetMesh();
-		ASSERT(mesh);
-#endif//NDEBUG
+		// 새로 등록해야 할 Pass들의 Flag
+		RenderPassFlags new_pass_flags = renderer->GetRenderPassFlags();
 
-		RenderPassFlags render_pass_flags = renderer->GetRenderPassFlags();
-
+		// 기존 등록된 Pass들에 대한 정보
+		const std::array<uint32, (size_t)RenderPassOrder::kCount>& renderer_slots_old = renderer->GetRenderSlots();
 		for (uint32 i = 0; i < (uint32)RenderPassOrder::kCount; ++i)
 		{
-			RenderPassOrder pass_order = (RenderPassOrder)i;
-			if (render_pass_flags.Test(pass_order))
+			// renderer_slots_old[i]는 곧 수정될 예정 -> value로 떠 놓는다
+			const uint32 old_slot = renderer_slots_old[i];
+
+			const bool new_registered = new_pass_flags.Test((RenderPassOrder)i);
+			const bool old_registered = (old_slot != kInvalidIdx32);
+
+			// 새로 등록 필요 && 기존 미등록 -> 새로 등록
+			if (new_registered && !old_registered)
 			{
-				uint32 slot = render_passes_[i]->AddRenderer(renderer);
-				renderer->SetRenderSlot(pass_order, slot);
+				render_passes_[i]->AddRenderer(renderer);
 			}
-			else
+			// 등록 해제 필요 && 기존 등록 -> 등록 해제
+			else if (!new_registered && old_registered)
 			{
-				renderer->SetRenderSlot(pass_order, kInvalidIdx32);
-			}
-		}
-		
-		for (uint32 i = 0; i < (uint32)RenderPassOrder::kCount; ++i)
-		{
-			RenderPassOrder pass_order = (RenderPassOrder)i;
-			if (render_pass_flags.Test(pass_order))
-			{
-				uint32 slot = render_passes_[i]->AddRenderer(renderer);
-				renderer->SetRenderSlot(pass_order, slot);
+				render_passes_[i]->RemoveRenderer(renderer);
 			}
 		}
 	}
 
-	void RenderManager::RefreshRenderer(Renderer* renderer)
-	{}
-
-	void RenderManager::UnRegisterRenderer(Renderer* renderer)
+	void RenderManager::UnregisterRenderer(Renderer* renderer)
 	{
 		ASSERT(renderer);
 
@@ -143,9 +135,8 @@ namespace engine
 		for (size_t i = 0; i < renderer_slots.size(); ++i)
 		{
 			if (renderer_slots[i] == kInvalidIdx32) { continue; }
-			render_passes_[i]->RemoveRenderer(renderer_slots[i]);
+			render_passes_[i]->RemoveRenderer(renderer);
 		}
-		renderer->ClearRenderSlots();
 	}
 
 	void RenderManager::MarkBoundsDirty(const Renderer* renderer)

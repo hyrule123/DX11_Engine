@@ -20,7 +20,7 @@ namespace engine
 	Renderer::Renderer(const HashedStringView& concrete_class_name)
 		: Component(concrete_class_name, ComponentCategory::kRenderer)
 	{
-		renderer_slots_.fill(kInvalidIdx32);
+		ClearRenderSlots();
 	}
 
 	Renderer::~Renderer()
@@ -36,13 +36,13 @@ namespace engine
 	{
 		Super::OnEnable();
 		Subscribe(SubscribeType::kTransformDirty);
-		RenderManager::GetInst().RegisterRenderer(this);
+		RenderManager::GetInst().RefreshRenderer(this);
 	}
 	void Renderer::OnDisable()
 	{
 		Super::OnDisable();
 		Unsubscribe(SubscribeType::kTransformDirty);
-		RenderManager::GetInst().UnRegisterRenderer(this);
+		RenderManager::GetInst().UnregisterRenderer(this);
 	}
 
 	bool Renderer::SetMesh(const HashedStringView& mesh_name)
@@ -110,9 +110,14 @@ namespace engine
 	}
 	void Renderer::BuildSubMeshRenderData()
 	{
+		bool needs_refresh = (submesh_render_data_.empty() == false);
+
 		submesh_render_data_.assign(materials_.size(), SubMeshRenderData{});   // kInvalidKey로 채움
-		if (!mesh_) return;
-		for (size_t i = 0; i < materials_.size(); ++i) {
+
+		if (mesh_ == nullptr) { return; }
+
+		for (size_t i = 0; i < materials_.size(); ++i) 
+		{
 			if (materials_[i] == nullptr) { continue; }
 
 			const auto& pso_per_pass = materials_[i]->GetPipelineStates();
@@ -126,6 +131,11 @@ namespace engine
 				}
 			}
 			submesh_render_data_[i] = SubMeshRenderData{RenderKey(materials_[i]->GetMaterialID(), mesh_->GetMeshID(), (uint8)i), pass_flags};
+		}
+
+		if (needs_refresh)
+		{
+			RenderManager::GetInst().RefreshRenderer(this);
 		}
 	}
 }

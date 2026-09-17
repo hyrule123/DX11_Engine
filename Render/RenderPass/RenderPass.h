@@ -33,15 +33,24 @@ namespace engine
 		}
 		void BindRenderTargetGroup(ID3D11DeviceContext* context);
 
-		uint32 AddRenderer(Renderer* renderer);
-		void RemoveRenderer(uint32 renderer_slot);
+		void AddRenderer(Renderer* renderer);
+
+		// Renderer에 접근해서 무효화시키지는 
+		void RemoveRenderer(Renderer* renderer);
 
 		void MarkDirty(uint32 renderer_slot) {
 			ASSERT(renderer_slot < registered_renderers_.size());
 			registered_renderers_[renderer_slot].is_dirty = true;
 		}
 
-		// 
+		// 해당 슬롯에 없을 경우 nullptr 반환
+		RendererInfo2D* GetRendererInfo(uint32 renderer_slot) {
+			if (renderer_slot >= registered_renderers_.size()) { 
+				ASSERT(renderer_slot < registered_renderers_.size());
+				return nullptr;
+			}
+			return &registered_renderers_[renderer_slot];
+		}
 		std::span<RendererInfo2D> GetRegisteredRenderers() { return std::span<RendererInfo2D>(registered_renderers_); }
 
 	private:

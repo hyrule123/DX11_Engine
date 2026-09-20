@@ -38,6 +38,41 @@ namespace engine::detail
         Args&&...) noexcept
     {}
 
+
+// --- ENSURE: 실패해도 중단하지 않는다 ---
+// 조건값을 그대로 반환하므로 if (!ENSURE(x)) { ... } 형태로 복구 경로를 쓴다.
+// 실패 시 보고하고, 디버거가 붙어 있으면 break 한다. 없으면 계속 진행.
+// abort() 하지 않는 것이 ASSERT/CHECK 와의 계약 차이.
+// __debugbreak() 가 이 함수 안에서 일어나므로 실패 지점이 콜스택
+// 한 칸 위로 밀린다 — 식으로 써야 해서 감수한 부분.
+    void ReportEnsureFailure(const char* file, int line, const char* expr,
+        std::string_view message);
+
+    inline bool OnEnsureFailed(bool condition, const char* file, int line,
+        const char* expr)
+    {
+        if (!condition)
+        {
+            ReportEnsureFailure(file, line, expr, {});
+        }
+
+        return condition;
+    }
+
+    template <typename... Args>
+    bool OnEnsureFailed(bool condition, const char* file, int line,
+        const char* expr, std::format_string<Args...> fmt,
+        Args&&... args)
+    {
+        if (!condition)
+        {
+            ReportEnsureFailure(file, line, expr,
+                std::format(fmt, std::forward<Args>(args)...));
+        }
+
+        return condition;
+    }
+
 }  // namespace engine::detail
 
 #define ENGINE_CHECK_IMPL(_expression)								 \
@@ -51,7 +86,7 @@ namespace engine::detail
     }                                                                \
   } while (false)
 
-#define ENGINE_CHECK_MSG_IMPL(_expression, ...)                      \
+#define ENGINE_CHECK_F_IMPL(_expression, ...)                      \
     do                                                               \
     {                                                                \
     if (!(_expression))                                              \
@@ -73,7 +108,7 @@ namespace engine::detail
     }                                                                \
   } while (false)
 
-#define ENGINE_ASSERT_MSG_IMPL(_expression, ...)                     \
+#define ENGINE_ASSERT_F_IMPL(_expression, ...)                     \
   do                                                                 \
   {                                                                  \
     if (!(_expression))                                              \
@@ -96,7 +131,7 @@ namespace engine::detail
     }                                                                \
   } while (false)
 
-#define ENGINE_SKIP_CHECK_MSG_IMPL(_expression, ...)                 \
+#define ENGINE_SKIP_CHECK_F_IMPL(_expression, ...)                 \
   do                                                                 \
   {                                                                  \
     if constexpr (false)                                             \
@@ -104,3 +139,12 @@ namespace engine::detail
       ::engine::detail::AssertUnused(!(_expression), __VA_ARGS__);   \
     }                                                                \
   } while (false)
+
+#define ENGINE_ENSURE_IMPL(_expression)                              \
+  (::engine::detail::OnEnsureFailed(!!(_expression), __FILE__,       \
+                                    __LINE__, #_expression))
+
+#define ENGINE_ENSURE_F_IMPL(_expression, ...)                     \
+  (::engine::detail::OnEnsureFailed(!!(_expression), __FILE__,       \
+                                    __LINE__, #_expression,          \
+                                    __VA_ARGS__))

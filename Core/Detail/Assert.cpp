@@ -65,4 +65,32 @@ namespace engine::detail
             std::abort();
         }
     }
+
+
+    void ReportEnsureFailure(const char* file, int line, const char* expr,
+        std::string_view message)
+    {
+        std::string text;
+        text.reserve(256);
+        text += "\n";
+        text += "*********** ENSURE FAILED ***********\n";
+        text += std::format("  expr    : {}\n", expr);
+
+        if (!message.empty())
+        {
+            text += std::format("  message : {}\n", message);
+        }
+
+        text += std::format("{}({})\n", file, line);
+        text += "*************************************\n";
+
+        EmitAssertText(text);
+
+        // ASSERT/CHECK 와 달리 abort() 하지 않는다.
+        // 디버거가 있으면 멈춰서 살펴볼 수 있게 하고, 없으면 그냥 진행한다.
+        if (::IsDebuggerPresent())
+        {
+            ENGINE_DEBUG_BREAK;
+        }
+    }
 }  // namespace engine::detail

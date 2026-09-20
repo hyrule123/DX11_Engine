@@ -3,6 +3,8 @@
 
 #include <Engine/Game/Scene.h>
 
+#include <Engine/Core/Debug.h>
+
 namespace engine
 {
 	SceneManager::SceneManager()
@@ -26,6 +28,12 @@ namespace engine
 				ChangeSceneNow();
 			}
 		}
+	}
+	void SceneManager::ChangeScene(const HashedStringView& concrete_class_name)
+	{
+		u_ptr<Scene> scene = EntityManager::GetInst().CreateEntityAs<Scene>(concrete_class_name);
+		ASSERT(scene);
+		ChangeScene(std::move(scene));
 	}
 	void SceneManager::Init()
 	{

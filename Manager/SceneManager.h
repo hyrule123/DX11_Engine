@@ -1,7 +1,5 @@
 #pragma once
-
 #include <Engine/Core/Singleton.h>
-
 #include <Engine/Core/CoreMinimal.h>
 
 namespace engine
@@ -17,6 +15,7 @@ namespace engine
 
 	public:
 		void ChangeScene(u_ptr<Scene> scene);
+		void ChangeScene(const HashedStringView& concrete_class_name);
 
 		void FrameStart();
 		void Update();

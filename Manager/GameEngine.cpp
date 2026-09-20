@@ -53,10 +53,9 @@ namespace engine
 	bool GameEngine::Run()
 	{
 		TimeManager::GetInst().Update();
+		InputManager::GetInst().Update();
 
 		SceneManager::GetInst().FrameStart();
-
-		InputManager::GetInst().Update();
 
 #pragma region FIXED_UPDATE
 		acc_delta_time_ += TimeManager::GetInst().GetDeltaTime();

@@ -26,20 +26,6 @@ namespace engine
 		FlushPendingAdd();
 	}
 
-	void Scene::Update()
-	{
-		size_t snapshot_size = game_objects_.size();	// Snapshot
-		for (size_t i = 0; i < snapshot_size; ++i)
-		{
-			if(game_objects_[i]->IsActive())
-			{ 
-				game_objects_[i]->Update();
-			}
-		}
-
-		FlushPendingAdd();
-	}
-
 	void Scene::FixedUpdate()
 	{
 		size_t snapshot_size = game_objects_.size();	// Snapshot
@@ -53,6 +39,20 @@ namespace engine
 		FlushPendingAdd();
 
 		collision_system_2D_.FixedUpdate();
+	}
+
+	void Scene::Update()
+	{
+		size_t snapshot_size = game_objects_.size();	// Snapshot
+		for (size_t i = 0; i < snapshot_size; ++i)
+		{
+			if(game_objects_[i]->IsActive())
+			{ 
+				game_objects_[i]->Update();
+			}
+		}
+
+		FlushPendingAdd();
 	}
 
 	void Scene::LateUpdate()

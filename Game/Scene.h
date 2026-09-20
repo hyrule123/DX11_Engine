@@ -30,10 +30,10 @@ namespace engine
 		virtual ~Scene() override;
 
 		virtual void Init() = 0;
-
-		void FrameStart();
-		void Update();
+		virtual void FrameStart();
 		void FixedUpdate();
+		void Update();
+		
 		void LateUpdate();
 		void FrameEnd();
 

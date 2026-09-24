@@ -19,11 +19,6 @@ namespace engine
 		has_initialized_ = true;
 	}
 
-	void Component::BeginPlay()
-	{
-		has_begun_play_ = true;
-	}
-
 	void Component::Destroy()
 	{
 		if (IsDestroyed()) { return; }
@@ -95,17 +90,14 @@ namespace engine
 
 	void Component::UpdateEnableState(bool is_active_in_hierarchy)
 	{
-		if (is_destroyed_) { return; }
+		// Awake 전: is_enabled_에 의도만 남기고 콜백/캐시는 flush가 처리 -> SetEnable()에서 기록됨
+		if (is_destroyed_ || has_awaken_ == false) { return; }
 
 		const bool new_state = is_enabled_ && is_active_in_hierarchy;
-
 		if (new_state == is_enabled_and_active_in_hierarchy_) { return; }
-		
-		is_enabled_and_active_in_hierarchy_ = new_state;
 
-		// Awake 호출 전에는 OnEnable/OnDisable 호출하지 않음
-		// 사용자가 Scene 돌기 전 비활성화 상태로 넣어놓을 수도 있기 때문
-		if (has_awaken_ && new_state)
+		is_enabled_and_active_in_hierarchy_ = new_state;
+		if (new_state)
 		{
 			OnEnable();
 		}

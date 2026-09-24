@@ -7,6 +7,8 @@
 #include <Engine/Core/Debug.h>
 #include <Engine/Core/Constants.h>
 
+#include <span>
+
 namespace engine
 {
 	GameObject::GameObject()
@@ -31,120 +33,107 @@ namespace engine
 
 	void GameObject::FlushPendingComponents()
 	{
-		std::vector<Component*> flushed_components = {};
-		flushed_components.reserve(pending_add_components_.size());
+		has_pending_components_ = false;
 
-		//먼저 싹 다 넣고
-		for (size_t i = 0; i < pending_add_components_.size(); ++i)
-		{
-			Component* flushed = AddPendingComponent(std::move(pending_add_components_[i]));
-			if (flushed)
+		std::vector<Component*> awaken_components;
+
+		auto CheckAwake = [this, &awaken_components](Component* com) -> void
 			{
-				flushed_components.push_back(flushed);
-			}
+				// 삽입 성공한 Component에 대해 Awake까지는 무조건 호출(다른 컴포넌트 탐색 보장)
+				if (com && com->IsDestroyed() == false && com->HasAwaken() == false)
+				{
+					com->MarkAwaken();
+					com->ReplaySubscriptions();
+					com->Awake();
+					awaken_components.push_back(com);
+				}
+			};
+
+		size_t snapshot_size = other_components_.size();
+		for (size_t i = 0; i < snapshot_size; ++i)
+		{
+			CheckAwake(other_components_[i].get());
 		}
 
-		//pending 대기열은 비워준다
-		pending_add_components_.clear();
-
-		// 삽입 성공한 Component에 대해 Awake까지는 무조건 호출(다른 컴포넌트 탐색 보장)
-		for (size_t i = 0; i < flushed_components.size(); ++i)
+		snapshot_size = fixed_order_components_.size();
+		for (size_t i = 0; i < snapshot_size; ++i)
 		{
-			if (false == flushed_components[i]->HasAwaken())
-			{
-				flushed_components[i]->MarkAwaken();
-				flushed_components[i]->ReplaySubscriptions();
-				flushed_components[i]->Awake();
-			}
+			CheckAwake(fixed_order_components_[i].get());
 		}
 
-		//GameObject의 활성화 상태에 따라 OnEnable 호출
-		for (size_t i = 0; i < flushed_components.size(); ++i)
+		for (Component* com : awaken_components)
 		{
-			if (IsActive() &&  flushed_components[i]->IsEnabled())
-			{
-				flushed_components[i]->OnEnable();
-			}
+			// 조건 판단 내부에서 진행됨
+			com->UpdateEnableState(IsActiveInHierarchy());
 		}
 	}
 
 	void GameObject::Update()
 	{
-		for (const auto& com : other_components_)
-		{
-			if (com && com->IsEnabled())
+		auto UpdateFunc = [](Component* com) -> void
 			{
-				if (false == com->HasBegunPlay())
+				if (com->IsEnabled())
 				{
-					com->BeginPlay();
+					com->Update();
 				}
-				com->Update();
-			}
+			};
+
+		size_t snapshot_size = other_components_.size();
+		for (size_t i = 0; i < snapshot_size; ++i)
+		{
+			if (other_components_[i]) { UpdateFunc(other_components_[i].get()); }
 		}
 
-		for (const auto& com : fixed_order_components_)
+		snapshot_size = fixed_order_components_.size();
+		for (size_t i = 0; i < snapshot_size; ++i)
 		{
-			if (com && com->IsEnabled())
-			{
-				if (false == com->HasBegunPlay())
-				{
-					com->BeginPlay();
-				}
-				com->Update();
-			}
+			if (fixed_order_components_[i]) { UpdateFunc(fixed_order_components_[i].get()); }
 		}
 	}
 
 	void GameObject::FixedUpdate()
 	{
-		for (const auto& com : other_components_)
-		{
-			if (com && com->IsEnabled())
+		auto  FixedUpdateFunc = [](Component* com) -> void
 			{
-				if (false == com->HasBegunPlay())
+				if (com->IsEnabled())
 				{
-					com->BeginPlay();
+					com->FixedUpdate();
 				}
-				com->FixedUpdate();
-			}
+			};
+
+		size_t snapshot_size = other_components_.size();
+		for (size_t i = 0; i < snapshot_size; ++i)
+		{
+			if (other_components_[i]) { FixedUpdateFunc(other_components_[i].get()); }
 		}
-		for (const auto& com : fixed_order_components_)
+
+		snapshot_size = fixed_order_components_.size();
+		for (size_t i = 0; i < snapshot_size; ++i)
 		{
-			if (com && com->IsEnabled())
-			{
-				if (false == com->HasBegunPlay())
-				{
-					com->BeginPlay();
-				}
-				com->FixedUpdate();
-			}
+			if (fixed_order_components_[i]) { FixedUpdateFunc(fixed_order_components_[i].get()); }
 		}
 	}
 
 	void GameObject::LateUpdate()
 	{
-		for (const auto& com : other_components_)
-		{
-			if (com && com->IsEnabled())
+		auto LateUpdateFunc = [](Component* com) -> void
 			{
-				if (false == com->HasBegunPlay())
+				if (com->IsEnabled())
 				{
-					com->BeginPlay();
+					com->LateUpdate();
 				}
-				com->LateUpdate();
-			}
+			};
+
+		size_t snapshot_size = other_components_.size();
+		for (size_t i = 0; i < snapshot_size; ++i)
+		{
+			if (other_components_[i]) { LateUpdateFunc(other_components_[i].get()); }
 		}
 
-		for (const auto& com : fixed_order_components_)
+		snapshot_size = fixed_order_components_.size();
+		for (size_t i = 0; i < snapshot_size; ++i)
 		{
-			if (com && com->IsEnabled())
-			{
-				if (false == com->HasBegunPlay())
-				{
-					com->BeginPlay();
-				}
-				com->LateUpdate();
-			}
+			if (fixed_order_components_[i]) { LateUpdateFunc(fixed_order_components_[i].get()); }
 		}
 	}
 
@@ -247,18 +236,15 @@ namespace engine
 		is_active_ = is_active;
 
 		//부모의 상태를 확인하고, ActiveInHierarchy를 갱신
-		Transform* parent_tr = transform_->GetParent();
-		if (parent_tr)
+		bool parent_active_in_hierarchy = true;
+		if (Transform* parent_tr = transform_->GetParent())
 		{
-			GameObject* parent = parent_tr->GetOwnerGameObject();
-			bool parent_active_in_hierarchy = parent ? parent->IsActiveInHierarchy() : true;
-
-			UpdateHierarchyState(parent_active_in_hierarchy);
+			if (GameObject* parent = parent_tr->GetOwnerGameObject())
+			{
+				parent_active_in_hierarchy = parent->IsActiveInHierarchy();
+			}
 		}
-		else
-		{
-			UpdateHierarchyState(is_active_);
-		}
+		UpdateHierarchyState(parent_active_in_hierarchy);
 	}
 
 	void GameObject::Destroy()
@@ -426,41 +412,76 @@ namespace engine
 		Component* ret = component.get();
 		if (component)
 		{
-			pending_add_components_.push_back(std::move(component));
 			ret->SetOwnerGameObject(this);
+
+			if (component->IsDestroyed()) { return nullptr; }	// 이미 Destroy된 녀석은 넣지 않음
+
+			ComponentCategory cat = component->GetComponentCategory();
+
+			Component* ret = component.get();
+
+			if (ComponentCategory::kScripts < cat)
+			{
+				if (nullptr == fixed_order_components_[(size_t)cat])
+				{
+					fixed_order_components_[(size_t)cat] = std::move(component);
+					has_pending_components_ = true;
+				}
+				else
+				{
+					ASSERT_F(false, "컴포넌트 중복 추가됨. 확인 필요.");
+					ret = nullptr;
+				}
+			}
+			else
+			{
+				other_components_.push_back(std::move(component));
+				has_pending_components_ = true;
+			}
 		}
 		return ret;
 	}
 
 	void GameObject::UpdateHierarchyState(bool is_active_in_hierarchy)
 	{
+		if (is_destroyed_) { return; }
+
 		const bool new_is_active_in_hierarchy = is_active_in_hierarchy && is_active_;
 
 		if (is_active_in_hierarchy_ == new_is_active_in_hierarchy) { return; }
-
 		is_active_in_hierarchy_ = new_is_active_in_hierarchy;
 
-		for (const auto& com : other_components_)
-		{
-			if (com)
+		auto UpdateEnableStateFunc = [this](Component* com) -> void
 			{
-				com->UpdateEnableState(new_is_active_in_hierarchy);
-			}
+				if (com)
+				{
+					com->UpdateEnableState(is_active_in_hierarchy_);
+				}
+			};
+
+		size_t snapshot_size = other_components_.size();
+		for (size_t i = 0; i < snapshot_size; ++i)
+		{
+			UpdateEnableStateFunc(other_components_[i].get());
 		}
-		for (const auto& com : fixed_order_components_)
+		snapshot_size = fixed_order_components_.size();
+		for (size_t i = 0; i < snapshot_size; ++i)
 		{
-			if (com)
-			{
-				com->UpdateEnableState(new_is_active_in_hierarchy);
-			}
+			UpdateEnableStateFunc(fixed_order_components_[i].get());
 		}
 
-		const auto& child_tr = transform_->GetChildren();
-		for (size_t i = 0; i < child_tr.size(); ++i)
+		// 중간에 부모자식관계가 변경될 가능성이 있으므로, Value로 떠놓은 뒤 루프에서 다시 한번 확인한다.
+		std::vector<Transform*> child_transforms = transform_->GetChildren();
+		for(Transform* child_tr : child_transforms)
 		{
-			if (auto child = child_tr[i]->GetOwnerGameObject())
+			ASSERT(child_tr);
+
+			// 다를 경우 부모가 바뀐 것 - 새 hierarchy 쪽에서 처리할 일
+			if (child_tr->GetParent() != transform_) { continue; }
+
+			if (GameObject* child = child_tr->GetOwnerGameObject())
 			{
-				child->UpdateHierarchyState(new_is_active_in_hierarchy);
+				child->UpdateHierarchyState(is_active_in_hierarchy_);
 			}
 		}
 	}
@@ -481,36 +502,5 @@ namespace engine
 				com->OnDestroy();
 			}
 		}
-	}
-
-	Component* GameObject::AddPendingComponent(u_ptr<Component> component)
-	{
-		// const가 아닌 어떤 함수도 호출하지 마시오!!!!!!!!(단순히 자리에 넣는 용도)
-
-		//넣을 때 null 체크 했으므로 무조건 있다고 가정
-		if (component->IsDestroyed()) { return nullptr; }	// 이미 Destroy된 녀석은 넣지 않음
-
-		ComponentCategory cat = component->GetComponentCategory();
-
-		Component* ret = component.get();
-
-		if (ComponentCategory::kScripts < cat)
-		{
-			if (nullptr == fixed_order_components_[(size_t)cat])
-			{
-				fixed_order_components_[(size_t)cat] = std::move(component);
-			}
-			else
-			{
-				ASSERT_F(false, "컴포넌트 중복 추가됨. 확인 필요.");
-				ret = nullptr;
-			}
-		}
-		else
-		{
-			other_components_.push_back(std::move(component));
-		}
-
-		return ret;
 	}
 }

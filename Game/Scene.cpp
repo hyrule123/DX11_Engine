@@ -21,13 +21,10 @@ namespace engine
 		collision_system_2D_.Init();
 	}
 
-	void Scene::FrameStart()
-	{
-		FlushPendingAdd();
-	}
-
 	void Scene::FixedUpdate()
 	{
+		FlushPendingAdd();
+
 		size_t snapshot_size = game_objects_.size();	// Snapshot
 		for (size_t i = 0; i < snapshot_size; ++i)
 		{
@@ -36,13 +33,14 @@ namespace engine
 				game_objects_[i]->FixedUpdate();
 			}
 		}
-		FlushPendingAdd();
 
 		collision_system_2D_.FixedUpdate();
 	}
 
 	void Scene::Update()
 	{
+		FlushPendingAdd();
+
 		size_t snapshot_size = game_objects_.size();	// Snapshot
 		for (size_t i = 0; i < snapshot_size; ++i)
 		{
@@ -51,12 +49,12 @@ namespace engine
 				game_objects_[i]->Update();
 			}
 		}
-
-		FlushPendingAdd();
 	}
 
 	void Scene::LateUpdate()
 	{
+		FlushPendingAdd();
+
 		size_t snapshot_size = game_objects_.size();	// Snapshot
 		for (size_t i = 0; i < snapshot_size; ++i)
 		{
@@ -65,8 +63,6 @@ namespace engine
 				game_objects_[i]->LateUpdate();
 			}
 		}
-
-		FlushPendingAdd();
 	}
 
 	void Scene::FrameEnd()

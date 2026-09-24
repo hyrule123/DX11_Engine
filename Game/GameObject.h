@@ -32,7 +32,7 @@ namespace engine
 
 		virtual void Init() override;
 
-		bool HasPendingComponents() const { return !pending_add_components_.empty(); }
+		bool HasPendingComponents() const { return has_pending_components_; }
 		void FlushPendingComponents();	// Component 추가 및 초기화 담당
 
 		void Update();
@@ -89,7 +89,6 @@ namespace engine
 
 	private:
 		Component* AddComponent(u_ptr<Component> component);
-		Component* AddPendingComponent(u_ptr<Component> component);
 
 		void UpdateHierarchyState(bool is_active_in_hierarchy);
 
@@ -101,13 +100,12 @@ namespace engine
 
 		std::string name_ = {};
 
-		std::vector<u_ptr<Component>> pending_add_components_ = {};
-
 		std::array<std::vector<Component*>, (size_t)SubscribeType::kEND> listeners_ = {};
 		std::bitset<(size_t)SubscribeType::kEND> is_listeners_dirty_ = {};
 
 		uint32 layer_ = 0;
 
+		bool has_pending_components_ = false;
 		bool is_active_ = true;
 		bool is_active_in_hierarchy_ = true;
 		bool is_destroyed_ = false;

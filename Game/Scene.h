@@ -30,7 +30,7 @@ namespace engine
 		virtual ~Scene() override;
 
 		virtual void Init() = 0;
-		virtual void FrameStart();
+		virtual void FrameStart() {};
 		void FixedUpdate();
 		void Update();
 		
@@ -39,7 +39,9 @@ namespace engine
 
 		//추가 예약, 실제 추가는 FlushPendingGameObjects() 타이밍
 		template <typename T> requires std::is_base_of_v<GameObject, T>
-		T* AddGameObject() { return AddGameObject(EntityManager::CreateEntity<T>()); }
+		T* AddGameObject() {
+			return static_cast<T*>(AddGameObject(EntityManager::CreateEntity<T>()));
+		}
 
 		GameObject* AddGameObject(const HashedStringView& concrete_class_name);
 		GameObject* FindGameObject(const std::string_view name) const;

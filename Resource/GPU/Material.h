@@ -62,7 +62,7 @@ namespace engine
 		bool IsInstancingSupported(RenderPassOrder pass) const;
         size_t GetPerObjectDataStride(RenderPassOrder pass) const;
 
-		MaterialID GetMaterialID() const { return material_ID_; }
+		uint32 GetMaterialID() const { return material_ID_.Get(); }
 
     private:
 		MaterialID material_ID_;    // RenderKey에 패킹되는 Material 고유 ID. ScopedID로 관리됨

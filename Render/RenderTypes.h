@@ -66,11 +66,11 @@ namespace engine
 			"RenderKey layout overflows uint64.");
 
 		RenderKey() = default;
-		RenderKey(MaterialID material_id, MeshID mesh_id, uint8 submesh_slot)
+		RenderKey(uint32 material_id, uint32 mesh_id, uint8 submesh_slot)
 			: key(
-				(uint64)material_id.Get() << kMaterialIDShift
+				(uint64)material_id << kMaterialIDShift
 				| 
-				(uint64)mesh_id.Get() << kMeshIDShift
+				(uint64)mesh_id << kMeshIDShift
 				| 
 				(uint64)submesh_slot << kSubMeshIndexShift)
 		{

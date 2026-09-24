@@ -114,6 +114,8 @@ namespace engine {
     // (생성자에서는 단순 초기화만 한다는 컨벤션의 의도적 예외 — Init()을 거치지
     //  않는 지역 객체 경로가 존재하는 이상 생성자가 아니면 보장할 수 없다.)
     // ---------------------------------------------------------------------------
+
+    // 중요: 이 데이터의 Getter 함수는 복사가 일어나도록 하지 말 것!!(return by 및 value parameter 사용 X)
     template <typename Tag, uint32 kBitWidth>
     class ScopedID {
     public:
@@ -121,7 +123,6 @@ namespace engine {
         using IDType = typename AllocatorType::IDType;
 
         ScopedID() : id_(AllocatorType::Acquire()) {}
-
         ~ScopedID() { AllocatorType::Release(id_); }
 
         // Acquire()가 free list 벡터를 건드리므로 noexcept를 붙일 수 없다.

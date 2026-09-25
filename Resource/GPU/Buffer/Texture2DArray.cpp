@@ -16,6 +16,79 @@ namespace engine
 	Texture2DArray::~Texture2DArray()
 	{}
 
+    bool Texture2DArray::CreateImmutableFromMemory(uint32_2 tex_size, uint32 tex_count, DXGI_FORMAT format, std::span<const uint8> data, uint32 row_pitch, uint32 slice_pitch)
+    {
+        ASSERT(tex_count > 0);
+        ASSERT(tex_size.x > 0 && tex_size.y > 0);
+        ASSERT((size_t)row_pitch * tex_size.y <= (size_t)slice_pitch);
+
+        auto device = GraphicsDevice::GetInst().GetDevice();
+
+		const size_t total_byte_size = (size_t)tex_count * (size_t)slice_pitch;
+        if (data.size() != total_byte_size)
+        {
+			ERR_MSG("data size mismatch: expected {}, actual {}", total_byte_size, data.size());
+            return false;
+        }
+
+        // 2. 비Texture2DArray를 생성합니다.
+        D3D11_TEXTURE2D_DESC sprite_desc = {};
+        sprite_desc.Width = tex_size.x;
+        sprite_desc.Height = tex_size.y;
+        sprite_desc.MipLevels = 1;                 // 밉맵 없음
+        sprite_desc.ArraySize = tex_count;         // 프레임 개수만큼 층 생성
+        sprite_desc.Format = format;
+        sprite_desc.SampleDesc.Count = 1;
+        sprite_desc.Usage = D3D11_USAGE_IMMUTABLE;   // 이미 만들어진 데이터가 있음 -> IMMUTABLE
+        sprite_desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+
+        std::vector<D3D11_SUBRESOURCE_DATA> initial_data;
+        initial_data.resize(tex_count);
+        for (uint32 i = 0; i < tex_count; ++i)
+        {
+            initial_data[i].pSysMem = data.data() + (size_t)i * (size_t)slice_pitch;
+            initial_data[i].SysMemPitch = row_pitch;
+            initial_data[i].SysMemSlicePitch = 0;  // 2D 배열에서는 사용되지 않음
+        }
+
+        ComPtr<ID3D11Texture2D> sprite_tex = nullptr;
+        HRESULT hr = device->CreateTexture2D(&sprite_desc, initial_data.data(), sprite_tex.GetAddressOf());
+        if (FAILED(hr))
+        {
+            ERR_MSG_HRESULT(hr);
+            return false;
+        }
+
+
+        // nullptr을 그대로 넘기면 Array Size == 1일 경우 Array가 아닌 단순 텍스처 2D가 생성됨!
+        D3D11_SHADER_RESOURCE_VIEW_DESC srv_desc = {};
+        srv_desc.Format = format;
+        srv_desc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2DARRAY;
+        srv_desc.Texture2DArray.MostDetailedMip = 0;
+        srv_desc.Texture2DArray.MipLevels = 1;
+        srv_desc.Texture2DArray.FirstArraySlice = 0;
+        srv_desc.Texture2DArray.ArraySize = tex_count;
+
+        ComPtr<ID3D11ShaderResourceView> srv = nullptr;
+        hr = device->CreateShaderResourceView(sprite_tex.Get(), &srv_desc, srv.GetAddressOf());
+
+        if (FAILED(hr))
+        {
+            ERR_MSG_HRESULT(hr);
+            return false;
+        }
+
+        SetTexture2D(sprite_tex);
+        SetSRV(srv);
+
+        // 가로/세로 프레임 개수 및 총 배열 크기 계산
+        frame_count_ = tex_count;
+        row_count_ = 1;
+        col_count_ = tex_count;
+
+        return true;
+    }
+
 	bool Texture2DArray::Slice(uint32 row_count, uint32 col_count)
 	{
         auto device = GraphicsDevice::GetInst().GetDevice();
@@ -35,23 +108,21 @@ namespace engine
         // 가로/세로 프레임 개수 및 총 배열 크기 계산
         UINT frame_width = atlas_desc.Width / (UINT)col_count;
         UINT frame_height = atlas_desc.Height / (UINT)row_count;
-        frame_count_ = row_count * col_count;
-        row_count_ = row_count;
-        col_count_ = col_count;
+        uint32 frame_count = (uint32)((size_t)row_count * (size_t)col_count);
 
         // 2. 비어있는 Texture2DArray를 생성합니다. (초기 데이터 없이 빈 공간만 할당)
         D3D11_TEXTURE2D_DESC sprite_desc = {};
         sprite_desc.Width = frame_width;
         sprite_desc.Height = frame_height;
         sprite_desc.MipLevels = 1;                 // 밉맵 없음
-        sprite_desc.ArraySize = frame_count_;         // 프레임 개수만큼 층 생성
+        sprite_desc.ArraySize = frame_count;         // 프레임 개수만큼 층 생성
         sprite_desc.Format = atlas_desc.Format;     // 원본 아틀라스와 동일한 픽셀 포맷
         sprite_desc.SampleDesc.Count = 1;
-        sprite_desc.Usage = D3D11_USAGE_DEFAULT;   // GPU가 읽고 쓸 수 있는 기본 사용법
+        sprite_desc.Usage = D3D11_USAGE_DEFAULT;   // GPU가 읽고 쓸 수 있는 기본 사용법 (쓰기 가능 - 빈 공간을 만들어 놓고 채워야 하므로)
         sprite_desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
 
         ComPtr<ID3D11Texture2D> sprite_tex = nullptr;
-        HRESULT hr = device->CreateTexture2D(&sprite_desc, nullptr, &sprite_tex);
+        HRESULT hr = device->CreateTexture2D(&sprite_desc, nullptr, sprite_tex.GetAddressOf());
         if (FAILED(hr))
         {
             ERR_MSG_HRESULT(hr);
@@ -59,7 +130,7 @@ namespace engine
         }
 
         // 3. GPU 명령어(Context)를 통해 아틀라스의 영역을 잘라서 Array로 복사합니다.
-        for (UINT i = 0; i < frame_count_; ++i)
+        for (UINT i = 0; i < frame_count; ++i)
         {
             UINT col = i % col_count;
             UINT row = i / col_count;
@@ -90,8 +161,16 @@ namespace engine
             );
         }
 
+        // nullptr을 그대로 넘기면 Array Size == 1일 경우 Array가 아닌 단순 텍스처 2D가 생성됨!
+        D3D11_SHADER_RESOURCE_VIEW_DESC srv_desc = {};
+        srv_desc.Format = sprite_desc.Format;
+        srv_desc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2DARRAY;
+        srv_desc.Texture2DArray.MostDetailedMip = 0;
+        srv_desc.Texture2DArray.MipLevels = 1;
+        srv_desc.Texture2DArray.FirstArraySlice = 0;
+        srv_desc.Texture2DArray.ArraySize = frame_count;
         ComPtr<ID3D11ShaderResourceView> srv = nullptr;
-        hr = device->CreateShaderResourceView(sprite_tex.Get(), nullptr, &srv);
+        hr = device->CreateShaderResourceView(sprite_tex.Get(), &srv_desc, srv.GetAddressOf());
 
         if (FAILED(hr))
         {
@@ -101,6 +180,10 @@ namespace engine
 
         SetTexture2D(sprite_tex);
         SetSRV(srv);
+
+		frame_count_ = frame_count;
+		row_count_ = row_count;
+		col_count_ = col_count;
 
 		return true;
 	}

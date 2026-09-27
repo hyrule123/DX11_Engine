@@ -29,6 +29,7 @@
 namespace engine
 {
 	RenderManager::RenderManager()
+		: per_frame_binding_table_(REG_B_PER_FRAME_START, REG_B_PER_FRAME_COUNT, REG_T_PER_FRAME_START, REG_T_PER_FRAME_COUNT)
 	{
 	}
 
@@ -59,14 +60,15 @@ namespace engine
 	}
 	void RenderManager::Render()
 	{
+		auto* context = GraphicsDevice::GetInst().GetContext();
+		per_frame_binding_table_.Bind(context);
+
 		Camera* main_cam = main_cam_.get();
 		if (main_cam == nullptr) 
 		{ 
 			ERR_MSG("Main Camera 없음");
 			return;
 		}
-
-		auto* context = GraphicsDevice::GetInst().GetContext();
 
 		//Per Pass ( = Camera )
 		CameraData cam_data = {};

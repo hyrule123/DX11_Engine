@@ -6,11 +6,10 @@
 #include <Engine/Core/CoreMinimal.h>
 
 #include <Engine/Core/Singleton.h>
-#include <Engine/Core/Enum.h>
 
 #include <Engine/HLSL/DebugDraw/DebugDraw.hlsli>
 
-#include <bitset>
+#include <Engine/Util/GPUBufferBindingTable.h>
 
 struct ID3D11SamplerState;
 
@@ -58,6 +57,13 @@ namespace engine
 
 		StructuredBuffer* AcquireInstanceBuffer(uint32 byte_stride, uint32 elem_count);
 
+		void AddPerFrameConstantBuffer(ShaderStageFlags stage_flag, RegisterB slot, s_ptr<ConstantBuffer> buffer) {
+			per_frame_binding_table_.AddConstantBuffer(stage_flag, slot, buffer);
+		}
+        void AddPerFrameShaderResource(ShaderStageFlags stage_flag, RegisterT slot, s_ptr<ShaderResource> buffer) {
+			per_frame_binding_table_.AddShaderResource(stage_flag, slot, buffer);
+        }
+
     private:
         void DebugDraw(ID3D11DeviceContext* context);
 
@@ -91,5 +97,7 @@ namespace engine
 		std::vector<DebugDrawPerInstanceData> debug_circle_data_;
 		u_ptr<StructuredBuffer> debug_buffer_ = {};
         u_ptr<PipelineState> debug_shader_set_ = {};
+
+        GPUBufferBindingTable per_frame_binding_table_;
     };
 }

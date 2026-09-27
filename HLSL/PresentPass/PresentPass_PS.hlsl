@@ -4,6 +4,6 @@
 
 float4 main(PresentVSOutput input) : SV_TARGET
 {
-	float4 color = g_src_rendertarget.Sample(g_point_clamp_samper, input.uv);
+	float4 color = g_src_rendertarget.Sample(g_point_clamp_sampler, input.uv);
 	return color;
 }

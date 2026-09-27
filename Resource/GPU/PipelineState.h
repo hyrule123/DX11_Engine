@@ -34,6 +34,9 @@ namespace engine
 		bool IsReady() const { return (bool)input_layout_ && (bool)vertex_shader_; }
 
 		void SetPerInstanceDataStride(size_t stride) { per_instance_data_stride_ = stride; }
+		template <typename T>
+		void SetPerInstanceDataStride() { per_instance_data_stride_ = sizeof(T); }
+
 		size_t GetPerInstanceDataStride() const { return per_instance_data_stride_; }
 		void SetInstancingSupport(bool is_supported) { is_instancing_supported_ = is_supported; }
 		bool IsInstancingSupported() const { return is_instancing_supported_; }

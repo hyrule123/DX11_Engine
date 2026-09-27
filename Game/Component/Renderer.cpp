@@ -72,7 +72,7 @@ namespace engine
 	{
 		if (mesh_ == nullptr)
 		{
-			ERR_MSG("Material을 먼저 설정하세요.");
+			ERR_MSG("Mesh를 먼저 설정하세요.");
 			return false;
 		}
 		if (submesh_idx >= materials_.size())

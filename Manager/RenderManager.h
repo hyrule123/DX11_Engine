@@ -57,12 +57,7 @@ namespace engine
 
 		StructuredBuffer* AcquireInstanceBuffer(uint32 byte_stride, uint32 elem_count);
 
-		void AddPerFrameConstantBuffer(ShaderStageFlags stage_flag, RegisterB slot, s_ptr<ConstantBuffer> buffer) {
-			per_frame_binding_table_.AddConstantBuffer(stage_flag, slot, buffer);
-		}
-        void AddPerFrameShaderResource(ShaderStageFlags stage_flag, RegisterT slot, s_ptr<ShaderResource> buffer) {
-			per_frame_binding_table_.AddShaderResource(stage_flag, slot, buffer);
-        }
+		GPUBufferBindingTable& GetPerFrameBindingTable() { return per_frame_binding_table_; }
 
     private:
         void DebugDraw(ID3D11DeviceContext* context);

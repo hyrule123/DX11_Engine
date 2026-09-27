@@ -104,7 +104,7 @@ namespace engine
 		}
 		if (idx >= srv_bindings_.size() || srv_bindings_[idx].buffer == nullptr)
 		{
-			ASSERT_F(false, "해당 슬롯에 등록된 SRV 버퍼가 없습니다.");
+			// 없으면 그냥 return(에러 아님)
 			return;
 		}
 		srv_bindings_[idx] = { ShaderStageFlags(), nullptr};

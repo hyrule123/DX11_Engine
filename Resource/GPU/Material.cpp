@@ -10,6 +10,7 @@
 
 #include <Engine/Util/IDAllocator.h>
 
+#include <Engine/HLSL/Core/Config.hlsli>
 #include <Engine/HLSL/Core/Register.hlsli>
 
 #include <utility>
@@ -19,6 +20,7 @@ namespace engine
 	Material::Material()
 		: Resource(Material::kClassConcreteName)
 		, material_ID_()	// 기본 생성자에서 발급됨(RAII)
+		, per_material_binding_table_(REG_B_PER_MATERIAL_START, REG_B_PER_MATERIAL_COUNT, REG_T_PER_MATERIAL_START, REG_T_PER_MATERIAL_COUNT)
 	{
 	}
 
@@ -58,59 +60,29 @@ namespace engine
 		return false;
 	}
 
-	void Material::BindTextures(ID3D11DeviceContext* context, ShaderStageFlags stage_flag)
+	void Material::SetTexture(ShaderStageFlags stage_flag, RegisterT slot, s_ptr<Texture2D> tex)
 	{
-		std::array<ID3D11ShaderResourceView*, std::tuple_size_v<Textures>> srv = {};
-		for (size_t i = 0; i < textures_.size(); ++i)
-		{
-			if (textures_[i])
-			{
-				srv[i] = textures_[i]->GetRawSRV();
-			}
-		}
-
-		constexpr UINT max_tex_count = (UINT)std::tuple_size_v<Textures>;
-		if (stage_flag.Test(ShaderStage::Vertex))
-		{
-			context->VSSetShaderResources(REG_T_PER_MATERIAL_START, max_tex_count, srv.data());
-		}
-		if (stage_flag.Test(ShaderStage::Geometry))
-		{
-			context->GSSetShaderResources(REG_T_PER_MATERIAL_START, max_tex_count, srv.data());
-		}
-		if (stage_flag.Test(ShaderStage::Pixel))
-		{
-			context->PSSetShaderResources(REG_T_PER_MATERIAL_START, max_tex_count, srv.data());
-		}
-		if (stage_flag.Test(ShaderStage::Compute))
-		{
-			context->CSSetShaderResources(REG_T_PER_MATERIAL_START, max_tex_count, srv.data());
-		}
-	}
-
-	void Material::SetTexture(RegisterT slot, s_ptr<Texture2D> tex)
-	{
-		int32 slot_idx = (int32)slot.Get() - (int32)REG_T_PER_MATERIAL_START;
-		if (slot_idx < 0 || MAX_TEXTURE_COUNT <= slot_idx)
-		{
-			CHECK("Material::SetTexture() - Invalid slot index");
-			return;
-		}
-		textures_[slot_idx] = std::move(tex);
-	}
-
-	bool Material::SetTexture(RegisterT slot, const HashedStringView& texture_name)
-	{
-		s_ptr<Texture2D> tex = 
-			ResourceManager::GetInst().LoadFromFile<Texture2D>(texture_name);
-
 		if (tex)
 		{
-			SetTexture(slot, tex);
-			return true;
+			per_material_binding_table_.AddShaderResource(stage_flag, slot, std::move(tex));
 		}
+		else
+		{
+			DEBUG_LOG("Material::SetTexture: nullptr texture for slot {}, removing binding.", slot.Get());
+			per_material_binding_table_.RemoveShaderResource(slot);
+		}
+	}
 
-		return false;
+	bool Material::SetTexture(ShaderStageFlags stage_flag, RegisterT slot, const HashedStringView& texture_name)
+	{
+		s_ptr<Texture2D> tex =
+			ResourceManager::GetInst().LoadFromFile<Texture2D>(texture_name);
+
+		if (tex == nullptr) { return false; }
+
+		SetTexture(stage_flag, slot, std::move(tex));
+
+		return true;
 	}
 	bool Material::IsInstancingSupported(RenderPassOrder pass) const
 	{

@@ -23,7 +23,7 @@ namespace engine
 		constexpr static uint32 kMaxBufferPerBindingTable = 10;
 	public:
 		GPUBufferBindingTable(uint32 cb_slot_start, uint32 cb_slot_count, uint32 srv_slot_start, uint32 srv_slot_count);
-		GPUBufferBindingTable(const GPUBufferBindingTable&) = delete;
+		GPUBufferBindingTable(const GPUBufferBindingTable&) = default;
 		GPUBufferBindingTable& operator=(const GPUBufferBindingTable&) = delete;
 		GPUBufferBindingTable(GPUBufferBindingTable&&) = delete;
 		GPUBufferBindingTable& operator=(GPUBufferBindingTable&&) = delete;

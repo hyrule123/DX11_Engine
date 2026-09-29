@@ -46,7 +46,7 @@ namespace engine
 			return;
 		}
 
-		cb_bindings_[idx] = { stage_flag, buffer };
+		cb_bindings_[idx] = { stage_flag, std::move(buffer) };
 	}
 
 	void GPUBufferBindingTable::RemoveConstantBuffer(RegisterB slot)
@@ -59,10 +59,20 @@ namespace engine
 		}
 		if (idx >= cb_bindings_.size() || cb_bindings_[idx].buffer == nullptr)
 		{
-			ASSERT_F(false, "해당 슬롯에 등록된 CB 버퍼가 없습니다.");
+			// 에러 아님 - 그대로 return
 			return;
 		}
 		cb_bindings_[idx] = { ShaderStageFlags(), nullptr };
+
+		// size 축소
+		if (cb_bindings_.size() >= 2)
+		{
+			for (int32 i = (int32)cb_bindings_.size() - 1; i >= 0; --i)
+			{
+				if (cb_bindings_[i].buffer != nullptr) { break; }
+				cb_bindings_.pop_back();
+			}
+		}
 	}
 
 	void GPUBufferBindingTable::AddShaderResource(ShaderStageFlags stage_flag, RegisterT slot, s_ptr<ShaderResource> buffer)
@@ -79,19 +89,19 @@ namespace engine
 			return;
 		}
 
-		// index만큼 cb_bindings가 존재하지 않으면 resize(검증 필요 없음)
+		// index만큼 srv_bindings가 존재하지 않으면 resize(검증 필요 없음)
 		if (idx >= srv_bindings_.size())
 		{
 			srv_bindings_.resize(idx + 1);
 		}
-		// index만큼 cb_bindings가 존재하면 이미 등록된 버퍼가 있는지 확인
+		// index만큼 srv_bindings가 존재하면 이미 등록된 버퍼가 있는지 확인
 		else if(srv_bindings_[idx].buffer != nullptr)
 		{
 			ASSERT_F(false, "이미 같은 슬롯에 버퍼가 등록되어 있습니다.");
 			return;
 		}
 
-		srv_bindings_[idx] = { stage_flag, buffer };
+		srv_bindings_[idx] = { stage_flag, std::move(buffer) };
 	}
 
 	void GPUBufferBindingTable::RemoveShaderResource(RegisterT slot)
@@ -108,6 +118,16 @@ namespace engine
 			return;
 		}
 		srv_bindings_[idx] = { ShaderStageFlags(), nullptr};
+
+		// size 축소
+		if (srv_bindings_.size() >= 2)
+		{
+			for (int32 i = (int32)srv_bindings_.size() - 1; i >= 0; --i)
+			{
+				if (srv_bindings_[i].buffer != nullptr) { break; }
+				srv_bindings_.pop_back();
+			}
+		}
 	}
 
 	void GPUBufferBindingTable::BindCBImpl(ID3D11DeviceContext * context) const

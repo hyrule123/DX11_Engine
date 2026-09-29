@@ -8,8 +8,7 @@
 #include <Engine/Render/RenderTypes.h>
 
 #include <Engine/Util/IDAllocator.h>
-
-#include <Engine/HLSL/Core/Config.hlsli>
+#include <Engine/Util/GPUBufferBindingTable.h>
 
 #include <array>
 
@@ -27,7 +26,6 @@ namespace engine
         ENTITY_INFO(Material, Resource)
 
     public:
-        using Textures = std::array<s_ptr<Texture2D>, MAX_TEXTURE_COUNT>;
 		using PipelineStatesPerPass = std::array<s_ptr<PipelineState>, (size_t)RenderPassOrder::kCount>;
 
         Material();
@@ -52,12 +50,16 @@ namespace engine
 		}
 		const PipelineStatesPerPass& GetPipelineStates() const { return pipeline_states_per_pass; }
 
-        // Material Start slot으로부터 8장 연속으로 바인딩함. 슬롯 주의
-        void BindTextures(ID3D11DeviceContext* context, ShaderStageFlags stage_flag = ShaderStageFlags(ShaderStage::Pixel));
+        void BindPerMaterialBuffers(ID3D11DeviceContext* context) {
+            per_material_binding_table_.Bind(context);
+        }
 
-        bool SetTexture(RegisterT slot, const HashedStringView& texture_name);
-        void SetTexture(RegisterT slot, s_ptr<Texture2D> tex);
-        void SetTextures(const Textures& textures) { textures_ = textures; }
+        void RemoveTexture(RegisterT slot) {
+            per_material_binding_table_.RemoveShaderResource(slot);
+        }
+
+        void SetTexture(ShaderStageFlags stage_flag, RegisterT slot, s_ptr<Texture2D> tex);
+        bool SetTexture(ShaderStageFlags stage_flag, RegisterT slot, const HashedStringView& texture_name);
 
 		bool IsInstancingSupported(RenderPassOrder pass) const;
         size_t GetPerObjectDataStride(RenderPassOrder pass) const;
@@ -66,8 +68,7 @@ namespace engine
 
     private:
 		MaterialID material_ID_;    // RenderKey에 패킹되는 Material 고유 ID. ScopedID로 관리됨
-
-        Textures textures_ = {};
+        GPUBufferBindingTable per_material_binding_table_;
 
         // TODO: 이후 Per Material 버퍼 추가 필요 시 추가해야 함
 

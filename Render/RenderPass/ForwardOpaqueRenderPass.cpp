@@ -90,7 +90,7 @@ namespace engine
 					pipeline_state->Bind(context);
 					prev_pipeline_state = pipeline_state;
 				}
-				mtrl->BindTextures(context, ShaderStage::Pixel);
+				mtrl->BindTextures(context, ShaderStage::Vertex | ShaderStage::Pixel);
 				prev_material_id = material_id;
 			}
 

@@ -6,6 +6,7 @@ struct alignas(16) CameraData
 {
 	matrix view_mat;
 	matrix proj_mat;
+	matrix view_proj;
 };
 
 #define REG_B_CAMERA			   REG_B_PER_PASS_0

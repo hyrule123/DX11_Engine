@@ -74,6 +74,7 @@ namespace engine
 		CameraData cam_data = {};
 		cam_data.view_mat = main_cam->GetViewMatrix();
 		cam_data.proj_mat = main_cam->GetProjMatrix();
+		cam_data.view_proj = cam_data.view_mat * cam_data.proj_mat;
 
 		cb_per_pass_camera_->Upload(context, cam_data);
 		cb_per_pass_camera_->Bind(context, kShaderStageAllGraphicsFlags, REG_B_CAMERA);

@@ -53,16 +53,16 @@ namespace engine
 		const std::array<std::bitset<kMaxLayers>, kMaxLayers>& GetCollisionMask() const { return collision_mask_; }
 
 	private:
-		GameObject* AddGameObject(u_ptr<GameObject> obj);
+		GameObject* AddGameObject(std::unique_ptr<GameObject> obj);
 		void FlushPendingAdd();
 
-		std::vector<u_ptr<GameObject>> game_objects_ = {};
+		std::vector<std::unique_ptr<GameObject>> game_objects_ = {};
 
 		CollisionSystem2D collision_system_2D_;
 
 		std::array<std::bitset<kMaxLayers>, kMaxLayers> collision_mask_ = {};
 
-		std::vector<u_ptr<SceneEntity>> graveyard_[2] = {};
+		std::vector<std::unique_ptr<SceneEntity>> graveyard_[2] = {};
 		bool graveyard_toggle_ = false;
 	};
 }

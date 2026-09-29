@@ -21,7 +21,7 @@
 
 namespace engine
 {
-	namespace Present_Pass
+	namespace present_pass
 	{
 		using Vertex = PresentVSInput;
 
@@ -57,12 +57,12 @@ namespace engine
 	void PresentPass::Init(ID3D11DeviceContext* context)
 	{
 		ResourceManager& res_mgr = ResourceManager::GetInst();
-		const stdfs::path& res_dir = res_mgr.GetResourceDir();
+		const std::filesystem::path& res_dir = res_mgr.GetResourceDir();
 
 		{
 			//VERTEX BUFFER
-			u_ptr<Mesh> mesh = EntityManager::CreateEntity<Mesh>();
-			std::vector<Present_Pass::Vertex> vertices;
+			std::unique_ptr<Mesh> mesh = EntityManager::CreateEntity<Mesh>();
+			std::vector<present_pass::Vertex> vertices;
 			vertices.resize(4);
 			vertices[0].position = { -1.0f, 1.0f, 0.5f };
 			vertices[1].position = { 1.0f, 1.0f, 0.5f };
@@ -93,26 +93,26 @@ namespace engine
 		shader_set_ = std::make_unique<PipelineState>();
 		shader_set_->SetPerInstanceDataStride(sizeof(PresentVSInput));
 		
-		s_ptr<VertexShader> vs = EntityManager::CreateEntity<VertexShader>();
+		std::shared_ptr<VertexShader> vs = EntityManager::CreateEntity<VertexShader>();
 		bool result = vs->LoadFromFile(res_dir / L"Shader/PresentPass_VS.cso");
 		ASSERT(result);
 		shader_set_->SetVertexShader(vs);
 
-		s_ptr<InputLayoutDesc> layout_desc = EntityManager::CreateEntity<InputLayoutDesc>();
-		for (const auto& desc : Present_Pass::kInputLayoutDescs)
+		std::shared_ptr<InputLayoutDesc> layout_desc = EntityManager::CreateEntity<InputLayoutDesc>();
+		for (const auto& desc : present_pass::kInputLayoutDescs)
 		{
 			layout_desc->AddLayoutDesc(desc);
 		}
 		result = shader_set_->CreateInputLayout(layout_desc.get());
 		ASSERT(result);
 
-		s_ptr<PixelShader> ps = EntityManager::CreateEntity<PixelShader>();
+		std::shared_ptr<PixelShader> ps = EntityManager::CreateEntity<PixelShader>();
 		result = ps->LoadFromFile(res_dir / L"Shader/PresentPass_PS.cso");
 		ASSERT(result);
 		shader_set_->SetPixelShader(ps);
 
-		shader_set_->SetRasterizerState("RSS_Solid_Back"_hash);
-		shader_set_->SetDepthStencilState("DSS_Default"_hash);
+		shader_set_->SetRasterizerState("RSS_Solid_Back");
+		shader_set_->SetDepthStencilState("DSS_Default");
 	}
 	void PresentPass::Execute(ID3D11DeviceContext * context, const RenderPassContext& pass_context)
 	{

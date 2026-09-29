@@ -36,7 +36,7 @@ namespace engine
 		void Present();
 		void FrameEnd();
 
-		s_ptr<RenderTargetGroup> GetSwapChainRenderTargetGroup() const { return swap_chain_RT_; }
+		std::shared_ptr<RenderTargetGroup> GetSwapChainRenderTargetGroup() const { return swap_chain_RT_; }
 
 	private:
 		bool Init();
@@ -50,7 +50,7 @@ namespace engine
 
 		ComPtr<IDXGISwapChain> swap_chain_ = {};
 
-		s_ptr<RenderTargetGroup> swap_chain_RT_ = {};
+		std::shared_ptr<RenderTargetGroup> swap_chain_RT_ = {};
 		
 
 		uint32 resolution_width_ = {};

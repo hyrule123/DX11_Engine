@@ -24,10 +24,12 @@ namespace engine
 
 	void SpriteRenderer::Init()
 	{
+		constexpr HashedStringView hsh = "Mesh_Standard2D_Rect";
+
 		Super::Init();
-		bool result = SetMesh("Mesh_Standard2D_Rect"_hash);
+		bool result = SetMesh("Mesh_Standard2D_Rect");
 		ASSERT(result);
-		result = SetMaterial(0, "Material_Sprite"_hash);
+		result = SetMaterial(0, "Material_Sprite");
 		ASSERT(result);
 	}
 	void SpriteRenderer::Awake()

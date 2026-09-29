@@ -111,7 +111,7 @@ namespace engine
 		//nullptr인 항목들 제거
 		std::erase_if(
 			game_objects_,
-			[](const u_ptr<GameObject>& obj) { return obj == nullptr; }
+			[](const std::unique_ptr<GameObject>& obj) { return obj == nullptr; }
 		);
 
 		// 반대쪽 Graveyard에 있는 SceneEntity들을 모두 제거
@@ -144,7 +144,7 @@ namespace engine
 		collision_mask_[layer_b][layer_a] = can_collide; // Ensure symmetry
 	}
 
-	GameObject* Scene::AddGameObject(u_ptr<GameObject> obj)
+	GameObject* Scene::AddGameObject(std::unique_ptr<GameObject> obj)
 	{
 		GameObject* raw_ptr = obj.get();
 		if (obj)

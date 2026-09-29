@@ -30,7 +30,7 @@ namespace engine
 
 		//path로 받아오고, weakly_canonical을 통해 절대 주소 만들기
 		program_path_ = buffer;
-		resource_dir_ = stdfs::weakly_canonical(program_path_.remove_filename() / ".." / ".." / ".." / "Res");
+		resource_dir_ = std::filesystem::weakly_canonical(program_path_.remove_filename() / ".." / ".." / ".." / "Res");
 
 		return true;
 	}
@@ -39,14 +39,14 @@ namespace engine
 		// ============ 기본 리소스 로드 ===============
 		DefaultRes::LoadDefaultResources();
 	}
-	s_ptr<Resource> ResourceManager::Find(const HashedStringView& res_key)
+	std::shared_ptr<Resource> ResourceManager::Find(const HashedStringView& res_key)
 	{
-		s_ptr<Resource> ret = nullptr;
+		std::shared_ptr<Resource> ret = nullptr;
 		auto iter = resources_.find(res_key);
 		if (iter != resources_.end()) { ret = iter->second; }
 		return ret;
 	}
-	bool ResourceManager::AddResource(const HashedStringView& res_key, s_ptr<Resource> resource)
+	bool ResourceManager::AddResource(const HashedStringView& res_key, std::shared_ptr<Resource> resource)
 	{
 		auto iter = resources_.find(res_key);
 		if (iter != resources_.end()) 

@@ -39,8 +39,8 @@ namespace engine
 
 		void MarkBoundsDirty(const Renderer* renderer);
 
-		void SetMainCamera(wh_ptr<Camera> cam) { main_cam_ = cam; }
-        wh_ptr<Camera> GetMainCamera() const { return main_cam_; }
+		void SetMainCamera(weak_handle_ptr<Camera> cam) { main_cam_ = cam; }
+        weak_handle_ptr<Camera> GetMainCamera() const { return main_cam_; }
 
         void OnScreenSizeChange(uint32 width, uint32 height);
         void OnClearContextStates();
@@ -66,12 +66,12 @@ namespace engine
         void BindPSSamplerStates(ID3D11DeviceContext* context);
         void CreateDebugRenderObjects(ID3D11DeviceContext* context);
 
-        s_ptr<ConstantBuffer> cb_per_pass_camera_ = {};
+        std::shared_ptr<ConstantBuffer> cb_per_pass_camera_ = {};
 
-		wh_ptr<Camera> main_cam_ = {};
+		weak_handle_ptr<Camera> main_cam_ = {};
 
 		// Key: byte stride, Value: StructuredBuffer
-		std::unordered_map<uint32, u_ptr<StructuredBuffer>> instance_buffer_per_stride_ = {};
+		std::unordered_map<uint32, std::unique_ptr<StructuredBuffer>> instance_buffer_per_stride_ = {};
         
         //Slot에 꽃아두고 계속 사용
         std::vector<ComPtr<ID3D11SamplerState>> sampler_states_ = {};
@@ -86,12 +86,12 @@ namespace engine
 		uint32 resolution_width_ = {};
 		uint32 resolution_height_ = {};
 
-		u_ptr<Mesh> debug_rect_mesh_ = {};
-		u_ptr<Mesh> debug_circle_mesh_ = {};
+		std::unique_ptr<Mesh> debug_rect_mesh_ = {};
+		std::unique_ptr<Mesh> debug_circle_mesh_ = {};
         std::vector<DebugDrawPerInstanceData> debug_rect_data_;
 		std::vector<DebugDrawPerInstanceData> debug_circle_data_;
-		u_ptr<StructuredBuffer> debug_buffer_ = {};
-        u_ptr<PipelineState> debug_shader_set_ = {};
+		std::unique_ptr<StructuredBuffer> debug_buffer_ = {};
+        std::unique_ptr<PipelineState> debug_shader_set_ = {};
 
         GPUBufferBindingTable per_frame_binding_table_;
     };

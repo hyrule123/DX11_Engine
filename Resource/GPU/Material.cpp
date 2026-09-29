@@ -34,7 +34,7 @@ namespace engine
 		return (bool)pipeline_states_per_pass[(size_t)pass];
 	}
 
-	void Material::SetPipelineState(RenderPassOrder pass, s_ptr<PipelineState> shader_set)
+	void Material::SetPipelineState(RenderPassOrder pass, std::shared_ptr<PipelineState> shader_set)
 	{
 		if (shader_set)
 		{
@@ -60,7 +60,7 @@ namespace engine
 		return false;
 	}
 
-	void Material::SetTexture(ShaderStageFlags stage_flag, RegisterT slot, s_ptr<Texture2D> tex)
+	void Material::SetTexture(ShaderStageFlags stage_flag, RegisterT slot, std::shared_ptr<Texture2D> tex)
 	{
 		if (tex)
 		{
@@ -75,7 +75,7 @@ namespace engine
 
 	bool Material::SetTexture(ShaderStageFlags stage_flag, RegisterT slot, const HashedStringView& texture_name)
 	{
-		s_ptr<Texture2D> tex =
+		std::shared_ptr<Texture2D> tex =
 			ResourceManager::GetInst().LoadFromFile<Texture2D>(texture_name);
 
 		if (tex == nullptr) { return false; }

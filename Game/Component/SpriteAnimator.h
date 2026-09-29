@@ -22,7 +22,7 @@ namespace engine
         virtual void LateUpdate() override;
 
         bool SetSpriteAnimation(const HashedStringView& res_path);
-        void SetSpriteAnimation(s_ptr<SpriteAnimation> anim) { anim_ = anim; }
+        void SetSpriteAnimation(std::shared_ptr<SpriteAnimation> anim) { anim_ = anim; }
 
         bool Play(const HashedStringView& anim_name);
         bool Play(SpriteAnimClip* clip_ptr);
@@ -42,7 +42,7 @@ namespace engine
 		void TriggerNotify(uint32 frame_idx);
 
         SpriteRenderer* renderer_ = {};
-        s_ptr<SpriteAnimation> anim_ = {};
+        std::shared_ptr<SpriteAnimation> anim_ = {};
 
         SpriteAnimClip* playing_clip_ = {};
 

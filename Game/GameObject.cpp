@@ -137,7 +137,7 @@ namespace engine
 		}
 	}
 
-	void GameObject::FrameEnd(std::vector<u_ptr<SceneEntity>>& graveyard)
+	void GameObject::FrameEnd(std::vector<std::unique_ptr<SceneEntity>>& graveyard)
 	{
 		uint32 pass_count = 0;
 		for (; pass_count < kMaxDrainLoopCount; ++pass_count)
@@ -145,7 +145,7 @@ namespace engine
 			bool any_destroyed = false;
 
 			//Destroy된 Component들의 OnDestroy 호출 및 Graveyard 이동
-			for (u_ptr<Component>& com : other_components_)
+			for (std::unique_ptr<Component>& com : other_components_)
 			{
 				if (com && com->IsDestroyed())
 				{
@@ -176,7 +176,7 @@ namespace engine
 		//Other Components는 vector이므로 nullptr들인 항목은 제거
 		std::erase_if(
 			other_components_, 
-			[](const u_ptr<Component>& com) { return com == nullptr; }
+			[](const std::unique_ptr<Component>& com) { return com == nullptr; }
 		);
 
 		for(uint32 i = 0; i < (uint32)SubscribeType::kEND; ++i)
@@ -194,7 +194,7 @@ namespace engine
 
 	Component* GameObject::AddComponent(const HashedStringView& concrete_class_name)
 	{
-		u_ptr<Component> comp = EntityManager::GetInst().CreateEntityAs<Component>(concrete_class_name);
+		std::unique_ptr<Component> comp = EntityManager::GetInst().CreateEntityAs<Component>(concrete_class_name);
 		if (comp)
 		{
 			return AddComponent(std::move(comp));
@@ -254,7 +254,7 @@ namespace engine
 		is_active_ = false;
 		is_active_in_hierarchy_ = false;
 
-		//Handle 무효화, wh_ptr에서 받아올 수 없음
+		//Handle 무효화, weak_handle_ptr에서 받아올 수 없음
 		InvalidateHandle();
 
 		//내꺼 파괴하고
@@ -407,7 +407,7 @@ namespace engine
 		}
 	}
 
-	Component* GameObject::AddComponent(u_ptr<Component> component)
+	Component* GameObject::AddComponent(std::unique_ptr<Component> component)
 	{
 		Component* ret = component.get();
 		if (component)
@@ -488,14 +488,14 @@ namespace engine
 
 	void GameObject::OnDestroy()
 	{
-		for (u_ptr<Component>& com : other_components_)
+		for (std::unique_ptr<Component>& com : other_components_)
 		{
 			if (com)
 			{
 				com->OnDestroy();
 			}
 		}
-		for (u_ptr<Component>& com : fixed_order_components_)
+		for (std::unique_ptr<Component>& com : fixed_order_components_)
 		{
 			if (com)
 			{

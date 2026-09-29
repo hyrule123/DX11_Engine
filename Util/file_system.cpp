@@ -8,7 +8,7 @@
 
 namespace engine::file_system
 {
-	std::vector<uint8> ReadAllBytes(const stdfs::path& file_path)
+	std::vector<uint8> ReadAllBytes(const std::filesystem::path& file_path)
 	{
         std::ifstream file(file_path, std::ios::binary | std::ios::ate);
         
@@ -31,7 +31,7 @@ namespace engine::file_system
 
         return buffer;
     }
-    bool DumpFile(const stdfs::path& file_path, const std::vector<uint8>& data)
+    bool DumpFile(const std::filesystem::path& file_path, const std::vector<uint8>& data)
     {
 		std::ofstream of(file_path, std::ios::binary);
         

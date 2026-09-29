@@ -22,7 +22,7 @@ namespace engine
 		virtual void Init() final;
         
         // 자동 호출됨
-        virtual s_ptr<ComputeShader> LoadComputeShader() = 0;
+        virtual std::shared_ptr<ComputeShader> LoadComputeShader() = 0;
 
 		void Execute(ID3D11DeviceContext* context);
 
@@ -34,7 +34,7 @@ namespace engine
 		virtual std::array<UINT, 3> GetThreadCount() const = 0;
 
     private:
-		s_ptr<ComputeShader> compute_shader_ = nullptr;
+		std::shared_ptr<ComputeShader> compute_shader_ = nullptr;
     };
 }
 

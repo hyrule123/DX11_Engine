@@ -26,14 +26,14 @@ namespace engine
         ENTITY_INFO(Material, Resource)
 
     public:
-		using PipelineStatesPerPass = std::array<s_ptr<PipelineState>, (size_t)RenderPassOrder::kCount>;
+		using PipelineStatesPerPass = std::array<std::shared_ptr<PipelineState>, (size_t)RenderPassOrder::kCount>;
 
         Material();
         Material(const Material& other) = default;
         virtual ~Material() override;
 
         //고유 텍스처를 만들 때 싸용
-        s_ptr<Material> Clone() const { 
+        std::shared_ptr<Material> Clone() const { 
             return std::make_shared<Material>(*this);
         }
 
@@ -42,7 +42,7 @@ namespace engine
 		}
 
         bool SetPipelineState(RenderPassOrder pass, const HashedStringView& shader_set_name);
-        void SetPipelineState(RenderPassOrder pass, s_ptr<PipelineState> shader_set);
+        void SetPipelineState(RenderPassOrder pass, std::shared_ptr<PipelineState> shader_set);
         bool BindPipelineState(ID3D11DeviceContext* context, RenderPassOrder pass);
 		PipelineState* GetPipelineState(RenderPassOrder pass) const {
             if (pass < RenderPassOrder::kCount) { return pipeline_states_per_pass[(size_t)pass].get(); }
@@ -58,7 +58,7 @@ namespace engine
             per_material_binding_table_.RemoveShaderResource(slot);
         }
 
-        void SetTexture(ShaderStageFlags stage_flag, RegisterT slot, s_ptr<Texture2D> tex);
+        void SetTexture(ShaderStageFlags stage_flag, RegisterT slot, std::shared_ptr<Texture2D> tex);
         bool SetTexture(ShaderStageFlags stage_flag, RegisterT slot, const HashedStringView& texture_name);
 
 		bool IsInstancingSupported(RenderPassOrder pass) const;

@@ -15,7 +15,7 @@ namespace engine
 	struct BufferBindingInfo
 	{
 		ShaderStageFlags stage_flag;
-		s_ptr<T> buffer = {};
+		std::shared_ptr<T> buffer = {};
 	};
 
 	class GPUBufferBindingTable
@@ -28,10 +28,10 @@ namespace engine
 		GPUBufferBindingTable(GPUBufferBindingTable&&) = delete;
 		GPUBufferBindingTable& operator=(GPUBufferBindingTable&&) = delete;
 
-		void AddConstantBuffer(ShaderStageFlags stage_flag, RegisterB slot, s_ptr<ConstantBuffer> buffer);
+		void AddConstantBuffer(ShaderStageFlags stage_flag, RegisterB slot, std::shared_ptr<ConstantBuffer> buffer);
 		void RemoveConstantBuffer(RegisterB slot);
 
-		void AddShaderResource(ShaderStageFlags stage_flag, RegisterT slot, s_ptr<ShaderResource> buffer);
+		void AddShaderResource(ShaderStageFlags stage_flag, RegisterT slot, std::shared_ptr<ShaderResource> buffer);
 		void RemoveShaderResource(RegisterT slot);
 
 		void Bind(ID3D11DeviceContext* context) const {

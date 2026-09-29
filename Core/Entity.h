@@ -10,8 +10,8 @@
 private: \
 using Super = base; \
 public: \
-constexpr static HashedStringView kClassConcreteName = STRINGIFY(derived)##_hash; \
-inline static EntityRegistrar<derived> kRegistrar{kClassConcreteName};
+constexpr static ::engine::HashedStringView kClassConcreteName { #derived }; \
+inline static ::engine::EntityRegistrar<derived> kRegistrar { kClassConcreteName };
 
 namespace engine
 {
@@ -36,7 +36,7 @@ namespace engine
 
         uint32 GetInstanceID() const { return instance_ID_; }
     private:
-        HashedStringView concrete_class_name_ = ""_hash; //컴파일 타임에 결정되는 클래스 이름
+        HashedStringView concrete_class_name_ = {}; //컴파일 타임에 결정되는 클래스 이름
 
         uint32 instance_ID_ = 0;	//런타임 ID(매 실행마다 달라질 수 있음)
         inline static uint32 next_instance_ID_ = 1;
@@ -47,7 +47,7 @@ namespace engine
         DECLARE_SINGLETON(EntityManager)
 
     public:
-        using EntityCreationFunc = u_ptr<Entity>(*)();
+        using EntityCreationFunc = std::unique_ptr<Entity>(*)();
         template <typename T>
         void AddCtor(const HashedStringView& key)
         {
@@ -61,32 +61,32 @@ namespace engine
         }
 
         template <typename T>
-        static u_ptr<T> CreateEntity()
+        static std::unique_ptr<T> CreateEntity()
         {
             static_assert(std::is_base_of_v<Entity, T>, "T must be derived from Entity");
-            u_ptr<T> entity = std::make_unique<T>();
+            std::unique_ptr<T> entity = std::make_unique<T>();
             entity->Init();
             return entity;
         }
 
-        u_ptr<Entity> CreateEntity(const HashedStringView& key);
+        std::unique_ptr<Entity> CreateEntity(const HashedStringView& key);
 
         template <typename T> requires std::is_base_of_v<Entity, T>
-        u_ptr<T> CreateEntityAs(const HashedStringView& key)
+        std::unique_ptr<T> CreateEntityAs(const HashedStringView& key)
         {
             static_assert(std::is_base_of_v<Entity, T>, "T must be derived from Entity");
-            u_ptr<Entity> entity = CreateEntity(key);
+            std::unique_ptr<Entity> entity = CreateEntity(key);
             if (nullptr == entity) { return nullptr; }
 
             T* casted = dynamic_cast<T*>(entity.get());
             if (nullptr == casted) { return nullptr; }   // entity가 살아있으므로 여기서 정상 해제
 
             entity.release();          // 소유권 포기 (캐스팅 성공이 확인된 뒤에만)
-            return u_ptr<T>(casted);
+            return std::unique_ptr<T>(casted);
         }
     private:
         template <typename T>
-        static u_ptr<Entity> CreateEntityUpcast()
+        static std::unique_ptr<Entity> CreateEntityUpcast()
         {
             return CreateEntity<T>();
         }

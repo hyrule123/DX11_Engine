@@ -52,13 +52,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             break;
         }
 
-		engine::uint32 width = LOWORD(lParam);
-		engine::uint32 height = HIWORD(lParam);
+		uint32 width = LOWORD(lParam);
+		uint32 height = HIWORD(lParam);
 
 		//방어 코드
         if (width > 0 && height > 0)
         {
-            engine::EngineMain::GetInst().OnScreenSizeChange((engine::uint32)width, (engine::uint32)height);
+            engine::EngineMain::GetInst().OnScreenSizeChange((uint32)width, (uint32)height);
         }
     }
     break;

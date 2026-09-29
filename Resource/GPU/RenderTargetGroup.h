@@ -23,13 +23,13 @@ namespace engine
     {
         ENTITY_INFO(RenderTargetGroup, Resource)
     public:
-        using RenderTargetArray = std::array<s_ptr<RenderTargetView>, kMaxRenderTargetCount>;
+        using RenderTargetArray = std::array<std::shared_ptr<RenderTargetView>, kMaxRenderTargetCount>;
 
         RenderTargetGroup();
         virtual ~RenderTargetGroup() override;
 
         void SetRenderTargets(const RenderTargetArray& rtv_arr);
-        void SetDepthStencilView(s_ptr<DepthStencilView> dsv) { dsv_ = std::move(dsv); }
+        void SetDepthStencilView(std::shared_ptr<DepthStencilView> dsv) { dsv_ = std::move(dsv); }
 
 		// start_slot으로부터 8장의 RenderTargetView를 동시에 바인딩함.
 		void BindShaderResourceViews(ID3D11DeviceContext* context, ShaderStageFlags stage_flags, RegisterT start_slot);
@@ -52,7 +52,7 @@ namespace engine
 
     private:
         RenderTargetArray render_target_buffers_ = {};
-        s_ptr<DepthStencilView> dsv_ = {};
+        std::shared_ptr<DepthStencilView> dsv_ = {};
 
         D3D11_VIEWPORT viewport_ = {};
 

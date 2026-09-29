@@ -42,42 +42,42 @@ namespace engine
 		bool IsInstancingSupported() const { return is_instancing_supported_; }
 
         bool SetVertexShader(const HashedStringView& vs_name);
-        void SetVertexShader(s_ptr<VertexShader> vertex_shader);
+        void SetVertexShader(std::shared_ptr<VertexShader> vertex_shader);
 
         bool CreateInputLayout(const HashedStringView& layout_desc_name);
         bool CreateInputLayout(InputLayoutDesc* input_layout_desc);
 
         bool SetPixelShader(const HashedStringView& ps_name);
-        void SetPixelShader(s_ptr<PixelShader> pixel_shader) {
+        void SetPixelShader(std::shared_ptr<PixelShader> pixel_shader) {
 			pixel_shader_ = std::move(pixel_shader);
         }
 
         bool SetRasterizerState(const HashedStringView& rss_name);
-        void SetRasterizerState(s_ptr<RasterizerState> rss) {
+        void SetRasterizerState(std::shared_ptr<RasterizerState> rss) {
 			rasterizer_state_ = std::move(rss);
         }
 
         bool SetBlendState(const HashedStringView& bs_name);
-        void SetBlendState(s_ptr<BlendState> bs) {
+        void SetBlendState(std::shared_ptr<BlendState> bs) {
 			blend_state_ = std::move(bs);
         }
 
         bool SetDepthStencilState(const HashedStringView& ds_name);
-        void SetDepthStencilState(s_ptr<DepthStencilState> dss) {
+        void SetDepthStencilState(std::shared_ptr<DepthStencilState> dss) {
 			depth_stencil_state_ = std::move(dss);
         }
 
         void Bind(ID3D11DeviceContext* context);
 		static void Clear(ID3D11DeviceContext* context);
 
-        void AddConstantBufferBinding(ShaderStageFlags stage_flag, RegisterB slot, s_ptr<ConstantBuffer> constant_buffer) {
+        void AddConstantBufferBinding(ShaderStageFlags stage_flag, RegisterB slot, std::shared_ptr<ConstantBuffer> constant_buffer) {
 			per_pipeline_buffer_binding_table_.AddConstantBuffer(stage_flag, slot, constant_buffer);
         }
         void RemoveConstantBufferBinding(RegisterB slot) {
 			per_pipeline_buffer_binding_table_.RemoveConstantBuffer(slot);
         }
 
-		void AddShaderResourceBinding(ShaderStageFlags stage_flag, RegisterT slot, s_ptr<ShaderResource> shader_resource) {
+		void AddShaderResourceBinding(ShaderStageFlags stage_flag, RegisterT slot, std::shared_ptr<ShaderResource> shader_resource) {
 			per_pipeline_buffer_binding_table_.AddShaderResource(stage_flag, slot, shader_resource);
 		}
         void RemoveShaderResourceBinding(RegisterT slot) {
@@ -87,13 +87,13 @@ namespace engine
     private:
         ComPtr<ID3D11InputLayout> input_layout_ = {};
 
-        s_ptr<VertexShader> vertex_shader_ = {};
-        s_ptr<PixelShader> pixel_shader_ = {};
+        std::shared_ptr<VertexShader> vertex_shader_ = {};
+        std::shared_ptr<PixelShader> pixel_shader_ = {};
         
-        s_ptr<RasterizerState> rasterizer_state_ = {};
-        s_ptr<BlendState> blend_state_ = {};
+        std::shared_ptr<RasterizerState> rasterizer_state_ = {};
+        std::shared_ptr<BlendState> blend_state_ = {};
 
-        s_ptr<DepthStencilState> depth_stencil_state_ = {};
+        std::shared_ptr<DepthStencilState> depth_stencil_state_ = {};
 
         // Per Pipeline State
         GPUBufferBindingTable per_pipeline_buffer_binding_table_;

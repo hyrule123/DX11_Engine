@@ -227,7 +227,6 @@
     <ClInclude Include="Render\RenderTypes.h" />
     <ClInclude Include="Util\IDAllocator.h" />
     <ClInclude Include="Util\GPUBufferBindingTable.h" />
-    <ClInclude Include="Util\DX11UtilFuncs.h" />
     <ClInclude Include="Resource\GPU\Buffer\ShaderResource.h" />
     <ClInclude Include="Resource\GPU\Shader\ComputePass.h" />
     <ClInclude Include="Resource\GPU\Shader\ComputeShader.h" />
@@ -314,7 +313,6 @@
     <ClCompile Include="Core\Detail\EngineLog.cpp" />
     <ClCompile Include="Render\Culling.cpp" />
     <ClCompile Include="Util\GPUBufferBindingTable.cpp" />
-    <ClCompile Include="Util\DX11UtilFuncs.cpp" />
     <ClCompile Include="Resource\GPU\Shader\ComputePass.cpp" />
     <ClCompile Include="Resource\GPU\Shader\ComputeShader.cpp" />
     <ClCompile Include="Core\HandlePointer.cpp" />

@@ -9,9 +9,9 @@
 
 namespace engine
 {
-	namespace Vertex
+	namespace vertex
 	{
-		namespace DebugDraw
+		namespace debug_draw
 		{
 			using Vertex = DebugVSInput;
 
@@ -44,7 +44,7 @@ namespace engine
 		}
 
 
-		namespace Standard2D
+		namespace standard_2d
 		{
 			using Vertex = SpriteVSInput;
 

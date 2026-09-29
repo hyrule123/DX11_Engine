@@ -165,7 +165,7 @@ namespace engine
 
 	StructuredBuffer* RenderManager::AcquireInstanceBuffer(uint32 byte_stride, uint32 elem_count)
 	{
-		u_ptr<StructuredBuffer>& buffer = instance_buffer_per_stride_[byte_stride];
+		std::unique_ptr<StructuredBuffer>& buffer = instance_buffer_per_stride_[byte_stride];
 
 		if (buffer == nullptr)
 		{
@@ -311,16 +311,16 @@ namespace engine
 		ASSERT(result);
 
 #pragma region //INPUT LAYOUT DESC
-		s_ptr<InputLayoutDesc> input_layout_desc = EntityManager::CreateEntity<InputLayoutDesc>();
+		std::shared_ptr<InputLayoutDesc> input_layout_desc = EntityManager::CreateEntity<InputLayoutDesc>();
 
-		for (const auto& desc : Vertex::DebugDraw::kInputLayoutDescs)
+		for (const auto& desc : vertex::debug_draw::kInputLayoutDescs)
 		{
 			input_layout_desc->AddLayoutDesc(desc);
 		}
 #pragma endregion //INPUT LAYOUT DESC
 
 		//Debug DSS
-		s_ptr<DepthStencilState> dss = EntityManager::CreateEntity<DepthStencilState>();
+		std::shared_ptr<DepthStencilState> dss = EntityManager::CreateEntity<DepthStencilState>();
 
 		// 1. Depth Stencil Desc 구조체 선언 및 초기화
 		D3D11_DEPTH_STENCIL_DESC dss_desc = {};
@@ -347,7 +347,7 @@ namespace engine
 
 			//Mesh
 			//VERTEX BUFFER
-			std::vector<Vertex::DebugDraw::Vertex> vertices;
+			std::vector<vertex::debug_draw::Vertex> vertices;
 			vertices.resize(4);
 			vertices[0].position = { -0.5f, 0.5f, 0.0f };
 			vertices[1].position = { 0.5f, 0.5f, 0.0f };
@@ -379,10 +379,10 @@ namespace engine
 			debug_circle_mesh_ = EntityManager::CreateEntity<Mesh>();
 
 			//Mesh
-			std::vector<Vertex::DebugDraw::Vertex> vertices;
+			std::vector<vertex::debug_draw::Vertex> vertices;
 			std::vector<uint16> indices;
 
-			Vertex::DebugDraw::Vertex v;
+			vertex::debug_draw::Vertex v;
 			//v.position = { 0.0f, 0.0f, 0.0f };	//중심점
 			//vertices.push_back(v);
 
@@ -413,9 +413,9 @@ namespace engine
 		debug_shader_set_->SetInstancingSupport(true);
 		debug_shader_set_->SetPerInstanceDataStride(sizeof(SpriteInstanceData));
 		//Shaders
-		debug_shader_set_->SetVertexShader("Shader/DebugDraw_VS.cso"_hash);
+		debug_shader_set_->SetVertexShader("Shader/DebugDraw_VS.cso");
 		debug_shader_set_->CreateInputLayout(input_layout_desc.get());
-		debug_shader_set_->SetPixelShader("Shader/DebugDraw_PS.cso"_hash);
+		debug_shader_set_->SetPixelShader("Shader/DebugDraw_PS.cso");
 		debug_shader_set_->SetDepthStencilState(dss);
 #pragma endregion // GRAPHICS SHADER SET
 	}

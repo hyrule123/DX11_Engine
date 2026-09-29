@@ -35,8 +35,8 @@ namespace engine
 		auto& res_mgr = ResourceManager::GetInst();
 		auto device = GraphicsDevice::GetInst().GetDevice();
 		{
-			s_ptr<RasterizerState> rss = EntityManager::CreateEntity<RasterizerState>();
-			res_mgr.AddResource("RSS_Solid_Back"_hash, rss);
+			std::shared_ptr<RasterizerState> rss = EntityManager::CreateEntity<RasterizerState>();
+			res_mgr.AddResource("RSS_Solid_Back", rss);
 			res_mgr.SetDefaultResource(rss);
 
 			// 구조체 초기화
@@ -58,8 +58,8 @@ namespace engine
 		}
 
 		{
-			s_ptr<RasterizerState> rss_wireframe = EntityManager::CreateEntity<RasterizerState>();
-			res_mgr.AddResource("RSS_WireFrame"_hash, rss_wireframe);
+			std::shared_ptr<RasterizerState> rss_wireframe = EntityManager::CreateEntity<RasterizerState>();
+			res_mgr.AddResource("RSS_WireFrame", rss_wireframe);
 			res_mgr.SetDefaultResource(rss_wireframe);
 
 			// 구조체 초기화
@@ -86,8 +86,8 @@ namespace engine
 		auto device = GraphicsDevice::GetInst().GetDevice();
 
 		{//Default DSS
-			s_ptr<DepthStencilState> dss = EntityManager::CreateEntity<DepthStencilState>();
-			ResourceManager::GetInst().AddResource("DSS_Default"_hash, dss);
+			std::shared_ptr<DepthStencilState> dss = EntityManager::CreateEntity<DepthStencilState>();
+			ResourceManager::GetInst().AddResource("DSS_Default", dss);
 			ResourceManager::GetInst().SetDefaultResource(dss);
 
 			// 1. Depth Stencil Desc 구조체 선언 및 초기화
@@ -124,23 +124,23 @@ namespace engine
 		auto device = GraphicsDevice::GetInst().GetDevice();
 
 #pragma region //INPUT LAYOUT DESC
-		s_ptr<InputLayoutDesc> input_layout_desc = EntityManager::CreateEntity<InputLayoutDesc>();
-		for (const auto& desc : Vertex::Standard2D::kInputLayoutDescs)
+		std::shared_ptr<InputLayoutDesc> input_layout_desc = EntityManager::CreateEntity<InputLayoutDesc>();
+		for (const auto& desc : vertex::standard_2d::kInputLayoutDescs)
 		{
 			input_layout_desc->AddLayoutDesc(desc);
 		}
-		resmgr.AddResource("InputLayoutDesc_Standard2D"_hash, input_layout_desc);
+		resmgr.AddResource("InputLayoutDesc_Standard2D", input_layout_desc);
 		resmgr.SetDefaultResource(input_layout_desc);
 #pragma endregion //INPUT LAYOUT DESC
 
 #pragma region //MESH
 		{
-			s_ptr<Mesh> mesh = EntityManager::CreateEntity<Mesh>();
-			resmgr.AddResource("Mesh_Standard2D_Rect"_hash, mesh);
+			std::shared_ptr<Mesh> mesh = EntityManager::CreateEntity<Mesh>();
+			resmgr.AddResource("Mesh_Standard2D_Rect", mesh);
 			resmgr.SetDefaultResource(mesh);
 
 			//VERTEX BUFFER
-			std::vector<Vertex::Standard2D::Vertex> vertices;
+			std::vector<vertex::standard_2d::Vertex> vertices;
 			vertices.resize(4);
 			vertices[0].position = { -0.5f, 0.5f, 0.0f };
 			vertices[1].position = { 0.5f, 0.5f, 0.0f };
@@ -169,23 +169,23 @@ namespace engine
 #pragma endregion //MESH
 		
 #pragma region //GRAPHICS SHADER SET
-		s_ptr<PipelineState> shaderset = EntityManager::CreateEntity<PipelineState>();
+		std::shared_ptr<PipelineState> shaderset = EntityManager::CreateEntity<PipelineState>();
 		
 		shaderset->SetInstancingSupport(true);
 		shaderset->SetPerInstanceDataStride(sizeof(SpriteInstanceData));
-		shaderset->SetVertexShader("Shader/Sprite_VS.cso"_hash);
-		shaderset->CreateInputLayout("InputLayoutDesc_Standard2D"_hash);
-		shaderset->SetPixelShader("Shader/Sprite_PS.cso"_hash);
-		shaderset->SetDepthStencilState("DSS_Default"_hash);
-		shaderset->SetRasterizerState("RSS_Solid_Back"_hash);
+		shaderset->SetVertexShader("Shader/Sprite_VS.cso");
+		shaderset->CreateInputLayout("InputLayoutDesc_Standard2D");
+		shaderset->SetPixelShader("Shader/Sprite_PS.cso");
+		shaderset->SetDepthStencilState("DSS_Default");
+		shaderset->SetRasterizerState("RSS_Solid_Back");
 
-		resmgr.AddResource("GraphicsShaderSet_Sprite"_hash, shaderset);
+		resmgr.AddResource("GraphicsShaderSet_Sprite", shaderset);
 		resmgr.SetDefaultResource(shaderset);
 
 		//MATERIAL
-		s_ptr<Material> material = EntityManager::CreateEntity<Material>();
+		std::shared_ptr<Material> material = EntityManager::CreateEntity<Material>();
 		material->SetPipelineState(RenderPassOrder::ForwardOpaque, shaderset);
-		resmgr.AddResource("Material_Sprite"_hash, material);
+		resmgr.AddResource("Material_Sprite", material);
 		resmgr.SetDefaultResource(material);
 	}
 }

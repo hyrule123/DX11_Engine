@@ -47,7 +47,7 @@ namespace engine
 
 	bool Renderer::SetMesh(const HashedStringView& mesh_name)
 	{
-		s_ptr<Mesh> mesh = ResourceManager::GetInst().Find<Mesh>(mesh_name);
+		std::shared_ptr<Mesh> mesh = ResourceManager::GetInst().Find<Mesh>(mesh_name);
 		if (mesh)
 		{
 			SetMesh(mesh);
@@ -56,7 +56,7 @@ namespace engine
 		return false;
 	}
 
-	void Renderer::SetMesh(s_ptr<Mesh> mesh)
+	void Renderer::SetMesh(std::shared_ptr<Mesh> mesh)
 	{
 		mesh_ = std::move(mesh);
 		materials_.clear();
@@ -68,7 +68,7 @@ namespace engine
 		BuildSubMeshRenderData();
 	}
 
-	bool Renderer::SetMaterial(size_t submesh_idx, s_ptr<Material> material)
+	bool Renderer::SetMaterial(size_t submesh_idx, std::shared_ptr<Material> material)
 	{
 		if (mesh_ == nullptr)
 		{
@@ -90,7 +90,7 @@ namespace engine
 
 	bool Renderer::SetMaterial(size_t submesh_idx, const HashedStringView& mtrl_name)
 	{
-		s_ptr<Material> material = ResourceManager::GetInst().Find<Material>(mtrl_name);
+		std::shared_ptr<Material> material = ResourceManager::GetInst().Find<Material>(mtrl_name);
 		if (material)
 		{
 			SetMaterial(submesh_idx, material);

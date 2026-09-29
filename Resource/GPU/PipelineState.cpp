@@ -35,7 +35,7 @@ namespace engine
 		vertex_shader_ = ResourceManager::GetInst().LoadFromFile<VertexShader>(vs_name);
 		return (bool)vertex_shader_;
 	}
-	void PipelineState::SetVertexShader(s_ptr<VertexShader> vertex_shader)
+	void PipelineState::SetVertexShader(std::shared_ptr<VertexShader> vertex_shader)
 	{
 		if (!vertex_shader || !vertex_shader->IsReady())
 		{
@@ -46,7 +46,7 @@ namespace engine
 	}
 	bool PipelineState::CreateInputLayout(const HashedStringView& layout_name)
 	{
-		s_ptr<InputLayoutDesc> desc = ResourceManager::GetInst().Find<InputLayoutDesc>(layout_name);
+		std::shared_ptr<InputLayoutDesc> desc = ResourceManager::GetInst().Find<InputLayoutDesc>(layout_name);
 		return CreateInputLayout(desc.get());
 	}
 

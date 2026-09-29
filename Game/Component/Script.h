@@ -16,7 +16,7 @@ namespace engine
         virtual void Init() override {}
 
         template <typename T>
-        s_ptr<T> AddComponent() {
+        std::shared_ptr<T> AddComponent() {
             return GetOwnerGameObject()->AddComponent<T>();
         }
     };

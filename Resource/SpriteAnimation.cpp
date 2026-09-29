@@ -13,7 +13,7 @@ namespace engine
 	{}
 	SpriteAnimation::~SpriteAnimation()
 	{}
-	void SpriteAnimation::AddAnimationClip(const HashedStringView& name, u_ptr<SpriteAnimClip> anim_clip)
+	void SpriteAnimation::AddAnimationClip(const HashedStringView& name, std::unique_ptr<SpriteAnimClip> anim_clip)
 	{
 		ASSERT(!!sprite_);
 		ASSERT(name.GetStringView().size() > 0);

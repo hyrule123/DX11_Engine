@@ -28,7 +28,7 @@ namespace engine
 
 		RenderPassOrder GetPassOrder() const { return pass_order_; }
 
-		void SetRenderTargetGroup(s_ptr<RenderTargetGroup> rt_group) { 
+		void SetRenderTargetGroup(std::shared_ptr<RenderTargetGroup> rt_group) { 
 			render_target_group_ = std::move(rt_group); 
 		}
 		void BindRenderTargetGroup(ID3D11DeviceContext* context);
@@ -57,7 +57,7 @@ namespace engine
 		RenderTargetGroup* GetRenderTargetGroup() const { return render_target_group_.get(); }
 
 		RenderPassOrder pass_order_;
-		s_ptr<RenderTargetGroup> render_target_group_ = {};
+		std::shared_ptr<RenderTargetGroup> render_target_group_ = {};
 
 		std::vector<RendererInfo2D> registered_renderers_ = {};
 	};

@@ -147,7 +147,7 @@ namespace engine
         enable_handle_from_this(enable_handle_from_this&&) = delete;
         enable_handle_from_this& operator=(enable_handle_from_this&&) = delete;
 
-        //포인터는 즉시 삭제되지 않지만, wh_ptr 참조는 불가능
+        //포인터는 즉시 삭제되지 않지만, weak_handle_ptr 참조는 불가능
         void InvalidateHandle() {
             if (handle_.IsValid())
             {

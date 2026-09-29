@@ -125,7 +125,7 @@ namespace engine
 
 #pragma region RTV
 		//RTV 생성
-		s_ptr<RenderTargetView> rt = EntityManager::CreateEntity<RenderTargetView>();
+		std::shared_ptr<RenderTargetView> rt = EntityManager::CreateEntity<RenderTargetView>();
 
 		bool result = rt->CreateForSwapchain(swap_chain_);
 		if (!result)
@@ -138,7 +138,7 @@ namespace engine
 
 #pragma region DSV
 		//DSV 생성
-		s_ptr<DepthStencilView> dsv = EntityManager::CreateEntity<DepthStencilView>();
+		std::shared_ptr<DepthStencilView> dsv = EntityManager::CreateEntity<DepthStencilView>();
 		D3D11_TEXTURE2D_DESC depth_buffer_desc = {};
 		depth_buffer_desc.Width = resolution_width;            // RTV의 가로 크기와 완전히 일치해야 합니다.
 		depth_buffer_desc.Height = resolution_height;          // RTV의 세로 크기와 완전히 일치해야 합니다.

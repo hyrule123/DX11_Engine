@@ -27,8 +27,8 @@ namespace engine
         Texture2D(const HashedStringView& concrete_class_name);
         virtual ~Texture2D() override;
 
-        virtual bool LoadFromFile(const stdfs::path& res_path) override;
-		bool SaveToFile(const stdfs::path& res_path);
+        virtual bool LoadFromFile(const std::filesystem::path& res_path) override;
+		bool SaveToFile(const std::filesystem::path& res_path);
 
         void BindSRV(
             ID3D11DeviceContext* context, 
@@ -76,7 +76,7 @@ namespace engine
             height_ = height;
         }
 
-        s_ptr<DirectX::ScratchImage> LoadScratchImageFromFile(const stdfs::path& res_path);
+        std::shared_ptr<DirectX::ScratchImage> LoadScratchImageFromFile(const std::filesystem::path& res_path);
     private:
 		ComPtr<ID3D11Texture2D> CreateTexture2DImpl(
 			D3D11_TEXTURE2D_DESC* desc,

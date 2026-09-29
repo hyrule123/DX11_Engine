@@ -19,11 +19,11 @@ namespace engine
 
         bool IsReady() const { return !!sprite_; }
 
-        s_ptr<Texture2DArray> GetSprite() const { return sprite_; }
+        std::shared_ptr<Texture2DArray> GetSprite() const { return sprite_; }
 
-        void SetSprite(s_ptr<Texture2DArray> sprite) { sprite_ = std::move(sprite); }
+        void SetSprite(std::shared_ptr<Texture2DArray> sprite) { sprite_ = std::move(sprite); }
 
-        void AddAnimationClip(const HashedStringView& name, u_ptr<SpriteAnimClip> anim_clip);
+        void AddAnimationClip(const HashedStringView& name, std::unique_ptr<SpriteAnimClip> anim_clip);
 
         SpriteAnimClip* GetAnimationClip(const HashedStringView& anim_name) const;
 
@@ -33,8 +33,8 @@ namespace engine
 		}
 
     private:
-        s_ptr<Texture2DArray> sprite_ = {};
-        StringHashTable<u_ptr<SpriteAnimClip>> anim_clips_ = {};
+        std::shared_ptr<Texture2DArray> sprite_ = {};
+        StringHashTable<std::unique_ptr<SpriteAnimClip>> anim_clips_ = {};
 		std::unordered_set<SpriteAnimClip*> anim_clip_ptrs_ = {};
     };
 }

@@ -14,7 +14,7 @@ namespace engine
 		void Init();
 
 	public:
-		void ChangeScene(u_ptr<Scene> scene);
+		void ChangeScene(std::unique_ptr<Scene> scene);
 		void ChangeScene(const HashedStringView& concrete_class_name);
 
 		void FrameStart();
@@ -26,7 +26,7 @@ namespace engine
 		void ChangeSceneNow();
 
 	private:
-		u_ptr<Scene> cur_scene_;
-		u_ptr<Scene> next_scene_;
+		std::unique_ptr<Scene> cur_scene_;
+		std::unique_ptr<Scene> next_scene_;
 	};
 }

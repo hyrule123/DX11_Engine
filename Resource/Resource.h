@@ -16,6 +16,6 @@ namespace engine
 		Resource(const HashedStringView& concrete_class_name);
 		virtual ~Resource() override;
 
-		virtual bool LoadFromFile(const stdfs::path& path) { return true; }
+		virtual bool LoadFromFile(const std::filesystem::path& path) { return true; }
 	};
 }

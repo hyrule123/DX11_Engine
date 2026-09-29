@@ -4,22 +4,20 @@
 #include <unordered_map>
 #include <string>
 
+/* Standard integer types */
+using int8 = std::int8_t;
+using int16 = std::int16_t;
+using int32 = std::int32_t;
+using int64 = std::int64_t;
+using uint8 = std::uint8_t;
+using uint16 = std::uint16_t;
+using uint32 = std::uint32_t;
+using uint64 = std::uint64_t;
+
 namespace engine
 {
-	/* Standard integer types */
-	using int8 = std::int8_t;
-	using int16 = std::int16_t;
-	using int32 = std::int32_t;
-	using int64 = std::int64_t;
-	using uint8 = std::uint8_t;
-	using uint16 = std::uint16_t;
-	using uint32 = std::uint32_t;
-	using uint64 = std::uint64_t;
-
 	struct int32_2 { int32 x, y; };
 	struct uint32_2 { uint32 x, y; };
-
-
 
 	struct DataBlock
 	{

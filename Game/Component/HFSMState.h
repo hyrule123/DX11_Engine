@@ -26,7 +26,7 @@ namespace engine
         virtual void OnUpdate(const AIContext& ai_context) {};
 		virtual void OnExit(const AIContext& ai_context) {};
 
-		virtual HashedStringView CheckTransition(const AIContext& ai_context) { return ""_hash; }
+		virtual HashedStringView CheckTransition(const AIContext& ai_context) { return {}; }
 
         void SetParentState(HFSMState* parent_state);
 		HFSMState* GetParentState() const { return parent_state_; }
@@ -53,7 +53,7 @@ namespace engine
 
 		std::vector<HFSMState*> ancestor_states_ = {};
 
-		HashedString state_name_ = ""_hash;
+		HashedString state_name_ = {};
     };
 }
 

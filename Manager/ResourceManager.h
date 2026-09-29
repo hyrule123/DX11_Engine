@@ -16,12 +16,12 @@ namespace engine
 		friend class GameEngine;
 
 	public:
-		s_ptr<Resource> Find(const HashedStringView& res_key);
+		std::shared_ptr<Resource> Find(const HashedStringView& res_key);
 
 		template <typename T>
-		s_ptr<T> Find(const HashedStringView& res_key)
+		std::shared_ptr<T> Find(const HashedStringView& res_key)
 		{
-			s_ptr<Resource> result = Find(res_key);
+			std::shared_ptr<Resource> result = Find(res_key);
 			if (result)
 			{
 				return std::dynamic_pointer_cast<T>(result);
@@ -30,9 +30,9 @@ namespace engine
 		}
 
 		template <typename T>
-		s_ptr<T> LoadFromFile(const HashedStringView& res_key)
+		std::shared_ptr<T> LoadFromFile(const HashedStringView& res_key)
 		{
-			s_ptr<T> resource = Find<T>(res_key);
+			std::shared_ptr<T> resource = Find<T>(res_key);
 			if (resource) { return resource; }
 			resource = LoadFromFileWithoutAdd<T>(res_key);
 			if (resource) 
@@ -43,10 +43,10 @@ namespace engine
 		}
 
 		template <typename T>
-		s_ptr<T> LoadFromFileWithoutAdd(const HashedStringView& res_key)
+		std::shared_ptr<T> LoadFromFileWithoutAdd(const HashedStringView& res_key)
 		{
 			static_assert(std::is_base_of_v<Resource, T>, "T must be derived from Resource");
-			s_ptr<T> resource = EntityManager::CreateEntity<T>();
+			std::shared_ptr<T> resource = EntityManager::CreateEntity<T>();
 			if (false == resource->LoadFromFile(resource_dir_ / res_key.GetStringView()))
 			{
 				return nullptr;
@@ -54,26 +54,26 @@ namespace engine
 			return resource;
 		}
 
-		bool AddResource(const HashedStringView& res_key, s_ptr<Resource> resource);
+		bool AddResource(const HashedStringView& res_key, std::shared_ptr<Resource> resource);
 
-		void SetDefaultResource(s_ptr<Resource> resource)
+		void SetDefaultResource(std::shared_ptr<Resource> resource)
 		{
 			default_resources_.insert(resource);
 		}
 
-		const stdfs::path& GetProgramPath() const { return program_path_; }
-		const stdfs::path& GetResourceDir() const { return resource_dir_; }
+		const std::filesystem::path& GetProgramPath() const { return program_path_; }
+		const std::filesystem::path& GetResourceDir() const { return resource_dir_; }
 
 	private:
 		bool Init();
 		void LoadDefaultResources();
 
 	private:
-		StringHashTable<s_ptr<Resource>> resources_;
-		std::unordered_set<s_ptr<Resource>> default_resources_;
+		StringHashTable<std::shared_ptr<Resource>> resources_;
+		std::unordered_set<std::shared_ptr<Resource>> default_resources_;
 
-		stdfs::path program_path_ = {};
-		stdfs::path resource_dir_ = {};
+		std::filesystem::path program_path_ = {};
+		std::filesystem::path resource_dir_ = {};
 	};
 }
 

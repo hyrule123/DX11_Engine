@@ -6,7 +6,7 @@
 
 #define COMPONENT_CATEGORY(component_category) \
 public: \
-constexpr static ComponentCategory kComponentCategory = component_category;
+constexpr static ::engine::ComponentCategory kComponentCategory = component_category;
 
 namespace engine
 {

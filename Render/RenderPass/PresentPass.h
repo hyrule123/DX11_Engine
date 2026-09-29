@@ -22,14 +22,14 @@ namespace engine
 		bool IsSet() const { return src_render_target_ != nullptr; }
 		
 		//복사 원본
-		void SetSourceRenderTarget(s_ptr<RenderTargetGroup> rt_group) {
+		void SetSourceRenderTarget(std::shared_ptr<RenderTargetGroup> rt_group) {
 			src_render_target_ = std::move(rt_group);
 		}
 
     private:
-		u_ptr<Mesh> mesh_ = {};
-		u_ptr<PipelineState> shader_set_ = {};
-		s_ptr<RenderTargetGroup> src_render_target_ = {};
+		std::unique_ptr<Mesh> mesh_ = {};
+		std::unique_ptr<PipelineState> shader_set_ = {};
+		std::shared_ptr<RenderTargetGroup> src_render_target_ = {};
     };
 }
 

@@ -38,13 +38,13 @@ namespace engine
 	{
 		ShaderStageFlags stage_flag = {};
 		uint32 slot = 0u;
-		s_ptr<ConstantBuffer> constant_buffer = {};
+		std::shared_ptr<ConstantBuffer> constant_buffer = {};
 	};
 	struct ShaderResourceBindingInfo
 	{
 		ShaderStageFlags stage_flag = {};
 		uint32 slot = 0u;
-		s_ptr<ShaderResource> shader_resource = {};
+		std::shared_ptr<ShaderResource> shader_resource = {};
 	};
 }
 

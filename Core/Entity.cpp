@@ -19,7 +19,7 @@ namespace engine
 	EntityManager::EntityManager() {}
 	EntityManager::~EntityManager() {}
 
-	u_ptr<Entity> EntityManager::CreateEntity(const HashedStringView& key)
+	std::unique_ptr<Entity> EntityManager::CreateEntity(const HashedStringView& key)
 	{
 		auto it = entity_creator_table_.find(key);
 		if (it != entity_creator_table_.end())

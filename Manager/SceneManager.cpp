@@ -17,7 +17,7 @@ namespace engine
 
 	}
 
-	void SceneManager::ChangeScene(u_ptr<Scene> scene)
+	void SceneManager::ChangeScene(std::unique_ptr<Scene> scene)
 	{
 		next_scene_ = std::move(scene);
 
@@ -31,7 +31,7 @@ namespace engine
 	}
 	void SceneManager::ChangeScene(const HashedStringView& concrete_class_name)
 	{
-		u_ptr<Scene> scene = EntityManager::GetInst().CreateEntityAs<Scene>(concrete_class_name);
+		std::unique_ptr<Scene> scene = EntityManager::GetInst().CreateEntityAs<Scene>(concrete_class_name);
 		ASSERT(scene);
 		ChangeScene(std::move(scene));
 	}

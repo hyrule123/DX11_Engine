@@ -25,7 +25,7 @@ namespace engine
 		virtual void Awake() override;
 		virtual void Update() override;
 
-		HFSMState* AddState(const HashedStringView& state_name, u_ptr<HFSMState> state);
+		HFSMState* AddState(const HashedStringView& state_name, std::unique_ptr<HFSMState> state);
 
 		void SetRootState(HFSMState* root_state) { root_ = root_state; }
 
@@ -39,13 +39,13 @@ namespace engine
 		void ValidateStates() const;
 		void ChangeState(const HashedStringView& state_name);
 
-		StringHashTable<u_ptr<HFSMState>> states_ = {};
+		StringHashTable<std::unique_ptr<HFSMState>> states_ = {};
 
 		HFSMState* root_ = {};
 
 		HFSMState* current_state_ = {};
 
-		wh_ptr<BlackBoard> blackboard_ = {};
+		weak_handle_ptr<BlackBoard> blackboard_ = {};
 
 		AIContext ai_context_ = {};
     };

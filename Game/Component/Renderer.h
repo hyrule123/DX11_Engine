@@ -40,15 +40,15 @@ namespace engine
 		size_t GetSubMeshCount() const { return materials_.size(); }
 
         // Mesh 먼저 설정할 것. 그래야 SubMesh 개수를 알 수 있음
-        void SetMesh(s_ptr<Mesh> mesh);
+        void SetMesh(std::shared_ptr<Mesh> mesh);
         bool SetMesh(const HashedStringView& mesh_name);
-        bool SetMaterial(size_t submesh_idx, s_ptr<Material> material);
+        bool SetMaterial(size_t submesh_idx, std::shared_ptr<Material> material);
         bool SetMaterial(size_t submesh_idx, const HashedStringView& mtrl_name);
 
         bool IsRenderReady() const { return (!materials_.empty() && mesh_); }
 
         Material* GetMaterial(size_t submesh_idx) const { return (submesh_idx < materials_.size()) ? materials_.at(submesh_idx).get() : nullptr; }
-		const std::vector<s_ptr<Material>>& GetMaterials() const { return materials_; }
+		const std::vector<std::shared_ptr<Material>>& GetMaterials() const { return materials_; }
 
         Mesh* GetMesh() const { return mesh_.get(); }
 
@@ -76,8 +76,8 @@ namespace engine
     private:
         Transform* my_transform_ = {};
 
-		std::vector<s_ptr<Material>> materials_ = {};
-        s_ptr<Mesh> mesh_ = {};
+		std::vector<std::shared_ptr<Material>> materials_ = {};
+        std::shared_ptr<Mesh> mesh_ = {};
 
         std::array<uint32, (size_t)RenderPassOrder::kCount> renderer_slots_; // RendererManager에서 발급(Pass 별), MAX로 초기화
         std::vector<SubMeshRenderData> submesh_render_data_;

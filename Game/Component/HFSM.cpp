@@ -23,8 +23,8 @@ namespace engine
 		blackboard_ = GetOwnerGameObject()->GetComponent<BlackBoard>();
 		ASSERT(blackboard_.get());
 
-		wh_ptr<Component> com = blackboard_;
-		wh_ptr<BlackBoard> bb = static_handle_cast<BlackBoard>(com);
+		weak_handle_ptr<Component> com = blackboard_;
+		weak_handle_ptr<BlackBoard> bb = static_handle_cast<BlackBoard>(com);
 
 		int tst = bb.get()->GetTest();
 
@@ -54,7 +54,7 @@ namespace engine
 		{
 			const auto& ancestors = current_state_->GetAncestorStates();
 
-			HashedStringView next_state_name = ""_hash;
+			HashedStringView next_state_name = "";
 
 			for (HFSMState* state : ancestors)
 			{
@@ -79,7 +79,7 @@ namespace engine
 		}
 	}
 
-	HFSMState* HFSM::AddState(const HashedStringView& state_name, u_ptr<HFSMState> state)
+	HFSMState* HFSM::AddState(const HashedStringView& state_name, std::unique_ptr<HFSMState> state)
 	{
 		ASSERT(false == state_name.IsEmpty());
 		ASSERT(state);

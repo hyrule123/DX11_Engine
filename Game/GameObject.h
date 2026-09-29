@@ -38,7 +38,7 @@ namespace engine
 		void Update();
 		void FixedUpdate();
 		void LateUpdate();
-		void FrameEnd(std::vector<u_ptr<SceneEntity>>& graveyard);	// Component 제거
+		void FrameEnd(std::vector<std::unique_ptr<SceneEntity>>& graveyard);	// Component 제거
 		
 		Component* AddComponent(const HashedStringView& concrete_class_name);
 
@@ -88,14 +88,14 @@ namespace engine
 		void BroadcastTriggerExit2D(Collider2D* other);
 
 	private:
-		Component* AddComponent(u_ptr<Component> component);
+		Component* AddComponent(std::unique_ptr<Component> component);
 
 		void UpdateHierarchyState(bool is_active_in_hierarchy);
 
 		Scene* owner_scene_ = {};
 
-		std::array<u_ptr<Component>, (size_t)ComponentCategory::kEnd> fixed_order_components_ = {};
-		std::vector<u_ptr<Component>> other_components_ = {};
+		std::array<std::unique_ptr<Component>, (size_t)ComponentCategory::kEnd> fixed_order_components_ = {};
+		std::vector<std::unique_ptr<Component>> other_components_ = {};
 		Transform* transform_ = {};
 
 		std::string name_ = {};

@@ -20,7 +20,7 @@ namespace engine
 		CHECK_F((uint64)srv_slot_start_ + (uint64)srv_slot_count_ <= (uint64)D3D11_COMMONSHADER_INPUT_RESOURCE_SLOT_COUNT, "srv_slot_count가 D3D11 입력 리소스 슬롯 수를 초과합니다.");
 	}
 
-	void GPUBufferBindingTable::AddConstantBuffer(ShaderStageFlags stage_flag, RegisterB slot, s_ptr<ConstantBuffer> buffer)
+	void GPUBufferBindingTable::AddConstantBuffer(ShaderStageFlags stage_flag, RegisterB slot, std::shared_ptr<ConstantBuffer> buffer)
 	{
 		const uint32 idx = slot.Get() - cb_slot_start_;
 		if (slot.Get() < cb_slot_start_ || idx >= cb_slot_count_)
@@ -75,7 +75,7 @@ namespace engine
 		}
 	}
 
-	void GPUBufferBindingTable::AddShaderResource(ShaderStageFlags stage_flag, RegisterT slot, s_ptr<ShaderResource> buffer)
+	void GPUBufferBindingTable::AddShaderResource(ShaderStageFlags stage_flag, RegisterT slot, std::shared_ptr<ShaderResource> buffer)
 	{
 		const uint32 idx = slot.Get() - srv_slot_start_;
 		if (slot.Get() < srv_slot_start_ || idx >= srv_slot_count_)

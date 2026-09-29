@@ -35,7 +35,7 @@ namespace engine
 
 	Texture2D::~Texture2D()
 	{}
-	bool Texture2D::LoadFromFile(const stdfs::path& res_path)
+	bool Texture2D::LoadFromFile(const std::filesystem::path& res_path)
 	{
 		if (false == Super::LoadFromFile(res_path)) { return false; }
 
@@ -45,7 +45,7 @@ namespace engine
 			return false; 
 		}
 
-		s_ptr<DirectX::ScratchImage> img = LoadScratchImageFromFile(res_path);
+		std::shared_ptr<DirectX::ScratchImage> img = LoadScratchImageFromFile(res_path);
 
 		// 메타데이터 저장 (클래스 멤버 변수로 선언되어 있다고 가정)
 		const DirectX::TexMetadata& meta = img->GetMetadata();
@@ -78,7 +78,7 @@ namespace engine
 		return true;
 	}
 
-	bool Texture2D::SaveToFile(const stdfs::path& res_path)
+	bool Texture2D::SaveToFile(const std::filesystem::path& res_path)
 	{
 		auto device = GraphicsDevice::GetInst().GetDevice();
 		auto context = GraphicsDevice::GetInst().GetContext();
@@ -299,10 +299,10 @@ namespace engine
 			height_ = 0u;
 		}
 	}
-	s_ptr<DirectX::ScratchImage> Texture2D::LoadScratchImageFromFile(const stdfs::path& res_path)
+	std::shared_ptr<DirectX::ScratchImage> Texture2D::LoadScratchImageFromFile(const std::filesystem::path& res_path)
 	{
 		using namespace DirectX;
-		s_ptr<DirectX::ScratchImage> img = std::make_shared<ScratchImage>();
+		std::shared_ptr<DirectX::ScratchImage> img = std::make_shared<ScratchImage>();
 
 		std::wstring upper_ext = string_utils::GetUpperCase(res_path.extension().wstring());
 		HRESULT hr = E_FAIL;

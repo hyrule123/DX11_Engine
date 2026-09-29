@@ -31,7 +31,7 @@ namespace engine
 		void Bind(ID3D11DeviceContext* context);
 		void Draw(ID3D11DeviceContext* context, uint32 instance_count, uint32 submesh_index = 0);
 
-		virtual bool LoadFromFile(const stdfs::path& path) override;
+		virtual bool LoadFromFile(const std::filesystem::path& path) override;
 
 		template <typename T>
 		bool CreateVertexBuffer(const std::vector<T>& vertices, const AABB3D& local_bounds)

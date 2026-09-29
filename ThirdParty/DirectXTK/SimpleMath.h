@@ -1,5 +1,6 @@
 #pragma once
 #define NOMINMAX
+#include <windef.h>
 
 #if __has_include("DirectXMath.h")
 // In this case, DirectXMath is coming from Windows SDK.
@@ -9,55 +10,6 @@
 #include <DirectXPackedVector.h>
 #include <DirectXCollision.h>
 #endif
-
-namespace engine
-{
-	constexpr float kPi = ::DirectX::XM_PI;
-	constexpr float kHalfPi = ::DirectX::XM_PIDIV2;
-	constexpr float kTwoPi = ::DirectX::XM_2PI;
-
-	//1(rad) / 180 * PI = PI / 180
-	constexpr const float kRadianToDegree = ::DirectX::XM_PI / 180.f;
-
-	//1(deg) / PI * 180 = 180 / PI
-	constexpr const float kDegreeToRadian = 180.f / ::DirectX::XM_PI;
-	inline constexpr float to_radian(float _radian) { return _radian * kRadianToDegree; }
-	inline constexpr float to_degree(float _degree) { return _degree * kDegreeToRadian; }
-
-	enum class eAxis2D
-	{
-		X,
-		Y,
-		END
-	};
-
-
-	enum class eAxis3D
-	{
-		X,
-		Y,
-		Z,
-		END
-	};
-
-	enum class eAxis4D
-	{
-		X,
-		Y,
-		Z,
-		W,
-		END
-	};
-
-	//직관적인 방향
-	enum class eDirection
-	{
-		Right,
-		Up,
-		Forward,
-		END
-	};
-}
 
 namespace engine
 {
@@ -558,12 +510,9 @@ namespace engine
 		Matrix& operator/= (const Matrix& M) noexcept;
 		// Element-wise divide
 
-	// Unary operators
+		// Unary operators
 		Matrix operator+ () const noexcept { return *this; }
 		Matrix operator- () const noexcept;
-
-		// Properties
-		Vector3 Axis(eAxis3D _Axis) const { return Vector3(this->m[(int)_Axis]); }
 
 		// Properties
 		Vector3 Up() const noexcept { return Vector3(_21, _22, _23); }

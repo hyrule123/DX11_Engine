@@ -70,8 +70,6 @@ namespace engine
 		MaterialID material_ID_;    // RenderKey에 패킹되는 Material 고유 ID. ScopedID로 관리됨
         GPUBufferBindingTable per_material_binding_table_;
 
-        // TODO: 이후 Per Material 버퍼 추가 필요 시 추가해야 함
-
         PipelineStatesPerPass pipeline_states_per_pass = {};
     };
 }

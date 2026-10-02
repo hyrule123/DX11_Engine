@@ -133,6 +133,8 @@ namespace engine
 			submesh_render_data_[i] = SubMeshRenderData{RenderKey(materials_[i]->GetMaterialID(), mesh_->GetMeshID(), (uint8)i), pass_flags};
 		}
 
+		// 활성화 상태일 경우 즉시 갱신
+		needs_refresh &= IsEnabledAndActiveInHierarchy();
 		if (needs_refresh)
 		{
 			RenderManager::GetInst().RefreshRenderer(this);

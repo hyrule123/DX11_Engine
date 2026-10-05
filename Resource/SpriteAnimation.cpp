@@ -19,7 +19,6 @@ namespace engine
 		ASSERT(name.GetStringView().size() > 0);
 		ASSERT(anim_clip && anim_clip->IsReady());
 		ASSERT(sprite_->GetFrameCount() > anim_clip->GetMaxFrameIndex());
-
 		ASSERT(anim_clips_.find(name) == anim_clips_.end());
 
 		anim_clip_ptrs_.insert(anim_clip.get());

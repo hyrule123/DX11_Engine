@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Engine/Render/RenderPass/ForwardOpaqueRenderPass.h>
+#include <Engine/Render/RenderPass/ForwardBlendPass.h>
 #include <Engine/Render/RenderPass/PresentPass.h>
 
 #include <Engine/Core/CoreMinimal.h>
@@ -46,6 +47,7 @@ namespace engine
         void OnClearContextStates();
 
 		ForwardOpaqueRenderPass* GetOpaquePass() { return &forward_opaque_pass_; }
+		ForwardBlendPass* GetForwardBlendPass() { return &forward_blend_pass_; }
 		PresentPass* GetPresentPass() { return &present_pass_; }
 
         void DrawDebugRect(const DebugDrawPerInstanceData& debug_data) {
@@ -81,6 +83,7 @@ namespace engine
 		std::array<RenderPass*, (size_t)RenderPassOrder::kCount> render_passes_ = {};
 
         ForwardOpaqueRenderPass forward_opaque_pass_ = {};
+		ForwardBlendPass forward_blend_pass_ = {};
 		PresentPass present_pass_ = {};
 
 		uint32 resolution_width_ = {};

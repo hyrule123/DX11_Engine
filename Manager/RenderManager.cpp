@@ -41,6 +41,7 @@ namespace engine
 		auto* context = GraphicsDevice::GetInst().GetContext();
 
 		render_passes_[(size_t)RenderPassOrder::ForwardOpaque] = &forward_opaque_pass_;
+		render_passes_[(size_t)RenderPassOrder::ForwardBlend] = &forward_blend_pass_;
 		render_passes_[(size_t)RenderPassOrder::Present] = &present_pass_;
 
 		for (RenderPass* render_pass : render_passes_)
@@ -351,7 +352,7 @@ namespace engine
 				bounds.Encapsulate(v.position);
 			}
 
-			bool result = debug_rect_mesh_->CreateVertexBuffer(vertices, bounds);
+			bool result = debug_rect_mesh_->CreateVertexBuffer<vertex::debug_draw::Vertex>(vertices, bounds);
 			ASSERT(result);
 
 			//INDEX BUFFER
@@ -393,7 +394,7 @@ namespace engine
 			{
 				bounds.Encapsulate(v.position);
 			}
-			debug_circle_mesh_->CreateVertexBuffer(vertices, bounds);
+			debug_circle_mesh_->CreateVertexBuffer<vertex::debug_draw::Vertex>(vertices, bounds);
 			debug_circle_mesh_->CreateIndexBuffer(indices, D3D11_PRIMITIVE_TOPOLOGY_LINESTRIP, {});
 		}
 #pragma endregion // CIRCLE MESH

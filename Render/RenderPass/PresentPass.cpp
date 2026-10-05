@@ -50,7 +50,7 @@ namespace engine
 	}
 
 	PresentPass::PresentPass()
-		: Super(RenderPassOrder::Present)
+		: Super(RenderPassOrder::Present, SortPolicy::None)
 	{}
 	PresentPass::~PresentPass()
 	{}
@@ -79,7 +79,7 @@ namespace engine
 			{
 				bounds.Encapsulate(v.position);
 			}
-			bool result = mesh->CreateVertexBuffer(vertices, bounds);
+			bool result = mesh->CreateVertexBuffer<present_pass::Vertex>(vertices, bounds);
 			ASSERT(result);
 
 			//INDEX BUFFER

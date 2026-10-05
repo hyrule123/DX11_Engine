@@ -70,6 +70,7 @@ namespace engine
         float2 GetCenter()      const noexcept { return (min + max) * 0.5f; }
         float2 GetHalfExtents() const noexcept { return (max - min) * 0.5f; }
         float2 GetSize()        const noexcept { return (max - min); }
+		
 
         // Size > 0
 		void SetSize(float2 size)  noexcept {

@@ -84,6 +84,7 @@ namespace engine
 
 		return true;
 	}
+
 	bool Material::IsInstancingSupported(RenderPassOrder pass) const
 	{
 		if (pipeline_states_per_pass[(size_t)pass])

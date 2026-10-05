@@ -45,6 +45,12 @@ namespace engine
 		RenderManager::GetInst().UnregisterRenderer(this);
 	}
 
+	void Renderer::OnTransformDirty(Transform* transform)
+	{
+		Super::OnTransformDirty(transform);
+		RenderManager::GetInst().MarkBoundsDirty(this);
+	}
+
 	bool Renderer::SetMesh(const HashedStringView& mesh_name)
 	{
 		std::shared_ptr<Mesh> mesh = ResourceManager::GetInst().Find<Mesh>(mesh_name);
@@ -102,12 +108,40 @@ namespace engine
 	AABB2D Renderer::ComputeWorldBounds2D() const
 	{
 		ASSERT(mesh_ && my_transform_);
-
-		const AABB3D& local_bounds = mesh_->GetLocalBounds();
+		
 		const matrix world_mat = my_transform_->GetWorldMatrix();
+		const AABB3D* local_bounds = nullptr;
+		if (local_bounds_override_.IsValid())
+		{
+			local_bounds = &local_bounds_override_;
+		}
+		else
+		{
+			local_bounds = &(mesh_->GetLocalBounds());
+		}
 
-		return geometry_2d::TransformBoundsTo2D(local_bounds, world_mat);
+		return geometry_2d::TransformBoundsTo2D(*local_bounds, world_mat);
 	}
+
+	void Renderer::SetLocalBoundsOverride(const AABB3D& local_bounds)
+	{
+		if (local_bounds_override_.min == local_bounds.min && local_bounds_override_.max == local_bounds.max)
+		{
+			return;
+		}
+
+		local_bounds_override_ = local_bounds;
+
+		RenderManager::GetInst().MarkBoundsDirty(this);
+	}
+
+	void Renderer::ClearLocalBoundsOverride()
+	{
+		local_bounds_override_ = {};
+
+		RenderManager::GetInst().MarkBoundsDirty(this);
+	}
+
 	void Renderer::BuildSubMeshRenderData()
 	{
 		bool needs_refresh = (submesh_render_data_.empty() == false);

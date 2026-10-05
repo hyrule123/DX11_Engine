@@ -33,6 +33,7 @@ namespace engine
 
 		void AddShaderResource(ShaderStageFlags stage_flag, RegisterT slot, std::shared_ptr<ShaderResource> buffer);
 		void RemoveShaderResource(RegisterT slot);
+		std::shared_ptr<ShaderResource> GetShaderResource(RegisterT slot) const;
 
 		void Bind(ID3D11DeviceContext* context) const {
 			BindCBImpl(context);

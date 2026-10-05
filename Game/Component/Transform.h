@@ -27,6 +27,7 @@ namespace engine
 		//virtual void BeginPlay() override;
 		virtual void LateUpdate() override;
 
+		virtual void OnEnable() override;
 		virtual void OnDisable() override;
 		virtual void OnDestroy() override;
 

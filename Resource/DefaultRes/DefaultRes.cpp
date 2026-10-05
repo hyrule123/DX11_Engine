@@ -148,7 +148,7 @@ namespace engine
 				bounds.Encapsulate(v.position);
 			}
 
-			bool result = mesh->CreateVertexBuffer(vertices, bounds);
+			bool result = mesh->CreateVertexBuffer<vertex::standard_2d::Vertex>(vertices, bounds);
 			ASSERT(result);
 
 			//INDEX BUFFER

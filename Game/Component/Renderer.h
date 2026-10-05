@@ -27,6 +27,8 @@ namespace engine
         virtual void OnEnable() override;
         virtual void OnDisable() override;
 
+        virtual void OnTransformDirty(Transform* transform) override;
+
         // RenderSlot Invalid == kInvalidIdx32
         void SetRenderSlot(RenderPassOrder pass, uint32 id) { ASSERT(id != kInvalidIdx32); renderer_slots_[(size_t)pass] = id; }
 		void InvalidateRenderSlot(RenderPassOrder pass) { renderer_slots_[(size_t)pass] = kInvalidIdx32; }
@@ -70,6 +72,9 @@ namespace engine
 			return flags;
 		}
 
+        void SetLocalBoundsOverride(const AABB3D& local_bounds);
+        void ClearLocalBoundsOverride();
+
     private:
         void BuildSubMeshRenderData();
 
@@ -81,6 +86,8 @@ namespace engine
 
         std::array<uint32, (size_t)RenderPassOrder::kCount> renderer_slots_; // RendererManager에서 발급(Pass 별), MAX로 초기화
         std::vector<SubMeshRenderData> submesh_render_data_;
+
+		AABB3D local_bounds_override_ = {};
     };
 }
 

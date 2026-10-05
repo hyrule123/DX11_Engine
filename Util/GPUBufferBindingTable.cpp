@@ -130,6 +130,16 @@ namespace engine
 		}
 	}
 
+	std::shared_ptr<ShaderResource> GPUBufferBindingTable::GetShaderResource(RegisterT slot) const
+	{
+		const uint32 idx = slot.Get() - srv_slot_start_;
+		if (slot.Get() < srv_slot_start_ || idx >= srv_slot_count_)
+		{
+			return nullptr;
+		}
+		return srv_bindings_[idx].buffer;
+	}
+
 	void GPUBufferBindingTable::BindCBImpl(ID3D11DeviceContext * context) const
 	{
 		if (cb_bindings_.empty()) { return; }

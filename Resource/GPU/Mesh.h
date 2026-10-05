@@ -34,15 +34,15 @@ namespace engine
 		virtual bool LoadFromFile(const std::filesystem::path& path) override;
 
 		template <typename T>
-		bool CreateVertexBuffer(const std::vector<T>& vertices, const AABB3D& local_bounds)
+		bool CreateVertexBuffer(std::span<const T> vertices, const AABB3D& local_bounds)
 		{
 			return CreateVertexBuffer(vertices.data(), (uint32)sizeof(T), (uint32)vertices.size(), local_bounds);
 		}
 
-		bool CreateIndexBuffer(const std::vector<uint16>& indices, D3D11_PRIMITIVE_TOPOLOGY topology, std::vector<SubMesh> sub_meshes = {}) {
+		bool CreateIndexBuffer(std::span<const uint16> indices, D3D11_PRIMITIVE_TOPOLOGY topology, std::vector<SubMesh> sub_meshes = {}) {
 			return CreateIndexBuffer((const void*)indices.data(), DXGI_FORMAT_R16_UINT, (uint32)indices.size(), topology, sub_meshes);
 		}
-		bool CreateIndexBuffer(const std::vector<uint32>& indices, D3D11_PRIMITIVE_TOPOLOGY topology, std::vector<SubMesh> sub_meshes = {}) {
+		bool CreateIndexBuffer(std::span<const uint32> indices, D3D11_PRIMITIVE_TOPOLOGY topology, std::vector<SubMesh> sub_meshes = {}) {
 			return CreateIndexBuffer((const void*)indices.data(), DXGI_FORMAT_R32_UINT, (uint32)indices.size(), topology, sub_meshes);
 		}
 

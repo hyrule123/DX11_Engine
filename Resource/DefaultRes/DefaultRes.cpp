@@ -10,7 +10,7 @@
 #include <Engine/Resource/GPU/Vertex.h>
 #include <Engine/Resource/GPU/State/RasterizerState.h>
 #include <Engine/Resource/GPU/State/DepthStencilState.h>
-#include <Engine/Resource/GPU/Shader/InputLayoutDesc.h>
+#include <Engine/Resource/GPU/Shader/InputLayout.h>
 
 #include <Engine/Core/Math.h>
 #include <Engine/Core/Debug.h>
@@ -123,16 +123,6 @@ namespace engine
 		auto& resmgr = ResourceManager::GetInst();
 		auto device = GraphicsDevice::GetInst().GetDevice();
 
-#pragma region //INPUT LAYOUT DESC
-		std::shared_ptr<InputLayoutDesc> input_layout_desc = EntityManager::CreateEntity<InputLayoutDesc>();
-		for (const auto& desc : vertex::standard_2d::kInputLayoutDescs)
-		{
-			input_layout_desc->AddLayoutDesc(desc);
-		}
-		resmgr.AddResource("InputLayoutDesc_Standard2D", input_layout_desc);
-		resmgr.SetDefaultResource(input_layout_desc);
-#pragma endregion //INPUT LAYOUT DESC
-
 #pragma region //MESH
 		{
 			std::shared_ptr<Mesh> mesh = EntityManager::CreateEntity<Mesh>();
@@ -174,10 +164,16 @@ namespace engine
 		shaderset->SetInstancingSupport(true);
 		shaderset->SetPerInstanceDataStride(sizeof(SpriteInstanceData));
 		shaderset->SetVertexShader("Shader/Sprite_VS.cso");
-		shaderset->CreateInputLayout("InputLayoutDesc_Standard2D");
+		shaderset->CreateInputLayout(vertex::standard_2d::kInputLayoutDescs);
 		shaderset->SetPixelShader("Shader/Sprite_PS.cso");
 		shaderset->SetDepthStencilState("DSS_Default");
 		shaderset->SetRasterizerState("RSS_Solid_Back");
+
+#pragma region //INPUT LAYOUT
+		std::shared_ptr<InputLayout> il = shaderset->GetInputLayout();
+		resmgr.AddResource("InputLayout_Standard2D", il);
+		resmgr.SetDefaultResource(il);
+#pragma endregion //INPUT LAYOUT
 
 		resmgr.AddResource("GraphicsShaderSet_Sprite", shaderset);
 		resmgr.SetDefaultResource(shaderset);

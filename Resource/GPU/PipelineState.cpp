@@ -4,7 +4,7 @@
 #include <Engine/Manager/GraphicsDevice.h>
 #include <Engine/Manager/ResourceManager.h>
 
-#include <Engine/Resource/GPU/Shader/InputLayoutDesc.h>
+#include <Engine/Resource/GPU/Shader/InputLayout.h>
 #include <Engine/Resource/GPU/Shader/VertexShader.h>
 #include <Engine/Resource/GPU/State/RasterizerState.h>
 #include <Engine/Resource/GPU/Shader/PixelShader.h>
@@ -32,8 +32,10 @@ namespace engine
 
 	bool PipelineState::SetVertexShader(const HashedStringView& vs_name)
 	{
-		vertex_shader_ = ResourceManager::GetInst().LoadFromFile<VertexShader>(vs_name);
-		return (bool)vertex_shader_;
+		std::shared_ptr<VertexShader> vs = ResourceManager::GetInst().LoadFromFile<VertexShader>(vs_name);
+		bool is_vs = (bool)vs;
+		if (is_vs) { SetVertexShader(std::move(vs)); }
+		return is_vs;
 	}
 	void PipelineState::SetVertexShader(std::shared_ptr<VertexShader> vertex_shader)
 	{
@@ -44,32 +46,26 @@ namespace engine
 		}
 		vertex_shader_ = std::move(vertex_shader);
 	}
-	bool PipelineState::CreateInputLayout(const HashedStringView& layout_name)
+
+	bool PipelineState::SetInputLayout(const HashedStringView& name)
 	{
-		std::shared_ptr<InputLayoutDesc> desc = ResourceManager::GetInst().Find<InputLayoutDesc>(layout_name);
-		return CreateInputLayout(desc.get());
+		std::shared_ptr<InputLayout> il = ResourceManager::GetInst().Find<InputLayout>(name);
+		bool is_il = (bool)il;
+		SetInputLayout(std::move(il));
+		return is_il;
 	}
 
-	bool PipelineState::CreateInputLayout(InputLayoutDesc* desc)
+	bool PipelineState::CreateInputLayout(std::span<const D3D11_INPUT_ELEMENT_DESC> layout_descs)
 	{
-		if (!vertex_shader_)
+		if (layout_descs.empty())
 		{
-			ASSERT_F(false, "VertexShader is not ready");
+			ASSERT_F(false, "InputLayout is empty");
 			return false;
 		}
+		// VS 체크는 InputLayout::Create에서 진행
 
-		if (!desc || !desc->IsReady())
-		{
-			ASSERT_F(false, "InputLayoutDesc is not ready");
-			return false;
-		}
-
-		const auto& descs = desc->GetInputLayoutDesc();
-		const auto& byte_code = vertex_shader_->GetByteCode();
-
-		input_layout_ = desc->CreateInputLayout(vertex_shader_.get());
-
-		return (bool)input_layout_;
+		input_layout_ = EntityManager::CreateEntity<InputLayout>();
+		return input_layout_->Create(layout_descs, vertex_shader_.get());
 	}
 
 	bool PipelineState::SetPixelShader(const HashedStringView& ps_name)
@@ -100,7 +96,8 @@ namespace engine
 			return; 
 		}
 
-		context->IASetInputLayout(input_layout_.Get());
+		if (input_layout_) { input_layout_->Bind(context); }
+		else { context->IASetInputLayout(nullptr); }
 
 		if (vertex_shader_) { vertex_shader_->Bind(context); }
 		else { context->VSSetShader(nullptr, nullptr, 0u); }

@@ -4,7 +4,7 @@
 #include <Engine/Manager/GraphicsDevice.h>
 #include <Engine/Manager/ResourceManager.h>
 
-#include <Engine/Resource/GPU/Shader/InputLayoutDesc.h>
+#include <Engine/Resource/GPU/Shader/InputLayout.h>
 #include <Engine/Resource/GPU/Shader/VertexShader.h>
 #include <Engine/Resource/GPU/Shader/PixelShader.h>
 #include <Engine/Resource/GPU/State/RasterizerState.h>
@@ -98,14 +98,6 @@ namespace engine
 		ASSERT(result);
 		shader_set_->SetVertexShader(vs);
 
-		std::shared_ptr<InputLayoutDesc> layout_desc = EntityManager::CreateEntity<InputLayoutDesc>();
-		for (const auto& desc : present_pass::kInputLayoutDescs)
-		{
-			layout_desc->AddLayoutDesc(desc);
-		}
-		result = shader_set_->CreateInputLayout(layout_desc.get());
-		ASSERT(result);
-
 		std::shared_ptr<PixelShader> ps = EntityManager::CreateEntity<PixelShader>();
 		result = ps->LoadFromFile(res_dir / L"Shader/PresentPass_PS.cso");
 		ASSERT(result);
@@ -113,6 +105,8 @@ namespace engine
 
 		shader_set_->SetRasterizerState("RSS_Solid_Back");
 		shader_set_->SetDepthStencilState("DSS_Default");
+
+		shader_set_->CreateInputLayout(present_pass::kInputLayoutDescs);
 	}
 	void PresentPass::Execute(ID3D11DeviceContext * context, const RenderPassContext& pass_context)
 	{

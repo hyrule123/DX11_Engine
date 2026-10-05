@@ -21,14 +21,15 @@ namespace engine
     public:
         struct RenderItem
         {
+            uint64 sort_key = {};   // Render Key + 각 Pass별 정책이 반영된 최종 정렬 키
             RenderKey key = {};
             Renderer* renderer = {};
 
 			auto operator<=>(const RenderItem& other) const {
-				return key <=> other.key;
+				return sort_key <=> other.sort_key;
 			}
 			auto operator == (const RenderItem& other) const {
-				return key == other.key;
+				return sort_key == other.sort_key;
 			}
         };
 

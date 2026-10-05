@@ -183,9 +183,6 @@
     <ClInclude Include="Resource\SpriteAnimClip.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Resource\GPU\Shader\InputLayoutDesc.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Render\RenderPass\ForwardOpaqueRenderPass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -274,6 +271,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Util\EnumFlags.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\GPU\Shader\InputLayout.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Render\RenderPass\ForwardBlendPass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -401,9 +404,6 @@
     <ClCompile Include="Resource\SpriteAnimClip.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Resource\GPU\Shader\InputLayoutDesc.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Render\RenderPass\ForwardOpaqueRenderPass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -465,6 +465,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Core\Detail\EngineLog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\GPU\Shader\InputLayout.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Render\RenderPass\ForwardBlendPass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

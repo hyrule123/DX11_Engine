@@ -9,6 +9,8 @@
 #include <Engine/Core/Enum.h>
 #include <Engine/Core/DX11.h>
 
+#include <span>
+
 struct ID3D11Device;
 struct ID3D11DeviceContext;
 struct ID3D11InputLayout;
@@ -16,7 +18,7 @@ struct D3D11_INPUT_ELEMENT_DESC;
 
 namespace engine
 {
-    class InputLayoutDesc;
+    class InputLayout;
     class VertexShader;
     class PixelShader;
     class RasterizerState;
@@ -43,9 +45,13 @@ namespace engine
 
         bool SetVertexShader(const HashedStringView& vs_name);
         void SetVertexShader(std::shared_ptr<VertexShader> vertex_shader);
+		std::shared_ptr<VertexShader> GetVertexShader() const { return vertex_shader_; }
 
-        bool CreateInputLayout(const HashedStringView& layout_desc_name);
-        bool CreateInputLayout(InputLayoutDesc* input_layout_desc);
+		void SetInputLayout(std::shared_ptr<InputLayout> input_layout) { input_layout_ = std::move(input_layout); }
+        bool SetInputLayout(const HashedStringView& name);
+		std::shared_ptr<InputLayout> GetInputLayout() const { return input_layout_; }
+
+        bool CreateInputLayout(std::span<const D3D11_INPUT_ELEMENT_DESC> layout_descs);
 
         bool SetPixelShader(const HashedStringView& ps_name);
         void SetPixelShader(std::shared_ptr<PixelShader> pixel_shader) {
@@ -85,7 +91,7 @@ namespace engine
 		}
 
     private:
-        ComPtr<ID3D11InputLayout> input_layout_ = {};
+        std::shared_ptr<InputLayout> input_layout_ = {};
 
         std::shared_ptr<VertexShader> vertex_shader_ = {};
         std::shared_ptr<PixelShader> pixel_shader_ = {};

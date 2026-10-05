@@ -12,8 +12,9 @@
 
 namespace engine
 {
-	RenderPass::RenderPass(RenderPassOrder pass_order)
+	RenderPass::RenderPass(RenderPassOrder pass_order, SortPolicy sort_policy)
 		: pass_order_(pass_order)
+		, sort_policy_(sort_policy)
 	{}
 
 	RenderPass::~RenderPass()

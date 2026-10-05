@@ -222,6 +222,8 @@
     <ClInclude Include="Core\Detail\Assert.h" />
     <ClInclude Include="Collision\Geometry2D.h" />
     <ClInclude Include="Core\Detail\EngineLog.h" />
+    <ClInclude Include="Render\RenderPass\ForwardBlendPass.h" />
+    <ClInclude Include="Resource\GPU\Shader\InputLayout.h" />
     <ClInclude Include="Util\EnumFlags.h" />
     <ClInclude Include="Render\Culling.h" />
     <ClInclude Include="Render\RenderTypes.h" />
@@ -248,7 +250,6 @@
     <ClInclude Include="Util\StringHashTable.h" />
     <ClInclude Include="Render\RenderPass\ForwardOpaqueRenderPass.h" />
     <ClInclude Include="Render\RenderPass\RenderPass.h" />
-    <ClInclude Include="Resource\GPU\Shader\InputLayoutDesc.h" />
     <ClInclude Include="Resource\SpriteAnimation.h" />
     <ClInclude Include="Game\Component\SpriteAnimator.h" />
     <ClInclude Include="Resource\GPU\Buffer\DepthStencilView.h" />
@@ -311,6 +312,8 @@
     <ClCompile Include="Core\Detail\Assert.cpp" />
     <ClCompile Include="Collision\Geometry2D.cpp" />
     <ClCompile Include="Core\Detail\EngineLog.cpp" />
+    <ClCompile Include="Render\RenderPass\ForwardBlendPass.cpp" />
+    <ClCompile Include="Resource\GPU\Shader\InputLayout.cpp" />
     <ClCompile Include="Render\Culling.cpp" />
     <ClCompile Include="Util\GPUBufferBindingTable.cpp" />
     <ClCompile Include="Resource\GPU\Shader\ComputePass.cpp" />
@@ -327,7 +330,6 @@
     <ClCompile Include="Render\RenderPass\PresentPass.cpp" />
     <ClCompile Include="Render\RenderPass\ForwardOpaqueRenderPass.cpp" />
     <ClCompile Include="Render\RenderPass\RenderPass.cpp" />
-    <ClCompile Include="Resource\GPU\Shader\InputLayoutDesc.cpp" />
     <ClCompile Include="Resource\SpriteAnimation.cpp" />
     <ClCompile Include="Game\Component\SpriteAnimator.cpp" />
     <ClCompile Include="Resource\GPU\Buffer\DepthStencilView.cpp" />

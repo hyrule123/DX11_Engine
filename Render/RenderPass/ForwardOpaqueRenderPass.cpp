@@ -23,10 +23,11 @@
 #include <algorithm>
 #include <limits>
 
+
 namespace engine
 {
 	ForwardOpaqueRenderPass::ForwardOpaqueRenderPass()
-		: Super(RenderPassOrder::ForwardOpaque)
+		: Super(RenderPassOrder::ForwardOpaque, SortPolicy::RenderKey)
 	{}
 	ForwardOpaqueRenderPass::~ForwardOpaqueRenderPass()
 	{}

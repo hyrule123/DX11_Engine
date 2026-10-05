@@ -19,7 +19,13 @@ namespace engine
 	class RenderPass
 	{
 	public:
-		RenderPass(RenderPassOrder pass_order);
+		enum class SortPolicy : uint8_t
+		{
+			RenderKey,		// Opaque, Blend: material 우선
+			BackToFront,	// Transparent: 깊이(먼 것부터) + material
+		};
+
+		RenderPass(RenderPassOrder pass_order, SortPolicy sort_policy);
 		virtual ~RenderPass();
 
 		virtual void Init(ID3D11DeviceContext* context) {};
@@ -60,5 +66,7 @@ namespace engine
 		std::shared_ptr<RenderTargetGroup> render_target_group_ = {};
 
 		std::vector<RendererInfo2D> registered_renderers_ = {};
+
+		const SortPolicy sort_policy_ = {};
 	};
 }

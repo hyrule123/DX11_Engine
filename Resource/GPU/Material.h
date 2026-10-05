@@ -73,5 +73,3 @@ namespace engine
         PipelineStatesPerPass pipeline_states_per_pass = {};
     };
 }
-
-

@@ -25,6 +25,7 @@ namespace engine
 	enum class RenderPassOrder : uint32
 	{
 		ForwardOpaque = 0u,
+		ForwardBlend,
 		Present,
 		kCount
 	};

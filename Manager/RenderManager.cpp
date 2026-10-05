@@ -12,7 +12,7 @@
 #include <Engine/Resource/GPU/Material.h>
 #include <Engine/Resource/GPU/PipelineState.h>
 
-#include <Engine/Resource/GPU/Shader/InputLayoutDesc.h>
+#include <Engine/Resource/GPU/Shader/InputLayout.h>
 #include <Engine/Resource/GPU/Vertex.h>
 
 #include <Engine/HLSL/Core/Register.hlsli>
@@ -310,15 +310,6 @@ namespace engine
 		bool result = debug_buffer_->CreateDynamicBuffer<DebugDrawPerInstanceData>(512);
 		ASSERT(result);
 
-#pragma region //INPUT LAYOUT DESC
-		std::shared_ptr<InputLayoutDesc> input_layout_desc = EntityManager::CreateEntity<InputLayoutDesc>();
-
-		for (const auto& desc : vertex::debug_draw::kInputLayoutDescs)
-		{
-			input_layout_desc->AddLayoutDesc(desc);
-		}
-#pragma endregion //INPUT LAYOUT DESC
-
 		//Debug DSS
 		std::shared_ptr<DepthStencilState> dss = EntityManager::CreateEntity<DepthStencilState>();
 
@@ -414,7 +405,7 @@ namespace engine
 		debug_shader_set_->SetPerInstanceDataStride(sizeof(SpriteInstanceData));
 		//Shaders
 		debug_shader_set_->SetVertexShader("Shader/DebugDraw_VS.cso");
-		debug_shader_set_->CreateInputLayout(input_layout_desc.get());
+		debug_shader_set_->CreateInputLayout(vertex::debug_draw::kInputLayoutDescs);
 		debug_shader_set_->SetPixelShader("Shader/DebugDraw_PS.cso");
 		debug_shader_set_->SetDepthStencilState(dss);
 #pragma endregion // GRAPHICS SHADER SET

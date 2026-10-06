@@ -86,11 +86,14 @@ namespace engine
 		//Render Pass 별 렌더링
 		forward_opaque_pass_.Execute(context, pass_context);
 
+		forward_blend_pass_.Execute(context, pass_context);
+
 		if (present_pass_.IsSet())
 		{
 			present_pass_.Execute(context, pass_context);
 		}
 		
+
 		//Debug Draw
 		DebugDraw(context);
 	}

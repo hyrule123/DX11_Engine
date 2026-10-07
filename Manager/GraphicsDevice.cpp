@@ -44,33 +44,27 @@ namespace engine
 
 	bool GraphicsDevice::CreateDeviceAndContext()
 	{
-		// Device, Device Context
-		UINT DeviceFlag{};
+		UINT device_flags = 0;
 #ifdef _DEBUG
-		DeviceFlag = D3D11_CREATE_DEVICE_DEBUG;
+		device_flags |= D3D11_CREATE_DEVICE_DEBUG;
 #endif // _DEBUG
 
-		D3D_FEATURE_LEVEL MaxSupportedFeatureLevel = D3D_FEATURE_LEVEL_11_0;
-		D3D_FEATURE_LEVEL FeatureLevels[] = {
-			D3D_FEATURE_LEVEL_11_0,
-			//D3D_FEATURE_LEVEL_10_1,
-			//D3D_FEATURE_LEVEL_10_0,
-			//D3D_FEATURE_LEVEL_9_3,
-			//D3D_FEATURE_LEVEL_9_2,
-			//D3D_FEATURE_LEVEL_9_1
+		const D3D_FEATURE_LEVEL feature_levels[] =
+		{
+			D3D_FEATURE_LEVEL_11_1,
 		};
 
 		HRESULT result = D3D11CreateDevice(
 			nullptr,
 			D3D_DRIVER_TYPE_HARDWARE,
 			nullptr,
-			DeviceFlag,
-			FeatureLevels,
-			sizeof(FeatureLevels) / sizeof(D3D_FEATURE_LEVEL),
+			device_flags,
+			feature_levels,
+			static_cast<UINT>(std::size(feature_levels)),
 			D3D11_SDK_VERSION,
-			&device_,
-			&MaxSupportedFeatureLevel,
-			&context_);
+			device_.GetAddressOf(),
+			&feature_level_,
+			context_.GetAddressOf());
 
 		if (FAILED(result))
 		{
@@ -78,8 +72,15 @@ namespace engine
 			return false;
 		}
 
+		// 필수 기능: ROV (발광 등 순서 의존 효과). D3D11.3(Windows 10) 런타임 + 하드웨어 지원 필요
+		D3D11_FEATURE_DATA_D3D11_OPTIONS2 options2 = {};
+		result = device_->CheckFeatureSupport(D3D11_FEATURE_D3D11_OPTIONS2, &options2, sizeof(options2));
+		CHECK_F(SUCCEEDED(result), "D3D11.3 runtime (Windows 10+) is required.");
+		CHECK_F(options2.ROVsSupported == TRUE, "Rasterizer Ordered Views are not supported on this GPU.");
+
 		return true;
 	}
+
 	void GraphicsDevice::ClearContextStates()
 	{
 		context_->ClearState();

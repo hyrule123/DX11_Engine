@@ -51,10 +51,13 @@ namespace engine
 		ComPtr<IDXGISwapChain> swap_chain_ = {};
 
 		std::shared_ptr<RenderTargetGroup> swap_chain_RT_ = {};
-		
 
 		uint32 resolution_width_ = {};
 		uint32 resolution_height_ = {};
+
+		D3D_FEATURE_LEVEL feature_level_ = {};
+		bool rovs_supported_ = false;
+		bool typed_uav_load_additional_formats_ = false;
 	};
 }
 

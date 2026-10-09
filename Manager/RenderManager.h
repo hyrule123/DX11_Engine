@@ -1,28 +1,45 @@
 #pragma once
-
-#include <Engine/Render/RenderPass/ForwardOpaqueRenderPass.h>
-#include <Engine/Render/RenderPass/ForwardBlendPass.h>
-#include <Engine/Render/RenderPass/PresentPass.h>
+#include <Engine/Render/RendererRegistry.h>
+#include <Engine/Render/RenderView.h>
+#include <Engine/Render/InstanceBufferPool.h>
 
 #include <Engine/Core/CoreMinimal.h>
-
 #include <Engine/Core/Singleton.h>
 
-#include <Engine/HLSL/DebugDraw/DebugDraw.hlsli>
-
 #include <Engine/Util/GPUBufferBindingTable.h>
+
+#include <Engine/HLSL/DebugDraw/DebugDraw.hlsli>
 
 struct ID3D11SamplerState;
 
 namespace engine
 {
     class RenderPass;
+
+    class MeshRenderPass;
     class ConstantBuffer;
     class Camera;
     class Scene;
     class Renderer;
     class StructuredBuffer;
     class Mesh;
+    class PipelineState;
+
+    struct MeshDrawEntry
+    {
+        RenderKey key;
+        Material* material;
+        Mesh* mesh;
+        uint32 bounds_id;
+        uint32 generation;
+    };
+
+    struct ViewEntry
+    {
+        RenderView          view;
+        std::vector<uint32> visible_ids;
+        // (나중에) 이 View에서 실행할 패스 목록
+    };
 
     class RenderManager
     {
@@ -35,20 +52,28 @@ namespace engine
         void Render();
         void FrameEnd();
 
-		void RefreshRenderer(Renderer* renderer);
+        template <typename T>
+        void RegisterRenderPass(std::unique_ptr<T> render_pass) {
+            static_assert(std::is_base_of_v<RenderPass, T>, "T must derive from RenderPass");
+			RegisterRenderPassImpl(std::move(render_pass), std::is_base_of_v<MeshRenderPass, T>);
+        }
+
+		void SetRenderPassOrder(std::vector<render_pass::ID> order);
+
+		void RegisterRenderer(Renderer* renderer);
 		void UnregisterRenderer(Renderer* renderer);
 
 		void MarkBoundsDirty(const Renderer* renderer);
 
+		void SetMainRenderTarget(std::shared_ptr<RenderTargetGroup> rtg) { main_render_target_override_ = std::move(rtg); }
+
 		void SetMainCamera(weak_handle_ptr<Camera> cam) { main_cam_ = cam; }
         weak_handle_ptr<Camera> GetMainCamera() const { return main_cam_; }
 
+		void SetMainViewClearSettings(const ClearSettings& clear_settings) { main_view_clear_setting_ = clear_settings; }
+
         void OnScreenSizeChange(uint32 width, uint32 height);
         void OnClearContextStates();
-
-		ForwardOpaqueRenderPass* GetOpaquePass() { return &forward_opaque_pass_; }
-		ForwardBlendPass* GetForwardBlendPass() { return &forward_blend_pass_; }
-		PresentPass* GetPresentPass() { return &present_pass_; }
 
         void DrawDebugRect(const DebugDrawPerInstanceData& debug_data) {
             debug_rect_data_.push_back(debug_data);
@@ -57,34 +82,47 @@ namespace engine
 			debug_circle_data_.push_back(debug_data);
 		}
 
-		StructuredBuffer* AcquireInstanceBuffer(uint32 byte_stride, uint32 elem_count);
+        StructuredBuffer* AcquireInstanceBuffer(uint32 byte_stride, uint32 elem_count) {
+			return instance_buffer_pool_.Acquire(byte_stride, elem_count);
+        }
 
 		GPUBufferBindingTable& GetPerFrameBindingTable() { return per_frame_binding_table_; }
 
     private:
+		MeshRenderPass* GetMeshRenderPass(render_pass::ID id);
+        void CullView(ViewEntry& view_entry);
+        void ExpandToMeshPasses(const ViewEntry& view_entry);
+
+        RenderTargetGroup* GetMainRenderTarget() const;
+
+        void RegisterRenderPassImpl(std::unique_ptr<RenderPass> render_pass, bool is_mesh_renderpass);
+
         void DebugDraw(ID3D11DeviceContext* context);
 
         void CreateSamplerStates(ID3D11DeviceContext* context);
         void BindPSSamplerStates(ID3D11DeviceContext* context);
         void CreateDebugRenderObjects(ID3D11DeviceContext* context);
 
+    private:
+		std::shared_ptr<RenderTargetGroup> main_render_target_override_ = {}; // 없을 시 SwapChain RTG 사용
+
         std::shared_ptr<ConstantBuffer> cb_per_pass_camera_ = {};
 
 		weak_handle_ptr<Camera> main_cam_ = {};
+        ViewEntry main_view_ = {};
+        ClearSettings main_view_clear_setting_ = {};
 
-		// Key: byte stride, Value: StructuredBuffer
-		std::unordered_map<uint32, std::unique_ptr<StructuredBuffer>> instance_buffer_per_stride_ = {};
+        std::array<std::unique_ptr<RenderPass>, (size_t)render_pass::ID::kCount> render_passes_ = {};
+		render_pass::Flags mesh_pass_mask_ = {};
+		render_pass::Flags active_mesh_passes_ = {};
+        std::vector<render_pass::ID> render_pass_order_ = {};
+
+		InstanceBufferPool instance_buffer_pool_ = {};
         
         //Slot에 꽃아두고 계속 사용
         std::vector<ComPtr<ID3D11SamplerState>> sampler_states_ = {};
 
-        //Render Passes
-        // 공통 함수 호출을 위한 포인터 저장소
-		std::array<RenderPass*, (size_t)RenderPassOrder::kCount> render_passes_ = {};
-
-        ForwardOpaqueRenderPass forward_opaque_pass_ = {};
-		ForwardBlendPass forward_blend_pass_ = {};
-		PresentPass present_pass_ = {};
+        RendererRegistry renderer_registry_ = {};
 
 		uint32 resolution_width_ = {};
 		uint32 resolution_height_ = {};
@@ -97,5 +135,7 @@ namespace engine
         std::unique_ptr<PipelineState> debug_shader_set_ = {};
 
         GPUBufferBindingTable per_frame_binding_table_;
+
+        bool is_rendering;
     };
 }

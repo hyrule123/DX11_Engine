@@ -28,26 +28,28 @@ namespace engine
 	{
 	}
 
-	bool Material::SetPipelineState(RenderPassOrder pass, const HashedStringView& shader_set_name)
+	bool Material::SetPipelineState(render_pass::ID pass, const HashedStringView& shader_set_name)
 	{
 		SetPipelineState(pass, ResourceManager::GetInst().Find<PipelineState>(shader_set_name));
 		return (bool)pipeline_states_per_pass[(size_t)pass];
 	}
 
-	void Material::SetPipelineState(RenderPassOrder pass, std::shared_ptr<PipelineState> shader_set)
+	void Material::SetPipelineState(render_pass::ID pass, std::shared_ptr<PipelineState> shader_set)
 	{
 		if (shader_set)
 		{
 			ASSERT(shader_set->IsReady());
 			pipeline_states_per_pass[(size_t)pass] = std::move(shader_set);
+			supported_passes_.Set(pass);
 		}
 		else
 		{
 			pipeline_states_per_pass[(size_t)pass] = nullptr;
+			supported_passes_.Reset(pass);
 		}
 	}
 
-	bool Material::BindPipelineState(ID3D11DeviceContext* context, RenderPassOrder pass)
+	bool Material::BindPipelineState(ID3D11DeviceContext* context, render_pass::ID pass) const
 	{
 		if (pipeline_states_per_pass[(size_t)pass]) 
 		{ 
@@ -55,8 +57,8 @@ namespace engine
 			return true; 
 		}
 		
-		ASSERT_F(false, "PipelineState is not set for the given RenderPassOrder.");
-		PipelineState::Clear(context);
+		ASSERT_F(false, "PipelineState is not set for the given render_pass::ID.");
+		PipelineState::ClearAllBindings(context);
 		return false;
 	}
 
@@ -85,7 +87,7 @@ namespace engine
 		return true;
 	}
 
-	bool Material::IsInstancingSupported(RenderPassOrder pass) const
+	bool Material::IsInstancingSupported(render_pass::ID pass) const
 	{
 		if (pipeline_states_per_pass[(size_t)pass])
 		{
@@ -93,7 +95,7 @@ namespace engine
 		}
 		return false;
 	}
-	size_t Material::GetPerObjectDataStride(RenderPassOrder pass) const
+	size_t Material::GetPerObjectDataStride(render_pass::ID pass) const
 	{
 		if (pipeline_states_per_pass[(size_t)pass])
 		{

@@ -28,7 +28,7 @@ namespace engine
 		return true;
 	}
 
-	void DepthStencilState::Bind(ID3D11DeviceContext * context, uint32 stencil_ref)
+	void DepthStencilState::Bind(ID3D11DeviceContext * context, uint32 stencil_ref) const
 	{
 		context->OMSetDepthStencilState(ds_state_.Get(), stencil_ref);
 	}

@@ -20,7 +20,7 @@ namespace engine
 
 		bool Create(std::span<const D3D11_INPUT_ELEMENT_DESC> layout_descs, VertexShader* vs);
 
-		void Bind(ID3D11DeviceContext* context);
+		void Bind(ID3D11DeviceContext* context) const;
 
 	private:
 		ComPtr<ID3D11InputLayout> input_layout_ = nullptr;

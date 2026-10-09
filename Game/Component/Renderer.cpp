@@ -19,8 +19,8 @@ namespace engine
 {
 	Renderer::Renderer(const HashedStringView& concrete_class_name)
 		: Component(concrete_class_name, ComponentCategory::kRenderer)
+		, renderer_id_(kInvalidIdx32)
 	{
-		ClearRenderSlots();
 	}
 
 	Renderer::~Renderer()
@@ -36,7 +36,7 @@ namespace engine
 	{
 		Super::OnEnable();
 		Subscribe(SubscribeType::kTransformDirty);
-		RenderManager::GetInst().RefreshRenderer(this);
+		RenderManager::GetInst().RegisterRenderer(this);
 	}
 	void Renderer::OnDisable()
 	{
@@ -65,31 +65,37 @@ namespace engine
 	void Renderer::SetMesh(std::shared_ptr<Mesh> mesh)
 	{
 		mesh_ = std::move(mesh);
-		materials_.clear();
 		if (mesh_)
 		{	
-			materials_.resize(mesh_->GetSubMeshCount());
+			submeshes_.resize(mesh_->GetSubMeshCount());
+			for (size_t i = 0; i < submeshes_.size(); ++i)
+			{
+				BuildSubMeshRenderData(i);
+			}
+		}
+		else
+		{
+			submeshes_.clear();
 		}
 
-		BuildSubMeshRenderData();
+		// 이미 등록되었다면 Bounds 재계산 필요
+		if (renderer_id_ != kInvalidIdx32)
+		{
+			RenderManager::GetInst().MarkBoundsDirty(this);
+		}
 	}
 
 	bool Renderer::SetMaterial(size_t submesh_idx, std::shared_ptr<Material> material)
 	{
-		if (mesh_ == nullptr)
-		{
-			ERR_MSG("Mesh를 먼저 설정하세요.");
-			return false;
-		}
-		if (submesh_idx >= materials_.size())
+		if (submesh_idx >= submeshes_.size())
 		{
 			ASSERT_F(false, "submesh index가 범위를 벗어남");
 			return false;
 		}
 
-		materials_[submesh_idx] = std::move(material);
+		submeshes_[submesh_idx].material = std::move(material);
 
-		BuildSubMeshRenderData();
+		BuildSubMeshRenderData(submesh_idx);
 
 		return true;
 	}
@@ -105,73 +111,70 @@ namespace engine
 		return false;
 	}
 
-	AABB2D Renderer::ComputeWorldBounds2D() const
+	AABB3D Renderer::ComputeWorldBounds() const
 	{
-		ASSERT(mesh_ && my_transform_);
+		if (mesh_ == nullptr) { return AABB3D::Invalid(); }
+
+		//Arvo 알고리즘
+		matrix world_mat = my_transform_->GetWorldMatrix();
+		const AABB3D& local = local_bounds_override_.IsValid()
+			? local_bounds_override_
+			: mesh_->GetLocalBounds();
+
+		const float3 center = (local.min + local.max) * 0.5f;
+		const float3 extent = (local.max - local.min) * 0.5f;
+
+		const float3 world_center = float3::Transform(center, world_mat);
+
+		// 행 벡터 규약(v * M) 기준: 출력 축 j의 반지름 = Σ_i |M[i][j]| * extent[i]
+		/* 기존 식
+		const float3 world_extent(
+			std::abs(world_mat._11) * extent.x + std::abs(world_mat._21) * extent.y + std::abs(world_mat._31) * extent.z,
+			std::abs(world_mat._12) * extent.x + std::abs(world_mat._22) * extent.y + std::abs(world_mat._32) * extent.z,
+			std::abs(world_mat._13) * extent.x + std::abs(world_mat._23) * extent.y + std::abs(world_mat._33) * extent.z);
+		*/
 		
-		const matrix world_mat = my_transform_->GetWorldMatrix();
-		const AABB3D* local_bounds = nullptr;
-		if (local_bounds_override_.IsValid())
+		// 3*3 부분을 절대값으로 변환
+		for (int i = 0; i < 3; ++i)
 		{
-			local_bounds = &local_bounds_override_;
-		}
-		else
-		{
-			local_bounds = &(mesh_->GetLocalBounds());
+			world_mat.m[i][0] = std::abs(world_mat.m[i][0]);
+			world_mat.m[i][1] = std::abs(world_mat.m[i][1]);
+			world_mat.m[i][2] = std::abs(world_mat.m[i][2]);
 		}
 
-		return geometry_2d::TransformBoundsTo2D(*local_bounds, world_mat);
+		const float3 world_extent = float3::TransformNormal(extent, world_mat);
+
+		AABB3D world_bounds;
+		world_bounds.min = world_center - world_extent;
+		world_bounds.max = world_center + world_extent;
+		return world_bounds;
 	}
 
 	void Renderer::SetLocalBoundsOverride(const AABB3D& local_bounds)
 	{
-		if (local_bounds_override_.min == local_bounds.min && local_bounds_override_.max == local_bounds.max)
-		{
-			return;
-		}
+		if (local_bounds_override_ == local_bounds) { return; }
 
 		local_bounds_override_ = local_bounds;
 
-		RenderManager::GetInst().MarkBoundsDirty(this);
-	}
-
-	void Renderer::ClearLocalBoundsOverride()
-	{
-		local_bounds_override_ = {};
-
-		RenderManager::GetInst().MarkBoundsDirty(this);
-	}
-
-	void Renderer::BuildSubMeshRenderData()
-	{
-		bool needs_refresh = (submesh_render_data_.empty() == false);
-
-		submesh_render_data_.assign(materials_.size(), SubMeshRenderData{});   // kInvalidKey로 채움
-
-		if (mesh_ == nullptr) { return; }
-
-		for (size_t i = 0; i < materials_.size(); ++i) 
+		if (IsRegistered())
 		{
-			if (materials_[i] == nullptr) { continue; }
-
-			const auto& pso_per_pass = materials_[i]->GetPipelineStates();
-
-			RenderPassFlags pass_flags = {};
-			for (size_t j = 0; j < pso_per_pass.size(); ++j)
-			{
-				if (pso_per_pass[j])
-				{
-					pass_flags.Set((RenderPassOrder)j);
-				}
-			}
-			submesh_render_data_[i] = SubMeshRenderData{RenderKey(materials_[i]->GetMaterialID(), mesh_->GetMeshID(), (uint8)i), pass_flags};
+			RenderManager::GetInst().MarkBoundsDirty(this);
 		}
+	}
 
-		// 활성화 상태일 경우 즉시 갱신
-		needs_refresh &= IsEnabledAndActiveInHierarchy();
-		if (needs_refresh)
+	void Renderer::BuildSubMeshRenderData(size_t submesh_idx)
+	{
+		ASSERT_F(submesh_idx < submeshes_.size(), "idx out of range");
+
+		SubMesh& submesh = submeshes_[submesh_idx];
+
+		if (mesh_ && submesh.material)
 		{
-			RenderManager::GetInst().RefreshRenderer(this);
+			submesh.key = RenderKey(submesh.material->GetMaterialID(), mesh_->GetMeshID(), (uint8)submesh_idx);
+		}
+		else
+		{
+			submesh.key.Invalidate();
 		}
 	}
 }

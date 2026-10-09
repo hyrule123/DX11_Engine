@@ -15,7 +15,7 @@ namespace engine
 
 	PixelShader::~PixelShader()
 	{}
-	void PixelShader::Bind(ID3D11DeviceContext* context)
+	void PixelShader::Bind(ID3D11DeviceContext* context) const
 	{
 		context->PSSetShader(ps_.Get(), nullptr, 0);
 	}

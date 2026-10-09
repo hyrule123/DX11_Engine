@@ -52,13 +52,13 @@ namespace engine
 			return; 
 		}
 
-		if (render_pass_mode_ == RenderPassOrder::ForwardOpaque
+		if (render_pass_mode_ == render_pass::ID::ForwardOpaque
 			&&
 			GetMaterial(0)->IsReady(render_pass_mode_))
 		{
 			auto* opaque_pass = RenderManager::GetInst().GetOpaquePass();
 
-			ForwardOpaqueRenderPass::RenderItem item;
+			ForwardOpaquePass::RenderItem item;
 			item.key.material_id = GetMaterial(0)->GetInstanceID();
 			item.key.mesh_id = GetMesh()->GetInstanceID();
 			item.renderer = this;

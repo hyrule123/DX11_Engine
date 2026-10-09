@@ -183,9 +183,6 @@
     <ClInclude Include="Resource\SpriteAnimClip.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Render\RenderPass\ForwardOpaqueRenderPass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Resource\GPU\Buffer\StructuredBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -276,7 +273,16 @@
     <ClInclude Include="Resource\GPU\Shader\InputLayout.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Render\RenderPass\ForwardBlendPass.h">
+    <ClInclude Include="Render\RenderPass\MeshRenderPass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Render\RendererRegistry.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Render\RenderView.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Render\InstanceBufferPool.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -404,9 +410,6 @@
     <ClCompile Include="Resource\SpriteAnimClip.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Render\RenderPass\ForwardOpaqueRenderPass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Resource\GPU\Buffer\StructuredBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -470,7 +473,16 @@
     <ClCompile Include="Resource\GPU\Shader\InputLayout.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Render\RenderPass\ForwardBlendPass.cpp">
+    <ClCompile Include="Render\RenderPass\MeshRenderPass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Render\RendererRegistry.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Render\RenderView.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Render\InstanceBufferPool.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

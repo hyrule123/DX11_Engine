@@ -46,7 +46,7 @@ namespace engine
 
 		return true;
 	}
-	void ComputeShader::Bind(ID3D11DeviceContext* context)
+	void ComputeShader::Bind(ID3D11DeviceContext* context) const
 	{
 		context->CSSetShader(compute_shader_.Get(), nullptr, 0);
 	}

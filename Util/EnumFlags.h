@@ -73,6 +73,33 @@ public:
 
 	constexpr bool operator==(const EnumFlags&) const = default;
 
+	// 켜진 비트를 낮은 인덱스부터 순회: for (EnumT e : flags) { ... }
+	class Iterator
+	{
+	public:
+		constexpr explicit Iterator(StorageT remaining) : remaining_(remaining) {}
+
+		constexpr EnumT operator*() const
+		{
+			return (EnumT)std::countr_zero(remaining_);
+		}
+
+		constexpr Iterator& operator++()
+		{
+			// 가장 낮은 켜진 비트 제거
+			remaining_ = (StorageT)(remaining_ & (remaining_ - 1));
+			return *this;
+		}
+
+		constexpr bool operator!=(const Iterator& other) const { return remaining_ != other.remaining_; }
+
+	private:
+		StorageT remaining_;
+	};
+
+	constexpr Iterator begin() const { return Iterator(bits_); }
+	constexpr Iterator end() const { return Iterator(StorageT{ 0 }); }
+
 private:
 	// kBitCount: StorageT의 값 비트 수.
 	// kValidMask: 유효 비트만 1.

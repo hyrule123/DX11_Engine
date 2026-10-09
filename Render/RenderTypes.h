@@ -7,6 +7,8 @@
 
 #include <Engine/Util/IDAllocator.h>
 
+struct ID3D11DeviceContext;
+
 namespace engine
 {
 	class Renderer;
@@ -14,22 +16,41 @@ namespace engine
 	{
 		Renderer* renderer;
 		AABB2D world_bounds;
-		bool is_dirty;
+		bool is_bounds_dirty;
 	};
 
-	struct RenderPassContext
+	class RenderView;
+	class RendererRegistry;
+	class InstanceBufferPool;
+
+	// 패스 실행에 필요한 프레임 단위 입력. RenderManager가 매 프레임 구성해 넘긴다.
+	// 패스는 RenderManager(싱글턴)에 직접 접근하지 않고 이것만 사용한다.
+	struct RenderContext
 	{
-		AABB2D view_bounds_2d;
+		ID3D11DeviceContext* dc;
+		const RenderView& view;					// 메인 카메라: 행렬, 출력 대상, 뷰포트
+		const RendererRegistry& registry;       // renderer_id → Renderer* 조회
+		InstanceBufferPool& instance_buffers;   // stride별 인스턴스 버퍼
 	};
 
-	enum class RenderPassOrder : uint32
+	namespace render_pass
 	{
-		ForwardOpaque = 0u,
-		ForwardBlend,
-		Present,
-		kCount
-	};
-	ENABLE_ENUM_FLAGS(RenderPassFlags, RenderPassOrder, uint32);
+		enum class ID : uint32
+		{
+			// 내장 패스
+			ForwardOpaque = 0, ForwardBlend, Present,
+
+			// 커스텀 예약 슬롯 (콘텐츠에서 이름을 붙여 사용)
+			Custom0, Custom1, Custom2, Custom3, Custom4, Custom5, Custom6, Custom7,
+			Custom8, Custom9, Custom10, Custom11, Custom12,
+
+			kCount
+		};
+
+		static_assert((size_t)ID::kCount < 32, "render_pass::ID can't exceed 32");
+
+		ENABLE_ENUM_FLAGS(Flags, ID, uint32);
+	}
 
 	enum class ShaderStage : uint8
 	{
@@ -74,18 +95,19 @@ namespace engine
 				(uint64)mesh_id << kMeshIDShift
 				| 
 				(uint64)submesh_slot << kSubMeshIndexShift)
-		{
-		}
+		{}
 
 		uint32 GetMaterialID() const { return (uint32)((key >> kMaterialIDShift) & kMaterialIDMask); }
 		uint32 GetMeshID() const { return (uint32)((key >> kMeshIDShift) & kMeshIDMask); }
 		uint8 GetSubMeshIndex() const { return (uint8)((key >> kSubMeshIndexShift) & kSubMeshIndexMask); }
+		void Invalidate() { key = kInvalidID; }
 
-		uint64 key = 0;
+		uint64 key = kInvalidID;
 
 		auto operator<=>(const RenderKey& other) const = default;
 		bool operator==(const RenderKey& other) const = default;
 
+		static constexpr uint64 kInvalidID = (uint64)0;
 		static constexpr uint32 kSubMeshIndexShift = 0;
 		static constexpr uint32 kMeshIDShift = kSubMeshIndexShift + kSubMeshIndexBits;
 		static constexpr uint32 kMaterialIDShift = kMeshIDShift + kMeshIDBits;
@@ -103,10 +125,10 @@ namespace engine
 		}
 	};
 
-	struct SubMeshRenderData
+	struct SubMesh
 	{
-		RenderKey key;
-		RenderPassFlags pass_flags;
+		std::shared_ptr<Material> material = {};
+		RenderKey key = {};
 	};
 
 
@@ -129,4 +151,22 @@ namespace engine
 	using RegisterB = RegisterSlot<RegisterType::B>;
 	using RegisterS = RegisterSlot<RegisterType::S>;
 	using RegisterU = RegisterSlot<RegisterType::U>;
+
+
+	// RenderTargetGroup의 Clear API가 Depth/Stencil을 함께 지우므로 둘을 하나로 묶는다.
+	enum class ClearTarget : uint8
+	{
+		Color = 0,
+		DepthStencil,
+		kCount
+	};
+	ENABLE_ENUM_FLAGS(ClearTargetFlags, ClearTarget, uint8);
+
+	struct ClearSettings
+	{
+		ClearTargetFlags flags = ClearTarget::Color | ClearTarget::DepthStencil;
+		std::array<float, 4> color = { 0.0f, 0.0f, 0.0f, 0.0f };
+		float depth = 1.0f;
+		uint8 stencil = 0;
+	};
 }

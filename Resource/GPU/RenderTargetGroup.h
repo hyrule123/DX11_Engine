@@ -7,6 +7,8 @@
 #include <Engine/Core/DX11.h>
 #include <Engine/Core/Enum.h>
 
+#include <Engine/Render/RenderTypes.h>
+
 #include <array>
 
 struct ID3D11RenderTargetView;
@@ -38,6 +40,7 @@ namespace engine
         void BindOutputMerger(ID3D11DeviceContext* context);
 		void UnBindOutputMerger(ID3D11DeviceContext* context);
 
+		void Clear(ID3D11DeviceContext* context, const ClearSettings& settings);
         void ClearRenderTargetView(ID3D11DeviceContext* context, std::array<float, 4> clear_color);
         void ClearDepthStencilView(ID3D11DeviceContext* context, float depth, uint8 stencil);
 

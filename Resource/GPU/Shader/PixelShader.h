@@ -18,7 +18,9 @@ namespace engine
 
 		bool IsReady() const { return (bool)ps_; }
 
-        virtual void Bind(ID3D11DeviceContext* context) final;
+        virtual void Bind(ID3D11DeviceContext* context) const final;
+
+		ComPtr<ID3D11PixelShader> GetD3D11PixelShader() const { return ps_; }
 
     protected:
         virtual bool Create( const std::vector<uint8>& bytecode) final;

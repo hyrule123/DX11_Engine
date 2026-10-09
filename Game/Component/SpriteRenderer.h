@@ -26,7 +26,7 @@ namespace engine
 
     private:
         SpriteInstanceData per_obj_data_ = {};
-		RenderPassOrder render_pass_mode_ = RenderPassOrder::ForwardOpaque;
+		render_pass::ID render_pass_mode_ = render_pass::ID::ForwardOpaque;
     };
 }
 

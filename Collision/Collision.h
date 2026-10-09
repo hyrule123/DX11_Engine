@@ -108,6 +108,19 @@ namespace engine
 			min = float3::Min(min, point);
 			max = float3::Max(max, point);
 		}
+
+		constexpr static AABB3D Invalid() noexcept
+		{
+			AABB3D bounds;
+			bounds.min = kFloat3Max;
+			bounds.max = kFloat3Lowest;
+			return bounds;
+		}
+
+		bool operator==(const AABB3D& other) const noexcept
+		{
+			return min == other.min && max == other.max;
+		}
     };
 
     struct Collision2D

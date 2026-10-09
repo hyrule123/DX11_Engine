@@ -29,7 +29,7 @@ namespace engine
 
 		return true;
 	}
-	void RasterizerState::Bind(ID3D11DeviceContext* context)
+	void RasterizerState::Bind(ID3D11DeviceContext* context) const
 	{
 		context->RSSetState(rasterizer_state_.Get());
 	}

@@ -16,7 +16,7 @@ namespace engine
 	VertexShader::~VertexShader()
 	{
 	}
-	void VertexShader::Bind(ID3D11DeviceContext* context)
+	void VertexShader::Bind(ID3D11DeviceContext* context) const
 	{
 		context->VSSetShader(vs_.Get(), nullptr, 0);
 	}

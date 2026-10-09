@@ -7,5 +7,10 @@
 
 namespace engine::culling
 {
-    void CullRenderers2D(const AABB2D& view_bounds, std::span<RendererInfo2D> renderer_infos, std::vector<uint32>& out_visible);
+	// dense_bounds[i]가 view_bounds와 겹치면 dense_to_sparse[i](고정 id)를 out_visible_ids에 추가
+	void CullRenderers2D(
+		const AABB2D& view_bounds,
+		std::span<const AABB3D> dense_bounds,
+		std::span<const uint32> dense_to_sparse,
+		std::vector<uint32>& out_visible_ids);
 }

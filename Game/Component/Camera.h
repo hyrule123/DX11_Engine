@@ -14,7 +14,7 @@ namespace engine
         public Component
     {
         ENTITY_INFO(Camera, Component)
-        COMPONENT_CATEGORY(ComponentCategory::kCamera)
+            COMPONENT_CATEGORY(ComponentCategory::kCamera)
     public:
         enum class ProjectionMode { Orthographic, Perspective };
         struct ProjectionMatrixDesc
@@ -34,16 +34,17 @@ namespace engine
 
         const matrix& GetViewMatrix() const { return view_mat_; }
         const matrix& GetProjMatrix() const { return proj_mat_; }
+		const float3& GetWorldPosition() const { return world_position_; }
+		const  float3& GetWorldForward() const { return world_forward_; }
 
         const ProjectionMatrixDesc& GetProjectionMatrixDesc() const { return proj_mat_desc_; }
 
-		float GetViewportWidth() const { return proj_mat_desc_.viewport_width; }
-		float GetViewportHeight() const { return proj_mat_desc_.viewport_height; }
+        float GetViewportWidth() const { return proj_mat_desc_.viewport_width; }
+        float GetViewportHeight() const { return proj_mat_desc_.viewport_height; }
 
         void CreateProjMatrix(ProjectionMatrixDesc desc);
-        
 
-		AABB2D ComputeViewBounds2D() const;
+        AABB2D ComputeViewBounds2D() const;
 
     private:
         void CreateViewMatrix();
@@ -52,6 +53,9 @@ namespace engine
 
         matrix view_mat_ = {};
         matrix proj_mat_;
+
+        float3 world_position_ = {};
+        float3 world_forward_;
 
         ProjectionMatrixDesc proj_mat_desc_;
     };

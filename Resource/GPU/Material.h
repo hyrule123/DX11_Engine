@@ -26,7 +26,7 @@ namespace engine
         ENTITY_INFO(Material, Resource)
 
     public:
-		using PipelineStatesPerPass = std::array<std::shared_ptr<PipelineState>, (size_t)RenderPassOrder::kCount>;
+		using PipelineStatesPerPass = std::array<std::shared_ptr<PipelineState>, (size_t)render_pass::ID::kCount>;
 
         Material();
         Material(const Material& other) = default;
@@ -37,22 +37,24 @@ namespace engine
             return std::make_shared<Material>(*this);
         }
 
-		bool IsReady(RenderPassOrder pass) const {
+		bool IsReady(render_pass::ID pass) const {
 			return (bool)pipeline_states_per_pass[(size_t)pass];
 		}
 
-        bool SetPipelineState(RenderPassOrder pass, const HashedStringView& shader_set_name);
-        void SetPipelineState(RenderPassOrder pass, std::shared_ptr<PipelineState> shader_set);
-        bool BindPipelineState(ID3D11DeviceContext* context, RenderPassOrder pass);
-		PipelineState* GetPipelineState(RenderPassOrder pass) const {
-            if (pass < RenderPassOrder::kCount) { return pipeline_states_per_pass[(size_t)pass].get(); }
+        bool SetPipelineState(render_pass::ID pass, const HashedStringView& shader_set_name);
+        void SetPipelineState(render_pass::ID pass, std::shared_ptr<PipelineState> shader_set);
+        bool BindPipelineState(ID3D11DeviceContext* context, render_pass::ID pass) const;
+		PipelineState* GetPipelineState(render_pass::ID pass) const {
+            if (pass < render_pass::ID::kCount) { return pipeline_states_per_pass[(size_t)pass].get(); }
             return nullptr;
 		}
 		const PipelineStatesPerPass& GetPipelineStates() const { return pipeline_states_per_pass; }
 
-        void BindPerMaterialBuffers(ID3D11DeviceContext* context) {
+        void Bind(ID3D11DeviceContext* context) const {
             per_material_binding_table_.Bind(context);
         }
+
+        render_pass::Flags GetSupportedPasses() const { return supported_passes_; }
 
         void RemoveTexture(RegisterT slot) {
             per_material_binding_table_.RemoveShaderResource(slot);
@@ -61,8 +63,8 @@ namespace engine
         void SetTexture(ShaderStageFlags stage_flag, RegisterT slot, std::shared_ptr<Texture2D> tex);
         bool SetTexture(ShaderStageFlags stage_flag, RegisterT slot, const HashedStringView& texture_name);
 
-		bool IsInstancingSupported(RenderPassOrder pass) const;
-        size_t GetPerObjectDataStride(RenderPassOrder pass) const;
+		bool IsInstancingSupported(render_pass::ID pass) const;
+        size_t GetPerObjectDataStride(render_pass::ID pass) const;
 
 		uint32 GetMaterialID() const { return material_ID_.Get(); }
 
@@ -71,5 +73,7 @@ namespace engine
         GPUBufferBindingTable per_material_binding_table_;
 
         PipelineStatesPerPass pipeline_states_per_pass = {};
+
+        render_pass::Flags supported_passes_ = {};
     };
 }

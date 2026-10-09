@@ -88,7 +88,7 @@ namespace engine
 		SetDepthStencilState(ResourceManager::GetInst().Find<DepthStencilState>(ds_name));
 		return (bool)depth_stencil_state_;
 	}
-	void PipelineState::Bind(ID3D11DeviceContext* context)
+	void PipelineState::Bind(ID3D11DeviceContext* context) const
 	{
 		if (!IsReady()) 
 		{ 
@@ -116,7 +116,7 @@ namespace engine
 		
 		per_pipeline_buffer_binding_table_.Bind(context);
 	}
-	void PipelineState::Clear(ID3D11DeviceContext* context)
+	void PipelineState::ClearAllBindings(ID3D11DeviceContext* context)
 	{
 		context->IASetInputLayout(nullptr);
 		context->VSSetShader(nullptr, nullptr, 0u);

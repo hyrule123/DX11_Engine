@@ -42,7 +42,7 @@ namespace engine
 
 		return true;
 	}
-	void InputLayout::Bind(ID3D11DeviceContext* context)
+	void InputLayout::Bind(ID3D11DeviceContext* context) const
 	{
 		ASSERT(input_layout_ != nullptr);
 		context->IASetInputLayout(input_layout_.Get());

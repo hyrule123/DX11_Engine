@@ -25,7 +25,7 @@ namespace engine
 		}
 
 		bool Create( const D3D11_RASTERIZER_DESC& desc);
-		void Bind(ID3D11DeviceContext* context);
+		void Bind(ID3D11DeviceContext* context) const;
 
 	private:
 		ComPtr<ID3D11RasterizerState> rasterizer_state_ = {};

@@ -60,11 +60,11 @@ namespace engine
             }
         }
 
-        template <typename T>
-        static std::unique_ptr<T> CreateEntity()
+        template <typename T, typename... Args>
+        static std::unique_ptr<T> CreateEntity(Args&&... args)
         {
             static_assert(std::is_base_of_v<Entity, T>, "T must be derived from Entity");
-            std::unique_ptr<T> entity = std::make_unique<T>();
+            std::unique_ptr<T> entity = std::make_unique<T>(std::forward<Args>(args)...);
             entity->Init();
             return entity;
         }

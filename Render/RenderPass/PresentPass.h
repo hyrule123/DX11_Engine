@@ -1,5 +1,7 @@
 #pragma once
-#include "RenderPass.h"
+#include <Engine/Render/RenderPass/RenderPass.h>
+
+#include <Engine/Render/RenderTypes.h>
 
 namespace engine
 {
@@ -10,26 +12,21 @@ namespace engine
 	class PresentPass
 		: public RenderPass
     {
-		using Super = RenderPass;
+		ENTITY_INFO(PresentPass, RenderPass);
     public:
         PresentPass();
 		virtual ~PresentPass() override;
 
-		virtual void Init( ID3D11DeviceContext* context) override;
-		virtual void Execute( ID3D11DeviceContext* context, const RenderPassContext& pass_context) override;
+		virtual void Init() override;
+		virtual void Execute(const RenderContext& ctx) override;
 
-		// src_render_target_이 없으면 작동하지 않음
-		bool IsSet() const { return src_render_target_ != nullptr; }
-		
-		//복사 원본
-		void SetSourceRenderTarget(std::shared_ptr<RenderTargetGroup> rt_group) {
-			src_render_target_ = std::move(rt_group);
-		}
+		void SetClearSettings(const ClearSettings& settings) { clear_settings_ = settings; }
 
     private:
 		std::unique_ptr<Mesh> mesh_ = {};
 		std::unique_ptr<PipelineState> shader_set_ = {};
-		std::shared_ptr<RenderTargetGroup> src_render_target_ = {};
+
+		ClearSettings clear_settings_ = {};
     };
 }
 

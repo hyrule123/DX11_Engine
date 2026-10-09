@@ -20,6 +20,7 @@ namespace engine
 	Camera::Camera()
 		: Super(Camera::kClassConcreteName, ComponentCategory::kCamera)
 		, proj_mat_(matrix::Identity)
+		, world_forward_(float3::Forward)
 	{
 		proj_mat_desc_.proj_mode = ProjectionMode::Orthographic;
 		proj_mat_desc_.near_z = 1.0f;
@@ -97,14 +98,14 @@ namespace engine
 		//World = S * R * T
 		//View = T^-1 * R^-1, Scale는 보통 View행렬에서 취급 안함
 
-		//-를 곱해서 반대로 이동
-		float3 inverse_pos = my_transform_->GetLocalPosition();
-		inverse_pos *= -1.0f;
+		// Camera::CreateViewMatrix 안에서
+		world_position_ = my_transform_->GetWorldPosition();
+		const Quaternion world_rot = my_transform_->GetWorldRotation();
+		world_forward_ = float3::Transform(float3::Forward, world_rot);   // 로컬 +Z = 전방
 
-		//켤레 쿼터니언을 사용하여 반대로 회전
-		Quaternion inverse_rot = my_transform_->GetLocalRotation();
+		float3 inverse_pos = -world_position_;	// -를 곱해서 반대로 이동
+		Quaternion inverse_rot = world_rot;	//켤레 쿼터니언을 사용하여 반대로 회전
 		inverse_rot.Conjugate();
-
 		view_mat_ = matrix::CreateTranslation(inverse_pos) * matrix::CreateFromQuaternion(inverse_rot);
 	}
 }

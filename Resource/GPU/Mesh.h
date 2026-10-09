@@ -28,7 +28,7 @@ namespace engine
 		virtual ~Mesh() override;
 
 		bool IsReady() const { return (bool)vertex_buffer_ && (bool)index_buffer_; }
-		void Bind(ID3D11DeviceContext* context);
+		void Bind(ID3D11DeviceContext* context) const;
 		void Draw(ID3D11DeviceContext* context, uint32 instance_count, uint32 submesh_index = 0);
 
 		virtual bool LoadFromFile(const std::filesystem::path& path) override;

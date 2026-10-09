@@ -153,6 +153,17 @@ namespace engine
 	{
 		context->OMSetRenderTargets(0, nullptr, nullptr);
 	}
+	void RenderTargetGroup::Clear(ID3D11DeviceContext* context, const ClearSettings& settings)
+	{
+		if (settings.flags.Test(ClearTarget::Color))
+		{
+			ClearRenderTargetView(context, settings.color);
+		}
+		if (settings.flags.Test(ClearTarget::DepthStencil))
+		{
+			ClearDepthStencilView(context, settings.depth, settings.stencil);
+		}
+	}
 	void RenderTargetGroup::ClearRenderTargetView(ID3D11DeviceContext* context, std::array<float, 4> clear_color)
 	{
 		for (const auto& rtv : render_target_buffers_)

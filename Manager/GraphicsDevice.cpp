@@ -183,12 +183,14 @@ namespace engine
 
 	void GraphicsDevice::FrameEnd()
 	{
-		// 1. 렌더 타겟 배경색으로 지우기
-		constexpr std::array<float, 4> color = { 0.1f, 0.1f, 0.1f, 1.0f };
-		swap_chain_RT_->ClearRenderTargetView(context_.Get(), color);
+		//View 영역으로 대체됨
 
-		// 2. 깊이/스텐실 버퍼 초기화
-		swap_chain_RT_->ClearDepthStencilView(context_.Get(), 1.0f, 0);
+		//// 1. 렌더 타겟 배경색으로 지우기
+		//constexpr std::array<float, 4> color = { 0.1f, 0.1f, 0.1f, 1.0f };
+		//swap_chain_RT_->ClearRenderTargetView(context_.Get(), color);
+
+		//// 2. 깊이/스텐실 버퍼 초기화
+		//swap_chain_RT_->ClearDepthStencilView(context_.Get(), 1.0f, 0);
 	}
 
 	ComPtr<IDXGISwapChain> GraphicsDevice::CreateSwapChain(HWND hwnd, uint32 width, uint32 height)

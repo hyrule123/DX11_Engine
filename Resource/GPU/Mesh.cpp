@@ -17,7 +17,7 @@ namespace engine
 	Mesh::~Mesh()
 	{}
 
-	void Mesh::Bind(ID3D11DeviceContext* context)
+	void Mesh::Bind(ID3D11DeviceContext* context) const
 	{
 		if (false == IsReady())
 		{

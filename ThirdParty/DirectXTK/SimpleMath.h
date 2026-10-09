@@ -124,7 +124,7 @@ namespace engine
 		Vector2 operator- () const noexcept { return Vector2(-x, -y); }
 
 		// Vector operations
-		bool InBounds(const Vector2& Bounds) const noexcept;
+		bool InBounds(const Vector2& GetDenseBounds) const noexcept;
 
 		float Length() const noexcept;
 		float LengthSquared() const noexcept;
@@ -243,7 +243,7 @@ namespace engine
 		Vector3 operator- () const noexcept;
 
 		// Vector operations
-		bool InBounds(const Vector3& Bounds) const noexcept;
+		bool InBounds(const Vector3& GetDenseBounds) const noexcept;
 
 		float Length() const noexcept;
 		float LengthSquared() const noexcept;
@@ -365,7 +365,7 @@ namespace engine
 		Vector4 operator- () const noexcept;
 
 		// Vector operations
-		bool InBounds(const Vector4& Bounds) const noexcept;
+		bool InBounds(const Vector4& GetDenseBounds) const noexcept;
 
 		float Length() const noexcept;
 		float LengthSquared() const noexcept;

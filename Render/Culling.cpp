@@ -7,24 +7,27 @@
 
 namespace engine::culling
 {
-	void CullRenderers2D(const AABB2D& view_bounds, std::span<RendererInfo2D> renderer_infos, std::vector<uint32>& out_visible)
+	void CullRenderers2D(
+		const AABB2D& view_bounds,
+		std::span<const AABB3D> dense_bounds,
+		std::span<const uint32> dense_to_sparse,
+		std::vector<uint32>& out_visible_ids)
 	{
-		out_visible.clear();
-		out_visible.reserve(renderer_infos.size());
+		ASSERT(dense_bounds.size() == dense_to_sparse.size());
 
-		for (uint32 i = 0; i < (uint32)renderer_infos.size(); ++i)
+		out_visible_ids.clear();
+
+		const size_t count = dense_bounds.size();
+		for (size_t i = 0; i < count; ++i)
 		{
-			RendererInfo2D& info = renderer_infos[i];
+			const AABB3D& b = dense_bounds[i];
 
-			if (info.is_dirty)
+			// 경계 포함(<=) 비교: 두께 0인 스프라이트도 빠지지 않음
+			// 무효 AABB(Mesh 없음 등)는 min > max라 자연스럽게 탈락
+			if (b.min.x <= view_bounds.max.x && b.max.x >= view_bounds.min.x &&
+				b.min.y <= view_bounds.max.y && b.max.y >= view_bounds.min.y)
 			{
-				info.world_bounds = info.renderer->ComputeWorldBounds2D();
-				info.is_dirty = false;
-			}
-
-			if (view_bounds.Overlaps(info.world_bounds))
-			{
-				out_visible.push_back(i);
+				out_visible_ids.push_back(dense_to_sparse[i]);
 			}
 		}
 	}

@@ -11,9 +11,13 @@
 #include <Engine/Resource/GPU/Mesh.h>
 #include <Engine/Resource/GPU/Material.h>
 #include <Engine/Resource/GPU/PipelineState.h>
-
 #include <Engine/Resource/GPU/Shader/InputLayout.h>
 #include <Engine/Resource/GPU/Vertex.h>
+
+#include <Engine/Render/RenderPass/RenderPass.h>
+#include <Engine/Render/RenderPass/MeshRenderPass.h>
+#include <Engine/Render/RenderPass/PresentPass.h>
+#include <Engine/Render/Culling.h>
 
 #include <Engine/HLSL/Core/Register.hlsli>
 #include <Engine/HLSL/DebugDraw/DebugDraw.hlsli>
@@ -30,6 +34,7 @@ namespace engine
 {
 	RenderManager::RenderManager()
 		: per_frame_binding_table_(REG_B_PER_FRAME_START, REG_B_PER_FRAME_COUNT, REG_T_PER_FRAME_START, REG_T_PER_FRAME_COUNT)
+		, is_rendering(false)
 	{
 	}
 
@@ -40,14 +45,12 @@ namespace engine
 	{
 		auto* context = GraphicsDevice::GetInst().GetContext();
 
-		render_passes_[(size_t)RenderPassOrder::ForwardOpaque] = &forward_opaque_pass_;
-		render_passes_[(size_t)RenderPassOrder::ForwardBlend] = &forward_blend_pass_;
-		render_passes_[(size_t)RenderPassOrder::Present] = &present_pass_;
+		// Default Render Passes
+		RegisterRenderPass(EntityManager::CreateEntity<MeshRenderPass>(render_pass::ID::ForwardOpaque, MeshRenderPass::SortPolicy::State));
+		RegisterRenderPass(EntityManager::CreateEntity<MeshRenderPass>(render_pass::ID::ForwardBlend, MeshRenderPass::SortPolicy::BackToFront));
+		RegisterRenderPass(EntityManager::CreateEntity<PresentPass>());
 
-		for (RenderPass* render_pass : render_passes_)
-		{
-			ASSERT_F(render_pass != nullptr, "RenderPass is nullptr");
-		}
+		SetRenderPassOrder({ render_pass::ID::ForwardOpaque, render_pass::ID::ForwardBlend, render_pass::ID::Present });
 
 		//CONSTANT BUFFERS
 		cb_per_pass_camera_ = EntityManager::CreateEntity<ConstantBuffer>();
@@ -56,104 +59,155 @@ namespace engine
 		CreateSamplerStates(context);
 		BindPSSamplerStates(context);
 		CreateDebugRenderObjects(context);
-
-		present_pass_.Init(context);
 	}
 	void RenderManager::Render()
 	{
+		is_rendering = true;
+
 		auto* context = GraphicsDevice::GetInst().GetContext();
+
+		// Per Frame
 		per_frame_binding_table_.Bind(context);
 
 		Camera* main_cam = main_cam_.get();
-		if (main_cam == nullptr) 
-		{ 
+		if (main_cam == nullptr)
+		{
 			ERR_MSG("Main Camera 없음");
 			return;
 		}
 
-		//Per Pass ( = Camera )
-		CameraData cam_data = {};
-		cam_data.view_mat = main_cam->GetViewMatrix();
-		cam_data.proj_mat = main_cam->GetProjMatrix();
-		cam_data.view_proj = cam_data.view_mat * cam_data.proj_mat;
+		// 1. bounds 갱신 (Renderer당 1회)
+		renderer_registry_.UpdateDirtyBounds();
 
-		cb_per_pass_camera_->Upload(context, cam_data);
+		// 2. View 구성 + 컬링
+		main_view_.view.Setup(*main_cam, GetMainRenderTarget(), main_view_clear_setting_);
+		CullView(main_view_);
+
+		// 3. 전개: 보이는 Renderer → 활성 메시 패스 큐
+		ExpandToMeshPasses(main_view_);
+
+		// 4. 카메라 cbuffer (View 단위)
+		cb_per_pass_camera_->Upload(context, main_view_.view.BuildCameraData());
 		cb_per_pass_camera_->Bind(context, kShaderStageAllGraphicsFlags, REG_B_CAMERA);
 
-		RenderPassContext pass_context = {};
-		pass_context.view_bounds_2d = main_cam->ComputeViewBounds2D();
+		// 5. 출력 대상 클리어 (View당 1회)
+		main_view_.view.ClearTargets(context);
 
-		//Render Pass 별 렌더링
-		forward_opaque_pass_.Execute(context, pass_context);
+		// 6. 실행 순서대로
+		const RenderContext pass_context = {
+			.dc = context,
+			.view = main_view_.view,
+			.registry = renderer_registry_,
+			.instance_buffers = instance_buffer_pool_ };
 
-		forward_blend_pass_.Execute(context, pass_context);
-
-		if (present_pass_.IsSet())
+		for (render_pass::ID pass_id : render_pass_order_)
 		{
-			present_pass_.Execute(context, pass_context);
+			RenderPass* pass = render_passes_[(size_t)pass_id].get();
+			ASSERT(pass);
+			pass->Execute(pass_context);
 		}
-		
 
-		//Debug Draw
+		// Debug Draw
 		DebugDraw(context);
+
+		is_rendering = false;
 	}
+
+	void RenderManager::CullView(ViewEntry& view_entry)
+	{
+		culling::CullRenderers2D(view_entry.view.GetViewBounds2D(), renderer_registry_.GetDenseBounds(), renderer_registry_.GetDenseToSparseTable(), view_entry.visible_ids);
+	}
+
+	void RenderManager::ExpandToMeshPasses(const ViewEntry& view_entry)
+	{
+		for (render_pass::ID id : active_mesh_passes_)
+		{
+			GetMeshRenderPass(id)->Clear();
+		}
+
+		const auto entries = renderer_registry_.SparseSlots();
+
+		for (uint32 renderer_id : view_entry.visible_ids)
+		{
+			const Renderer* renderer = entries[renderer_id].renderer;
+			const float depth = view_entry.view.ComputeViewDepth(renderer_registry_.GetBound(renderer_id).GetCenter());
+
+			for (const SubMesh& submesh : renderer->GetSubMeshes())
+			{
+				if (submesh.material == nullptr)
+				{
+					continue;
+				}
+
+				const render_pass::Flags passes = submesh.material->GetSupportedPasses() & active_mesh_passes_;
+				for (render_pass::ID id : passes)
+				{
+					GetMeshRenderPass(id)->Push(submesh.key, renderer_id, depth);
+				}
+			}
+		}
+	}
+
+	RenderTargetGroup* RenderManager::GetMainRenderTarget() const
+	{
+		if (main_render_target_override_)
+		{
+			return main_render_target_override_.get();
+		}
+		return GraphicsDevice::GetInst().GetSwapChainRenderTargetGroup();
+	}
+
 	void RenderManager::FrameEnd()
 	{
 		//일단은 하지 않음
 		//render_queue_.clear();
 	}
 
-	void RenderManager::RefreshRenderer(Renderer* renderer)
+	void RenderManager::SetRenderPassOrder(std::vector<render_pass::ID> order)
 	{
-		//이 함수가 수정하는 대상: Renderer -> std::array<uint32, (size_t)RenderPassOrder::kCount> renderer_slots_;
-		ASSERT(renderer);
+		CHECK(order.empty() == false);
 
-		// 새로 등록해야 할 Pass들의 Flag
-		RenderPassFlags new_pass_flags = renderer->GetRenderPassFlags();
-
-		// 기존 등록된 Pass들에 대한 정보
-		const std::array<uint32, (size_t)RenderPassOrder::kCount>& renderer_slots_old = renderer->GetRenderSlots();
-		for (uint32 i = 0; i < (uint32)RenderPassOrder::kCount; ++i)
+		render_pass::Flags in_order = {};
+		for (render_pass::ID id : order)
 		{
-			// renderer_slots_old[i]는 곧 수정될 예정 -> value로 떠 놓는다
-			const uint32 old_slot = renderer_slots_old[i];
-
-			const bool new_registered = new_pass_flags.Test((RenderPassOrder)i);
-			const bool old_registered = (old_slot != kInvalidIdx32);
-
-			// 새로 등록 필요 && 기존 미등록 -> 새로 등록
-			if (new_registered && !old_registered)
-			{
-				render_passes_[i]->AddRenderer(renderer);
-			}
-			// 등록 해제 필요 && 기존 등록 -> 등록 해제
-			else if (!new_registered && old_registered)
-			{
-				render_passes_[i]->RemoveRenderer(renderer);
-			}
+			ASSERT_F(in_order.Test(id) == false, "실행 순서에 같은 패스가 두 번 들어 있습니다.");
+			ASSERT_F(render_passes_[(size_t)id] != nullptr, "등록되지 않은 패스가 실행 순서에 들어 있습니다.");
+			in_order.Set(id);
 		}
+
+		render_pass_order_ = std::move(order);
+		active_mesh_passes_ = in_order & mesh_pass_mask_;
+	}
+
+	void RenderManager::RegisterRenderer(Renderer* renderer)
+	{
+		ASSERT_F(is_rendering == false, "Rendering 중에는 Renderer를 등록할 수 없습니다.");
+		ASSERT(renderer);
+		ASSERT_F(renderer->IsRegistered() == false, "이미 등록된 Renderer입니다.");
+
+		const uint32 id = renderer_registry_.Allocate(renderer);
+		renderer->SetRendererId(id);
 	}
 
 	void RenderManager::UnregisterRenderer(Renderer* renderer)
 	{
+		ASSERT_F(is_rendering == false, "Rendering 중에는 Renderer 등록을 해제할 수 없습니다.");
 		ASSERT(renderer);
-
-		const auto& renderer_slots = renderer->GetRenderSlots();
-		for (size_t i = 0; i < renderer_slots.size(); ++i)
+		if (renderer->IsRegistered() == false)
 		{
-			if (renderer_slots[i] == kInvalidIdx32) { continue; }
-			render_passes_[i]->RemoveRenderer(renderer);
+			return;
 		}
+
+		renderer_registry_.Release(renderer->GetRendererId());
+		renderer->SetRendererId(kInvalidIdx32);
 	}
 
 	void RenderManager::MarkBoundsDirty(const Renderer* renderer)
 	{
 		ASSERT(renderer);
-		const auto& renderer_slots = renderer->GetRenderSlots();
-		for (size_t i = 0; i < renderer_slots.size(); ++i)
+		if (renderer->IsRegistered())
 		{
-			if(renderer_slots[i] == kInvalidIdx32) { continue; }
-			render_passes_[i]->MarkDirty(renderer_slots[i]);
+			renderer_registry_.MarkBoundsDirty(renderer->GetRendererId());
 		}
 	}
 
@@ -167,26 +221,34 @@ namespace engine
 		BindPSSamplerStates(GraphicsDevice::GetInst().GetContext());
 	}
 
-	StructuredBuffer* RenderManager::AcquireInstanceBuffer(uint32 byte_stride, uint32 elem_count)
+	MeshRenderPass* RenderManager::GetMeshRenderPass(render_pass::ID id)
 	{
-		std::unique_ptr<StructuredBuffer>& buffer = instance_buffer_per_stride_[byte_stride];
-
-		if (buffer == nullptr)
+		if (mesh_pass_mask_.Test(id))
 		{
-			buffer = EntityManager::CreateEntity<StructuredBuffer>();
-			bool result = buffer->CreateDynamicBuffer(byte_stride, elem_count);
-			CHECK(result);
+			return static_cast<MeshRenderPass*>(render_passes_[(size_t)id].get());
+		}
+		return nullptr;
+	}
+
+	void RenderManager::RegisterRenderPassImpl(std::unique_ptr<RenderPass> render_pass, bool is_mesh_renderpass)
+	{
+		ASSERT(render_pass != nullptr);
+
+		const size_t idx = (size_t)render_pass->GetID();
+		CHECK(idx < render_passes_.size());
+		CHECK_F(render_passes_[idx] == nullptr, "RenderPass already registered at this index");
+
+		if (is_mesh_renderpass)
+		{
+			// 호출부의 is_base_of 판별로 실제 타입이 MeshRenderPass 계열임이 보장됨
+			mesh_pass_mask_.Set(render_pass->GetID());
+		}
+		else
+		{
+			mesh_pass_mask_.Reset(render_pass->GetID());
 		}
 
-		if (elem_count > buffer->GetCapacity())
-		{
-			// 1.5배 or 그보다 클 경우 elem_count만큼 확장
-			const uint32 grown = buffer->GetCapacity() + buffer->GetCapacity() / 2;
-			bool result = buffer->Reserve(std::max(grown, elem_count));
-			CHECK(result);
-		}
-
-		return buffer.get();
+		render_passes_[idx] = std::move(render_pass);
 	}
 
 	void RenderManager::DebugDraw(ID3D11DeviceContext* context)

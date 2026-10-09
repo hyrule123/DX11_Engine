@@ -17,7 +17,7 @@ namespace engine
 
 		virtual bool Create(const std::vector<uint8>& bytecode) override;
 
-        virtual void Bind(ID3D11DeviceContext* context) override;
+        virtual void Bind(ID3D11DeviceContext* context) const override;
         void Unbind(ID3D11DeviceContext* context);
 
 		std::array<UINT, 3> GetThreadGroupSize() const { return thread_group_size_; }

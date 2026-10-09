@@ -1,77 +1,32 @@
 #pragma once
-
 #include <Engine/Core/Entity.h>
-#include <Engine/Core/CoreMinimal.h>
-#include <Engine/Core/Enum.h>
 
 #include <Engine/Render/RenderTypes.h>
 
-#include <span>
-
-struct ID3D11Device;
 struct ID3D11DeviceContext;
 
 namespace engine
 {
-	class RenderTargetGroup;
-	class Renderer;
+    // 모든 패스의 공통 베이스.
+    // - ID는 슬롯 식별자일 뿐 실행 순서가 아니다(실행 순서는 RenderManager의 exec_order_).
+    // - 출력 대상은 패스가 갖지 않는다. 기본은 ctx.view의 대상이며,
+    //   대상이 고정된 패스(Present, 그림자 등)만 파생 클래스에서 직접 보유한다.
+    class RenderPass
+        : public Entity
+    {
+        ENTITY_INFO(RenderPass, Entity)
+    public:
+        explicit RenderPass(const HashedStringView& concrete_class_name, render_pass::ID id);
+        virtual ~RenderPass();
 
-	class RenderPass
-	{
-	public:
-		enum class SortPolicy : uint8_t
-		{
-			None,
-			RenderKey,		// Opaque, Blend: material 우선
-			BackToFront,	// Transparent: 깊이(먼 것부터) + material
-		};
+        RenderPass(const RenderPass&) = delete;
+        RenderPass& operator=(const RenderPass&) = delete;
 
-		RenderPass(RenderPassOrder pass_order, SortPolicy sort_policy);
-		virtual ~RenderPass();
+        virtual void Execute(const RenderContext& ctx) = 0;
 
-		virtual void Init(ID3D11DeviceContext* context) {};
+        render_pass::ID GetID() const { return id_; }
 
-		virtual void Execute(ID3D11DeviceContext* context, const RenderPassContext& pass_context) = 0;
-
-		RenderPassOrder GetPassOrder() const { return pass_order_; }
-
-		void SetRenderTargetGroup(std::shared_ptr<RenderTargetGroup> rt_group) 
-		{ 
-			render_target_group_ = std::move(rt_group); 
-		}
-		void BindRenderTargetGroup(ID3D11DeviceContext* context);
-
-		void AddRenderer(Renderer* renderer);
-
-		// Renderer에 접근해서 무효화시키지는 
-		void RemoveRenderer(Renderer* renderer);
-
-		void MarkDirty(uint32 renderer_slot) 
-		{
-			ASSERT(renderer_slot < registered_renderers_.size());
-			registered_renderers_[renderer_slot].is_dirty = true;
-		}
-
-		// 해당 슬롯에 없을 경우 nullptr 반환
-		RendererInfo2D* GetRendererInfo(uint32 renderer_slot) 
-		{
-			if (renderer_slot >= registered_renderers_.size()) 
-			{ 
-				ASSERT(renderer_slot < registered_renderers_.size());
-				return nullptr;
-			}
-			return &registered_renderers_[renderer_slot];
-		}
-		std::span<RendererInfo2D> GetRegisteredRenderers() { return std::span<RendererInfo2D>(registered_renderers_); }
-
-	private:
-		RenderTargetGroup* GetRenderTargetGroup() const { return render_target_group_.get(); }
-
-		RenderPassOrder pass_order_;
-		std::shared_ptr<RenderTargetGroup> render_target_group_ = {};
-
-		std::vector<RendererInfo2D> registered_renderers_ = {};
-
-		const SortPolicy sort_policy_ = {};
-	};
+    private:
+        render_pass::ID id_;
+    };
 }

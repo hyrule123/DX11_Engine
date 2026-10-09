@@ -25,7 +25,7 @@ namespace engine
             ds_state_ = std::move(dss);
         }
 
-        void Bind(ID3D11DeviceContext* context, uint32 stencil_ref = 1u);
+        void Bind(ID3D11DeviceContext* context, uint32 stencil_ref = 1u) const;
 
     private:
         ComPtr<ID3D11DepthStencilState> ds_state_ = {};

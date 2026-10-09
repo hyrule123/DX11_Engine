@@ -180,7 +180,7 @@ namespace engine
 
 		//MATERIAL
 		std::shared_ptr<Material> material = EntityManager::CreateEntity<Material>();
-		material->SetPipelineState(RenderPassOrder::ForwardOpaque, shaderset);
+		material->SetPipelineState(render_pass::ID::ForwardOpaque, shaderset);
 		resmgr.AddResource("Material_Sprite", material);
 		resmgr.SetDefaultResource(material);
 	}

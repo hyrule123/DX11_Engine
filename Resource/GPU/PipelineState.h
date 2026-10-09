@@ -18,6 +18,7 @@ struct D3D11_INPUT_ELEMENT_DESC;
 
 namespace engine
 {
+    struct RenderContext;
     class InputLayout;
     class VertexShader;
     class PixelShader;
@@ -57,6 +58,7 @@ namespace engine
         void SetPixelShader(std::shared_ptr<PixelShader> pixel_shader) {
 			pixel_shader_ = std::move(pixel_shader);
         }
+		std::shared_ptr<PixelShader> GetPixelShader() const { return pixel_shader_; }
 
         bool SetRasterizerState(const HashedStringView& rss_name);
         void SetRasterizerState(std::shared_ptr<RasterizerState> rss) {
@@ -73,8 +75,8 @@ namespace engine
 			depth_stencil_state_ = std::move(dss);
         }
 
-        void Bind(ID3D11DeviceContext* context);
-		static void Clear(ID3D11DeviceContext* context);
+        void Bind(ID3D11DeviceContext* context) const;
+		static void ClearAllBindings(ID3D11DeviceContext* context);
 
         void AddConstantBufferBinding(ShaderStageFlags stage_flag, RegisterB slot, std::shared_ptr<ConstantBuffer> constant_buffer) {
 			per_pipeline_buffer_binding_table_.AddConstantBuffer(stage_flag, slot, constant_buffer);

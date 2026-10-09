@@ -13,6 +13,8 @@
 #include <Engine/Resource/GPU/RenderTargetGroup.h>
 #include <Engine/Resource/GPU/PipelineState.h>
 
+#include <Engine/Render/RenderView.h>
+
 #include <Engine/Core/Debug.h>
 
 #include <Engine/HLSL/PresentPass/PresentPass.hlsli>
@@ -50,12 +52,16 @@ namespace engine
 	}
 
 	PresentPass::PresentPass()
-		: Super(RenderPassOrder::Present, SortPolicy::None)
-	{}
+		: Super(PresentPass::kClassConcreteName, render_pass::ID::Present)
+	{
+	}
 	PresentPass::~PresentPass()
 	{}
-	void PresentPass::Init(ID3D11DeviceContext* context)
+
+	void PresentPass::Init()
 	{
+		Super::Init();
+
 		ResourceManager& res_mgr = ResourceManager::GetInst();
 		const std::filesystem::path& res_dir = res_mgr.GetResourceDir();
 
@@ -92,7 +98,8 @@ namespace engine
 
 		shader_set_ = std::make_unique<PipelineState>();
 		shader_set_->SetPerInstanceDataStride(sizeof(PresentVSInput));
-		
+		shader_set_->SetInstancingSupport(false);
+
 		std::shared_ptr<VertexShader> vs = EntityManager::CreateEntity<VertexShader>();
 		bool result = vs->LoadFromFile(res_dir / L"Shader/PresentPass_VS.cso");
 		ASSERT(result);
@@ -107,29 +114,42 @@ namespace engine
 		shader_set_->SetDepthStencilState("DSS_Default");
 
 		shader_set_->CreateInputLayout(present_pass::kInputLayoutDescs);
-	}
-	void PresentPass::Execute(ID3D11DeviceContext * context, const RenderPassContext& pass_context)
-	{
-		if (!src_render_target_) { return; }
 
-		src_render_target_->UnBindOutputMerger(context);
+		clear_settings_.flags = ClearTarget::Color | ClearTarget::DepthStencil;
+		clear_settings_.color = { 0.0f, 0.0f, 0.0f, 1.0f };
+		clear_settings_.depth = 1.0f;
+		clear_settings_.stencil = 0;
+	}
+
+	void PresentPass::Execute(const RenderContext& ctx)
+	{
+		RenderTargetGroup* src = ctx.view.GetTarget();
+		RenderTargetGroup* swap_chain = GraphicsDevice::GetInst().GetSwapChainRenderTargetGroup();
+
+		if (src == nullptr || src == swap_chain)
+		{
+			// 이미 스왑체인 렌더타겟에 렌더링된 경우, PresentPass는 아무것도 하지 않음
+			return;
+		}
+
+		src->UnBindOutputMerger(ctx.dc);
 
 		// 이전 렌더패스에서 렌더링된 결과를 PresentPass에서 사용하기 위해 SRV로 바인딩
-		src_render_target_->BindShaderResourceViews(context, ShaderStage::Pixel, REG_T_SRC_RENDERTARGET);
+		src->BindShaderResourceViews(ctx.dc, ShaderStage::Pixel, REG_T_SRC_RENDERTARGET);
 
 		// 전용 ShderSet 바인딩
-		shader_set_->Bind(context);
+		shader_set_->Bind(ctx.dc);
+
+		swap_chain->Clear(ctx.dc, clear_settings_);
 
 		// 스왑체인 렌더타겟을 바인딩
 		GraphicsDevice::GetInst().BindSwapChainRTV();
 
-		mesh_->Bind(context);
+		mesh_->Bind(ctx.dc);
 
 		// 전용 Mesh를 사용하여 화면에 렌더링
-		mesh_->Draw(context, 1);
+		mesh_->Draw(ctx.dc, 1);
 
-		src_render_target_->UnBindShaderResourceViews(context, ShaderStage::Pixel, REG_T_SRC_RENDERTARGET);
-		src_render_target_->ClearRenderTargetView(context, { 0.0f, 0.0f, 0.0f, 0.0f });
-		src_render_target_->ClearDepthStencilView(context, 1.0f, 0);
+		src->UnBindShaderResourceViews(ctx.dc, ShaderStage::Pixel, REG_T_SRC_RENDERTARGET);
 	}
 }

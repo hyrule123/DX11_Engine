@@ -23,8 +23,8 @@ namespace engine
 
 		return true;
 	}
-	void BlendState::Bind(ID3D11DeviceContext* context, const float* blend_factor, uint32 sample_mask)
+	void BlendState::Bind(ID3D11DeviceContext* context, const float* blend_factor, uint32 sample_mask) const
 	{
-		context->OMSetBlendState(blend_state_.Get(), blend_factor, 0xFFFFFFFF);
+		context->OMSetBlendState(blend_state_.Get(), blend_factor, sample_mask);
 	}
 }

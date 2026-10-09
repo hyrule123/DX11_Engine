@@ -19,7 +19,7 @@ namespace engine
         virtual ~Shader() override;
 
         virtual bool LoadFromFile(const std::filesystem::path& path) final;
-        virtual void Bind(ID3D11DeviceContext* context) = 0;
+        virtual void Bind(ID3D11DeviceContext* context) const = 0;
     protected:
         virtual bool Create(const std::vector<uint8>& bytecode) = 0;
     };

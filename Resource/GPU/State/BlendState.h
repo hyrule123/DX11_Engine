@@ -31,7 +31,7 @@ namespace engine
             ID3D11DeviceContext* context, 
             const float* blend_factor = kDefaultBlendFactor, 
             uint32 sample_mask = kDefaultSampleMask
-        );
+        ) const;
 
     private:
         ComPtr<ID3D11BlendState> blend_state_ = {};

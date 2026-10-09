@@ -307,11 +307,11 @@ inline Vector2 operator* (float S, const Vector2& V) noexcept
 // Vector operations
 //------------------------------------------------------------------------------
 
-inline bool Vector2::InBounds(const Vector2& Bounds) const noexcept
+inline bool Vector2::InBounds(const Vector2& GetDenseBounds) const noexcept
 {
     using namespace DirectX;
     const XMVECTOR v1 = XMLoadFloat2(this);
-    const XMVECTOR v2 = XMLoadFloat2(&Bounds);
+    const XMVECTOR v2 = XMLoadFloat2(&GetDenseBounds);
     return XMVector2InBounds(v1, v2);
 }
 
@@ -906,11 +906,11 @@ inline Vector3 operator* (float S, const Vector3& V) noexcept
 // Vector operations
 //------------------------------------------------------------------------------
 
-inline bool Vector3::InBounds(const Vector3& Bounds) const noexcept
+inline bool Vector3::InBounds(const Vector3& GetDenseBounds) const noexcept
 {
     using namespace DirectX;
     const XMVECTOR v1 = XMLoadFloat3(this);
-    const XMVECTOR v2 = XMLoadFloat3(&Bounds);
+    const XMVECTOR v2 = XMLoadFloat3(&GetDenseBounds);
     return XMVector3InBounds(v1, v2);
 }
 
@@ -1496,11 +1496,11 @@ inline Vector4 operator* (float S, const Vector4& V) noexcept
 // Vector operations
 //------------------------------------------------------------------------------
 
-inline bool Vector4::InBounds(const Vector4& Bounds) const noexcept
+inline bool Vector4::InBounds(const Vector4& GetDenseBounds) const noexcept
 {
     using namespace DirectX;
     const XMVECTOR v1 = XMLoadFloat4(this);
-    const XMVECTOR v2 = XMLoadFloat4(&Bounds);
+    const XMVECTOR v2 = XMLoadFloat4(&GetDenseBounds);
     return XMVector4InBounds(v1, v2);
 }
 

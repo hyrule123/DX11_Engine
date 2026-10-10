@@ -16,7 +16,7 @@ namespace engine
 	{
 		Super::LateUpdate();
 
-#ifndef NDEBUG
+#if ENABLE_DEBUG_DRAW
 		DebugDrawPerInstanceData debug_data;
 
 		float2 size = local_bounds_.GetSize();
@@ -29,8 +29,8 @@ namespace engine
 
 		debug_data.color = IsContacting() ? float3(1.0f, 0.0f, 0.0f) : float3(0.0f, 1.0f, 0.0f);
 
-		RenderManager::GetInst().DrawDebugRect(debug_data);
-#endif //NDEBUG
+		RenderManager::GetInst().PushDebugRect(debug_data);
+#endif //ENABLE_DEBUG_DRAW
 	}
 	AABB2D AABBCollider2D::GetWorldBounds() const
 	{

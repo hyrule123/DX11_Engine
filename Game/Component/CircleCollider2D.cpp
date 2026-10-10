@@ -16,7 +16,7 @@ namespace engine
 	{
 		Super::LateUpdate();
 
-#ifndef NDEBUG
+#if ENABLE_DEBUG_DRAW
 		DebugDrawPerInstanceData debug_data;
 
 		debug_data.world_mat = DirectX::XMMatrixAffineTransformation(
@@ -28,7 +28,7 @@ namespace engine
 
 		debug_data.color = IsContacting() ? float3(1.0f, 0.0f, 0.0f) : float3(0.0f, 1.0f, 0.0f);
 		
-		RenderManager::GetInst().DrawDebugCircle(debug_data);
+		RenderManager::GetInst().PushDebugCircle(debug_data);
 #endif
 	}
 	AABB2D CircleCollider2D::GetWorldBounds() const

@@ -24,6 +24,7 @@ namespace engine
     class StructuredBuffer;
     class Mesh;
     class PipelineState;
+    class DebugDrawPass;
 
     struct MeshDrawEntry
     {
@@ -75,12 +76,8 @@ namespace engine
         void OnScreenSizeChange(uint32 width, uint32 height);
         void OnClearContextStates();
 
-        void DrawDebugRect(const DebugDrawPerInstanceData& debug_data) {
-            debug_rect_data_.push_back(debug_data);
-        }
-		void DrawDebugCircle(const DebugDrawPerInstanceData& debug_data) {
-			debug_circle_data_.push_back(debug_data);
-		}
+        void PushDebugRect(const DebugDrawPerInstanceData& debug_data);
+        void PushDebugCircle(const DebugDrawPerInstanceData& debug_data);
 
         StructuredBuffer* AcquireInstanceBuffer(uint32 byte_stride, uint32 elem_count) {
 			return instance_buffer_pool_.Acquire(byte_stride, elem_count);
@@ -89,6 +86,7 @@ namespace engine
 		GPUBufferBindingTable& GetPerFrameBindingTable() { return per_frame_binding_table_; }
 
     private:
+        void CreateDebugDrawPass();
 		MeshRenderPass* GetMeshRenderPass(render_pass::ID id);
         void CullView(ViewEntry& view_entry);
         void ExpandToMeshPasses(const ViewEntry& view_entry);
@@ -97,44 +95,36 @@ namespace engine
 
         void RegisterRenderPassImpl(std::unique_ptr<RenderPass> render_pass, bool is_mesh_renderpass);
 
-        void DebugDraw(ID3D11DeviceContext* context);
-
         void CreateSamplerStates(ID3D11DeviceContext* context);
         void BindPSSamplerStates(ID3D11DeviceContext* context);
-        void CreateDebugRenderObjects(ID3D11DeviceContext* context);
 
     private:
-		std::shared_ptr<RenderTargetGroup> main_render_target_override_ = {}; // 없을 시 SwapChain RTG 사용
+		std::shared_ptr<RenderTargetGroup> main_render_target_override_; // 없을 시 SwapChain RTG 사용
 
-        std::shared_ptr<ConstantBuffer> cb_per_pass_camera_ = {};
+        std::shared_ptr<ConstantBuffer> cb_per_pass_camera_;
 
-		weak_handle_ptr<Camera> main_cam_ = {};
-        ViewEntry main_view_ = {};
-        ClearSettings main_view_clear_setting_ = {};
+		weak_handle_ptr<Camera> main_cam_;
+        ViewEntry main_view_;
+        ClearSettings main_view_clear_setting_;
 
-        std::array<std::unique_ptr<RenderPass>, (size_t)render_pass::ID::kCount> render_passes_ = {};
-		render_pass::Flags mesh_pass_mask_ = {};
-		render_pass::Flags active_mesh_passes_ = {};
-        std::vector<render_pass::ID> render_pass_order_ = {};
+        std::array<std::unique_ptr<RenderPass>, (size_t)render_pass::ID::kCount> render_passes_;
+		render_pass::Flags mesh_pass_mask_;
+		render_pass::Flags active_mesh_passes_;
+        std::vector<render_pass::ID> render_pass_order_;
 
-		InstanceBufferPool instance_buffer_pool_ = {};
+		InstanceBufferPool instance_buffer_pool_;
         
         //Slot에 꽃아두고 계속 사용
-        std::vector<ComPtr<ID3D11SamplerState>> sampler_states_ = {};
+        std::vector<ComPtr<ID3D11SamplerState>> sampler_states_;
 
-        RendererRegistry renderer_registry_ = {};
+        RendererRegistry renderer_registry_;
 
-		uint32 resolution_width_ = {};
-		uint32 resolution_height_ = {};
-
-		std::unique_ptr<Mesh> debug_rect_mesh_ = {};
-		std::unique_ptr<Mesh> debug_circle_mesh_ = {};
-        std::vector<DebugDrawPerInstanceData> debug_rect_data_;
-		std::vector<DebugDrawPerInstanceData> debug_circle_data_;
-		std::unique_ptr<StructuredBuffer> debug_buffer_ = {};
-        std::unique_ptr<PipelineState> debug_shader_set_ = {};
+		uint32 resolution_width_;
+		uint32 resolution_height_;
 
         GPUBufferBindingTable per_frame_binding_table_;
+
+		DebugDrawPass* debug_draw_pass_;
 
         bool is_rendering;
     };

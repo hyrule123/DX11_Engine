@@ -222,6 +222,7 @@
     <ClInclude Include="Core\Detail\Assert.h" />
     <ClInclude Include="Collision\Geometry2D.h" />
     <ClInclude Include="Core\Detail\EngineLog.h" />
+    <ClInclude Include="Render\RenderPass\DebugDrawPass.h" />
     <ClInclude Include="Render\InstanceBufferPool.h" />
     <ClInclude Include="Render\RenderView.h" />
     <ClInclude Include="Render\RendererRegistry.h" />
@@ -314,6 +315,7 @@
     <ClCompile Include="Core\Detail\Assert.cpp" />
     <ClCompile Include="Collision\Geometry2D.cpp" />
     <ClCompile Include="Core\Detail\EngineLog.cpp" />
+    <ClCompile Include="Render\RenderPass\DebugDrawPass.cpp" />
     <ClCompile Include="Render\InstanceBufferPool.cpp" />
     <ClCompile Include="Render\RenderView.cpp" />
     <ClCompile Include="Render\RendererRegistry.cpp" />

@@ -7,6 +7,12 @@
 
 #include <Engine/Util/IDAllocator.h>
 
+#ifdef NDEBUG
+#define ENABLE_DEBUG_DRAW 0
+#else
+#define ENABLE_DEBUG_DRAW 1
+#endif
+
 struct ID3D11DeviceContext;
 
 namespace engine
@@ -38,11 +44,11 @@ namespace engine
 		enum class ID : uint32
 		{
 			// 내장 패스
-			ForwardOpaque = 0, ForwardBlend, Present,
+			ForwardOpaque = 0, ForwardBlend, Present, DebugDraw,
 
 			// 커스텀 예약 슬롯 (콘텐츠에서 이름을 붙여 사용)
 			Custom0, Custom1, Custom2, Custom3, Custom4, Custom5, Custom6, Custom7,
-			Custom8, Custom9, Custom10, Custom11, Custom12,
+			Custom8,
 
 			kCount
 		};

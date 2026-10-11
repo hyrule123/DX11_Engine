@@ -309,15 +309,15 @@ namespace engine
         return true;
 	}
 
-    MapScopeDynamic StructuredBuffer::MapDynamic(ID3D11DeviceContext* context)
+    MapScopeWriteDiscard StructuredBuffer::MapWriteDiscard(ID3D11DeviceContext* context)
     {
         if((buffer_usage_ & D3D11_USAGE_DYNAMIC) == 0)
         {
-            ERR_MSG("MapDynamic() can only be used with dynamic buffers.");
-            return MapScopeDynamic();
+            ERR_MSG("MapWriteDiscard() can only be used with dynamic buffers.");
+            return MapScopeWriteDiscard();
         }
 		count_ = 0; // 맵핑 시 기존 데이터는 모두 날아감
-        return MapScopeDynamic(context, buffer_.Get(), stride_, capacity_);
+        return MapScopeWriteDiscard(context, buffer_.Get(), stride_, capacity_);
     }
     void StructuredBuffer::UnMap(ID3D11DeviceContext* context)
     {
@@ -340,7 +340,7 @@ namespace engine
         ASSERT(nullptr != UAV_);
         context->CSSetUnorderedAccessViews(slot.Get(), 1, UAV_.GetAddressOf(), nullptr);
     }
-    MapScopeDynamic::MapScopeDynamic(ID3D11DeviceContext* ctx, ID3D11Buffer* buf, uint32 stride, uint32 capacity)
+    MapScopeWriteDiscard::MapScopeWriteDiscard(ID3D11DeviceContext* ctx, ID3D11Buffer* buf, uint32 stride, uint32 capacity)
 		: context_(ctx), buffer_(buf), stride_(stride), capacity_(capacity)
     {
         D3D11_MAPPED_SUBRESOURCE mapped = {};
@@ -357,8 +357,5 @@ namespace engine
         }
     }
 
-    MapScopeDynamic::~MapScopeDynamic()
-    {
-        if (mapped_ok_) { context_->Unmap(buffer_, 0); }
-    }
+
 }

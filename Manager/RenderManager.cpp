@@ -85,6 +85,7 @@ namespace engine
 		CreateSamplerStates(context);
 		BindPSSamplerStates(context);
 		
+		instance_buffer_pool_.Init(context);
 	}
 	void RenderManager::Render()
 	{

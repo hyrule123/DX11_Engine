@@ -83,6 +83,7 @@ namespace engine
 	constexpr uint32 kMaterialIDBits = 20;
 	constexpr uint32 kMeshIDBits = 20;
 	constexpr uint32 kSubMeshIndexBits = 8;
+	static_assert(kSubMeshIndexBits <= 8);
 	constexpr uint32 kMaxSubMeshCount = 1u << kSubMeshIndexBits;
 
 	using MaterialID = ScopedID<Material, kMaterialIDBits>;

@@ -33,13 +33,14 @@ namespace engine
 		context->IASetIndexBuffer(index_buffer_.Get(), ib_format_, 0);
 	}
 
-	void Mesh::Draw(ID3D11DeviceContext* context, uint32 instance_count, uint32 submesh_index)
+	void Mesh::Draw(ID3D11DeviceContext* context, DrawArgs args) const
 	{
 		ASSERT(IsReady());
-		ASSERT(submesh_index < (UINT)sub_meshes_.size());
+		ASSERT(args.instance_count > 0);
+		ASSERT(args.submesh_index < (UINT)sub_meshes_.size());
 
-		const SubMesh& sub_mesh = sub_meshes_[submesh_index];
-		context->DrawIndexedInstanced((UINT)sub_mesh.index_count, (UINT)instance_count, (UINT)sub_mesh.index_start, 0, 0);
+		const SubMesh& sub_mesh = sub_meshes_[args.submesh_index];
+		context->DrawIndexedInstanced((UINT)sub_mesh.index_count, (UINT)args.instance_count, (UINT)sub_mesh.index_start, 0, (UINT)args.instance_start);
 	}
 
 	bool Mesh::LoadFromFile(const std::filesystem::path& path)

@@ -167,7 +167,7 @@ namespace engine
 				ASSERT(instance_buffer);
 
 				{
-					MapScopeDynamic map_scope = instance_buffer->MapDynamic(context);
+					MapScopeWriteDiscard map_scope = instance_buffer->MapWriteDiscard(context);
 					for (size_t j = i; j < span_end; ++j)
 					{
 						Renderer* renderer = reg_slots[queue_[j].renderer_id].renderer;
@@ -186,7 +186,7 @@ namespace engine
 				mesh->Bind(context);
 				prev_mesh_id = mesh_id;
 			}
-			mesh->Draw(context, instance_count, submesh_idx);
+			mesh->Draw(context, {.instance_start = 0, .instance_count = instance_count, .submesh_index = submesh_idx});
 
 			i = span_end;
 		}

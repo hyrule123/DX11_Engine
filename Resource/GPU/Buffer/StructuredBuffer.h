@@ -2,6 +2,7 @@
 #include <Engine/Resource/Resource.h>
 
 #include <Engine/Resource/GPU/Buffer/ShaderResource.h>
+#include <Engine/Resource/GPU/Buffer/MapScopeWriteDiscard.h>
 
 #include <Engine/Core/CoreMinimal.h>
 #include <Engine/Core/Enum.h>
@@ -21,38 +22,7 @@ struct ID3D11Device;
 struct ID3D11DeviceContext;
 namespace engine
 {
-    class MapScopeDynamic
-    {
-    public:
-        MapScopeDynamic() = default;
-        MapScopeDynamic(ID3D11DeviceContext* ctx, ID3D11Buffer* buf, uint32 stride, uint32 capacity);
-        ~MapScopeDynamic();
 
-        MapScopeDynamic(const MapScopeDynamic&) = delete;
-        MapScopeDynamic& operator=(const MapScopeDynamic&) = delete;
-
-        bool IsValid() const { return mapped_ok_; }
-        uint32 Count() const { return count_; }
-        bool IsFull() const { return count_ >= capacity_; }
-
-        // 슬롯을 하나 소비한다. 실패 시 빈 블록.
-        DataBlock Allocate()
-        {
-            ASSERT(mapped_ok_ && count_ < capacity_);
-            if (!mapped_ok_ || count_ >= capacity_) { return {}; }
-            return { p_data_ + (size_t)stride_ * count_++, stride_ };
-        }
-
-    private:
-        ID3D11DeviceContext* const  context_ = nullptr;
-        ID3D11Buffer* const buffer_ = nullptr;
-        const uint32 stride_ = 0;
-        const uint32 capacity_ = 0;
-
-        uint8* p_data_ = nullptr;
-        uint32 count_ = 0;
-        bool mapped_ok_ = false;
-    };
 
     class StructuredBuffer
         : public Resource
@@ -97,7 +67,7 @@ namespace engine
 
         //Dynamic 버퍼 모드에서만 사용 가능. 반드시 UnMap() 호출할것.
 		//WriteDiscard 모드로 맵핑되므로 기존 데이터는 모두 날아감.
-        MapScopeDynamic MapDynamic(ID3D11DeviceContext* context);
+        MapScopeWriteDiscard MapWriteDiscard(ID3D11DeviceContext* context);
         void UnMap(ID3D11DeviceContext* context);
 
         void BindSRV(ID3D11DeviceContext* context, ShaderStageFlags stage_flag, RegisterT slot);

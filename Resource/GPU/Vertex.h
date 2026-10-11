@@ -16,7 +16,7 @@ namespace engine
 			using Vertex = DebugVSInput;
 
 			constexpr auto kInputLayoutDescs = []() {
-				std::array<D3D11_INPUT_ELEMENT_DESC, 1> descs;
+				std::array<D3D11_INPUT_ELEMENT_DESC, 1> descs{};
 				//VS의 입력 구조체 매개변수 이름과 일치해야 함
 				descs[0].SemanticName = "POSITION";
 
@@ -49,7 +49,7 @@ namespace engine
 			using Vertex = SpriteVSInput;
 
 			constexpr auto kInputLayoutDescs = []() {
-				std::array<D3D11_INPUT_ELEMENT_DESC, 2> descs;
+				std::array<D3D11_INPUT_ELEMENT_DESC, 2> descs{};
 
 				descs[0].SemanticName = "POSITION";
 				descs[0].SemanticIndex = 0;
@@ -70,6 +70,26 @@ namespace engine
 
 				return descs;
 			}();
+		}
+
+		namespace instance_id
+		{
+			constexpr uint kInputSlot = 31; // 인스턴스 데이터는 일반적으로 다른 슬롯에 위치
+			constexpr const char* kSemanticName = "INSTANCE_ID";
+
+			static_assert(kInputSlot < D3D11_IA_VERTEX_INPUT_RESOURCE_SLOT_COUNT, "입력 슬롯 범위 초과");
+
+			constexpr auto kInputLayoutDesc = []() {
+				D3D11_INPUT_ELEMENT_DESC desc{};
+				desc.SemanticName = kSemanticName;
+				desc.SemanticIndex = 0;
+				desc.Format = DXGI_FORMAT_R32_UINT;
+				desc.InputSlot = kInputSlot;
+				desc.AlignedByteOffset = 0;
+				desc.InputSlotClass = D3D11_INPUT_PER_INSTANCE_DATA;
+				desc.InstanceDataStepRate = 1; // 인스턴스마다 증가
+				return desc;
+				}();
 		}
 	}
 }

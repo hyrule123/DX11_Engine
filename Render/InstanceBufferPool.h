@@ -2,12 +2,15 @@
 
 #include <Engine/Core/CoreMinimal.h>
 
+#include <Engine/Resource/GPU/Buffer/MapScopeWriteDiscard.h>
+
 #include <memory>
 #include <unordered_map>
 
 namespace engine
 {
 	class StructuredBuffer;
+	class InstanceIDBuffer;
 
 	// stride별 동적 StructuredBuffer 풀.
 	// - RenderManager가 값으로 소유하고, RenderPassContext로 패스에 전달한다.
@@ -17,19 +20,55 @@ namespace engine
 	class InstanceBufferPool
 	{
 	public:
+		struct InstanceBuffer; // forward
+		struct Allocation
+		{
+			struct InstanceBuffer* entry = nullptr;	// nullptr = 할당 없음 (stride 0)
+			uint32 start = 0;					// Draw의 instance_start
+			uint32 count = 0;					// Draw의 instance_count, 범위 검사용
+
+			bool IsValid() const { return entry != nullptr; }
+		};
+
+	public:
 		InstanceBufferPool();
 		~InstanceBufferPool();
+
+		void Init(ID3D11DeviceContext* dc);
 
 		InstanceBufferPool(const InstanceBufferPool&) = delete;
 		InstanceBufferPool& operator=(const InstanceBufferPool&) = delete;
 
+		void BeginAllocation();
 		// elem_count개 이상을 담을 수 있는 stride용 버퍼를 반환한다.
-		[[nodiscard]] StructuredBuffer* Acquire(uint32 byte_stride, uint32 elem_count);
+		[[nodiscard]] Allocation Allocate(uint32 byte_stride, uint32 elem_count);
+		
+		void MapAll(ID3D11DeviceContext* dc);
+
+		void UnmapAll();
 
 	private:
+		enum class Phase
+		{
+			Idle,
+			Allocating,
+			Mapping,
+		};
+		bool TransitionPhase(Phase from, Phase to);
+
 		// 처음 만들 때 너무 작게 잡아 확장이 반복되는 것을 방지
 		static constexpr uint32 kMinInitialCapacity = 64;
+		struct InstanceBuffer
+		{
+			std::unique_ptr<StructuredBuffer> buffer = {};	// stride는 buffer->GetElementStride()
+			uint32 allocated = 0;							// 이번 패스 누적 할당 수
+			MapScopeWriteDiscard map_scope = {};
+		};
 
-		std::unordered_map<uint32, std::unique_ptr<StructuredBuffer>> buffers_per_stride_ = {};
+	private:
+		Phase phase_;
+		std::unordered_map<uint32, InstanceBuffer> buffers_per_stride_;
+		std::unique_ptr<InstanceIDBuffer> instance_iota_buffer;
+		
 	};
 }

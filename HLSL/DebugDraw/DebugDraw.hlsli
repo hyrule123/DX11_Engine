@@ -17,18 +17,17 @@ struct DebugVSInput
 	float3 position SEMANTIC(POSITION);
 	
 #ifdef __HLSL
-	uint instance_ID : SV_InstanceID;
+	uint instance_id : INSTANCE_ID;
 #endif //__HLSL
 };
 
 #ifdef __HLSL
 
-StructuredBuffer<DebugDrawPerInstanceData> g_debug_instance_data : register(REG_T_INSTANCE_BUFFER);
-
 struct VS_OUT
 {
 	float4 position : SV_Position;
-	uint instance_ID : SV_InstanceID;
+	nointerpolation float3 color : COLOR;
+	nointerpolation uint instance_id : INSTANCE_ID;
 };
 
 #endif // __HLSL

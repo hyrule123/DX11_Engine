@@ -148,7 +148,7 @@ namespace engine
 		mesh_->Bind(ctx.dc);
 
 		// 전용 Mesh를 사용하여 화면에 렌더링
-		mesh_->Draw(ctx.dc, 1);
+		mesh_->Draw(ctx.dc, {.instance_start = 0, .instance_count = 1, .submesh_index = 0});
 
 		src->UnBindShaderResourceViews(ctx.dc, ShaderStage::Pixel, REG_T_SRC_RENDERTARGET);
 	}

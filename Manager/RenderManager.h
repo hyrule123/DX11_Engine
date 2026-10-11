@@ -56,22 +56,22 @@ namespace engine
         template <typename T>
         void RegisterRenderPass(std::unique_ptr<T> render_pass) {
             static_assert(std::is_base_of_v<RenderPass, T>, "T must derive from RenderPass");
-			RegisterRenderPassImpl(std::move(render_pass), std::is_base_of_v<MeshRenderPass, T>);
+            RegisterRenderPassImpl(std::move(render_pass), std::is_base_of_v<MeshRenderPass, T>);
         }
 
-		void SetRenderPassOrder(std::vector<render_pass::ID> order);
+        void SetRenderPassOrder(std::vector<render_pass::ID> order);
 
-		void RegisterRenderer(Renderer* renderer);
-		void UnregisterRenderer(Renderer* renderer);
+        void RegisterRenderer(Renderer* renderer);
+        void UnregisterRenderer(Renderer* renderer);
 
-		void MarkBoundsDirty(const Renderer* renderer);
+        void MarkBoundsDirty(const Renderer* renderer);
 
-		void SetMainRenderTarget(std::shared_ptr<RenderTargetGroup> rtg) { main_render_target_override_ = std::move(rtg); }
+        void SetMainRenderTarget(std::shared_ptr<RenderTargetGroup> rtg) { main_render_target_override_ = std::move(rtg); }
 
-		void SetMainCamera(weak_handle_ptr<Camera> cam) { main_cam_ = cam; }
+        void SetMainCamera(weak_handle_ptr<Camera> cam) { main_cam_ = cam; }
         weak_handle_ptr<Camera> GetMainCamera() const { return main_cam_; }
 
-		void SetMainViewClearSettings(const ClearSettings& clear_settings) { main_view_clear_setting_ = clear_settings; }
+        void SetMainViewClearSettings(const ClearSettings& clear_settings) { main_view_clear_setting_ = clear_settings; }
 
         void OnScreenSizeChange(uint32 width, uint32 height);
         void OnClearContextStates();
@@ -79,15 +79,17 @@ namespace engine
         void PushDebugRect(const DebugDrawPerInstanceData& debug_data);
         void PushDebugCircle(const DebugDrawPerInstanceData& debug_data);
 
+		InstanceIDBuffer* GetInstanceIDBuffer() const { return instance_iota_buffer.get(); }
+
         StructuredBuffer* AcquireInstanceBuffer(uint32 byte_stride, uint32 elem_count) {
-			return instance_buffer_pool_.Acquire(byte_stride, elem_count);
+            return instance_buffer_pool_.Acquire(byte_stride, elem_count);
         }
 
-		GPUBufferBindingTable& GetPerFrameBindingTable() { return per_frame_binding_table_; }
+        GPUBufferBindingTable& GetPerFrameBindingTable() { return per_frame_binding_table_; }
 
     private:
         void CreateDebugDrawPass();
-		MeshRenderPass* GetMeshRenderPass(render_pass::ID id);
+        MeshRenderPass* GetMeshRenderPass(render_pass::ID id);
         void CullView(ViewEntry& view_entry);
         void ExpandToMeshPasses(const ViewEntry& view_entry);
 
@@ -99,19 +101,18 @@ namespace engine
         void BindPSSamplerStates(ID3D11DeviceContext* context);
 
     private:
-		std::shared_ptr<RenderTargetGroup> main_render_target_override_; // 없을 시 SwapChain RTG 사용
+        std::shared_ptr<RenderTargetGroup> main_render_target_override_; // 없을 시 SwapChain RTG 사용
 
         std::shared_ptr<ConstantBuffer> cb_per_pass_camera_;
 
-		weak_handle_ptr<Camera> main_cam_;
+        weak_handle_ptr<Camera> main_cam_;
         ViewEntry main_view_;
         ClearSettings main_view_clear_setting_;
 
         std::array<std::unique_ptr<RenderPass>, (size_t)render_pass::ID::kCount> render_passes_;
-		render_pass::Flags mesh_pass_mask_;
-		render_pass::Flags active_mesh_passes_;
+        render_pass::Flags mesh_pass_mask_;
+        render_pass::Flags active_mesh_passes_;
         std::vector<render_pass::ID> render_pass_order_;
-
 		InstanceBufferPool instance_buffer_pool_;
         
         //Slot에 꽃아두고 계속 사용

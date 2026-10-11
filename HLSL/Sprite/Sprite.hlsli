@@ -21,7 +21,7 @@ struct SpriteVSInput
 	float2 uv SEMANTIC(TEXCOORD);
 	
 	#ifdef __HLSL
-	uint instance_ID :SV_InstanceID;
+	uint instance_id :INSTANCE_ID;
 	#endif //__HLSL
 };
 
@@ -35,7 +35,7 @@ struct VS_OUT
 {
 	float4 position : SV_Position;
 	float2 uv : TEXCOORD;
-	uint instance_ID : SV_InstanceID;
+	uint instance_id : INSTANCE_ID;
 };
 #endif//__HLSL
 

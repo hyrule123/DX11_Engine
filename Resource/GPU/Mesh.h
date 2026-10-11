@@ -15,6 +15,13 @@ namespace engine
 		ENTITY_INFO(Mesh, Resource)
 
 	public:
+		struct DrawArgs
+		{
+			uint32 instance_start;
+			uint32 instance_count;
+			uint32 submesh_index;
+		};
+
 		struct SubMesh
 		{
 			// 현재 SubMesh의 Index 시작 지점.
@@ -29,7 +36,7 @@ namespace engine
 
 		bool IsReady() const { return (bool)vertex_buffer_ && (bool)index_buffer_; }
 		void Bind(ID3D11DeviceContext* context) const;
-		void Draw(ID3D11DeviceContext* context, uint32 instance_count, uint32 submesh_index = 0);
+		void Draw(ID3D11DeviceContext* context, DrawArgs args) const;
 
 		virtual bool LoadFromFile(const std::filesystem::path& path) override;
 

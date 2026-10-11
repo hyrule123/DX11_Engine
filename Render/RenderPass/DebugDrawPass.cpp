@@ -164,7 +164,7 @@ namespace engine
 
 			//Mesh Draw
 			debug_rect_mesh_->Bind(ctx.dc);
-			debug_rect_mesh_->Draw(ctx.dc, (uint32)debug_rect_data_.size());
+			debug_rect_mesh_->Draw(ctx.dc, {.instance_start = 0, .instance_count = (uint32)debug_rect_data_.size(), .submesh_index = 0});
 
 			// 순회 돌면서 dt 감소 및 음수가 된 값들은 제거
 			for (int32 i = (int32)debug_rect_data_.size() - 1; i >= 0; --i)
@@ -188,7 +188,7 @@ namespace engine
 
 			//Mesh Draw
 			debug_circle_mesh_->Bind(ctx.dc);
-			debug_circle_mesh_->Draw(ctx.dc, (UINT)debug_circle_data_.size());
+			debug_circle_mesh_->Draw(ctx.dc, {.instance_start = 0, .instance_count = (uint32)debug_circle_data_.size(), .submesh_index = 0});
 
 			// 순회 돌면서 dt 감소 및 음수가 된 값들은 제거
 			for (int32 i = (int32)debug_circle_data_.size() - 1; i >= 0; --i)

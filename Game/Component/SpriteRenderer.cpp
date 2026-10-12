@@ -38,7 +38,7 @@ namespace engine
 
 		Material* mtrl = GetMaterial(0);
 		ASSERT(mtrl);
-		ASSERT(sizeof(per_obj_data_) == mtrl->GetPerObjectDataStride(render_pass_mode_));
+		ASSERT(sizeof(per_obj_data_) == mtrl->GetInstanceDataStride(render_pass_mode_));
 	}
 
 	/*
@@ -68,7 +68,7 @@ namespace engine
 	}
 	*/
 
-	void SpriteRenderer::WritePerObjectData(DataBlock data_block)
+	void SpriteRenderer::WriteInstanceData(DataBlock data_block)
 	{
 		per_obj_data_.world_mat = GetTransform()->GetWorldMatrix();
 

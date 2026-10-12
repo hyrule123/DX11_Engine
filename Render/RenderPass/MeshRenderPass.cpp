@@ -169,7 +169,7 @@ namespace engine
 			{
 				Renderer* renderer = renderer_registry[queue_[q].renderer_id].renderer;
 				ASSERT(renderer);
-				renderer->WritePerObjectData(pool.NextSlot(group.alloc));
+				renderer->WriteInstanceData(pool.NextSlot(group.alloc));
 			}
 		}
 

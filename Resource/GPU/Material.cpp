@@ -95,7 +95,7 @@ namespace engine
 		}
 		return false;
 	}
-	size_t Material::GetPerObjectDataStride(render_pass::ID pass) const
+	size_t Material::GetInstanceDataStride(render_pass::ID pass) const
 	{
 		if (pipeline_states_per_pass[(size_t)pass])
 		{

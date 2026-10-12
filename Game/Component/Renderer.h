@@ -50,7 +50,7 @@ namespace engine
 
         Mesh* GetMesh() const { return mesh_.get(); }
 
-        virtual void WritePerObjectData(DataBlock data_block) = 0;
+        virtual void WriteInstanceData(DataBlock data_block) = 0;
 
         AABB3D ComputeWorldBounds() const;
 

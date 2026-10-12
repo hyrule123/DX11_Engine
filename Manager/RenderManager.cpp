@@ -166,7 +166,7 @@ namespace engine
 				const render_pass::Flags passes = submesh.material->GetSupportedPasses() & active_mesh_passes_;
 				for (render_pass::ID id : passes)
 				{
-					GetMeshRenderPass(id)->Push(submesh.key, renderer_id, depth, (uint32)submesh.material->GetPerObjectDataStride(id));
+					GetMeshRenderPass(id)->Push(submesh.key, renderer_id, depth, (uint32)submesh.material->GetInstanceDataStride(id));
 				}
 			}
 		}

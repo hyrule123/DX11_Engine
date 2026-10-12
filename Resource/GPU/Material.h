@@ -64,7 +64,7 @@ namespace engine
         bool SetTexture(ShaderStageFlags stage_flag, RegisterT slot, const HashedStringView& texture_name);
 
 		bool IsInstancingSupported(render_pass::ID pass) const;
-        size_t GetPerObjectDataStride(render_pass::ID pass) const;
+        size_t GetInstanceDataStride(render_pass::ID pass) const;
 
 		uint32 GetMaterialID() const { return material_ID_.Get(); }
 

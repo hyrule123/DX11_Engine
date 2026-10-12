@@ -79,12 +79,6 @@ namespace engine
         void PushDebugRect(const DebugDrawPerInstanceData& debug_data);
         void PushDebugCircle(const DebugDrawPerInstanceData& debug_data);
 
-		InstanceIDBuffer* GetInstanceIDBuffer() const { return instance_iota_buffer.get(); }
-
-        StructuredBuffer* AcquireInstanceBuffer(uint32 byte_stride, uint32 elem_count) {
-            return instance_buffer_pool_.Acquire(byte_stride, elem_count);
-        }
-
         GPUBufferBindingTable& GetPerFrameBindingTable() { return per_frame_binding_table_; }
 
     private:

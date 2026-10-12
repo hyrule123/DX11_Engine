@@ -28,20 +28,18 @@ namespace engine
 		bool result = TransitionPhase(Phase::Idle, Phase::Allocating);
 		if (false == result) { return; }
 
-		phase_ = Phase::Allocating;
-
 		for (auto& [stride, buffer] : buffers_per_stride_)
 		{
 			buffer.allocated = 0;
 		}
 	}
-	InstanceBufferPool::Allocation InstanceBufferPool::Allocate(uint32 byte_stride, uint32 elem_count)
+	InstanceDataAllocation InstanceBufferPool::Allocate(uint32 byte_stride, uint32 elem_count)
 	{
 		ASSERT(phase_ == Phase::Allocating);
 		ASSERT_F(byte_stride > 0, "인스턴스 데이터 stride가 0입니다.");
 		ASSERT_F(elem_count > 0, "인스턴스 개수가 0입니다.");
 
-		InstanceBuffer& buffer = buffers_per_stride_[byte_stride];
+		InstanceBufferEntry& buffer = buffers_per_stride_[byte_stride];
 
 		if (buffer.buffer == nullptr)
 		{
@@ -61,7 +59,7 @@ namespace engine
 		//	CHECK(result);
 		//}
 
-		Allocation alloc;
+		InstanceDataAllocation alloc;
 		alloc.entry = &buffer;
 		alloc.start = buffer.allocated;
 		alloc.count = elem_count;
@@ -69,6 +67,17 @@ namespace engine
 		buffer.allocated += elem_count;
 
 		return alloc;
+	}
+
+	DataBlock InstanceBufferPool::NextSlot(const InstanceDataAllocation& alloc)
+	{
+		ASSERT_F(phase_ == Phase::Mapping, "NextSlot은 MapAll ~ UnmapAll 사이에서만 호출할 수 있습니다.");
+		ASSERT_F(alloc.IsValid(), "무효 Allocation에 기록하려 했습니다.");
+		if (phase_ != Phase::Mapping || false == alloc.IsValid())
+		{
+			return {};	// 릴리스 방어
+		}
+		return alloc.entry->map_scope.Allocate();
 	}
 
 	void InstanceBufferPool::MapAll(ID3D11DeviceContext* dc)
@@ -95,6 +104,7 @@ namespace engine
 				alloc_count_max = std::max(alloc_count_max, grown);
 			}
 
+			alloc_count_max = std::max(alloc_count_max, buffer.buffer->GetCapacity());
 			buffer.map_scope = buffer.buffer->MapWriteDiscard(dc);
 			ASSERT_F(buffer.map_scope.IsValid(), "InstanceBufferPool: stride {} 버퍼 맵핑 실패", stride);
 		}
@@ -115,6 +125,31 @@ namespace engine
 				buffer.map_scope = {};
 			}
 		}
+	}
+
+	void InstanceBufferPool::BindIotaBuffer(ID3D11DeviceContext* dc) const
+	{
+		ASSERT(instance_iota_buffer != nullptr);
+		instance_iota_buffer->Bind(dc);
+	}
+
+	void InstanceBufferPool::Bind(ID3D11DeviceContext* dc, const InstanceDataAllocation& alloc, ShaderStageFlags stages, RegisterT slot)
+	{
+		ASSERT(phase_ == Phase::Idle);
+		if (phase_ != Phase::Idle)
+		{
+			return;	// 릴리스 방어
+		}
+
+		if (false == alloc.IsValid())
+		{
+			return;	// stride 0: 바인딩 없음
+		}
+
+		StructuredBuffer* buffer = alloc.entry->buffer.get();
+		ASSERT(buffer != nullptr);
+
+		buffer->BindSRV(dc, stages, slot);
 	}
 
 	bool InstanceBufferPool::TransitionPhase(Phase from, Phase to)

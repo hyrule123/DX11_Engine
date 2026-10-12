@@ -14,7 +14,5 @@ VS_OUT main(DebugVSInput inpos)
 	
 	outpos.color = g_debug_instance_data[inpos.instance_id].color;
 	
-	outpos.instance_id = inpos.instance_id;
-	
 	return outpos;
 }

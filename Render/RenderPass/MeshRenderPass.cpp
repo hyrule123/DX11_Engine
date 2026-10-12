@@ -52,7 +52,7 @@ namespace engine
 
 	MeshRenderPass::~MeshRenderPass() = default;
 
-	void MeshRenderPass::Push(RenderKey key, uint32 renderer_id, float depth)
+	void MeshRenderPass::Push(RenderKey key, uint32 renderer_id, float depth, uint32 obj_data_stride)
 	{
 		uint64 sort_key = 0;
 
@@ -82,7 +82,7 @@ namespace engine
 		}
 		}
 
-		queue_.push_back({ .sort_key = sort_key, .key = key, .renderer_id = renderer_id });
+		queue_.push_back({ .sort_key = sort_key, .key = key, .renderer_id = renderer_id, .obj_data_stride = obj_data_stride });
 	}
 
 	void MeshRenderPass::Execute(const RenderContext& ctx)
@@ -93,8 +93,10 @@ namespace engine
 		}
 
 		Sort();
+		BuildGroups(ctx);		// 런 렝스 + 인스턴스 범위 할당
+		UploadInstances(ctx);	// stride별 Map 1회 → 일괄 기록 → Unmap
 		BindTargets(ctx);
-		DrawQueue(ctx);
+		DrawGroups(ctx);		// 상태 바인딩(변경 시) + Draw
 	}
 
 	void MeshRenderPass::BindTargets(const RenderContext& ctx)
@@ -110,15 +112,12 @@ namespace engine
 			});
 	}
 
-	void MeshRenderPass::DrawQueue(const RenderContext& ctx)
+	void MeshRenderPass::BuildGroups(const RenderContext& ctx)
 	{
-		ID3D11DeviceContext* context = ctx.dc;
-		const auto reg_slots = ctx.registry.SparseSlots();
-		const render_pass::ID pass_id = GetID();
+		draw_groups_.clear();
+		ctx.instance_buffers.BeginAllocation();
 
-		uint32 prev_material_id = kInvalidID;
-		uint32 prev_mesh_id = kInvalidID;
-		PipelineState* prev_pipeline_state = nullptr;
+		const auto renderer_registry = ctx.registry.SparseSlots();
 
 		const size_t queue_count = queue_.size();
 		size_t i = 0;
@@ -130,23 +129,78 @@ namespace engine
 			size_t span_end = i + 1;
 			while (span_end < queue_count && queue_[span_end].key == item.key)
 			{
+				ASSERT(queue_[span_end].obj_data_stride == item.obj_data_stride);
 				++span_end;
 			}
 			const uint32 instance_count = (uint32)(span_end - i);
 
-			const uint32 material_id = item.key.GetMaterialID();
-			const uint32 mesh_id = item.key.GetMeshID();
-			const uint8 submesh_idx = item.key.GetSubMeshIndex();
+			DrawGroup& group = draw_groups_.emplace_back();
+			group.queue_begin = (uint32)i;
+			group.instance_count = instance_count;
+			group.alloc = (item.obj_data_stride > 0)
+				? ctx.instance_buffers.Allocate(item.obj_data_stride, instance_count)
+				: InstanceDataAllocation{};
+			group.renderer = renderer_registry[item.renderer_id].renderer;
+			ASSERT(group.renderer);
 
-			// 그룹 첫 항목의 Renderer에서 Material/Mesh 조회 (그룹당 1회)
-			Renderer* first_renderer = reg_slots[item.renderer_id].renderer;
-			ASSERT(first_renderer);
+			i = span_end;
+		}
+	}
 
-			Material* mtrl = first_renderer->GetMaterial(submesh_idx);
-			ASSERT(mtrl);
+	void MeshRenderPass::UploadInstances(const RenderContext& ctx)
+	{
+		InstanceBufferPool& pool = ctx.instance_buffers;
+		const auto renderer_registry = ctx.registry.SparseSlots();
 
+		pool.MapAll(ctx.dc);
+
+		// 그룹 순서 = 할당 순서이므로 stride별 커서가 alloc.start와 일치한다
+		for (const DrawGroup& group : draw_groups_)
+		{
+			if (false == group.alloc.IsValid())
+			{
+				continue;	// per-object 데이터 없음: Renderer 역참조도 생략
+			}
+
+			ASSERT(group.queue_begin + group.instance_count <= (uint32)queue_.size());
+
+			const uint32 queue_end = group.queue_begin + group.instance_count;
+			for (uint32 q = group.queue_begin; q < queue_end; ++q)
+			{
+				Renderer* renderer = renderer_registry[queue_[q].renderer_id].renderer;
+				ASSERT(renderer);
+				renderer->WritePerObjectData(pool.NextSlot(group.alloc));
+			}
+		}
+
+		// 중간 return 금지: Mapping 단계에 남으면 다음 패스의 BeginAllocation에서 걸린다
+		pool.UnmapAll();
+	}
+
+	void MeshRenderPass::DrawGroups(const RenderContext& ctx)
+	{
+		ID3D11DeviceContext* context = ctx.dc;
+		InstanceBufferPool& pool = ctx.instance_buffers;
+		const render_pass::ID pass_id = GetID();
+
+		uint32 prev_material_id = kInvalidID;
+		uint32 prev_mesh_id = kInvalidID;
+		PipelineState* prev_pipeline_state = nullptr;
+		const void* prev_instance_buffer = nullptr;		// SRV 재바인딩 판단용 (alloc.entry 비교)
+
+		for (const DrawGroup& group : draw_groups_)
+		{
+			const RenderKey key = queue_[group.queue_begin].key;
+			const uint32 material_id = key.GetMaterialID();
+			const uint32 mesh_id = key.GetMeshID();
+			const uint8 submesh_idx = key.GetSubMeshIndex();
+
+			// Material / PipelineState (Material이 바뀔 때만 조회)
 			if (prev_material_id != material_id)
 			{
+				Material* mtrl = group.renderer->GetMaterial(submesh_idx);
+				ASSERT(mtrl);
+
 				PipelineState* pipeline_state = mtrl->GetPipelineState(pass_id);
 				ASSERT_F(pipeline_state, "이 패스용 PipelineState가 없는 Material이 큐에 들어왔습니다.");
 
@@ -159,36 +213,28 @@ namespace engine
 				prev_material_id = material_id;
 			}
 
-			// 인스턴스 데이터: stride별 버퍼를 Map(DISCARD) → 그룹 전체 기록 → SRV 바인딩
-			const uint32 instance_data_stride = (uint32)mtrl->GetPerObjectDataStride(pass_id);
-			if (instance_data_stride > 0)
+			// 인스턴스 데이터 SRV (stride 버퍼가 바뀔 때만)
+			if (group.alloc.IsValid() && prev_instance_buffer != group.alloc.entry)
 			{
-				StructuredBuffer* instance_buffer = ctx.instance_buffers.Acquire(instance_data_stride, instance_count);
-				ASSERT(instance_buffer);
-
-				{
-					MapScopeWriteDiscard map_scope = instance_buffer->MapWriteDiscard(context);
-					for (size_t j = i; j < span_end; ++j)
-					{
-						Renderer* renderer = reg_slots[queue_[j].renderer_id].renderer;
-						renderer->WritePerObjectData(map_scope.Allocate());
-					}
-				}
-
-				instance_buffer->BindSRV(context, ShaderStage::Vertex | ShaderStage::Pixel, REG_T_INSTANCE_BUFFER);
+				pool.Bind(context, group.alloc, ShaderStage::Vertex | ShaderStage::Pixel, REG_T_INSTANCE_BUFFER);
+				prev_instance_buffer = group.alloc.entry;
 			}
 
-			Mesh* mesh = first_renderer->GetMesh();
+			// Mesh (바뀔 때만)
+			Mesh* mesh = group.renderer->GetMesh();
 			ASSERT(mesh);
-
 			if (prev_mesh_id != mesh_id)
 			{
 				mesh->Bind(context);
 				prev_mesh_id = mesh_id;
 			}
-			mesh->Draw(context, {.instance_start = 0, .instance_count = instance_count, .submesh_index = submesh_idx});
 
-			i = span_end;
+			mesh->Draw(context,
+				{
+					.instance_start = group.alloc.IsValid() ? group.alloc.start : 0,
+					.instance_count = group.instance_count,
+					.submesh_index = submesh_idx,
+				});
 		}
 	}
 }

@@ -166,7 +166,7 @@ namespace engine
 				const render_pass::Flags passes = submesh.material->GetSupportedPasses() & active_mesh_passes_;
 				for (render_pass::ID id : passes)
 				{
-					GetMeshRenderPass(id)->Push(submesh.key, renderer_id, depth);
+					GetMeshRenderPass(id)->Push(submesh.key, renderer_id, depth, (uint32)submesh.material->GetPerObjectDataStride(id));
 				}
 			}
 		}
@@ -239,6 +239,10 @@ namespace engine
 	{
 		resolution_width_ = width;
 		resolution_height_ = height;
+
+		auto* ctx = GraphicsDevice::GetInst().GetContext();
+
+		instance_buffer_pool_.BindIotaBuffer(ctx);
 	}
 	void RenderManager::OnClearContextStates()
 	{

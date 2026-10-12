@@ -23,7 +23,8 @@ namespace engine
 		void Bind(ID3D11DeviceContext* context) const;
 
 	private:
-		ComPtr<ID3D11InputLayout> input_layout_ = nullptr;
+		ComPtr<ID3D11InputLayout> input_layout_;
+		bool has_instance_id_;
 	};
 }
 

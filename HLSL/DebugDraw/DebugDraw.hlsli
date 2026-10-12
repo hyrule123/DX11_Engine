@@ -27,7 +27,6 @@ struct VS_OUT
 {
 	float4 position : SV_Position;
 	nointerpolation float3 color : COLOR;
-	nointerpolation uint instance_id : INSTANCE_ID;
 };
 
 #endif // __HLSL

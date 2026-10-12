@@ -176,4 +176,13 @@ namespace engine
 		float depth = 1.0f;
 		uint8 stencil = 0;
 	};
+
+	struct InstanceDataAllocation
+	{
+		struct InstanceBufferEntry* entry = nullptr;	// nullptr = 할당 없음 (stride 0)
+		uint32 start = 0;					// Draw의 instance_start
+		uint32 count = 0;					// Draw의 instance_count, 범위 검사용
+
+		bool IsValid() const { return entry != nullptr; }
+	};
 }

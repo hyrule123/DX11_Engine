@@ -7,6 +7,8 @@
 
 namespace engine
 {
+	class Renderer;
+
 	// Renderer를 서브메시 단위로 그리는 패스의 공통 구현.
 	// - 항목을 캐싱하지 않는다. RenderManager가 매 프레임(View마다) Clear() 후
 	//   컬링 통과분을 전개하며 Push()로 채운다.
@@ -29,7 +31,7 @@ namespace engine
 		void Reserve(size_t count) { queue_.reserve(count); }
 
 		// depth: RenderView::ComputeViewDepth 결과. State 정책에서는 사용하지 않는다.
-		void Push(RenderKey key, uint32 renderer_id, float depth);
+		void Push(RenderKey key, uint32 renderer_id, float depth, uint32 obj_data_stride);
 
 		virtual void Execute(const RenderContext& ctx) final;
 
@@ -41,17 +43,31 @@ namespace engine
 		virtual void BindTargets(const RenderContext& ctx);
 
 	private:
+		void Sort();
+		void BuildGroups(const RenderContext& ctx);	// 사전 Buffer 용량 계산
+		void UploadInstances(const RenderContext& ctx); // 사전 계산된 Buffer에 데이터 채워넣기 & Draw Command 생성
+		void DrawGroups(const RenderContext& ctx);
+
+	private:
 		struct QueueItem
 		{
 			uint64 sort_key;
 			RenderKey key;
 			uint32 renderer_id;
+			uint32 obj_data_stride;
 		};
 
-		void Sort();
-		void DrawQueue(const RenderContext& ctx);
+		struct DrawGroup
+		{
+			uint32 queue_begin = 0;							// queue_ 내 시작 인덱스
+			uint32 instance_count = 0;						// 그룹 인스턴스 수 (stride 0이어도 유효)
+			InstanceDataAllocation alloc = {};		// stride 0이면 무효
+			Renderer* renderer = nullptr;					// 그룹 첫 Renderer (상태 해석용)
+		};
 
-		std::vector<QueueItem> queue_ = {};
+	private:
 		const SortPolicy sort_policy_;
+		std::vector<QueueItem> queue_ = {};
+		std::vector<DrawGroup> draw_groups_ = {};
 	};
 }

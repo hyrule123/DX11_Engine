@@ -22,13 +22,13 @@ struct ID3D11Device;
 struct ID3D11DeviceContext;
 namespace engine
 {
-
-
     class StructuredBuffer
         : public Resource
 		, public ShaderResource
     {
-        ENTITY_INFO(StructuredBuffer, Resource)
+        ENTITY_INFO(StructuredBuffer, Resource);
+
+		friend class MapScopeWriteDiscard;
     public:
         StructuredBuffer();
         virtual ~StructuredBuffer() override;
@@ -68,7 +68,6 @@ namespace engine
         //Dynamic 버퍼 모드에서만 사용 가능. 반드시 UnMap() 호출할것.
 		//WriteDiscard 모드로 맵핑되므로 기존 데이터는 모두 날아감.
         MapScopeWriteDiscard MapWriteDiscard(ID3D11DeviceContext* context);
-        void UnMap(ID3D11DeviceContext* context);
 
         void BindSRV(ID3D11DeviceContext* context, ShaderStageFlags stage_flag, RegisterT slot);
 		void BindUAV(ID3D11DeviceContext* context, RegisterU slot);
@@ -78,6 +77,7 @@ namespace engine
         uint32 GetCapacity() const { return capacity_; }
 
     private:
+        void UnMap(ID3D11DeviceContext* context);
         bool CreateBufferImpl(uint32 stride, uint32 capacity,
             D3D11_USAGE buffer_usage,
             UINT bind_flags, UINT cpu_access, const void* init_data);

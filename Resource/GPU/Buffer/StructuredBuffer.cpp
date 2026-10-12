@@ -340,22 +340,4 @@ namespace engine
         ASSERT(nullptr != UAV_);
         context->CSSetUnorderedAccessViews(slot.Get(), 1, UAV_.GetAddressOf(), nullptr);
     }
-    MapScopeWriteDiscard::MapScopeWriteDiscard(ID3D11DeviceContext* ctx, ID3D11Buffer* buf, uint32 stride, uint32 capacity)
-		: context_(ctx), buffer_(buf), stride_(stride), capacity_(capacity)
-    {
-        D3D11_MAPPED_SUBRESOURCE mapped = {};
-        HRESULT hr = context_->Map(buffer_, 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped);
-        if (FAILED(hr))
-        {
-            ERR_MSG_HRESULT(hr);
-            mapped_ok_ = false;
-        }
-        else
-        {
-            p_data_ = static_cast<uint8*>(mapped.pData);
-            mapped_ok_ = true;
-        }
-    }
-
-
 }

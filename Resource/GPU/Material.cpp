@@ -87,14 +87,6 @@ namespace engine
 		return true;
 	}
 
-	bool Material::IsInstancingSupported(render_pass::ID pass) const
-	{
-		if (pipeline_states_per_pass[(size_t)pass])
-		{
-			return pipeline_states_per_pass[(size_t)pass]->IsInstancingSupported();
-		}
-		return false;
-	}
 	size_t Material::GetInstanceDataStride(render_pass::ID pass) const
 	{
 		if (pipeline_states_per_pass[(size_t)pass])

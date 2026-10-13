@@ -17,7 +17,7 @@ struct DebugVSInput
 	float3 position SEMANTIC(POSITION);
 	
 #ifdef __HLSL
-	uint instance_id : INSTANCE_ID;
+	uint instance_id : SV_InstanceID;
 #endif //__HLSL
 };
 

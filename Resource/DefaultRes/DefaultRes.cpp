@@ -161,7 +161,6 @@ namespace engine
 #pragma region //GRAPHICS SHADER SET
 		std::shared_ptr<PipelineState> shaderset = EntityManager::CreateEntity<PipelineState>();
 		
-		shaderset->SetInstancingSupport(true);
 		shaderset->SetPerInstanceDataStride(sizeof(SpriteInstanceData));
 		shaderset->SetVertexShader("Shader/Sprite_VS.cso");
 		shaderset->CreateInputLayout(vertex::standard_2d::kInputLayoutDescs);

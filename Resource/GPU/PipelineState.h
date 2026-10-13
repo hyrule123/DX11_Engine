@@ -41,8 +41,6 @@ namespace engine
 		void SetPerInstanceDataStride() { per_instance_data_stride_ = sizeof(T); }
 
 		size_t GetPerInstanceDataStride() const { return per_instance_data_stride_; }
-		void SetInstancingSupport(bool is_supported) { is_instancing_supported_ = is_supported; }
-		bool IsInstancingSupported() const { return is_instancing_supported_; }
 
         bool SetVertexShader(const HashedStringView& vs_name);
         void SetVertexShader(std::shared_ptr<VertexShader> vertex_shader);
@@ -108,7 +106,6 @@ namespace engine
 
         // Per Instance
 		size_t per_instance_data_stride_ = {};
-        bool is_instancing_supported_ = {};
     };
 }
 

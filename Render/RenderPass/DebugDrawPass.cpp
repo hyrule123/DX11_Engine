@@ -13,6 +13,38 @@
 
 namespace engine
 {
+	namespace vertex::debug_draw
+	{
+		using Vertex = DebugVSInput;
+
+		constexpr auto kInputLayoutDescs = []() {
+			std::array<D3D11_INPUT_ELEMENT_DESC, 1> descs{};
+			//VS의 입력 구조체 매개변수 이름과 일치해야 함
+			descs[0].SemanticName = "POSITION";
+
+			//POSITION0을 의미 (뒤에 숫자가 없을 때 기본값 0)
+			descs[0].SemanticIndex = 0;
+
+			//데이터 포맷
+			descs[0].Format = DXGI_FORMAT_R32G32B32_FLOAT;
+
+			//InputSlot: 0번 정점 버퍼 슬롯을 사용합니다.
+			descs[0].InputSlot = 0;
+
+			//AlignedByteOffset: 구조체 시작점으로부터 몇 번째부터 읽어야 하는지
+			descs[0].AlignedByteOffset = 0;
+
+			//정점별로 데이터를 보낼것인지 인스턴스별로 보낼것인지
+			descs[0].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
+
+			//인스턴스 별로 보낼 때 인스턴스 별로 몇단계씩 올릴 것인지
+			//e.g) 2 -> 0, 2, 4, 8, ...
+			descs[0].InstanceDataStepRate = 0;
+
+			return descs;
+			}();
+	}
+
 	DebugDrawPass::DebugDrawPass()
 		: Super(DebugDrawPass::kClassConcreteName, render_pass::ID::DebugDraw)
 		, debug_rect_mesh_(nullptr)
@@ -124,7 +156,6 @@ namespace engine
 #pragma region // GRAPHICS SHADER SET
 		debug_shader_set_ = std::make_unique<PipelineState>();
 
-		debug_shader_set_->SetInstancingSupport(true);
 		debug_shader_set_->SetPerInstanceDataStride(sizeof(SpriteInstanceData));
 		//Shaders
 		debug_shader_set_->SetVertexShader("Shader/DebugDraw_VS.cso");

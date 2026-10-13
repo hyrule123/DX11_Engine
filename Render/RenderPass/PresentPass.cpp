@@ -98,7 +98,6 @@ namespace engine
 
 		shader_set_ = std::make_unique<PipelineState>();
 		shader_set_->SetPerInstanceDataStride(sizeof(PresentVSInput));
-		shader_set_->SetInstancingSupport(false);
 
 		std::shared_ptr<VertexShader> vs = EntityManager::CreateEntity<VertexShader>();
 		bool result = vs->LoadFromFile(res_dir / L"Shader/PresentPass_VS.cso");

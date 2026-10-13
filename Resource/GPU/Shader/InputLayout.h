@@ -24,7 +24,6 @@ namespace engine
 
 	private:
 		ComPtr<ID3D11InputLayout> input_layout_;
-		bool has_instance_id_;
 	};
 }
 

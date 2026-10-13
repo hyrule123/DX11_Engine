@@ -34,7 +34,7 @@ namespace engine
 			(UINT)layout_descs.size(),
 			vs->GetByteCode().data(),
 			vs->GetByteCode().size(),
-			input_layout_.GetAddressOf()
+			input_layout_.ReleaseAndGetAddressOf()
 		);
 
 		if (FAILED(hr))

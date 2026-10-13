@@ -89,9 +89,12 @@ namespace engine
 	}
 	void RenderManager::Render()
 	{
-		is_rendering = true;
+		ScopedValue<bool> scoped_val(is_rendering, true);
 
 		auto* context = GraphicsDevice::GetInst().GetContext();
+
+		// IOTA Instance ID Buffer
+		instance_buffer_pool_.BindIotaBuffer(context);
 
 		// Per Frame
 		per_frame_binding_table_.Bind(context);
@@ -133,8 +136,6 @@ namespace engine
 			ASSERT(pass);
 			pass->Execute(pass_context);
 		}
-
-		is_rendering = false;
 	}
 
 	void RenderManager::CullView(ViewEntry& view_entry)

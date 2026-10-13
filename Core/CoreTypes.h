@@ -65,6 +65,33 @@ namespace engine
 	ScopedValue(T&, T) -> ScopedValue<T>;
 
 
+	// 함수 호출(void)에 scope가 필요할 때
+	template<typename Begin, typename End>
+	class [[nodiscard]] ScopedCall
+	{
+	public:
+		ScopedCall(Begin begin, End end)
+			: end_(std::move(end))
+		{
+			static_assert(std::is_void_v<std::invoke_result_t<Begin&>>,
+				"ScopedCall: begin must return void");
+			static_assert(std::is_void_v<std::invoke_result_t<End&>>,
+				"ScopedCall: end must return void");
+
+			begin();
+		}
+
+		~ScopedCall()
+		{
+			end_();
+		}
+
+		ScopedCall(const ScopedCall&) = delete;
+		ScopedCall& operator=(const ScopedCall&) = delete;
+
+	private:
+		End end_;
+	};
 
 
 }

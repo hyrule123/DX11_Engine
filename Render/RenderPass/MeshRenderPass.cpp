@@ -152,7 +152,8 @@ namespace engine
 		InstanceBufferPool& pool = ctx.instance_buffers;
 		const auto renderer_registry = ctx.registry.SparseSlots();
 
-		pool.MapAll(ctx.dc);
+		// 이 함수 종료 시 자동 UnmapAll
+		ScopedCall map_scope([&]() { pool.MapAll(ctx.dc); }, [&]() { pool.UnmapAll(); });
 
 		// 그룹 순서 = 할당 순서이므로 stride별 커서가 alloc.start와 일치한다
 		for (const DrawGroup& group : draw_groups_)
@@ -172,9 +173,6 @@ namespace engine
 				renderer->WriteInstanceData(pool.NextSlot(group.alloc));
 			}
 		}
-
-		// 중간 return 금지: Mapping 단계에 남으면 다음 패스의 BeginAllocation에서 걸린다
-		pool.UnmapAll();
 	}
 
 	void MeshRenderPass::DrawGroups(const RenderContext& ctx)

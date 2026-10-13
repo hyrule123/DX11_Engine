@@ -11,6 +11,7 @@
 #include <Engine/Resource/GPU/Mesh.h>
 #include <Engine/Resource/GPU/Vertex.h>
 
+
 namespace engine
 {
 	namespace vertex::debug_draw
@@ -156,7 +157,7 @@ namespace engine
 #pragma region // GRAPHICS SHADER SET
 		debug_shader_set_ = std::make_unique<PipelineState>();
 
-		debug_shader_set_->SetPerInstanceDataStride(sizeof(SpriteInstanceData));
+		debug_shader_set_->SetInstanceDataStride(sizeof(DebugDrawPerInstanceData));
 		//Shaders
 		debug_shader_set_->SetVertexShader("Shader/DebugDraw_VS.cso");
 		debug_shader_set_->CreateInputLayout(vertex::debug_draw::kInputLayoutDescs);

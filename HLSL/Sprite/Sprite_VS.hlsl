@@ -18,6 +18,7 @@ VS_OUT main(SpriteVSInput indata)
 	}
 	outdata.uv.y = indata.uv.y;
 	outdata.instance_id = indata.instance_id;
+	outdata.sprite_frame_idx = g_sprite_instance_data[indata.instance_id].sprite_frame_idx;
 	
 	return outdata;
 }

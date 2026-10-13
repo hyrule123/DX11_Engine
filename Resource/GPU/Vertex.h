@@ -10,6 +10,8 @@ namespace engine
 {
 	namespace vertex
 	{
+		// MeshRenderPass를 사용하는 쉐이더는 INSTANCE_ID 입력 필요
+		// 레이아웃에 이 desc를 포함시키면 됨.
 		namespace instance_id
 		{
 			constexpr uint kInputSlot = 31; // 인스턴스 데이터는 일반적으로 다른 슬롯에 위치

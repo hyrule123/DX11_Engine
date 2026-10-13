@@ -35,7 +35,7 @@ struct VS_OUT
 {
 	float4 position : SV_Position;
 	float2 uv : TEXCOORD;
-	uint instance_id : INSTANCE_ID;
+	nointerpolation uint sprite_frame_idx : SPRITE_FRAME_IDX;
 };
 #endif//__HLSL
 

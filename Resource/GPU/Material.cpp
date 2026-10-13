@@ -91,7 +91,7 @@ namespace engine
 	{
 		if (pipeline_states_per_pass[(size_t)pass])
 		{
-			return pipeline_states_per_pass[(size_t)pass]->GetPerInstanceDataStride();
+			return pipeline_states_per_pass[(size_t)pass]->GetInstanceDataStride();
 		}
 		return 0;
 	}

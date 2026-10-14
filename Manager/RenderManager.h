@@ -82,7 +82,7 @@ namespace engine
 
         GPUBufferBindingTable& GetPerFrameBindingTable() { return per_frame_binding_table_; }
 
-		RenderTargetPool& GetRenderTargetPoolInst() { return render_target_pool_; }
+		RenderTargetPool& GetRenderTargetPool() { return render_target_pool_; }
 
     private:
         void CreateDebugDrawPass();

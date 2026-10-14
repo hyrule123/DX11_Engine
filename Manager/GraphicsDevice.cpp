@@ -3,8 +3,8 @@
 
 #include <Engine/Manager/RenderManager.h>
 
-#include <Engine/Resource/GPU/Buffer/RenderTargetView.h>
-#include <Engine/Resource/GPU/Buffer/DepthStencilView.h>
+#include <Engine/Resource/GPU/Buffer/RenderTarget.h>
+#include <Engine/Resource/GPU/Buffer/DepthStencilTarget.h>
 #include <Engine/Resource/GPU/RenderTargetGroup.h>
 
 #include <Engine/Core/EngineMain.h>
@@ -126,7 +126,7 @@ namespace engine
 
 #pragma region RTV
 		//RTV 생성
-		std::shared_ptr<RenderTargetView> rt = EntityManager::CreateEntity<RenderTargetView>();
+		std::shared_ptr<RenderTarget> rt = EntityManager::CreateEntity<RenderTarget>();
 
 		bool result = rt->CreateForSwapchain(swap_chain_);
 		if (!result)
@@ -139,7 +139,7 @@ namespace engine
 
 #pragma region DSV
 		//DSV 생성
-		std::shared_ptr<DepthStencilView> dsv = EntityManager::CreateEntity<DepthStencilView>();
+		std::shared_ptr<DepthStencilTarget> dsv = EntityManager::CreateEntity<DepthStencilTarget>();
 		D3D11_TEXTURE2D_DESC depth_buffer_desc = {};
 		depth_buffer_desc.Width = resolution_width;            // RTV의 가로 크기와 완전히 일치해야 합니다.
 		depth_buffer_desc.Height = resolution_height;          // RTV의 세로 크기와 완전히 일치해야 합니다.

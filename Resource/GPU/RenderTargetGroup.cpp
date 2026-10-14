@@ -1,8 +1,8 @@
 #include "Engine/Core/pch.h"
 #include "RenderTargetGroup.h"
 
-#include <Engine/Resource/GPU/Buffer/RenderTargetView.h>
-#include <Engine/Resource/GPU/Buffer/DepthStencilView.h>
+#include <Engine/Resource/GPU/Buffer/RenderTarget.h>
+#include <Engine/Resource/GPU/Buffer/DepthStencilTarget.h>
 
 #include <Engine/Core/Debug.h>
 

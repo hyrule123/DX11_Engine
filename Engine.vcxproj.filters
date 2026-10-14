@@ -162,10 +162,10 @@
     <ClInclude Include="Resource\GPU\State\BlendState.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Resource\GPU\Buffer\RenderTargetView.h">
+    <ClInclude Include="Resource\GPU\Buffer\RenderTarget.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Resource\GPU\Buffer\DepthStencilView.h">
+    <ClInclude Include="Resource\GPU\Buffer\DepthStencilTarget.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Game\Component\SpriteRenderer.h">
@@ -401,10 +401,10 @@
     <ClCompile Include="Resource\GPU\State\BlendState.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Resource\GPU\Buffer\RenderTargetView.cpp">
+    <ClCompile Include="Resource\GPU\Buffer\RenderTarget.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Resource\GPU\Buffer\DepthStencilView.cpp">
+    <ClCompile Include="Resource\GPU\Buffer\DepthStencilTarget.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Game\Component\SpriteRenderer.cpp">

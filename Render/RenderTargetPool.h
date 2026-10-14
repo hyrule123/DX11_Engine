@@ -9,8 +9,8 @@
 namespace engine
 {
     class Texture2D;
-    class RenderTargetView;
-    class DepthStencilView;
+    class RenderTarget;
+    class DepthStencilTarget;
 
     // 크기 기준.
     // - Fixed: desc의 width/height 그대로. 해상도 변경에 반응하지 않는다.
@@ -53,7 +53,7 @@ namespace engine
     };
 
     // RenderManager가 값으로 소유하는 RT 저장소.
-    // - 관리 단위는 텍스처(RenderTargetView / DepthStencilView) 하나. RTG 조합은 사용하는 쪽이 구성한다.
+    // - 관리 단위는 텍스처(RenderTarget / DepthStencilTarget) 하나. RTG 조합은 사용하는 쪽이 구성한다.
     // - 같은 이름으로 다시 요청하면 기존 텍스처를 반환한다. 종류(Color/Depth)나 desc가 다르면 실패.
     // - 수명은 참조 카운트로만 판단한다. 풀만 들고 있는 상태(use_count == 1)가
     //   kReleaseAfterUnusedFrames 프레임 연속되면 해제. 그 이상의 수명 관리는 사용하는 쪽의 책임.
@@ -71,8 +71,8 @@ namespace engine
         RenderTargetPool& operator=(const RenderTargetPool&) = delete;
 
         // 실패 시 nullptr
-        std::shared_ptr<RenderTargetView> AcquireColor(const HashedStringView& name, const ColorTargetDesc& desc);
-        std::shared_ptr<DepthStencilView> AcquireDepth(const HashedStringView& name, const DepthTargetDesc& desc);
+        std::shared_ptr<RenderTarget> AcquireColor(const HashedStringView& name, const ColorTargetDesc& desc);
+        std::shared_ptr<DepthStencilTarget> AcquireDepth(const HashedStringView& name, const DepthTargetDesc& desc);
 
         // 프레임당 1회 (RenderManager::FrameEnd). 미사용 프레임 수를 갱신하고 기준을 넘은 항목을 해제한다.
         void FrameEnd();
@@ -102,8 +102,8 @@ namespace engine
         // 반환: 항목이 없으면 nullptr(out_failed = false), 종류 불일치면 nullptr(out_failed = true)
         Entry* FindExisting(const HashedStringView& name, Kind kind, bool& out_failed);
 
-        static std::shared_ptr<RenderTargetView> CreateColor(const ColorTargetDesc& desc);
-        static std::shared_ptr<DepthStencilView> CreateDepth(const DepthTargetDesc& desc);
+        static std::shared_ptr<RenderTarget> CreateColor(const ColorTargetDesc& desc);
+        static std::shared_ptr<DepthStencilTarget> CreateDepth(const DepthTargetDesc& desc);
 
         static bool ResolveSize(const RenderTargetSize& size, uint32& out_width, uint32& out_height);
         static const RenderTargetSize& GetSize(const Entry& entry);

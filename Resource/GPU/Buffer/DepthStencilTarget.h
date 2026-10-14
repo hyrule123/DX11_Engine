@@ -6,13 +6,13 @@
 
 namespace engine
 {
-    class DepthStencilView :
+    class DepthStencilTarget :
         public Texture2D
     {
-        ENTITY_INFO(DepthStencilView, Texture2D)
+        ENTITY_INFO(DepthStencilTarget, Texture2D)
     public:
-        DepthStencilView();
-        virtual ~DepthStencilView() override;
+        DepthStencilTarget();
+        virtual ~DepthStencilTarget() override;
 
         bool CreateDSV(D3D11_DEPTH_STENCIL_VIEW_DESC* dsv_desc);
 

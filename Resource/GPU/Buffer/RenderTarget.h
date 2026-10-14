@@ -6,13 +6,13 @@
 
 namespace engine
 {
-    class RenderTargetView :
+    class RenderTarget :
         public Texture2D
     {
-        ENTITY_INFO(RenderTargetView, Texture2D)
+        ENTITY_INFO(RenderTarget, Texture2D)
     public:
-        RenderTargetView();
-        virtual ~RenderTargetView() override;
+        RenderTarget();
+        virtual ~RenderTarget() override;
 
         //기본적인(가장 많이 사용하는) 렌더타겟을 생성
         bool CreateDefaultBuffer(

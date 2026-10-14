@@ -3,8 +3,8 @@
 
 #include <Engine/Manager/GraphicsDevice.h>
 
-#include <Engine/Resource/GPU/Buffer/RenderTargetView.h>
-#include <Engine/Resource/GPU/Buffer/DepthStencilView.h>
+#include <Engine/Resource/GPU/Buffer/RenderTarget.h>
+#include <Engine/Resource/GPU/Buffer/DepthStencilTarget.h>
 
 #include <Engine/Core/Debug.h>
 
@@ -28,7 +28,7 @@ namespace engine
 	RenderTargetPool::~RenderTargetPool()
 	{}
 
-	std::shared_ptr<RenderTargetView> RenderTargetPool::AcquireColor(const HashedStringView& name, const ColorTargetDesc& desc)
+	std::shared_ptr<RenderTarget> RenderTargetPool::AcquireColor(const HashedStringView& name, const ColorTargetDesc& desc)
 	{
 		bool failed = false;
 		if (Entry* entry = FindExisting(name, Kind::Color, failed))
@@ -39,7 +39,7 @@ namespace engine
 			}
 
 			entry->unused_frames = 0;
-			return std::static_pointer_cast<RenderTargetView>(entry->texture);
+			return std::static_pointer_cast<RenderTarget>(entry->texture);
 		}
 
 		if (failed)
@@ -47,7 +47,7 @@ namespace engine
 			return nullptr;
 		}
 
-		std::shared_ptr<RenderTargetView> rtv = CreateColor(desc);
+		std::shared_ptr<RenderTarget> rtv = CreateColor(desc);
 		if (rtv == nullptr)
 		{
 			ERR_MSG("RenderTargetPool: '{}' 생성 실패", name.GetStringView());
@@ -63,7 +63,7 @@ namespace engine
 		return rtv;
 	}
 
-	std::shared_ptr<DepthStencilView> RenderTargetPool::AcquireDepth(const HashedStringView& name, const DepthTargetDesc& desc)
+	std::shared_ptr<DepthStencilTarget> RenderTargetPool::AcquireDepth(const HashedStringView& name, const DepthTargetDesc& desc)
 	{
 		bool failed = false;
 		if (Entry* entry = FindExisting(name, Kind::Depth, failed))
@@ -74,7 +74,7 @@ namespace engine
 			}
 
 			entry->unused_frames = 0;
-			return std::static_pointer_cast<DepthStencilView>(entry->texture);
+			return std::static_pointer_cast<DepthStencilTarget>(entry->texture);
 		}
 
 		if (failed)
@@ -82,7 +82,7 @@ namespace engine
 			return nullptr;
 		}
 
-		std::shared_ptr<DepthStencilView> dsv = CreateDepth(desc);
+		std::shared_ptr<DepthStencilTarget> dsv = CreateDepth(desc);
 		if (dsv == nullptr)
 		{
 			ERR_MSG("RenderTargetPool: '{}' 생성 실패", name.GetStringView());
@@ -174,7 +174,7 @@ namespace engine
 		return &entry;
 	}
 
-	std::shared_ptr<RenderTargetView> RenderTargetPool::CreateColor(const ColorTargetDesc& desc)
+	std::shared_ptr<RenderTarget> RenderTargetPool::CreateColor(const ColorTargetDesc& desc)
 	{
 		uint32 width = 0;
 		uint32 height = 0;
@@ -201,7 +201,7 @@ namespace engine
 			tex_desc.BindFlags |= D3D11_BIND_UNORDERED_ACCESS;
 		}
 
-		std::shared_ptr<RenderTargetView> rtv = EntityManager::CreateEntity<RenderTargetView>();
+		std::shared_ptr<RenderTarget> rtv = EntityManager::CreateEntity<RenderTarget>();
 
 		// BindFlags에 따라 기본 SRV/UAV도 함께 생성됨
 		if (false == rtv->CreateTexture2D(&tex_desc))
@@ -216,7 +216,7 @@ namespace engine
 		return rtv;
 	}
 
-	std::shared_ptr<DepthStencilView> RenderTargetPool::CreateDepth(const DepthTargetDesc& desc)
+	std::shared_ptr<DepthStencilTarget> RenderTargetPool::CreateDepth(const DepthTargetDesc& desc)
 	{
 		uint32 width = 0;
 		uint32 height = 0;
@@ -235,7 +235,7 @@ namespace engine
 		tex_desc.Usage = D3D11_USAGE_DEFAULT;
 		tex_desc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
 
-		std::shared_ptr<DepthStencilView> dsv = EntityManager::CreateEntity<DepthStencilView>();
+		std::shared_ptr<DepthStencilTarget> dsv = EntityManager::CreateEntity<DepthStencilTarget>();
 		if (false == dsv->CreateTexture2D(&tex_desc))
 		{
 			return nullptr;

@@ -258,8 +258,8 @@
     <ClInclude Include="Render\RenderPass\RenderPass.h" />
     <ClInclude Include="Resource\SpriteAnimation.h" />
     <ClInclude Include="Game\Component\SpriteAnimator.h" />
-    <ClInclude Include="Resource\GPU\Buffer\DepthStencilView.h" />
-    <ClInclude Include="Resource\GPU\Buffer\RenderTargetView.h" />
+    <ClInclude Include="Resource\GPU\Buffer\DepthStencilTarget.h" />
+    <ClInclude Include="Resource\GPU\Buffer\RenderTarget.h" />
     <ClInclude Include="Resource\GPU\State\BlendState.h" />
     <ClInclude Include="Core\Enum.h" />
     <ClInclude Include="Resource\GPU\State\RasterizerState.h" />
@@ -344,8 +344,8 @@
     <ClCompile Include="Render\RenderPass\RenderPass.cpp" />
     <ClCompile Include="Resource\SpriteAnimation.cpp" />
     <ClCompile Include="Game\Component\SpriteAnimator.cpp" />
-    <ClCompile Include="Resource\GPU\Buffer\DepthStencilView.cpp" />
-    <ClCompile Include="Resource\GPU\Buffer\RenderTargetView.cpp" />
+    <ClCompile Include="Resource\GPU\Buffer\DepthStencilTarget.cpp" />
+    <ClCompile Include="Resource\GPU\Buffer\RenderTarget.cpp" />
     <ClCompile Include="Resource\GPU\State\BlendState.cpp" />
     <ClCompile Include="Resource\GPU\State\RasterizerState.cpp" />
     <ClCompile Include="Resource\GPU\State\DepthStencilState.cpp" />

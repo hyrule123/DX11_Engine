@@ -1,5 +1,5 @@
 #include "Engine/Core/pch.h"
-#include "DepthStencilView.h"
+#include "DepthStencilTarget.h"
 
 #include <Engine/Manager/GraphicsDevice.h>
 
@@ -7,15 +7,15 @@
 
 namespace engine
 {
-	DepthStencilView::DepthStencilView()
-		: Super(DepthStencilView::kClassConcreteName)
+	DepthStencilTarget::DepthStencilTarget()
+		: Super(DepthStencilTarget::kClassConcreteName)
 	{
 	}
-	DepthStencilView::~DepthStencilView()
+	DepthStencilTarget::~DepthStencilTarget()
 	{
 	}
 
-    bool DepthStencilView::CreateDSV( D3D11_DEPTH_STENCIL_VIEW_DESC* dsv_desc)
+    bool DepthStencilTarget::CreateDSV( D3D11_DEPTH_STENCIL_VIEW_DESC* dsv_desc)
     {
 		auto tex = GetTexture2D();
 		if (!tex)
@@ -35,7 +35,7 @@ namespace engine
 
         return true;
     }
-	bool DepthStencilView::Resize(uint32 width, uint32 height)
+	bool DepthStencilTarget::Resize(uint32 width, uint32 height)
 	{
 		bool result = Super::Resize(width, height);
 		if (!result)

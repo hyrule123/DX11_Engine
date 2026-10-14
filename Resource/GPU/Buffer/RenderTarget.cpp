@@ -1,5 +1,5 @@
 #include "Engine/Core/pch.h"
-#include "RenderTargetView.h"
+#include "RenderTarget.h"
 
 #include <Engine/Manager/GraphicsDevice.h>
 
@@ -7,12 +7,12 @@
 
 namespace engine
 {
-	RenderTargetView::RenderTargetView()
-		: Super(RenderTargetView::kClassConcreteName)
+	RenderTarget::RenderTarget()
+		: Super(RenderTarget::kClassConcreteName)
 	{}
-	RenderTargetView::~RenderTargetView()
+	RenderTarget::~RenderTarget()
 	{}
-	bool RenderTargetView::CreateDefaultBuffer(uint32 width, uint32 height, DXGI_FORMAT format)
+	bool RenderTarget::CreateDefaultBuffer(uint32 width, uint32 height, DXGI_FORMAT format)
 	{
 		// 내부에서 표준 DESC를 조립
 		D3D11_TEXTURE2D_DESC desc = {};
@@ -34,7 +34,7 @@ namespace engine
 
 		return CreateRTV(nullptr);
 	}
-	bool RenderTargetView::CreateRTV(D3D11_RENDER_TARGET_VIEW_DESC* rtv_desc)
+	bool RenderTarget::CreateRTV(D3D11_RENDER_TARGET_VIEW_DESC* rtv_desc)
 	{
 		auto tex = GetTexture2D();
 		if (!tex)
@@ -52,7 +52,7 @@ namespace engine
 
 		return true;
 	}
-	bool RenderTargetView::CreateForSwapchain( ComPtr<IDXGISwapChain> swap_chain)
+	bool RenderTarget::CreateForSwapchain( ComPtr<IDXGISwapChain> swap_chain)
 	{
 		// 1. 스왑 체인으로부터 백 버퍼(Texture2D) 포인터를 가져옵니다.
 		ComPtr<ID3D11Texture2D> back_buffer;
@@ -75,7 +75,7 @@ namespace engine
 			
 		return true;
 	}
-	bool RenderTargetView::Resize( uint32 width, uint32 height)
+	bool RenderTarget::Resize( uint32 width, uint32 height)
 	{
 		bool result = Super::Resize(width, height);
 		if (!result)

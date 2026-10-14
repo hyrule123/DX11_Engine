@@ -266,7 +266,7 @@ namespace engine
 			return false;
 		}
 
-		ComPtr<ID3D11ShaderResourceView> new_srv;
+		ComPtr<ID3D11ShaderResourceView> new_srv = nullptr;
 		if (SRV_)
 		{
 			D3D11_SHADER_RESOURCE_VIEW_DESC srv_desc = {};
@@ -279,9 +279,25 @@ namespace engine
 				return false;
 			}
 		}
+		ComPtr<ID3D11UnorderedAccessView> new_uav = nullptr;
+		if(UAV_)
+		{
+			D3D11_UNORDERED_ACCESS_VIEW_DESC uav_desc = {};
+			UAV_->GetDesc(&uav_desc);
+
+			new_uav = CreateUAVImpl(new_texture.Get(), &uav_desc);
+			if (new_uav == nullptr)
+			{
+				ERR_MSG("Texture2D Resize 실패: 새로운 UAV 생성 실패");
+				return false;
+			}
+		}
 
 		tex2D_buffer_ = std::move(new_texture);
 		SRV_ = std::move(new_srv);
+		UAV_ = std::move(new_uav);
+		width_ = width;
+		height_ = height;
 		return true;
 	}
 	void Texture2D::SetTexture2D(ComPtr<ID3D11Texture2D> texture)

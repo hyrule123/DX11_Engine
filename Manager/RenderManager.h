@@ -2,6 +2,7 @@
 #include <Engine/Render/RendererRegistry.h>
 #include <Engine/Render/RenderView.h>
 #include <Engine/Render/InstanceBufferPool.h>
+#include <Engine/Render/RenderTargetPool.h>
 
 #include <Engine/Core/CoreMinimal.h>
 #include <Engine/Core/Singleton.h>
@@ -81,6 +82,8 @@ namespace engine
 
         GPUBufferBindingTable& GetPerFrameBindingTable() { return per_frame_binding_table_; }
 
+		RenderTargetPool& GetRenderTargetPoolInst() { return render_target_pool_; }
+
     private:
         void CreateDebugDrawPass();
         MeshRenderPass* GetMeshRenderPass(render_pass::ID id);
@@ -95,6 +98,8 @@ namespace engine
         void BindPSSamplerStates(ID3D11DeviceContext* context);
 
     private:
+        RenderTargetPool render_target_pool_;
+        
         std::shared_ptr<RenderTargetGroup> main_render_target_override_; // 없을 시 SwapChain RTG 사용
 
         std::shared_ptr<ConstantBuffer> cb_per_pass_camera_;

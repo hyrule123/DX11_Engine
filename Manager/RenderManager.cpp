@@ -34,7 +34,8 @@
 namespace engine
 {
 	RenderManager::RenderManager()
-		: main_render_target_override_(nullptr)
+		: render_target_pool_()
+		, main_render_target_override_(nullptr)
 		, cb_per_pass_camera_(nullptr)
 		, main_cam_(nullptr)
 		, main_view_()
@@ -184,8 +185,7 @@ namespace engine
 
 	void RenderManager::FrameEnd()
 	{
-		//일단은 하지 않음
-		//render_queue_.clear();
+		render_target_pool_.FrameEnd();
 	}
 
 	void RenderManager::SetRenderPassOrder(std::vector<render_pass::ID> order)
@@ -241,8 +241,9 @@ namespace engine
 		resolution_width_ = width;
 		resolution_height_ = height;
 
-		auto* ctx = GraphicsDevice::GetInst().GetContext();
+		render_target_pool_.OnScreenSizeChange(width, height);
 
+		auto* ctx = GraphicsDevice::GetInst().GetContext();
 		instance_buffer_pool_.BindIotaBuffer(ctx);
 	}
 	void RenderManager::OnClearContextStates()

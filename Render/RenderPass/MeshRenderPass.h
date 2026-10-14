@@ -9,6 +9,7 @@ namespace engine
 {
 	class Renderer;
 	class RenderTarget;
+	class RenderTargetGroup;
 
 	// Renderer를 서브메시 단위로 그리는 패스의 공통 구현.
 	// - 항목을 캐싱하지 않는다. RenderManager가 매 프레임(View마다) Clear() 후

@@ -219,6 +219,7 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Render\RenderPass\BlitPass.h" />
     <ClInclude Include="Core\Detail\Assert.h" />
     <ClInclude Include="Collision\Geometry2D.h" />
     <ClInclude Include="Core\Detail\EngineLog.h" />
@@ -250,7 +251,6 @@
     <ClInclude Include="Game\Component\BlackBoard.h" />
     <ClInclude Include="Game\Component\HFSM.h" />
     <ClInclude Include="Game\Component\HFSMState.h" />
-    <ClInclude Include="Render\RenderPass\PresentPass.h" />
     <ClInclude Include="ThirdParty\ankerl\unordered_dense.h" />
     <ClInclude Include="ThirdParty\ankerl\unordered_dense_stl.h" />
     <ClInclude Include="Resource\GPU\Buffer\TypedBuffer.h" />
@@ -315,6 +315,7 @@
     <ClInclude Include="Resource\GPU\Shader\VertexShader.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Render\RenderPass\BlitPass.cpp" />
     <ClCompile Include="Core\Detail\Assert.cpp" />
     <ClCompile Include="Collision\Geometry2D.cpp" />
     <ClCompile Include="Core\Detail\EngineLog.cpp" />
@@ -340,7 +341,6 @@
     <ClCompile Include="Game\Component\BlackBoard.cpp" />
     <ClCompile Include="Game\Component\HFSM.cpp" />
     <ClCompile Include="Game\Component\HFSMState.cpp" />
-    <ClCompile Include="Render\RenderPass\PresentPass.cpp" />
     <ClCompile Include="Render\RenderPass\RenderPass.cpp" />
     <ClCompile Include="Resource\SpriteAnimation.cpp" />
     <ClCompile Include="Game\Component\SpriteAnimator.cpp" />
@@ -406,7 +406,7 @@
     <None Include="HLSL\DebugDraw\DebugDraw.hlsli" />
     <None Include="HLSL\Core\Register.hlsli" />
     <None Include="HLSL\ForwardOpaquePass.hlsli" />
-    <None Include="HLSL\PresentPass\PresentPass.hlsli" />
+    <None Include="HLSL\BlitPass\BlitPass.hlsli" />
     <None Include="HLSL\RenderPass.hlsli" />
     <None Include="HLSL\Sprite\Sprite.hlsli" />
     <None Include="ThirdParty\DirectXTK\SimpleMath.inl" />
@@ -424,13 +424,13 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
     </FxCompile>
-    <FxCompile Include="HLSL\PresentPass\PresentPass_PS.hlsl">
+    <FxCompile Include="HLSL\BlitPass\BlitPass_PS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
     </FxCompile>
-    <FxCompile Include="HLSL\PresentPass\PresentPass_VS.hlsl">
+    <FxCompile Include="HLSL\BlitPass\BlitPass_VS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>

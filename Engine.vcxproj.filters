@@ -204,9 +204,6 @@
     <ClInclude Include="Game\Component\AIContext.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Render\RenderPass\PresentPass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Collision\CollisionSystem2D.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -295,6 +292,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Render\RenderTargetPool.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Render\RenderPass\BlitPass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -437,9 +437,6 @@
     <ClCompile Include="Game\Component\BlackBoard.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Render\RenderPass\PresentPass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Collision\CollisionSystem2D.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -509,6 +506,9 @@
     <ClCompile Include="Render\RenderTargetPool.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Render\RenderPass\BlitPass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Engine.rc">
@@ -531,7 +531,7 @@
     <None Include="HLSL\Core\Config.hlsli" />
     <None Include="HLSL\Sprite\Sprite.hlsli" />
     <None Include="HLSL\CommonSampler.hlsli" />
-    <None Include="HLSL\PresentPass\PresentPass.hlsli" />
+    <None Include="HLSL\BlitPass\BlitPass.hlsli" />
     <None Include="HLSL\Camera.hlsli" />
     <None Include="HLSL\ForwardOpaquePass.hlsli" />
     <None Include="HLSL\RenderPass.hlsli" />
@@ -541,7 +541,7 @@
     <FxCompile Include="HLSL\DebugDraw\DebugDraw_VS.hlsl" />
     <FxCompile Include="HLSL\Sprite\Sprite_VS.hlsl" />
     <FxCompile Include="HLSL\Sprite\Sprite_PS.hlsl" />
-    <FxCompile Include="HLSL\PresentPass\PresentPass_VS.hlsl" />
-    <FxCompile Include="HLSL\PresentPass\PresentPass_PS.hlsl" />
+    <FxCompile Include="HLSL\BlitPass\BlitPass_VS.hlsl" />
+    <FxCompile Include="HLSL\BlitPass\BlitPass_PS.hlsl" />
   </ItemGroup>
 </Project>

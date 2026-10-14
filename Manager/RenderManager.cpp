@@ -16,7 +16,7 @@
 
 #include <Engine/Render/RenderPass/RenderPass.h>
 #include <Engine/Render/RenderPass/MeshRenderPass.h>
-#include <Engine/Render/RenderPass/PresentPass.h>
+#include <Engine/Render/RenderPass/BlitPass.h>
 #include <Engine/Render/Culling.h>
 #include <Engine/Render/RenderPass/DebugDrawPass.h>
 
@@ -67,7 +67,18 @@ namespace engine
 			RegisterRenderPass(EntityManager::CreateEntity<MeshRenderPass>(render_pass::ID::ForwardOpaque, MeshRenderPass::SortPolicy::State));
 			RegisterRenderPass(EntityManager::CreateEntity<MeshRenderPass>(render_pass::ID::ForwardBlend, MeshRenderPass::SortPolicy::BackToFront));
 
-			RegisterRenderPass(EntityManager::CreateEntity<PresentPass>());
+			auto present = EntityManager::CreateEntity<BlitPass>(render_pass::ID::Present);
+			{
+				ClearSettings present_clear = {};
+				present_clear.flags = ClearTarget::Color | ClearTarget::DepthStencil;
+				present_clear.color = { 0.0f, 0.0f, 0.0f, 1.0f };
+				present_clear.depth = 1.0f;
+				present_clear.stencil = 0;
+				// 기본 설정: nullptr -> Swapchain -> 아무 작업도 안 함
+				present->SetOutputSwapChain(present_clear);
+			}
+			
+			RegisterRenderPass(std::move(present));
 
 			std::vector<render_pass::ID> default_order = { render_pass::ID::ForwardOpaque, render_pass::ID::ForwardBlend };
 

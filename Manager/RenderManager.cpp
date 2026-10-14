@@ -199,7 +199,7 @@ namespace engine
 		render_target_pool_.FrameEnd();
 	}
 
-	void RenderManager::SetRenderPassOrder(std::vector<render_pass::ID> order)
+	void RenderManager::SetRenderPassOrder(std::span<const render_pass::ID> order)
 	{
 		CHECK(order.empty() == false);
 
@@ -211,7 +211,7 @@ namespace engine
 			in_order.Set(id);
 		}
 
-		render_pass_order_ = std::move(order);
+		render_pass_order_ = std::vector<render_pass::ID>(order.begin(), order.end());
 		active_mesh_passes_ = in_order & mesh_pass_mask_;
 	}
 

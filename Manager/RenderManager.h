@@ -60,7 +60,7 @@ namespace engine
             RegisterRenderPassImpl(std::move(render_pass), std::is_base_of_v<MeshRenderPass, T>);
         }
 
-        void SetRenderPassOrder(std::vector<render_pass::ID> order);
+        void SetRenderPassOrder(std::span<const render_pass::ID> order);
 
         void RegisterRenderer(Renderer* renderer);
         void UnregisterRenderer(Renderer* renderer);

@@ -6,7 +6,7 @@
 
 #define REG_T_SRC_RENDERTARGET REG_T_PER_PASS_0
 
-struct PresentVSInput
+struct BlitVSInput
 {
 	float3 position SEMANTIC(POSITION);
 	float2 uv SEMANTIC(TEXCOORD);
@@ -14,9 +14,7 @@ struct PresentVSInput
 
 #ifdef __HLSL
 
-Texture2D g_src_rendertarget : register(REG_T_SRC_RENDERTARGET);
-
-struct PresentVSOutput
+struct BlitVSOutput
 {
 	float4 position : SV_Position;
 	float2 uv : TEXCOORD;

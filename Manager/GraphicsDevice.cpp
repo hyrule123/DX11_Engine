@@ -163,7 +163,7 @@ namespace engine
 		CHECK(result);
 #pragma endregion DSV
 
-		swap_chain_RT_->SetDepthStencilView(dsv);
+		swap_chain_RT_->SetDepthStencilTarget(dsv);
 
 		resolution_width_ = resolution_width;
 		resolution_height_ = resolution_height;

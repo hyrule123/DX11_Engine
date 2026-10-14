@@ -22,7 +22,7 @@ namespace engine
 {
 	namespace blit_pass
 	{
-		using Vertex = PresentVSInput;
+		using Vertex = BlitVSInput;
 
 		constexpr auto kInputLayoutDescs = []()
 			{

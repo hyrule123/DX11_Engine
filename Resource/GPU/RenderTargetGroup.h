@@ -31,7 +31,7 @@ namespace engine
         virtual ~RenderTargetGroup() override;
 
         void SetRenderTargets(const RenderTargetArray& rtv_arr);
-        void SetDepthStencilView(std::shared_ptr<DepthStencilTarget> dsv) { dsv_ = std::move(dsv); }
+        void SetDepthStencilTarget(std::shared_ptr<DepthStencilTarget> dsv) { dsv_ = std::move(dsv); }
 
 		// start_slot으로부터 8장의 RenderTargetView를 동시에 바인딩함.
 		void BindShaderResourceViews(ID3D11DeviceContext* context, ShaderStageFlags stage_flags, RegisterT start_slot);

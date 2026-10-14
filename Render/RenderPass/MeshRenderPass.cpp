@@ -4,6 +4,7 @@
 #include <Engine/Render/RendererRegistry.h>
 #include <Engine/Render/RenderView.h>
 #include <Engine/Render/InstanceBufferPool.h>
+#include <Engine/Resource/GPU/RenderTargetGroup.h>
 
 #include <Engine/Game/Component/Renderer.h>
 
@@ -48,6 +49,10 @@ namespace engine
 	MeshRenderPass::MeshRenderPass(render_pass::ID id, SortPolicy sort_policy)
 		: Super(MeshRenderPass::kClassConcreteName, id)
 		, sort_policy_(sort_policy)
+		, queue_()
+		, draw_groups_()
+		, rtg_override_(nullptr)
+		, rtg_override_clear_setting_{}
 	{}
 
 	MeshRenderPass::~MeshRenderPass() = default;
@@ -87,6 +92,11 @@ namespace engine
 
 	void MeshRenderPass::Execute(const RenderContext& ctx)
 	{
+		if (rtg_override_)
+		{
+			rtg_override_->Clear(ctx.dc, rtg_override_clear_setting_);
+		}
+
 		if (queue_.empty())
 		{
 			return;
@@ -101,7 +111,14 @@ namespace engine
 
 	void MeshRenderPass::BindTargets(const RenderContext& ctx)
 	{
-		ctx.view.BindTargets(ctx.dc);
+		if (rtg_override_)
+		{
+			rtg_override_->BindOutputMerger(ctx.dc);
+		}
+		else
+		{
+			ctx.view.BindTargets(ctx.dc);
+		}
 	}
 
 	void MeshRenderPass::Sort()

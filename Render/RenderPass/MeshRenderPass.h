@@ -8,6 +8,7 @@
 namespace engine
 {
 	class Renderer;
+	class RenderTarget;
 
 	// Renderer를 서브메시 단위로 그리는 패스의 공통 구현.
 	// - 항목을 캐싱하지 않는다. RenderManager가 매 프레임(View마다) Clear() 후
@@ -36,6 +37,12 @@ namespace engine
 		virtual void Execute(const RenderContext& ctx) final;
 
 		SortPolicy GetSortPolicy() const { return sort_policy_; }
+
+		void SetOutputTarget(std::shared_ptr<RenderTargetGroup> rtg, const ClearSettings& clear_settings)
+		{
+			rtg_override_ = rtg;
+			rtg_override_clear_setting_ = clear_settings;
+		}
 
 	protected:
 		// 패스당 1회. 기본은 ctx.view의 출력 대상 바인딩.
@@ -67,7 +74,9 @@ namespace engine
 
 	private:
 		const SortPolicy sort_policy_;
-		std::vector<QueueItem> queue_ = {};
-		std::vector<DrawGroup> draw_groups_ = {};
+		std::vector<QueueItem> queue_;
+		std::vector<DrawGroup> draw_groups_;
+		std::shared_ptr<RenderTargetGroup> rtg_override_;
+		ClearSettings rtg_override_clear_setting_;
 	};
 }

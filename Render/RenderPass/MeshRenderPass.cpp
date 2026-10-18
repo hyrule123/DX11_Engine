@@ -47,12 +47,7 @@ namespace engine
 	}
 
 	MeshRenderPass::MeshRenderPass(render_pass::ID id, SortPolicy sort_policy)
-		: Super(MeshRenderPass::kClassConcreteName, id)
-		, sort_policy_(sort_policy)
-		, queue_()
-		, draw_groups_()
-		, rtg_override_(nullptr)
-		, rtg_override_clear_setting_{}
+		: MeshRenderPass(MeshRenderPass::kClassConcreteName, id, sort_policy)
 	{}
 
 	MeshRenderPass::~MeshRenderPass() = default;
@@ -108,6 +103,15 @@ namespace engine
 		BindTargets(ctx);
 		DrawGroups(ctx);		// 상태 바인딩(변경 시) + Draw
 	}
+
+	MeshRenderPass::MeshRenderPass(const HashedStringView& concrete_class_name, render_pass::ID id, SortPolicy sort_policy)
+		: Super(concrete_class_name, id)
+		, sort_policy_(sort_policy)
+		, queue_()
+		, draw_groups_()
+		, rtg_override_(nullptr)
+		, rtg_override_clear_setting_{}
+	{}
 
 	void MeshRenderPass::BindTargets(const RenderContext& ctx)
 	{

@@ -46,6 +46,8 @@ namespace engine
 		}
 
 	protected:
+		MeshRenderPass(const HashedStringView& concrete_class_name, render_pass::ID id, SortPolicy sort_policy);
+
 		// 패스당 1회. 기본은 ctx.view의 출력 대상 바인딩.
 		// 전용 대상(그림자 DSV, ROV UAV 등)을 쓰는 패스만 오버라이드하며, 그 대상의 클리어도 여기서 처리한다.
 		virtual void BindTargets(const RenderContext& ctx);

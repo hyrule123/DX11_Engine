@@ -39,6 +39,9 @@ namespace engine
         ComPtr<ID3D11ShaderResourceView> GetSRV() const { return SRV_; }
         ID3D11ShaderResourceView* GetRawSRV() const { return SRV_.Get(); }
 
+		ComPtr<ID3D11UnorderedAccessView> GetUAV() const { return UAV_; }
+		ID3D11UnorderedAccessView* GetRawUAV() const { return UAV_.Get(); }
+
         // BindFlag에 따라 기본 SRV, UAV가 생성됨.
         bool CreateTexture2D(
             D3D11_TEXTURE2D_DESC* desc,
@@ -51,8 +54,8 @@ namespace engine
         // 기본 SRV/UAV는 생성되어 있음. 별도 설정으로 생성하길 원한다면 호출할 것
 		bool CreateUAV(D3D11_UNORDERED_ACCESS_VIEW_DESC* uav_desc);
 
-		void BindUAV(ID3D11DeviceContext* context, RegisterU slot);
-		static void UnbindUAV(ID3D11DeviceContext* context, RegisterU slot);
+		void BindUAV(ID3D11DeviceContext* context, RegisterU slot);             // CS 전용
+		static void UnbindUAV(ID3D11DeviceContext* context, RegisterU slot);    // CS 전용
 
         // 상속 시 Super::Resize() 호출할 것
 		virtual bool Resize(uint32 width, uint32 height);

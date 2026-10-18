@@ -24,8 +24,8 @@ namespace engine
 
 	constexpr int32_t kInvalidIndex = -1;
 
-	constexpr uint32_t kInvalidIdx32 = std::numeric_limits<uint32_t>::max();
-	constexpr uint64_t kInvalidIdx64 = std::numeric_limits<uint64_t>::max();
+	constexpr uint32_t kInvalid32 = std::numeric_limits<uint32_t>::max();
+	constexpr uint64_t kInvalid64 = std::numeric_limits<uint64_t>::max();
 
 	constexpr size_t kInvalidSize = std::numeric_limits<size_t>::max();
 }

@@ -19,7 +19,7 @@ namespace engine
 {
 	Renderer::Renderer(const HashedStringView& concrete_class_name)
 		: Component(concrete_class_name, ComponentCategory::kRenderer)
-		, renderer_id_(kInvalidIdx32)
+		, renderer_id_(kInvalid32)
 	{
 	}
 
@@ -79,7 +79,7 @@ namespace engine
 		}
 
 		// 이미 등록되었다면 Bounds 재계산 필요
-		if (renderer_id_ != kInvalidIdx32)
+		if (renderer_id_ != kInvalid32)
 		{
 			RenderManager::GetInst().MarkBoundsDirty(this);
 		}

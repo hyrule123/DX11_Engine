@@ -168,6 +168,7 @@ namespace engine
 		{
 			const Renderer* renderer = entries[renderer_id].renderer;
 			const float depth = view_entry.view.ComputeViewDepth(renderer_registry_.GetBound(renderer_id).GetCenter());
+			const uint32_t custom_key = renderer->GetCustomSortKey();
 
 			for (const SubMesh& submesh : renderer->GetSubMeshes())
 			{
@@ -179,7 +180,7 @@ namespace engine
 				const render_pass::Flags passes = submesh.material->GetSupportedPasses() & active_mesh_passes_;
 				for (render_pass::ID id : passes)
 				{
-					GetMeshRenderPass(id)->Push(submesh.key, renderer_id, depth, (uint32_t)submesh.material->GetInstanceDataStride(id));
+					GetMeshRenderPass(id)->Push(submesh.key, renderer_id, depth, (uint32_t)submesh.material->GetInstanceDataStride(id), custom_key);
 				}
 			}
 		}
@@ -235,7 +236,7 @@ namespace engine
 		}
 
 		renderer_registry_.Release(renderer->GetRendererId());
-		renderer->SetRendererId(kInvalidIdx32);
+		renderer->SetRendererId(kInvalid32);
 	}
 
 	void RenderManager::MarkBoundsDirty(const Renderer* renderer)

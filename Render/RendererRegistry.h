@@ -52,11 +52,11 @@ namespace engine
 		std::span<const uint32_t> GetDenseToSparseTable() const { return dense_to_sparse_; }
 
     private:
-        bool IsValidSlot(uint32_t id) const { return id < sparse_slots_.size() && sparse_slots_[id].dense_idx != kInvalidIdx32; }
+        bool IsValidSlot(uint32_t id) const { return id < sparse_slots_.size() && sparse_slots_[id].dense_idx != kInvalid32; }
 
         // Sparse Slots(고정 ID)
         std::vector<SparseSlot>  sparse_slots_;
-        uint32_t              free_slot_head_ = kInvalidIdx32;
+        uint32_t              free_slot_head_ = kInvalid32;
         std::vector<uint32_t> dirty_slot_ids_;      // 고정 id 저장 → swap에 영향받지 않음
 
         // Dense Entries

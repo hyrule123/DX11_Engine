@@ -13,10 +13,10 @@ namespace engine
     {
         ASSERT(renderer);
 
-        uint32_t id = kInvalidIdx32;
+        uint32_t id = kInvalid32;
 
 		// 빈 슬롯이 있으면 재사용
-        if (free_slot_head_ != kInvalidIdx32)
+        if (free_slot_head_ != kInvalid32)
         {
             id = free_slot_head_;
 
@@ -34,7 +34,7 @@ namespace engine
         SparseSlot& slot = sparse_slots_[id];
 
 		slot.renderer = renderer;
-		slot.next_free_slot = kInvalidIdx32;
+		slot.next_free_slot = kInvalid32;
         slot.dense_idx = (uint32_t)dense_bounds_.size();
         slot.is_bounds_dirty = false;
 
@@ -71,7 +71,7 @@ namespace engine
         // 슬롯 비우고 free list에 반환
         slot.renderer = nullptr;
         slot.is_bounds_dirty = false;
-        slot.dense_idx = kInvalidIdx32;
+        slot.dense_idx = kInvalid32;
         slot.next_free_slot = free_slot_head_;
         free_slot_head_ = id;
 

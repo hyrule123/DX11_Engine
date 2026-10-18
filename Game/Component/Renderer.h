@@ -3,6 +3,7 @@
 #include <Engine/Game/Component/Component.h>
 
 #include <Engine/Core/CoreMinimal.h>
+#include <Engine/Core/Constants.h>
 
 #include <Engine/Render/RenderTypes.h>
 
@@ -13,6 +14,8 @@ namespace engine
     class Material;
     class Mesh;
     class ConstantBuffer;
+
+    constexpr uint32_t kInvalidCustomSortKey = kInvalid32;
 
     class Renderer 
         : public Component
@@ -31,7 +34,10 @@ namespace engine
 
 		uint32_t GetRendererId() const { return renderer_id_; }
 		void SetRendererId(uint32_t id) { renderer_id_ = id; }
-        bool IsRegistered() const { return renderer_id_ != kInvalidIdx32; }
+        bool IsRegistered() const { return renderer_id_ != kInvalid32; }
+
+		uint32_t GetCustomSortKey() const { return custom_sort_key_; }
+        void SetCustomSortKey(uint32_t sort_key) { custom_sort_key_ = sort_key; }
 
         Transform* GetTransform() const { return my_transform_; }
 
@@ -64,7 +70,9 @@ namespace engine
         std::shared_ptr<Mesh> mesh_ = {};
         std::vector<SubMesh> submeshes_ = {};
 
-        uint32_t renderer_id_; // RenderManager에서 발급
+        uint32_t renderer_id_ = {}; // RenderManager에서 발급
+
+        uint32_t custom_sort_key_ = kInvalidCustomSortKey;
 
         Transform* my_transform_ = {};
 

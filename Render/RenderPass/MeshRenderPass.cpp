@@ -22,7 +22,8 @@ namespace engine
 {
 	namespace
 	{
-		// sort_key 레이아웃 (깊이 정책): [63..32] 깊이 | [31..8] renderer_id | [7..0] submesh
+		// sort_key 레이아웃 (깊이 정책): [63..32] 깊이 OR 커스텀 키 | [31..8] renderer_id | [7..0] submesh
+
 		constexpr uint32_t kRendererIdBits = 24;
 		constexpr uint32_t kDepthShift = 32;
 		constexpr uint32_t kRendererIdShift = kSubMeshIndexBits;
@@ -38,7 +39,8 @@ namespace engine
 			return (bits & 0x80000000u) ? ~bits : (bits | 0x80000000u);
 		}
 
-		uint64_t MakeDepthSortKey(uint32_t depth_bits, uint32_t renderer_id, uint8_t submesh_idx)
+		// 정렬 순서를 결정할 Sort Key를 최종 생성
+		uint64_t MakeOrderSortKey(uint32_t depth_bits, uint32_t renderer_id, uint8_t submesh_idx)
 		{
 			return ((uint64_t)depth_bits << kDepthShift)
 				| (((uint64_t)renderer_id & kRendererIdMask) << kRendererIdShift)
@@ -52,7 +54,7 @@ namespace engine
 
 	MeshRenderPass::~MeshRenderPass() = default;
 
-	void MeshRenderPass::Push(RenderKey key, uint32_t renderer_id, float depth, uint32_t obj_data_stride)
+	void MeshRenderPass::Push(RenderKey key, uint32_t renderer_id, float depth, uint32_t obj_data_stride, uint32_t custom_sort_key)
 	{
 		uint64_t sort_key = 0;
 
@@ -66,13 +68,20 @@ namespace engine
 		}
 		case SortPolicy::FrontToBack:
 		{
-			sort_key = MakeDepthSortKey(DepthToSortable(depth), renderer_id, key.GetSubMeshIndex());
+			sort_key = MakeOrderSortKey(DepthToSortable(depth), renderer_id, key.GetSubMeshIndex());
 			break;
 		}
 		case SortPolicy::BackToFront:
 		{
 			// 깊이 비트만 반전 (하위 동률 비트는 그대로 두어 순서 고정)
-			sort_key = MakeDepthSortKey(~DepthToSortable(depth), renderer_id, key.GetSubMeshIndex());
+			sort_key = MakeOrderSortKey(~DepthToSortable(depth), renderer_id, key.GetSubMeshIndex());
+			break;
+		}
+		case SortPolicy::Custom:
+		{
+			ASSERT(custom_sort_key != kInvalidCustomSortKey);
+
+			sort_key = MakeOrderSortKey(custom_sort_key, renderer_id, key.GetSubMeshIndex());
 			break;
 		}
 		default:

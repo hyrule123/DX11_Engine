@@ -102,6 +102,7 @@ namespace engine
 		UploadInstances(ctx);	// stride별 Map 1회 → 일괄 기록 → Unmap
 		BindTargets(ctx);
 		DrawGroups(ctx);		// 상태 바인딩(변경 시) + Draw
+		UnbindTargets(ctx);
 	}
 
 	MeshRenderPass::MeshRenderPass(const HashedStringView& concrete_class_name, render_pass::ID id, SortPolicy sort_policy)

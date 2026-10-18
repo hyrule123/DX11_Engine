@@ -52,6 +52,9 @@ namespace engine
 		// 전용 대상(그림자 DSV, ROV UAV 등)을 쓰는 패스만 오버라이드하며, 그 대상의 클리어도 여기서 처리한다.
 		virtual void BindTargets(const RenderContext& ctx);
 
+		// 전용 대상을 바인딩했다면 UnbindTargets에서 해제할 것(특히 다음 패스가 SRV로 읽는 UAV)
+		virtual void UnbindTargets(const RenderContext& ctx) {}	
+
 	private:
 		void Sort();
 		void BuildGroups(const RenderContext& ctx);	// 사전 Buffer 용량 계산

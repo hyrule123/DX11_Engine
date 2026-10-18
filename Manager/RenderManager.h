@@ -32,14 +32,14 @@ namespace engine
         RenderKey key;
         Material* material;
         Mesh* mesh;
-        uint32 bounds_id;
-        uint32 generation;
+        uint32_t bounds_id;
+        uint32_t generation;
     };
 
     struct ViewEntry
     {
         RenderView          view;
-        std::vector<uint32> visible_ids;
+        std::vector<uint32_t> visible_ids;
         // (나중에) 이 View에서 실행할 패스 목록
     };
 
@@ -74,7 +74,7 @@ namespace engine
 
         void SetMainViewClearSettings(const ClearSettings& clear_settings) { main_view_clear_setting_ = clear_settings; }
 
-        void OnScreenSizeChange(uint32 width, uint32 height);
+        void OnScreenSizeChange(uint32_t width, uint32_t height);
         void OnClearContextStates();
 
         void PushDebugRect(const DebugDrawPerInstanceData& debug_data);
@@ -119,8 +119,8 @@ namespace engine
 
         RendererRegistry renderer_registry_;
 
-		uint32 resolution_width_;
-		uint32 resolution_height_;
+		uint32_t resolution_width_;
+		uint32_t resolution_height_;
 
         GPUBufferBindingTable per_frame_binding_table_;
 

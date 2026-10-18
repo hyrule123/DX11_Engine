@@ -10,8 +10,8 @@ namespace engine
 {
 	namespace file_system
 	{
-		std::vector<uint8> ReadAllBytes(const std::filesystem::path& file_path);
-		std::vector<uint8> ReadAllBytes(std::ifstream& ifs);
+		std::vector<uint8_t> ReadAllBytes(const std::filesystem::path& file_path);
+		std::vector<uint8_t> ReadAllBytes(std::ifstream& ifs);
 
 		template <typename T>
 		std::vector<T> ReadAll(std::ifstream& fs)
@@ -30,6 +30,6 @@ namespace engine
 			return out;
 		}
 
-		bool DumpFile(const std::filesystem::path& file_path, const std::vector<uint8>& data);
+		bool DumpFile(const std::filesystem::path& file_path, const std::vector<uint8_t>& data);
 	}
 }

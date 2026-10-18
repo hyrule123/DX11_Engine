@@ -164,7 +164,7 @@ namespace engine
 
 		const auto entries = renderer_registry_.SparseSlots();
 
-		for (uint32 renderer_id : view_entry.visible_ids)
+		for (uint32_t renderer_id : view_entry.visible_ids)
 		{
 			const Renderer* renderer = entries[renderer_id].renderer;
 			const float depth = view_entry.view.ComputeViewDepth(renderer_registry_.GetBound(renderer_id).GetCenter());
@@ -179,7 +179,7 @@ namespace engine
 				const render_pass::Flags passes = submesh.material->GetSupportedPasses() & active_mesh_passes_;
 				for (render_pass::ID id : passes)
 				{
-					GetMeshRenderPass(id)->Push(submesh.key, renderer_id, depth, (uint32)submesh.material->GetInstanceDataStride(id));
+					GetMeshRenderPass(id)->Push(submesh.key, renderer_id, depth, (uint32_t)submesh.material->GetInstanceDataStride(id));
 				}
 			}
 		}
@@ -221,7 +221,7 @@ namespace engine
 		ASSERT(renderer);
 		ASSERT_F(renderer->IsRegistered() == false, "이미 등록된 Renderer입니다.");
 
-		const uint32 id = renderer_registry_.Allocate(renderer);
+		const uint32_t id = renderer_registry_.Allocate(renderer);
 		renderer->SetRendererId(id);
 	}
 
@@ -247,7 +247,7 @@ namespace engine
 		}
 	}
 
-	void RenderManager::OnScreenSizeChange(uint32 width, uint32 height)
+	void RenderManager::OnScreenSizeChange(uint32_t width, uint32_t height)
 	{
 		resolution_width_ = width;
 		resolution_height_ = height;

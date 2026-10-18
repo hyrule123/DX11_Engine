@@ -27,10 +27,10 @@ namespace engine
 		ID3D11Device* GetDevice() const { return device_.Get(); }
 		ID3D11DeviceContext* GetContext() const { return context_.Get(); }
 
-		void OnScreenSizeChange(uint32 width, uint32 height);
-		bool SetResolution(uint32 resolution_width, uint32 resolution_height);
-		uint32 GetResolutionWidth() const { return resolution_width_; }
-		uint32 GetResolutionHeight() const { return resolution_height_; }
+		void OnScreenSizeChange(uint32_t width, uint32_t height);
+		bool SetResolution(uint32_t resolution_width, uint32_t resolution_height);
+		uint32_t GetResolutionWidth() const { return resolution_width_; }
+		uint32_t GetResolutionHeight() const { return resolution_height_; }
 
 		void BindSwapChainRTV();
 		void Present();
@@ -43,7 +43,7 @@ namespace engine
 		bool CreateDeviceAndContext();
 		void ClearContextStates();
 
-		ComPtr<IDXGISwapChain> CreateSwapChain(HWND hwnd, uint32 width, uint32 height);
+		ComPtr<IDXGISwapChain> CreateSwapChain(HWND hwnd, uint32_t width, uint32_t height);
 	private:
 		ComPtr<ID3D11Device> device_ = {};
 		ComPtr<ID3D11DeviceContext> context_ = {};
@@ -52,8 +52,8 @@ namespace engine
 
 		std::unique_ptr<RenderTargetGroup> swap_chain_RT_ = {};
 
-		uint32 resolution_width_ = {};
-		uint32 resolution_height_ = {};
+		uint32_t resolution_width_ = {};
+		uint32_t resolution_height_ = {};
 
 		D3D_FEATURE_LEVEL feature_level_ = {};
 		bool rovs_supported_ = false;

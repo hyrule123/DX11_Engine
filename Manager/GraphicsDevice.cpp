@@ -86,13 +86,13 @@ namespace engine
 		context_->ClearState();
 		RenderManager::GetInst().OnClearContextStates();
 	}
-	void GraphicsDevice::OnScreenSizeChange(uint32 width, uint32 height)
+	void GraphicsDevice::OnScreenSizeChange(uint32_t width, uint32_t height)
 	{
 		bool result = SetResolution(width, height);
 		ASSERT(result);
 		RenderManager::GetInst().OnScreenSizeChange(width, height);
 	}
-	bool GraphicsDevice::SetResolution(uint32 resolution_width, uint32 resolution_height)
+	bool GraphicsDevice::SetResolution(uint32_t resolution_width, uint32_t resolution_height)
 	{
 		HRESULT hr = E_FAIL;
 
@@ -193,7 +193,7 @@ namespace engine
 		//swap_chain_RT_->ClearDepthStencilView(context_.Get(), 1.0f, 0);
 	}
 
-	ComPtr<IDXGISwapChain> GraphicsDevice::CreateSwapChain(HWND hwnd, uint32 width, uint32 height)
+	ComPtr<IDXGISwapChain> GraphicsDevice::CreateSwapChain(HWND hwnd, uint32_t width, uint32_t height)
 	{
 		if (nullptr == device_ || NULL == hwnd)
 		{

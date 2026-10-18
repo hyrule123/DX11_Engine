@@ -51,7 +51,7 @@ namespace engine
 		BlitPass(const HashedStringView& concrete_class_name, render_pass::ID id);
 
 	private:
-		enum class OutputMode : uint8
+		enum class OutputMode : uint8_t
 		{
 			ViewTarget,
 			SwapChain,

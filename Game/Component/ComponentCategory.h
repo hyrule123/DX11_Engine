@@ -10,7 +10,7 @@ constexpr static ::engine::ComponentCategory kComponentCategory = component_cate
 
 namespace engine
 {
-    enum class ComponentCategory : int32
+    enum class ComponentCategory : int32_t
     {
         kScripts = -1,
 

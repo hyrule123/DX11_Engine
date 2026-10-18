@@ -25,22 +25,22 @@ namespace engine
 			if (key_param < kKeyCountMax) { cur_keys_[key_param] = is_down; }
 		}
 
-        void SetMousePos(int32 x, int32 y) { 
+        void SetMousePos(int32_t x, int32_t y) { 
             mouse_pos_.x = x, mouse_pos_.y = y; 
         }
 
         void ClearKeys() { cur_keys_.reset(); }
 
         bool GetKeyDown(KeyCode code) {
-            return down_keys_[(uint8)code];
+            return down_keys_[(uint8_t)code];
         }
 
         bool GetKey(KeyCode code) {
-            return cur_keys_[(uint8)code];
+            return cur_keys_[(uint8_t)code];
         }
 
         bool GetKeyUp(KeyCode code) {
-            return up_keys_[(uint8)code];
+            return up_keys_[(uint8_t)code];
         }
 
         const std::bitset<kKeyCountMax>& GetDownKeys() const { return down_keys_; }

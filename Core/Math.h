@@ -11,7 +11,7 @@ using float2 = engine::Vector2;
 using float3 = engine::Vector3;
 using float4 = engine::Vector4;
 using matrix = engine::Matrix;
-using uint = uint32;
+using uint = uint32_t;
 using uint2 = engine::uint32_2;
 using int2 = engine::int32_2;
 

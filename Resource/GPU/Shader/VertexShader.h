@@ -19,14 +19,14 @@ namespace engine
 
 		virtual void Bind(ID3D11DeviceContext* context) const final;
 
-		const std::vector<uint8>& GetByteCode() const { return byte_code_; }
+		const std::vector<uint8_t>& GetByteCode() const { return byte_code_; }
 
 	protected:
-		virtual bool Create(const std::vector<uint8>& bytecode) final;
+		virtual bool Create(const std::vector<uint8_t>& bytecode) final;
 
 	private:
 		ComPtr<ID3D11VertexShader> vs_ = {};
-		std::vector<uint8> byte_code_ = {};
+		std::vector<uint8_t> byte_code_ = {};
 	};
 }
 

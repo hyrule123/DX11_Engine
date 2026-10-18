@@ -48,7 +48,7 @@ namespace engine
 
 		CollisionSystem2D* GetCollisionSystem2D() { return &collision_system_2D_; }
 
-		void SetCollisionMask(uint32 layer_a, uint32 layer_b, bool can_collide);
+		void SetCollisionMask(uint32_t layer_a, uint32_t layer_b, bool can_collide);
 
 		const std::array<std::bitset<kMaxLayers>, kMaxLayers>& GetCollisionMask() const { return collision_mask_; }
 

@@ -34,12 +34,12 @@ namespace engine
 
         const HashedStringView& GetConcreteClassName() const { return concrete_class_name_; }
 
-        uint32 GetInstanceID() const { return instance_ID_; }
+        uint32_t GetInstanceID() const { return instance_ID_; }
     private:
         HashedStringView concrete_class_name_ = {}; //컴파일 타임에 결정되는 클래스 이름
 
-        uint32 instance_ID_ = 0;	//런타임 ID(매 실행마다 달라질 수 있음)
-        inline static uint32 next_instance_ID_ = 1;
+        uint32_t instance_ID_ = 0;	//런타임 ID(매 실행마다 달라질 수 있음)
+        inline static uint32_t next_instance_ID_ = 1;
     };
 
     class EntityManager

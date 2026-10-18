@@ -22,20 +22,20 @@ namespace engine
 		void Init(ID3D11DeviceContext* context);
 
 		// 최소 count개를 담도록 보장. 재생성되었다면 즉시 다시 바인딩한다.
-		bool EnsureCapacity(ID3D11DeviceContext* context, uint32 count);
+		bool EnsureCapacity(ID3D11DeviceContext* context, uint32_t count);
 
 		// 프레임 시작 시, 그리고 ClearState 이후에 호출
 		void Bind(ID3D11DeviceContext* context) const;
 
-		uint32 GetCapacity() const { return capacity_; }
+		uint32_t GetCapacity() const { return capacity_; }
 
 	private:
-		bool Recreate(uint32 new_capacity);
+		bool Recreate(uint32_t new_capacity);
 
-		static constexpr uint32 kMinCapacity = 4096;	// 16KB
+		static constexpr uint32_t kMinCapacity = 4096;	// 16KB
 
 		ComPtr<ID3D11Buffer> buffer_ = {};
-		uint32 capacity_ = 0;
+		uint32_t capacity_ = 0;
 
 		bool has_initialized_ = false;
 	};

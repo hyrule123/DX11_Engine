@@ -8,7 +8,7 @@
 
 namespace engine
 {
-	GPUBufferBindingTable::GPUBufferBindingTable(uint32 cb_slot_start, uint32 cb_slot_count, uint32 srv_slot_start, uint32 srv_slot_count)
+	GPUBufferBindingTable::GPUBufferBindingTable(uint32_t cb_slot_start, uint32_t cb_slot_count, uint32_t srv_slot_start, uint32_t srv_slot_count)
 		: cb_slot_start_(cb_slot_start)
 		, cb_slot_count_(cb_slot_count)
 		, srv_slot_start_(srv_slot_start)
@@ -16,13 +16,13 @@ namespace engine
 	{
 		CHECK_F(cb_slot_count_ <= kMaxBufferPerBindingTable && srv_slot_count_ <= kMaxBufferPerBindingTable, "버퍼 수가 최대 버퍼 수를 초과합니다.");
 
-		CHECK_F((uint64)cb_slot_start_ + (uint64)cb_slot_count_ <= (uint64)D3D11_COMMONSHADER_CONSTANT_BUFFER_API_SLOT_COUNT, "cb_slot_count가 D3D11 상수 버퍼 슬롯 수를 초과합니다.");
-		CHECK_F((uint64)srv_slot_start_ + (uint64)srv_slot_count_ <= (uint64)D3D11_COMMONSHADER_INPUT_RESOURCE_SLOT_COUNT, "srv_slot_count가 D3D11 입력 리소스 슬롯 수를 초과합니다.");
+		CHECK_F((uint64_t)cb_slot_start_ + (uint64_t)cb_slot_count_ <= (uint64_t)D3D11_COMMONSHADER_CONSTANT_BUFFER_API_SLOT_COUNT, "cb_slot_count가 D3D11 상수 버퍼 슬롯 수를 초과합니다.");
+		CHECK_F((uint64_t)srv_slot_start_ + (uint64_t)srv_slot_count_ <= (uint64_t)D3D11_COMMONSHADER_INPUT_RESOURCE_SLOT_COUNT, "srv_slot_count가 D3D11 입력 리소스 슬롯 수를 초과합니다.");
 	}
 
 	void GPUBufferBindingTable::AddConstantBuffer(ShaderStageFlags stage_flag, RegisterB slot, std::shared_ptr<ConstantBuffer> buffer)
 	{
-		const uint32 idx = slot.Get() - cb_slot_start_;
+		const uint32_t idx = slot.Get() - cb_slot_start_;
 		if (slot.Get() < cb_slot_start_ || idx >= cb_slot_count_)
 		{
 			ASSERT_F(false, "CB 슬롯 범위 초과");
@@ -51,7 +51,7 @@ namespace engine
 
 	void GPUBufferBindingTable::RemoveConstantBuffer(RegisterB slot)
 	{
-		const uint32 idx = slot.Get() - cb_slot_start_;
+		const uint32_t idx = slot.Get() - cb_slot_start_;
 		if (slot.Get() < cb_slot_start_ || idx >= cb_slot_count_)
 		{
 			ASSERT_F(false, "CB 슬롯 범위 초과");
@@ -67,7 +67,7 @@ namespace engine
 		// size 축소
 		if (cb_bindings_.size() >= 2)
 		{
-			for (int32 i = (int32)cb_bindings_.size() - 1; i >= 0; --i)
+			for (int32_t i = (int32_t)cb_bindings_.size() - 1; i >= 0; --i)
 			{
 				if (cb_bindings_[i].buffer != nullptr) { break; }
 				cb_bindings_.pop_back();
@@ -77,7 +77,7 @@ namespace engine
 
 	void GPUBufferBindingTable::AddShaderResource(ShaderStageFlags stage_flag, RegisterT slot, std::shared_ptr<ShaderResource> buffer)
 	{
-		const uint32 idx = slot.Get() - srv_slot_start_;
+		const uint32_t idx = slot.Get() - srv_slot_start_;
 		if (slot.Get() < srv_slot_start_ || idx >= srv_slot_count_)
 		{
 			ASSERT_F(false, "SRV 슬롯 범위 초과");
@@ -106,7 +106,7 @@ namespace engine
 
 	void GPUBufferBindingTable::RemoveShaderResource(RegisterT slot)
 	{
-		const uint32 idx = slot.Get() - srv_slot_start_;
+		const uint32_t idx = slot.Get() - srv_slot_start_;
 		if (slot.Get() < srv_slot_start_ || idx >= srv_slot_count_)
 		{
 			ASSERT_F(false, "SRV 슬롯 범위 초과");
@@ -122,7 +122,7 @@ namespace engine
 		// size 축소
 		if (srv_bindings_.size() >= 2)
 		{
-			for (int32 i = (int32)srv_bindings_.size() - 1; i >= 0; --i)
+			for (int32_t i = (int32_t)srv_bindings_.size() - 1; i >= 0; --i)
 			{
 				if (srv_bindings_[i].buffer != nullptr) { break; }
 				srv_bindings_.pop_back();
@@ -132,7 +132,7 @@ namespace engine
 
 	std::shared_ptr<ShaderResource> GPUBufferBindingTable::GetShaderResource(RegisterT slot) const
 	{
-		const uint32 idx = slot.Get() - srv_slot_start_;
+		const uint32_t idx = slot.Get() - srv_slot_start_;
 		if (slot.Get() < srv_slot_start_ || idx >= srv_slot_count_)
 		{
 			return nullptr;
@@ -152,7 +152,7 @@ namespace engine
 		}
 
 		std::array<ID3D11Buffer*, kMaxBufferPerBindingTable> bind_ptr;
-		for (uint8 i = 0; i < (uint8)ShaderStage::kCount; ++i)
+		for (uint8_t i = 0; i < (uint8_t)ShaderStage::kCount; ++i)
 		{
 			const ShaderStage stage = static_cast<ShaderStage>(i);
 
@@ -160,8 +160,8 @@ namespace engine
 			if (used_stage_flags.Test(stage) == false) { continue; }
 			
 			// 각 ShaderStage에 대해 바인딩할 ConstantBuffer를 준비, 바인딩할 constant buffer의 최대 개수도 같이 계산
-			uint32 max_cb_count = 0u;
-			for (uint32 j = 0; j < (uint32)cb_bindings_.size(); ++j)
+			uint32_t max_cb_count = 0u;
+			for (uint32_t j = 0; j < (uint32_t)cb_bindings_.size(); ++j)
 			{
 				if (cb_bindings_[j].stage_flag.Test(stage))
 				{
@@ -206,13 +206,13 @@ namespace engine
 			used_stage_flags |= srv_bindings_[i].stage_flag;
 		}
 		std::array<ID3D11ShaderResourceView*, kMaxBufferPerBindingTable> bind_ptr;
-		for (uint8 i = 0; i < (uint8)ShaderStage::kCount; ++i)
+		for (uint8_t i = 0; i < (uint8_t)ShaderStage::kCount; ++i)
 		{
 			const ShaderStage stage = static_cast<ShaderStage>(i);
 			// 실제 사용된 ShaderStage에 대해서만 바인딩 수행
 			if (used_stage_flags.Test(stage) == false) { continue; }
-			uint32 max_srv_count = 0u;
-			for (uint32 j = 0; j < (uint32)srv_bindings_.size(); ++j)
+			uint32_t max_srv_count = 0u;
+			for (uint32_t j = 0; j < (uint32_t)srv_bindings_.size(); ++j)
 			{
 				if (srv_bindings_[j].stage_flag.Test(stage))
 				{

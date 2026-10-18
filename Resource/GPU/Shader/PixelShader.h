@@ -23,7 +23,7 @@ namespace engine
 		ComPtr<ID3D11PixelShader> GetD3D11PixelShader() const { return ps_; }
 
     protected:
-        virtual bool Create( const std::vector<uint8>& bytecode) final;
+        virtual bool Create( const std::vector<uint8_t>& bytecode) final;
 
     private:
         ComPtr<ID3D11PixelShader> ps_ = {};

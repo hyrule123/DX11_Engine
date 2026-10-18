@@ -33,7 +33,7 @@ namespace engine
 			buffer.allocated = 0;
 		}
 	}
-	InstanceDataAllocation InstanceBufferPool::Allocate(uint32 byte_stride, uint32 elem_count)
+	InstanceDataAllocation InstanceBufferPool::Allocate(uint32_t byte_stride, uint32_t elem_count)
 	{
 		ASSERT(phase_ == Phase::Allocating);
 		ASSERT_F(byte_stride > 0, "인스턴스 데이터 stride가 0입니다.");
@@ -49,12 +49,12 @@ namespace engine
 			CHECK(result);
 		}
 
-		//const uint32 required = buffer.allocated + elem_count;
-		//const uint32 capacity = buffer.buffer->GetCapacity();
+		//const uint32_t required = buffer.allocated + elem_count;
+		//const uint32_t capacity = buffer.buffer->GetCapacity();
 		//if (required > capacity)
 		//{
 		//	// 1.5배, 그래도 부족하면 요청량만큼
-		//	const uint32 grown = capacity + capacity / 2;
+		//	const uint32_t grown = capacity + capacity / 2;
 		//	const bool result = buffer.buffer->Reserve(std::max(grown, elem_count));
 		//	CHECK(result);
 		//}
@@ -85,7 +85,7 @@ namespace engine
 		bool result = TransitionPhase(Phase::Allocating, Phase::Mapping);
 		if (false == result) { return; }
 	
-		uint32 alloc_count_max = 0;
+		uint32_t alloc_count_max = 0;
 		for (auto& [stride, buffer] : buffers_per_stride_)
 		{
 			if (buffer.allocated == 0)
@@ -93,11 +93,11 @@ namespace engine
 				continue;	// 이번 패스에 사용되지 않은 버퍼는 맵핑하지 않음
 			}
 			
-			const uint32 capacity = buffer.buffer->GetCapacity();
+			const uint32_t capacity = buffer.buffer->GetCapacity();
 			if (capacity < buffer.allocated)
 			{
 				// 1.5배, 그래도 부족하면 필요량만큼
-				const uint32 grown = std::max(buffer.allocated, capacity + capacity / 2);
+				const uint32_t grown = std::max(buffer.allocated, capacity + capacity / 2);
 				result = buffer.buffer->Reserve(grown);
 				CHECK_F(result, "InstanceBufferPool: stride {} 버퍼 예약 실패", stride);
 

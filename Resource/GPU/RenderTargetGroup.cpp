@@ -174,7 +174,7 @@ namespace engine
 			}
 		}
 	}
-	void RenderTargetGroup::ClearDepthStencilView(ID3D11DeviceContext* context, float depth, uint8 stencil)
+	void RenderTargetGroup::ClearDepthStencilView(ID3D11DeviceContext* context, float depth, uint8_t stencil)
 	{
 		if (dsv_ && dsv_->GetRawDepthStencilView())
 		{
@@ -186,7 +186,7 @@ namespace engine
 		render_target_buffers_.fill(nullptr);
 		dsv_ = nullptr;
 	}
-	void RenderTargetGroup::Resize(uint32 width, uint32 height)
+	void RenderTargetGroup::Resize(uint32_t width, uint32_t height)
 	{
 		if (!requires_resize_) 
 		{ 

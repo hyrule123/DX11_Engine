@@ -33,37 +33,37 @@ namespace engine
         StructuredBuffer();
         virtual ~StructuredBuffer() override;
 
-        bool CreateImmutableBuffer(uint32 stride, const void* data, uint32 count);
+        bool CreateImmutableBuffer(uint32_t stride, const void* data, uint32_t count);
         template <typename T>
 		bool CreateImmutableBuffer(std::span<T> data)
 		{
-			return CreateImmutableBuffer((uint32)sizeof(T), data.data(), (uint32)data.size());
+			return CreateImmutableBuffer((uint32_t)sizeof(T), data.data(), (uint32_t)data.size());
 		}
 
-        bool CreateDynamicBuffer(uint32 stride, uint32 capacity);
+        bool CreateDynamicBuffer(uint32_t stride, uint32_t capacity);
 		template <typename T>
-        bool CreateDynamicBuffer(uint32 capacity) {
-			return CreateDynamicBuffer((uint32)sizeof(T), capacity);
+        bool CreateDynamicBuffer(uint32_t capacity) {
+			return CreateDynamicBuffer((uint32_t)sizeof(T), capacity);
         }
 
-        bool CreateDefaultBuffer(uint32 stride, uint32 capacity, bool need_uav);
+        bool CreateDefaultBuffer(uint32_t stride, uint32_t capacity, bool need_uav);
 		template <typename T>
-        bool CreateDefaultBuffer(uint32 capacity, bool need_uav) {
-            return CreateDefaultBuffer((uint32)sizeof(T), capacity, need_uav);
+        bool CreateDefaultBuffer(uint32_t capacity, bool need_uav) {
+            return CreateDefaultBuffer((uint32_t)sizeof(T), capacity, need_uav);
         }
 
         // No Preserve
-        bool Reserve(uint32 new_capacity);
+        bool Reserve(uint32_t new_capacity);
 
         template <typename T>
         bool Upload(ID3D11DeviceContext* context, const std::span<T> data)
         {
-            return Upload(context, (void*)data.data(), (uint32)sizeof(T), (uint32)data.size());
+            return Upload(context, (void*)data.data(), (uint32_t)sizeof(T), (uint32_t)data.size());
         }
 
         //사이즈 부족 시 에러 발생하므로 확장 필요 여부 확인 필수
         //elem_stride: 사이즈 일치여부 확인 용
-        bool Upload(ID3D11DeviceContext* context, void* data, uint32 elem_stride, uint32 elem_count);
+        bool Upload(ID3D11DeviceContext* context, void* data, uint32_t elem_stride, uint32_t elem_count);
 
         //Dynamic 버퍼 모드에서만 사용 가능. 반드시 UnMap() 호출할것.
 		//WriteDiscard 모드로 맵핑되므로 기존 데이터는 모두 날아감.
@@ -72,19 +72,19 @@ namespace engine
         void BindSRV(ID3D11DeviceContext* context, ShaderStageFlags stage_flag, RegisterT slot);
 		void BindUAV(ID3D11DeviceContext* context, RegisterU slot);
 
-        uint32 GetElementStride() const { return stride_; }
-        uint32 GetElementCount() const { return count_; }
-        uint32 GetCapacity() const { return capacity_; }
+        uint32_t GetElementStride() const { return stride_; }
+        uint32_t GetElementCount() const { return count_; }
+        uint32_t GetCapacity() const { return capacity_; }
 
     private:
         void UnMap(ID3D11DeviceContext* context);
-        bool CreateBufferImpl(uint32 stride, uint32 capacity,
+        bool CreateBufferImpl(uint32_t stride, uint32_t capacity,
             D3D11_USAGE buffer_usage,
             UINT bind_flags, UINT cpu_access, const void* init_data);
 
         // count == 0이면 전체 범위. start + count <= capacity
-        ComPtr<ID3D11ShaderResourceView> CreateSRVImpl(ID3D11Buffer* buffer, uint32 capacity, uint32 start = 0, uint32 count = 0);
-        ComPtr<ID3D11UnorderedAccessView> CreateUAVImpl(ID3D11Buffer* buffer, uint32 capacity, uint32 start = 0, uint32 count = 0);
+        ComPtr<ID3D11ShaderResourceView> CreateSRVImpl(ID3D11Buffer* buffer, uint32_t capacity, uint32_t start = 0, uint32_t count = 0);
+        ComPtr<ID3D11UnorderedAccessView> CreateUAVImpl(ID3D11Buffer* buffer, uint32_t capacity, uint32_t start = 0, uint32_t count = 0);
 
         ComPtr<ID3D11UnorderedAccessView> UAV_ = {};
         ComPtr<ID3D11Buffer>              buffer_ = {};
@@ -92,9 +92,9 @@ namespace engine
         //나중에 Staging Buffer 만드는 코드 필요할듯
 
         D3D11_USAGE buffer_usage_ = {};
-        uint32 stride_ = {};
-        uint32 count_ = {};
-        uint32 capacity_ = {};
+        uint32_t stride_ = {};
+        uint32_t count_ = {};
+        uint32_t capacity_ = {};
     };
 }
 

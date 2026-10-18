@@ -15,7 +15,7 @@ namespace engine
         ComputeShader();
 		virtual ~ComputeShader() override;
 
-		virtual bool Create(const std::vector<uint8>& bytecode) override;
+		virtual bool Create(const std::vector<uint8_t>& bytecode) override;
 
         virtual void Bind(ID3D11DeviceContext* context) const override;
         void Unbind(ID3D11DeviceContext* context);

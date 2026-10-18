@@ -160,7 +160,7 @@ namespace engine
 			}
 
 			// 나가려는 쪽은 OnExit 싹 호출(index -1이 될수있으므로 int32로 변환)
-			for (int32 i = (int32)(prev_hierarchy.size()) - 1; i >= (int32)lca_index; --i)
+			for (int32_t i = (int32_t)(prev_hierarchy.size()) - 1; i >= (int32_t)lca_index; --i)
 			{
 				prev_hierarchy[i]->OnExit(ai_context_);
 			}

@@ -11,7 +11,7 @@ namespace engine
 {
 	constexpr size_t kMaxKeyCount = 256;
 
-	enum class KeyCode : uint8 {
+	enum class KeyCode : uint8_t {
 		kNone = 0x00,
 
 		// ==========================================

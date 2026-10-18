@@ -26,7 +26,7 @@ namespace engine
 		Bind(context);
 	}
 
-	bool InstanceIDBuffer::EnsureCapacity(ID3D11DeviceContext* context, uint32 count)
+	bool InstanceIDBuffer::EnsureCapacity(ID3D11DeviceContext* context, uint32_t count)
 	{
 		if (buffer_ != nullptr && count <= capacity_)
 		{
@@ -34,8 +34,8 @@ namespace engine
 		}
 
 		// 1.5배, 그래도 부족하면 요청량만큼 (InstanceBufferPool과 동일 정책)
-		const uint32 grown = capacity_ + capacity_ / 2;
-		const uint32 new_capacity = std::max({ count, grown, kMinCapacity });
+		const uint32_t grown = capacity_ + capacity_ / 2;
+		const uint32_t new_capacity = std::max({ count, grown, kMinCapacity });
 
 		if (false == Recreate(new_capacity))
 		{
@@ -51,19 +51,19 @@ namespace engine
 	{
 		ASSERT_F(buffer_ != nullptr, "InstanceIDBuffer가 생성되지 않았습니다.");
 
-		const UINT stride = sizeof(uint32);
+		const UINT stride = sizeof(uint32_t);
 		const UINT offset = 0;
 		context->IASetVertexBuffers(vertex::instance_id::kInputSlot, 1, buffer_.GetAddressOf(), &stride, &offset);
 	}
 
-	bool InstanceIDBuffer::Recreate(uint32 new_capacity)
+	bool InstanceIDBuffer::Recreate(uint32_t new_capacity)
 	{
 		// 0, 1, 2, ..., new_capacity - 1
-		std::vector<uint32> ids(new_capacity);
+		std::vector<uint32_t> ids(new_capacity);
 		std::iota(ids.begin(), ids.end(), 0u);
 
 		D3D11_BUFFER_DESC desc = {};
-		desc.ByteWidth = (UINT)(sizeof(uint32) * new_capacity);
+		desc.ByteWidth = (UINT)(sizeof(uint32_t) * new_capacity);
 		desc.Usage = D3D11_USAGE_IMMUTABLE;			// 생성 후 내용 불변
 		desc.BindFlags = D3D11_BIND_VERTEX_BUFFER;	// 일반 정점 버퍼와 동일
 		desc.CPUAccessFlags = 0;

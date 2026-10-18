@@ -245,7 +245,7 @@ namespace engine
 		return uav;
 	}
 
-	bool Texture2D::Resize(uint32 width, uint32 height)
+	bool Texture2D::Resize(uint32_t width, uint32_t height)
 	{
 		if (!tex2D_buffer_)
 		{

@@ -16,7 +16,7 @@ namespace engine
 	TypedBuffer::~TypedBuffer()
 	{}
 
-	bool TypedBuffer::CreateImmutableBuffer(DXGI_FORMAT format, uint32 elem_stride, const void* data, uint32 count)
+	bool TypedBuffer::CreateImmutableBuffer(DXGI_FORMAT format, uint32_t elem_stride, const void* data, uint32_t count)
 	{
 		// IMMUTABLE은 초기 데이터 필수
 		if (nullptr == data) 
@@ -33,20 +33,20 @@ namespace engine
 			D3D11_BIND_SHADER_RESOURCE, 0, data);
 	}
 
-	bool TypedBuffer::CreateDynamicBuffer(DXGI_FORMAT format, uint32 capacity)
+	bool TypedBuffer::CreateDynamicBuffer(DXGI_FORMAT format, uint32_t capacity)
 	{
 		return CreateBufferImpl(format, capacity, D3D11_USAGE_DYNAMIC,
 			D3D11_BIND_SHADER_RESOURCE, D3D11_CPU_ACCESS_WRITE, nullptr);
 	}
 
-	bool TypedBuffer::CreateDefaultBuffer(DXGI_FORMAT format, uint32 capacity, bool need_uav)
+	bool TypedBuffer::CreateDefaultBuffer(DXGI_FORMAT format, uint32_t capacity, bool need_uav)
 	{
 		return CreateBufferImpl(format, capacity, D3D11_USAGE_DEFAULT,
 			D3D11_BIND_SHADER_RESOURCE | (need_uav ? D3D11_BIND_UNORDERED_ACCESS : 0u),
 			0, nullptr);
 	}
 
-	bool TypedBuffer::Upload(ID3D11DeviceContext* context, const void* data, uint32 elem_stride, uint32 elem_count)
+	bool TypedBuffer::Upload(ID3D11DeviceContext* context, const void* data, uint32_t elem_stride, uint32_t elem_count)
 	{
 		if (data == nullptr)
 		{
@@ -107,7 +107,7 @@ namespace engine
 		return true;
 	}
 
-	bool TypedBuffer::Reserve(uint32 new_capacity)
+	bool TypedBuffer::Reserve(uint32_t new_capacity)
 	{
 		if (buffer_ == nullptr)
 		{
@@ -191,9 +191,9 @@ namespace engine
 		context->CSSetUnorderedAccessViews(slot.Get(), 1, UAV_.GetAddressOf(), nullptr);
 	}
 
-	bool TypedBuffer::ValidateParameters(DXGI_FORMAT format, uint32 capacity)
+	bool TypedBuffer::ValidateParameters(DXGI_FORMAT format, uint32_t capacity)
 	{
-		const uint32 elem_stride = GetDXGIFormatByteStride(format);
+		const uint32_t elem_stride = GetDXGIFormatByteStride(format);
 		if (elem_stride == 0)
 		{
 			ERR_MSG("지원되지 않는 DXGI_FORMAT입니다.");
@@ -204,7 +204,7 @@ namespace engine
 			ERR_MSG("capacity는 1 이상이어야 합니다.");
 			return false;
 		}
-		if ((uint64)elem_stride * (uint64)capacity > (uint64)(std::numeric_limits<uint32>::max()))
+		if ((uint64_t)elem_stride * (uint64_t)capacity > (uint64_t)(std::numeric_limits<uint32_t>::max()))
 		{
 			ERR_MSG("버퍼 크기가 UINT32 범위를 초과합니다.");
 			return false;
@@ -212,11 +212,11 @@ namespace engine
 		return true;
 	}
 
-	bool TypedBuffer::CreateBufferImpl(DXGI_FORMAT format, uint32 capacity, D3D11_USAGE buffer_usage, UINT bind_flags, UINT cpu_access_flags, const void* initial_data)
+	bool TypedBuffer::CreateBufferImpl(DXGI_FORMAT format, uint32_t capacity, D3D11_USAGE buffer_usage, UINT bind_flags, UINT cpu_access_flags, const void* initial_data)
 	{
 		if (false == ValidateParameters(format, capacity)) { return false; }
 
-		const uint32 stride = GetDXGIFormatByteStride(format);
+		const uint32_t stride = GetDXGIFormatByteStride(format);
 
 		D3D11_BUFFER_DESC desc = {};
 		desc.ByteWidth = (UINT)(stride * capacity);
@@ -272,7 +272,7 @@ namespace engine
 		return true;
 	}
 
-	ComPtr<ID3D11ShaderResourceView> TypedBuffer::CreateSRV(ID3D11Buffer* buffer, DXGI_FORMAT format, uint32 capacity, uint32 start, uint32 count)
+	ComPtr<ID3D11ShaderResourceView> TypedBuffer::CreateSRV(ID3D11Buffer* buffer, DXGI_FORMAT format, uint32_t capacity, uint32_t start, uint32_t count)
 	{
 		if (buffer == nullptr)
 		{
@@ -311,7 +311,7 @@ namespace engine
 
 		return srv;
 	}
-	ComPtr<ID3D11UnorderedAccessView> TypedBuffer::CreateUAV(ID3D11Buffer* buffer, DXGI_FORMAT format, uint32 capacity, uint32 start, uint32 count)
+	ComPtr<ID3D11UnorderedAccessView> TypedBuffer::CreateUAV(ID3D11Buffer* buffer, DXGI_FORMAT format, uint32_t capacity, uint32_t start, uint32_t count)
 	{
 		if (buffer == nullptr)
 		{

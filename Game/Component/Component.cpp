@@ -66,7 +66,7 @@ namespace engine
 
 	void Component::UnsubscribeAll()
 	{
-		for (uint32 i = 0; i < (uint32)SubscribeType::kEND; ++i)
+		for (uint32_t i = 0; i < (uint32_t)SubscribeType::kEND; ++i)
 		{
 			if (is_subscribing_.test(i))
 			{

@@ -19,7 +19,7 @@ namespace engine
         ComPtr<ID3D11DepthStencilView> GetDepthStencilView() const { return dsv_; }
         ID3D11DepthStencilView* GetRawDepthStencilView() const { return dsv_.Get(); }
 
-		virtual bool Resize(uint32 width, uint32 height) override;
+		virtual bool Resize(uint32_t width, uint32_t height) override;
 
     private:
         ComPtr<ID3D11DepthStencilView> dsv_ = {};

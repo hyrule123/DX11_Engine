@@ -10,8 +10,8 @@ namespace engine::culling
 	void CullRenderers2D(
 		const AABB2D& view_bounds,
 		std::span<const AABB3D> dense_bounds,
-		std::span<const uint32> dense_to_sparse,
-		std::vector<uint32>& out_visible_ids)
+		std::span<const uint32_t> dense_to_sparse,
+		std::vector<uint32_t>& out_visible_ids)
 	{
 		ASSERT(dense_bounds.size() == dense_to_sparse.size());
 

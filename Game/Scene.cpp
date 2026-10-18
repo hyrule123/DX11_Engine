@@ -80,7 +80,7 @@ namespace engine
 
 		// Phase 2: Destroy된 GameObject들의 OnDestroy 호출 및 Graveyard 이동
 		// 연쇄적으로 꼬리를 물고 Destroy되는 GameObject가 있을 수 있으므로, 최대 kMaxDestroyPassCount번 반복
-		uint32 pass_count = 0;
+		uint32_t pass_count = 0;
 		for (; pass_count <= kMaxDrainLoopCount; ++pass_count)
 		{
 			bool any_destroyed = false;
@@ -136,7 +136,7 @@ namespace engine
 		}
 		return nullptr;
 	}
-	void Scene::SetCollisionMask(uint32 layer_a, uint32 layer_b, bool can_collide)
+	void Scene::SetCollisionMask(uint32_t layer_a, uint32_t layer_b, bool can_collide)
 	{
 		ASSERT_F(layer_a < kMaxLayers && layer_b < kMaxLayers, "Layer index out of bounds");
 

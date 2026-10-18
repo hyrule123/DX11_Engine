@@ -8,7 +8,7 @@
 
 namespace engine::file_system
 {
-	std::vector<uint8> ReadAllBytes(const std::filesystem::path& file_path)
+	std::vector<uint8_t> ReadAllBytes(const std::filesystem::path& file_path)
 	{
         std::ifstream file(file_path, std::ios::binary | std::ios::ate);
         
@@ -19,9 +19,9 @@ namespace engine::file_system
 
 		return ReadAllBytes(file);
 	}
-    std::vector<uint8> ReadAllBytes(std::ifstream& ifs)
+    std::vector<uint8_t> ReadAllBytes(std::ifstream& ifs)
     {
-        std::vector<uint8> buffer;
+        std::vector<uint8_t> buffer;
 
         std::streamsize size = ifs.tellg();
         ifs.seekg(0, std::ios::beg);
@@ -31,7 +31,7 @@ namespace engine::file_system
 
         return buffer;
     }
-    bool DumpFile(const std::filesystem::path& file_path, const std::vector<uint8>& data)
+    bool DumpFile(const std::filesystem::path& file_path, const std::vector<uint8_t>& data)
     {
 		std::ofstream of(file_path, std::ios::binary);
         

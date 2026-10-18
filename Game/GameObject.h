@@ -73,15 +73,15 @@ namespace engine
 		// GameObject 전체가 파괴되었을 때 호출
 		void OnDestroy();
 
-		void SetLayer(uint32 layer);
-		uint32 GetLayer() const { return layer_; }
+		void SetLayer(uint32_t layer);
+		uint32_t GetLayer() const { return layer_; }
 
 		void Subscribe(SubscribeType type, Component* listener);
 		void Unsubscribe(SubscribeType type, Component* listener);
 
 		// Broadcast는 첫 프레임에 안 옴. 초기화는 각자 알아서 할것
 		void BroadcastTransformDirty(Transform* transform);
-		void BroadcastLayerChanged(uint32 prev_layer, uint32 new_layer);
+		void BroadcastLayerChanged(uint32_t prev_layer, uint32_t new_layer);
 		void BroadcastCollisionEnter2D(const Collision2D& col_info);
 		void BroadcastCollisionExit2D(Collider2D* other);
 		void BroadcastTriggerEnter2D(Collider2D* other);
@@ -103,7 +103,7 @@ namespace engine
 		std::array<std::vector<Component*>, (size_t)SubscribeType::kEND> listeners_ = {};
 		std::bitset<(size_t)SubscribeType::kEND> is_listeners_dirty_ = {};
 
-		uint32 layer_ = 0;
+		uint32_t layer_ = 0;
 
 		bool has_pending_components_ = false;
 		bool is_active_ = true;

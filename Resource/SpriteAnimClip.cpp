@@ -10,7 +10,7 @@ namespace engine
 	{}
 	SpriteAnimClip::~SpriteAnimClip()
 	{}
-	void SpriteAnimClip::AddFrames(const std::vector<uint32>& frame_indices, float total_duration)
+	void SpriteAnimClip::AddFrames(const std::vector<uint32_t>& frame_indices, float total_duration)
 	{
 		if (frame_indices.empty())
 		{
@@ -26,7 +26,7 @@ namespace engine
 		total_duration_ = total_duration;
 		float frame_duration = total_duration / (float)frame_indices.size();
 
-		for (uint32 index : frame_indices)
+		for (uint32_t index : frame_indices)
 		{
 			frames_.push_back({ index, frame_duration });
 		}

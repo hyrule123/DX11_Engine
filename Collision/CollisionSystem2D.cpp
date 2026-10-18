@@ -75,11 +75,11 @@ namespace
 
 	int32_2 ConvertWorldPosToCellIndex(float2 pos, float2 cell_size_inv) {
 		float2 cell_index_f = pos * cell_size_inv;
-		return {static_cast<int32>(std::floor(cell_index_f.x)), static_cast<int32>(std::floor(cell_index_f.y))};
+		return {static_cast<int32_t>(std::floor(cell_index_f.x)), static_cast<int32_t>(std::floor(cell_index_f.y))};
 	}
 
-	uint32 GetBucketIndex(int32 x, int32 y, uint64 bucket_bit_shifts) {
-		uint64 k = (static_cast<uint64>(static_cast<uint32>(y)) << 32ull) | static_cast<uint64>(static_cast<uint32>(x));
+	uint32_t GetBucketIndex(int32_t x, int32_t y, uint64_t bucket_bit_shifts) {
+		uint64_t k = (static_cast<uint64_t>(static_cast<uint32_t>(y)) << 32ull) | static_cast<uint64_t>(static_cast<uint32_t>(x));
 
 		// splitmix64 finalizer
 		k ^= k >> 30; 
@@ -88,7 +88,7 @@ namespace
 		k *= 0x94D049BB133111EBULL;
 		k ^= k >> 31;
 
-		return static_cast<uint32>(k >> (64 - bucket_bit_shifts));   // 상위 비트 취득
+		return static_cast<uint32_t>(k >> (64 - bucket_bit_shifts));   // 상위 비트 취득
 	}
 
 
@@ -122,10 +122,10 @@ namespace engine
 			SetBucketCount(kDefaultCollisionBucketSize);
 		}
 	}
-	void CollisionSystem2D::SetBucketCount(uint64 requested_count)
+	void CollisionSystem2D::SetBucketCount(uint64_t requested_count)
 	{
 		//클램핑: 최소 2, 최대 kMaxCollisionBucketCount
-		const uint64 clamped = std::clamp(requested_count, 2ull, kMaxCollisionBucketCount);
+		const uint64_t clamped = std::clamp(requested_count, 2ull, kMaxCollisionBucketCount);
 
 		// 알아서 가장 가까운 2의 거듭제곱으로 올려줌 (예: 2000 -> 2048)
 		bucket_count_ = std::bit_ceil(clamped);
@@ -142,21 +142,21 @@ namespace engine
 	{
 		ASSERT(collider);
 
-		int32 index = collider->GetCollisionSystemIndex();
+		int32_t index = collider->GetCollisionSystemIndex();
 		ASSERT_F(index == kInvalidIndex, "Collider is already registered");
 
 		colliders_.push_back({ collider, });
 		colliders_.back().is_world_bound_dirty = true;
 		colliders_.back().is_layer_dirty = true;
 
-		collider->SetCollisionSystemIndex((int32)(colliders_.size() - 1));
+		collider->SetCollisionSystemIndex((int32_t)(colliders_.size() - 1));
 	}
 
 	void CollisionSystem2D::UnregisterCollider(Collider2D* collider)
 	{
 		ASSERT(collider);
 
-		int32 index = collider->GetCollisionSystemIndex();
+		int32_t index = collider->GetCollisionSystemIndex();
 		ASSERT_F(index != kInvalidIndex, "Collider is not registered");
 
 		// 저장된 포인터 주소가 다르면 뭔가 문제 있는거임
@@ -213,7 +213,7 @@ namespace engine
 
 		// Pass 1: Staging buffer 채워넣기
 		//not null이 보장됨
-		for(uint32 i = 0; i < (uint32)colliders_.size(); ++i)
+		for(uint32_t i = 0; i < (uint32_t)colliders_.size(); ++i)
 		{
 			if (colliders_[i].is_world_bound_dirty)
 			{
@@ -231,14 +231,14 @@ namespace engine
 			int32_2 cell_index_LB = ConvertWorldPosToCellIndex(bounds.min, cell_size_inv_);
 			int32_2 cell_index_RT = ConvertWorldPosToCellIndex(bounds.max, cell_size_inv_);
 
-			const int64 cells = int64(cell_index_RT.x - cell_index_LB.x + 1) * (cell_index_RT.y - cell_index_LB.y + 1);
+			const int64_t cells = int64_t(cell_index_RT.x - cell_index_LB.x + 1) * (cell_index_RT.y - cell_index_LB.y + 1);
 			ASSERT_F(cells <= kMaxCellsPerCollider, "Collider spans too many cells");
 
-			for (int32 x = cell_index_LB.x; x <= cell_index_RT.x; ++x)
+			for (int32_t x = cell_index_LB.x; x <= cell_index_RT.x; ++x)
 			{
-				for (int32 y = cell_index_LB.y; y <= cell_index_RT.y; ++y)
+				for (int32_t y = cell_index_LB.y; y <= cell_index_RT.y; ++y)
 				{
-					uint32 bucket_index = GetBucketIndex(x, y, bucket_size_bit_shifts_);
+					uint32_t bucket_index = GetBucketIndex(x, y, bucket_size_bit_shifts_);
 					staged_entries_.emplace_back(
 						GridEntry{
 						x,
@@ -259,7 +259,7 @@ namespace engine
 		}
 
 		// Pass 2: 누적합 계산
-		for (uint32 i = 1; i < bucket_start_idx_.size(); ++i)
+		for (uint32_t i = 1; i < bucket_start_idx_.size(); ++i)
 		{
 			bucket_start_idx_[i] += bucket_start_idx_[i - 1];
 		}
@@ -271,8 +271,8 @@ namespace engine
 		bucket_.resize(staged_entries_.size());
 		for (const auto& entry : staged_entries_)
 		{
-			const uint32 bucket_index = entry.bucket_index;
-			const uint32 insert_index = bucket_cursor_[bucket_index];
+			const uint32_t bucket_index = entry.bucket_index;
+			const uint32_t insert_index = bucket_cursor_[bucket_index];
 			bucket_cursor_[bucket_index]++; // 다음에 들어올 entry를 위해 cursor_ 증가
 
 			bucket_[insert_index] = entry;
@@ -293,15 +293,15 @@ namespace engine
 		const std::array<std::bitset<kMaxLayers>, kMaxLayers>& collision_mask = owner_scene_->GetCollisionMask();
 
 		for (size_t bucket_idx = 0; bucket_idx < bucket_count_; ++bucket_idx) {
-			const uint32 begin = bucket_start_idx_[bucket_idx];
-			const uint32 end = bucket_start_idx_[bucket_idx + 1];
+			const uint32_t begin = bucket_start_idx_[bucket_idx];
+			const uint32_t end = bucket_start_idx_[bucket_idx + 1];
 
 			//같은 셀 내의 Collider2D들끼리 충돌 감지
-			for (uint32 i = begin; i < end; ++i) {
+			for (uint32_t i = begin; i < end; ++i) {
 				const GridEntry& e_i = bucket_[i];
 				const AABB2D& e_i_world_bound = colliders_[e_i.colliders_index].world_bounds;
 
-				for (uint32 j = i + 1; j < end; ++j) {
+				for (uint32_t j = i + 1; j < end; ++j) {
 					const GridEntry& e_j = bucket_[j];
 					const AABB2D& e_j_world_bound = colliders_[e_j.colliders_index].world_bounds;
 
@@ -350,8 +350,8 @@ namespace engine
 						contact_point_ptr
 						);
 
-					const uint32 collider_id_i = collider_i->GetInstanceID();
-					const uint32 collider_id_j = collider_j->GetInstanceID();
+					const uint32_t collider_id_i = collider_i->GetInstanceID();
+					const uint32_t collider_id_j = collider_j->GetInstanceID();
 
 					ColliderPairID id_pair{ collider_id_i, collider_id_j };
 
@@ -458,7 +458,7 @@ namespace engine
 	void CollisionSystem2D::SetWorldBoundsDirty(Collider2D* collider)
 	{
 		ASSERT(collider);
-		int32 index = collider->GetCollisionSystemIndex();
+		int32_t index = collider->GetCollisionSystemIndex();
 		if (index == kInvalidIndex) { return; }
 
 		ASSERT(collider == colliders_[index].collider);
@@ -467,7 +467,7 @@ namespace engine
 	void CollisionSystem2D::SetLayerDirty(Collider2D * collider)
 	{
 		ASSERT(collider);
-		int32 index = collider->GetCollisionSystemIndex();
+		int32_t index = collider->GetCollisionSystemIndex();
 		if (index == kInvalidIndex) { return; }
 
 		ASSERT(collider == colliders_[index].collider);

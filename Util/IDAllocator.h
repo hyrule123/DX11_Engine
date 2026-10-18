@@ -18,12 +18,12 @@ namespace engine {
     //
     // 스레드 안전성 없음 — 단일 스레드 리소스 로딩 전제.
     // 직접 쓰지 않고 아래 ScopedID를 통해서만 사용한다.
-    constexpr uint32 kInvalidID = 0;
+    constexpr uint32_t kInvalidID = 0;
 
-    template <typename Tag, uint32 kBitWidth>
+    template <typename Tag, uint32_t kBitWidth>
     class IDAllocator {
     public:
-        using IDType = uint32;
+        using IDType = uint32_t;
 
         // ID 0을 무효값으로 예약하므로 실제 발급 가능한 최대치는 (2^n - 1).
         static constexpr IDType kMaxID = (kBitWidth >= 32)
@@ -116,7 +116,7 @@ namespace engine {
     // ---------------------------------------------------------------------------
 
     // 중요: 이 데이터의 Getter 함수는 복사가 일어나도록 하지 말 것!!(return by 및 value parameter 사용 X)
-    template <typename Tag, uint32 kBitWidth>
+    template <typename Tag, uint32_t kBitWidth>
     class ScopedID {
     public:
         using AllocatorType = IDAllocator<Tag, kBitWidth>;

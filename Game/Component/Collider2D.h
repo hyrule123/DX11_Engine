@@ -29,7 +29,7 @@ namespace engine
 		void TriggerEnter2D(Collider2D* other);
 		void TriggerExit2D(Collider2D* other);
 
-		virtual void OnLayerChanged(uint32 prev_layer, uint32 new_layer) override;
+		virtual void OnLayerChanged(uint32_t prev_layer, uint32_t new_layer) override;
 
 		void SetTrigger(bool is_trigger) { is_trigger_ = is_trigger; }
 		bool IsTrigger() const { return is_trigger_; }
@@ -37,8 +37,8 @@ namespace engine
 		void SetOffset(float2 offset) { offset_ = offset; }
 		float2 GetOffset() const { return offset_; }
 
-		void SetCollisionSystemIndex(int32 index) { collision_system_index_ = index; }
-		int32 GetCollisionSystemIndex() const { return collision_system_index_; }
+		void SetCollisionSystemIndex(int32_t index) { collision_system_index_ = index; }
+		int32_t GetCollisionSystemIndex() const { return collision_system_index_; }
 
 		ColliderShape2D GetShape() const { return shape_; }
 
@@ -69,7 +69,7 @@ namespace engine
 		float2 offset_ = {};
 
 		// CollisionSystem2D의 배열에 저장된 Index
-		int32 collision_system_index_ = kInvalidIndex;
+		int32_t collision_system_index_ = kInvalidIndex;
 
 		std::vector<ColliderPairID> contacts_ = {};
     };

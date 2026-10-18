@@ -21,13 +21,13 @@ namespace engine
         struct SparseSlot
         {
             Renderer* renderer;          // nullptr = 빈 슬롯
-            uint32    dense_idx;        // dense 배열 내 현재 위치
-            uint32    next_free_slot;
+            uint32_t    dense_idx;        // dense 배열 내 현재 위치
+            uint32_t    next_free_slot;
             bool      is_bounds_dirty;
         };
 
         // sort_key 하위 비트(bounds_id 24비트) 제약
-        static constexpr uint32 kMaxRendererCount = 1u << 24;
+        static constexpr uint32_t kMaxRendererCount = 1u << 24;
 
         RendererRegistry() = default;
 
@@ -35,33 +35,33 @@ namespace engine
         RendererRegistry& operator=(const RendererRegistry&) = delete;
 
         // 새 슬롯 발급. 첫 bounds 계산을 위해 dirty로 표시된다.
-        [[nodiscard]] uint32 Allocate(Renderer* renderer);
+        [[nodiscard]] uint32_t Allocate(Renderer* renderer);
 
         // 해제. generation은 Release에서 증가
-        void Release(uint32 idx);
+        void Release(uint32_t idx);
 
-        void MarkBoundsDirty(uint32 idx);
+        void MarkBoundsDirty(uint32_t idx);
         void UpdateDirtyBounds();
 
 		std::span<const SparseSlot> SparseSlots() const { return sparse_slots_; }
 		std::span<const AABB3D> GetDenseBounds() const { return dense_bounds_; }
-		const AABB3D& GetBound(uint32 id) const { 
+		const AABB3D& GetBound(uint32_t id) const { 
             ASSERT(IsValidSlot(id));
 			return dense_bounds_[sparse_slots_[id].dense_idx];
         }
-		std::span<const uint32> GetDenseToSparseTable() const { return dense_to_sparse_; }
+		std::span<const uint32_t> GetDenseToSparseTable() const { return dense_to_sparse_; }
 
     private:
-        bool IsValidSlot(uint32 id) const { return id < sparse_slots_.size() && sparse_slots_[id].dense_idx != kInvalidIdx32; }
+        bool IsValidSlot(uint32_t id) const { return id < sparse_slots_.size() && sparse_slots_[id].dense_idx != kInvalidIdx32; }
 
         // Sparse Slots(고정 ID)
         std::vector<SparseSlot>  sparse_slots_;
-        uint32              free_slot_head_ = kInvalidIdx32;
-        std::vector<uint32> dirty_slot_ids_;      // 고정 id 저장 → swap에 영향받지 않음
+        uint32_t              free_slot_head_ = kInvalidIdx32;
+        std::vector<uint32_t> dirty_slot_ids_;      // 고정 id 저장 → swap에 영향받지 않음
 
         // Dense Entries
         std::vector<AABB3D> dense_bounds_;
-        std::vector<uint32> dense_to_sparse_;    // dense 위치 → 고정 id
+        std::vector<uint32_t> dense_to_sparse_;    // dense 위치 → 고정 id
     };
 }
 

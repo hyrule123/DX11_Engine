@@ -13,22 +13,22 @@ namespace engine
     {
     public:
         // 0 == Invalid Handle (실제 Invalid Check는 Generation이 0인 경우만 진행)
-        inline static constexpr uint32 kInvalidGeneration = 0;
+        inline static constexpr uint32_t kInvalidGeneration = 0;
 
         constexpr Handle() {}
 
-        constexpr Handle(uint32 slot_id, uint32 generation)
-            : value_((uint64(generation) << 32) | slot_id)
+        constexpr Handle(uint32_t slot_id, uint32_t generation)
+            : value_((uint64_t(generation) << 32) | slot_id)
         {}
 
-        constexpr uint32 GetSlotID() const
+        constexpr uint32_t GetSlotID() const
         {
-            return static_cast<uint32>(value_);
+            return static_cast<uint32_t>(value_);
         }
 
-        constexpr uint32 GetGeneration() const
+        constexpr uint32_t GetGeneration() const
         {
-            return static_cast<uint32>(value_ >> 32);
+            return static_cast<uint32_t>(value_ >> 32);
         }
 
         constexpr bool IsValid() const
@@ -36,7 +36,7 @@ namespace engine
             return GetGeneration() != kInvalidGeneration;
         }
 
-        constexpr uint64 Value() const
+        constexpr uint64_t Value() const
         {
             return value_;
         }
@@ -52,7 +52,7 @@ namespace engine
         }
 
     private:
-        uint64 value_ = {};
+        uint64_t value_ = {};
     };
 
     class HandlePointerPool
@@ -63,7 +63,7 @@ namespace engine
         template <typename T>
         friend class weak_handle_ptr;
 
-        inline static constexpr uint32 kUint32Max = (std::numeric_limits<uint32>::max)();
+        inline static constexpr uint32_t kUint32Max = (std::numeric_limits<uint32_t>::max)();
 
     public:
         static HandlePointerPool& GetInst()
@@ -90,7 +90,7 @@ namespace engine
         {
             if (!handle.IsValid()) { return false; }
 
-            uint32 slot_id = handle.GetSlotID();
+            uint32_t slot_id = handle.GetSlotID();
             if (slot_id >= slots_.size()) { return false; }
 
             const Slot& slot = slots_[slot_id];
@@ -101,12 +101,12 @@ namespace engine
         struct Slot
         {
             void* object = nullptr;
-            uint32 generation = 1u;
-            uint32 next_free = kUint32Max;
+            uint32_t generation = 1u;
+            uint32_t next_free = kUint32Max;
         };
 
         std::vector<Slot> slots_;
-        uint32 next_free_index_ = kUint32Max;
+        uint32_t next_free_index_ = kUint32Max;
     };
 
     //전방 선언

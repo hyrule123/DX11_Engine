@@ -12,7 +12,7 @@ namespace engine
     public:
         struct Frame
         {
-            uint32 index = {};
+            uint32_t index = {};
             float duration = {};
 			HashedString notify_name = {};
         };
@@ -20,7 +20,7 @@ namespace engine
         SpriteAnimClip();
         virtual ~SpriteAnimClip();
 
-        void AddFrames(const std::vector<uint32>& frame_indices, float total_duration);
+        void AddFrames(const std::vector<uint32_t>& frame_indices, float total_duration);
 
         //웬만하면 move semantic
         void AddFrames(std::vector<Frame>&& frames);
@@ -38,18 +38,18 @@ namespace engine
         bool IsLoop() const { return is_loop_; }
 
         //Texture Array의 최대 인덱스 벗어나는지 확인용
-        uint32 GetMaxFrameIndex() const { return max_frame_idx_; }
+        uint32_t GetMaxFrameIndex() const { return max_frame_idx_; }
 
         bool IsReady() const { return !(frames_.empty()) || (total_duration_ <= 0.0f); }
 
-        void SetFrameNotifyName(uint32 frame_idx, const HashedStringView& name) {
-			if (frame_idx < (uint32)frames_.size())
+        void SetFrameNotifyName(uint32_t frame_idx, const HashedStringView& name) {
+			if (frame_idx < (uint32_t)frames_.size())
 			{
 				frames_[frame_idx].notify_name = name;
 			}
         }
-		HashedStringView GetFrameNotifyName(uint32 frame_idx) const {
-			if (frame_idx < (uint32)frames_.size())
+		HashedStringView GetFrameNotifyName(uint32_t frame_idx) const {
+			if (frame_idx < (uint32_t)frames_.size())
 			{
 				return frames_[frame_idx].notify_name;
 			}
@@ -60,7 +60,7 @@ namespace engine
         std::vector<Frame> frames_ = {};
         float total_duration_ = {};
         bool is_loop_ = {};
-        uint32 max_frame_idx_ = {};
+        uint32_t max_frame_idx_ = {};
     };
 }
 

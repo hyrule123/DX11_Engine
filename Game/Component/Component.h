@@ -43,7 +43,7 @@ namespace engine
         virtual void OnTriggerExit2D(Collider2D* other) {}
 
 		virtual void OnTransformDirty(Transform* transform) {}
-        virtual void OnLayerChanged(uint32 prev_layer, uint32 new_layer) {}
+        virtual void OnLayerChanged(uint32_t prev_layer, uint32_t new_layer) {}
 
         ComponentCategory GetComponentCategory() const { return category_; }
 

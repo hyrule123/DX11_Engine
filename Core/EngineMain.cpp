@@ -52,13 +52,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             break;
         }
 
-		uint32 width = LOWORD(lParam);
-		uint32 height = HIWORD(lParam);
+		uint32_t width = LOWORD(lParam);
+		uint32_t height = HIWORD(lParam);
 
 		//방어 코드
         if (width > 0 && height > 0)
         {
-            engine::EngineMain::GetInst().OnScreenSizeChange((uint32)width, (uint32)height);
+            engine::EngineMain::GetInst().OnScreenSizeChange((uint32_t)width, (uint32_t)height);
         }
     }
     break;
@@ -219,7 +219,7 @@ namespace engine
 
         return is_running_;
     }
-    void EngineMain::SetScreenSize(uint32 width, uint32 height)
+    void EngineMain::SetScreenSize(uint32_t width, uint32_t height)
     {
         // 1. 원하는 순수 도화지 크기 설정
         RECT target_rect = { 0, 0, (LONG)width, (LONG)height };
@@ -235,7 +235,7 @@ namespace engine
         // 4. SetWindowPos 호출
         SetWindowPos(h_wnd_, nullptr, 0, 0, new_window_width, new_window_height, SWP_NOMOVE | SWP_NOZORDER);
     }
-    void EngineMain::OnScreenSizeChange(uint32 width, uint32 height)
+    void EngineMain::OnScreenSizeChange(uint32_t width, uint32_t height)
     {
         //동일 사이즈는 무시
 		if (screen_width_ == width && screen_height_ == height) { return; }

@@ -19,7 +19,7 @@ namespace engine
 	{
 		context->PSSetShader(ps_.Get(), nullptr, 0);
 	}
-	bool PixelShader::Create( const std::vector<uint8>& bytecode)
+	bool PixelShader::Create( const std::vector<uint8_t>& bytecode)
 	{
 		auto* device = GraphicsDevice::GetInst().GetDevice();
 		HRESULT hr = device->CreatePixelShader(bytecode.data(), bytecode.size(), nullptr, ps_.ReleaseAndGetAddressOf());

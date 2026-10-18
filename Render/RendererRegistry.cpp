@@ -9,11 +9,11 @@
 
 namespace engine
 {
-    uint32 RendererRegistry::Allocate(Renderer* renderer)
+    uint32_t RendererRegistry::Allocate(Renderer* renderer)
     {
         ASSERT(renderer);
 
-        uint32 id = kInvalidIdx32;
+        uint32_t id = kInvalidIdx32;
 
 		// 빈 슬롯이 있으면 재사용
         if (free_slot_head_ != kInvalidIdx32)
@@ -26,7 +26,7 @@ namespace engine
         }
         else // 없을 시 새로 추가
         {
-            id = (uint32)sparse_slots_.size();
+            id = (uint32_t)sparse_slots_.size();
             ASSERT_F(id < kMaxRendererCount, "Renderer 수가 kMaxRendererCount(sort_key 24비트) 한도를 넘었습니다.");
             sparse_slots_.push_back({});
         }
@@ -35,7 +35,7 @@ namespace engine
 
 		slot.renderer = renderer;
 		slot.next_free_slot = kInvalidIdx32;
-        slot.dense_idx = (uint32)dense_bounds_.size();
+        slot.dense_idx = (uint32_t)dense_bounds_.size();
         slot.is_bounds_dirty = false;
 
         dense_to_sparse_.push_back(id);
@@ -46,20 +46,20 @@ namespace engine
         return id;
     }
 
-    void RendererRegistry::Release(uint32 id)
+    void RendererRegistry::Release(uint32_t id)
     {
         ASSERT(IsValidSlot(id));
 
         SparseSlot& slot = sparse_slots_[id];
         ASSERT(slot.renderer);
 
-        const uint32 dense_idx = slot.dense_idx;
-        const uint32 last = (uint32)dense_bounds_.size() - 1;
+        const uint32_t dense_idx = slot.dense_idx;
+        const uint32_t last = (uint32_t)dense_bounds_.size() - 1;
 
         // 마지막 원소를 빈자리로 옮기고, 옮겨진 원소의 sparse 연결 갱신
         if (dense_idx != last)
         {
-            const uint32 moved_id = dense_to_sparse_[last];
+            const uint32_t moved_id = dense_to_sparse_[last];
 
             dense_bounds_[dense_idx] = dense_bounds_[last];
             dense_to_sparse_[dense_idx] = moved_id;
@@ -84,7 +84,7 @@ namespace engine
 #endif
     }
 
-    void RendererRegistry::MarkBoundsDirty(uint32 id)
+    void RendererRegistry::MarkBoundsDirty(uint32_t id)
     {
         ASSERT(IsValidSlot(id));
 
@@ -102,7 +102,7 @@ namespace engine
 
     void RendererRegistry::UpdateDirtyBounds()
     {
-        for (uint32 slot_id : dirty_slot_ids_)
+        for (uint32_t slot_id : dirty_slot_ids_)
         {
             SparseSlot& slot = sparse_slots_[slot_id];
 

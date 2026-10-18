@@ -20,9 +20,9 @@ namespace engine
 
 	class GPUBufferBindingTable
 	{
-		constexpr static uint32 kMaxBufferPerBindingTable = 10;
+		constexpr static uint32_t kMaxBufferPerBindingTable = 10;
 	public:
-		GPUBufferBindingTable(uint32 cb_slot_start, uint32 cb_slot_count, uint32 srv_slot_start, uint32 srv_slot_count);
+		GPUBufferBindingTable(uint32_t cb_slot_start, uint32_t cb_slot_count, uint32_t srv_slot_start, uint32_t srv_slot_count);
 		GPUBufferBindingTable(const GPUBufferBindingTable&) = default;
 		GPUBufferBindingTable& operator=(const GPUBufferBindingTable&) = delete;
 		GPUBufferBindingTable(GPUBufferBindingTable&&) = delete;
@@ -44,10 +44,10 @@ namespace engine
 		void BindCBImpl(ID3D11DeviceContext* context) const;
 		void BindSRVImpl(ID3D11DeviceContext* context) const;
 
-		const uint32 cb_slot_start_;
-		const uint32 cb_slot_count_;
-		const uint32 srv_slot_start_;
-		const uint32 srv_slot_count_;
+		const uint32_t cb_slot_start_;
+		const uint32_t cb_slot_count_;
+		const uint32_t srv_slot_start_;
+		const uint32_t srv_slot_count_;
 		std::vector<BufferBindingInfo<ConstantBuffer>> cb_bindings_;
 		std::vector<BufferBindingInfo<ShaderResource>> srv_bindings_;
 	};

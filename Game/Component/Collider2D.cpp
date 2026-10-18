@@ -77,7 +77,7 @@ namespace engine
 		GetOwnerGameObject()->BroadcastTriggerExit2D(other);
 	}
 
-	void Collider2D::OnLayerChanged(uint32 prev_layer, uint32 new_layer)
+	void Collider2D::OnLayerChanged(uint32_t prev_layer, uint32_t new_layer)
 	{
 		Super::OnLayerChanged(prev_layer, new_layer);
 

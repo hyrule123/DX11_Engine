@@ -24,7 +24,7 @@ namespace engine
 	{
 		context->VSSetShader(vs_.Get(), nullptr, 0);
 	}
-	bool VertexShader::Create( const std::vector<uint8>& bytecode)
+	bool VertexShader::Create( const std::vector<uint8_t>& bytecode)
 	{
 		auto* device = GraphicsDevice::GetInst().GetDevice();
 		HRESULT hr = device->CreateVertexShader(bytecode.data(), bytecode.size(), nullptr, vs_.ReleaseAndGetAddressOf());

@@ -65,7 +65,7 @@ namespace engine
 
         size_t GetInstanceDataStride(render_pass::ID pass) const;
 
-		uint32 GetMaterialID() const { return material_ID_.Get(); }
+		uint32_t GetMaterialID() const { return material_ID_.Get(); }
 
     private:
 		MaterialID material_ID_;    // RenderKey에 패킹되는 Material 고유 ID. ScopedID로 관리됨

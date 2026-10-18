@@ -16,7 +16,7 @@ namespace engine
 	{}
 	bool Shader::LoadFromFile(const std::filesystem::path & path)
 	{
-		std::vector<uint8> bytecode = file_system::ReadAllBytes(path);
+		std::vector<uint8_t> bytecode = file_system::ReadAllBytes(path);
 
 		if (bytecode.empty())
 		{

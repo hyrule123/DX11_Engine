@@ -8,7 +8,7 @@
 namespace engine
 {
     // 상수 버퍼 규칙
-    constexpr bool IsValidStride(uint32 stride)
+    constexpr bool IsValidStride(uint32_t stride)
     {
         return (stride > 0 && (stride % 4) == 0 && stride <= 2048);
     }
@@ -18,24 +18,24 @@ namespace engine
 	{}
 	StructuredBuffer::~StructuredBuffer()
 	{}
-    bool StructuredBuffer::CreateImmutableBuffer(uint32 stride, const void* data, uint32 count)
+    bool StructuredBuffer::CreateImmutableBuffer(uint32_t stride, const void* data, uint32_t count)
     {
 		return CreateBufferImpl(stride, count, D3D11_USAGE_IMMUTABLE,
 			D3D11_BIND_SHADER_RESOURCE, 0, data);
     }
-    bool StructuredBuffer::CreateDynamicBuffer(uint32 stride, uint32 capacity)
+    bool StructuredBuffer::CreateDynamicBuffer(uint32_t stride, uint32_t capacity)
     {
         return CreateBufferImpl(stride, capacity, D3D11_USAGE_DYNAMIC,
 			D3D11_BIND_SHADER_RESOURCE, D3D11_CPU_ACCESS_WRITE, nullptr);
     }
-    bool StructuredBuffer::CreateDefaultBuffer(uint32 stride, uint32 capacity, bool need_uav)
+    bool StructuredBuffer::CreateDefaultBuffer(uint32_t stride, uint32_t capacity, bool need_uav)
     {
 		return CreateBufferImpl(stride, capacity, D3D11_USAGE_DEFAULT, 
 			D3D11_BIND_SHADER_RESOURCE | (need_uav ? D3D11_BIND_UNORDERED_ACCESS : 0u),
 			0, nullptr);
     }
 
-    bool StructuredBuffer::Reserve(uint32 new_capacity)
+    bool StructuredBuffer::Reserve(uint32_t new_capacity)
     {
         if (buffer_ == nullptr)
         {
@@ -88,7 +88,7 @@ namespace engine
         return true;
     }
 
-    bool StructuredBuffer::CreateBufferImpl(uint32 stride, uint32 capacity, D3D11_USAGE buffer_usage, UINT bind_flags, UINT cpu_access, const void* init_data)
+    bool StructuredBuffer::CreateBufferImpl(uint32_t stride, uint32_t capacity, D3D11_USAGE buffer_usage, UINT bind_flags, UINT cpu_access, const void* init_data)
     {
         if (!IsValidStride(stride) || capacity == 0) 
         { 
@@ -100,8 +100,8 @@ namespace engine
             ERR_MSG("data가 nullptr입니다. IMMUTABLE은 초기 데이터가 필수입니다.");
             return false;
         }
-		uint64 total_size = (uint64)(stride) * (uint64)(capacity);
-		if (total_size > std::numeric_limits<uint32>::max())
+		uint64_t total_size = (uint64_t)(stride) * (uint64_t)(capacity);
+		if (total_size > std::numeric_limits<uint32_t>::max())
 		{
 			ERR_MSG("StructuredBuffer 생성 실패: 버퍼 크기가 UINT32 범위를 초과합니다.");
 			return false;
@@ -155,7 +155,7 @@ namespace engine
         return true;
     }
 
-    ComPtr<ID3D11ShaderResourceView> StructuredBuffer::CreateSRVImpl(ID3D11Buffer* buffer, uint32 capacity, uint32 start, uint32 count)
+    ComPtr<ID3D11ShaderResourceView> StructuredBuffer::CreateSRVImpl(ID3D11Buffer* buffer, uint32_t capacity, uint32_t start, uint32_t count)
     {
         if (buffer == nullptr)
         {
@@ -194,7 +194,7 @@ namespace engine
 
         return srv;
     }
-    ComPtr<ID3D11UnorderedAccessView> StructuredBuffer::CreateUAVImpl(ID3D11Buffer* buffer, uint32 capacity, uint32 start, uint32 count)
+    ComPtr<ID3D11UnorderedAccessView> StructuredBuffer::CreateUAVImpl(ID3D11Buffer* buffer, uint32_t capacity, uint32_t start, uint32_t count)
     {
         if (buffer == nullptr)
         {
@@ -236,7 +236,7 @@ namespace engine
         return uav;
     }
 
-    bool StructuredBuffer::Upload(ID3D11DeviceContext* context, void* data, uint32 elem_stride, uint32 elem_count)
+    bool StructuredBuffer::Upload(ID3D11DeviceContext* context, void* data, uint32_t elem_stride, uint32_t elem_count)
 	{
         if (data == nullptr)
         {

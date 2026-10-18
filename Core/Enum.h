@@ -7,7 +7,7 @@
 
 namespace engine
 {
-	enum class SubscribeType : uint8
+	enum class SubscribeType : uint8_t
 	{
 		kCollision,
 		kTransformDirty,

@@ -152,7 +152,7 @@ namespace engine
 			ASSERT(result);
 
 			//INDEX BUFFER
-			std::vector<uint32> indices = { 0, 1, 2, 0, 2, 3 };
+			std::vector<uint32_t> indices = { 0, 1, 2, 0, 2, 3 };
 			result = mesh->CreateIndexBuffer(indices, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 			ASSERT(result);
 		}

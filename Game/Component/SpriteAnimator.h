@@ -39,7 +39,7 @@ namespace engine
 		//참고: Internal 함수는 Null Check를 하지 않음. 호출 전 반드시 확인 필요
         void PlayInternal(SpriteAnimClip* clip_ptr);
         bool SwitchAnimKeepFrameInternal(SpriteAnimClip* clip_ptr);
-		void TriggerNotify(uint32 frame_idx);
+		void TriggerNotify(uint32_t frame_idx);
 
         SpriteRenderer* renderer_ = {};
         std::shared_ptr<SpriteAnimation> anim_ = {};
@@ -50,8 +50,8 @@ namespace engine
 
         //상태 캐시
         float acc_deltatime_ = {};
-        uint32 cur_frame_idx_ = {};
-        uint32 clip_frame_total_count_ = {};
+        uint32_t cur_frame_idx_ = {};
+        uint32_t clip_frame_total_count_ = {};
         float cur_frame_duration_= {};
 		std::vector<bool> frame_notify_checked_ = {};
 

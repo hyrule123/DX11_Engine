@@ -58,10 +58,10 @@ namespace engine
 		static void UnbindUAV(ID3D11DeviceContext* context, RegisterU slot);    // CS 전용
 
         // 상속 시 Super::Resize() 호출할 것
-		virtual bool Resize(uint32 width, uint32 height);
+		virtual bool Resize(uint32_t width, uint32_t height);
 
-        uint32 GetWidth() const { return width_; }
-        uint32 GetHeight() const { return height_; }
+        uint32_t GetWidth() const { return width_; }
+        uint32_t GetHeight() const { return height_; }
 
     protected:
         void SetTexture2D(ComPtr<ID3D11Texture2D> texture);
@@ -74,7 +74,7 @@ namespace engine
             SRV_ = std::move(shader_resource_view);
         }
 
-        void SetSize(uint32 width, uint32 height) {
+        void SetSize(uint32_t width, uint32_t height) {
             width_ = width;
             height_ = height;
         }

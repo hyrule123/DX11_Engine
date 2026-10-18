@@ -66,7 +66,7 @@ namespace engine
 					else
 					{
 						// Non-loop: 마지막 프레임에 고정
-						cur_frame_idx_ = (uint32)(playing_clip_->GetFrames().size() - 1);
+						cur_frame_idx_ = (uint32_t)(playing_clip_->GetFrames().size() - 1);
 
 						// 더 이상 시간이 누적되어 오버플로우가 발생하지 않도록 시간 고정
 						acc_deltatime_ = playing_clip_->GetFrames()[cur_frame_idx_].duration;
@@ -151,7 +151,7 @@ namespace engine
 		cur_frame_duration_ = clip_ptr->GetFrames()[0].duration;
 		frame_notify_checked_.clear();
 		frame_notify_checked_.resize(clip_ptr->GetFrames().size(), false);
-		clip_frame_total_count_ = (uint32)clip_ptr->GetFrames().size();
+		clip_frame_total_count_ = (uint32_t)clip_ptr->GetFrames().size();
 		playing_clip_ = clip_ptr;
 
 		// Check 0 frame notify - 업데이트 루프에서 첫 0프레임은 노티파이 처리 안되므로 여기서 처리
@@ -177,10 +177,10 @@ namespace engine
 	}
 
 	//No Exception Check(다 확인했다고 가정)
-	void SpriteAnimator::TriggerNotify(uint32 frame_idx)
+	void SpriteAnimator::TriggerNotify(uint32_t frame_idx)
 	{
 		if (frame_notify_checked_[frame_idx]) { return; }
-		ASSERT(frame_idx < (uint32)frame_notify_checked_.size());
+		ASSERT(frame_idx < (uint32_t)frame_notify_checked_.size());
 		frame_notify_checked_[frame_idx] = true;
 		// 노티파이 있을 시 호출
 		HashedStringView notify_name = playing_clip_->GetFrameNotifyName(frame_idx);

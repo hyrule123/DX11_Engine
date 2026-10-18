@@ -49,7 +49,7 @@ namespace engine
 		return false;
 	}
 
-	bool Mesh::CreateVertexBuffer(const void* data, uint32 data_stride, uint32 data_count, const AABB3D& local_bounds)
+	bool Mesh::CreateVertexBuffer(const void* data, uint32_t data_stride, uint32_t data_count, const AABB3D& local_bounds)
 	{
 		if (nullptr == data)
 		{
@@ -84,7 +84,7 @@ namespace engine
 		return true;
 	}
 
-	bool Mesh::CreateIndexBuffer(const void* p_data, DXGI_FORMAT format, uint32 data_count, D3D11_PRIMITIVE_TOPOLOGY topology, std::vector<SubMesh> sub_meshes)
+	bool Mesh::CreateIndexBuffer(const void* p_data, DXGI_FORMAT format, uint32_t data_count, D3D11_PRIMITIVE_TOPOLOGY topology, std::vector<SubMesh> sub_meshes)
 	{
 		UINT data_stride = GetDXGIFormatByteStride(format);
 

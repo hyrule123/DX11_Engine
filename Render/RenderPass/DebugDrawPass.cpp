@@ -111,7 +111,7 @@ namespace engine
 			ASSERT(result);
 
 			//INDEX BUFFER
-			std::vector<uint16> indices;
+			std::vector<uint16_t> indices;
 			indices.push_back(0u);
 			indices.push_back(1u);
 			indices.push_back(2u);
@@ -127,20 +127,20 @@ namespace engine
 
 			//Mesh
 			std::vector<vertex::debug_draw::Vertex> vertices;
-			std::vector<uint16> indices;
+			std::vector<uint16_t> indices;
 
 			vertex::debug_draw::Vertex v;
 			//v.position = { 0.0f, 0.0f, 0.0f };	//중심점
 			//vertices.push_back(v);
 
 			//32개 (vertex: 32개 index 0 ~ 31)
-			for (uint32 i = 0; i <= 31; ++i)
+			for (uint32_t i = 0; i <= 31; ++i)
 			{
 				float angle = (float)i / 32.0f * XM_2PI;
 				float x = cosf(angle) * 0.5f;
 				float y = sinf(angle) * 0.5f;
 				vertices.push_back({ {x, y, 0.0f} });
-				indices.push_back((uint16)i);
+				indices.push_back((uint16_t)i);
 			}
 			indices.push_back(0u);	//마지막에 0번으로 돌아가서 닫힌 원 만들기
 
@@ -181,7 +181,7 @@ namespace engine
 		if (max_size > debug_buffer_->GetElementCount())
 		{
 			//벡터랑 버퍼 확장 타이밍 맞추기 위해 capacity() 사용
-			bool result = debug_buffer_->Reserve((uint32)max_size);
+			bool result = debug_buffer_->Reserve((uint32_t)max_size);
 			ASSERT(result);
 		}
 
@@ -196,10 +196,10 @@ namespace engine
 
 			//Mesh Draw
 			debug_rect_mesh_->Bind(ctx.dc);
-			debug_rect_mesh_->Draw(ctx.dc, {.instance_start = 0, .instance_count = (uint32)debug_rect_data_.size(), .submesh_index = 0});
+			debug_rect_mesh_->Draw(ctx.dc, {.instance_start = 0, .instance_count = (uint32_t)debug_rect_data_.size(), .submesh_index = 0});
 
 			// 순회 돌면서 dt 감소 및 음수가 된 값들은 제거
-			for (int32 i = (int32)debug_rect_data_.size() - 1; i >= 0; --i)
+			for (int32_t i = (int32_t)debug_rect_data_.size() - 1; i >= 0; --i)
 			{
 				debug_rect_data_[i].left_time -= dt;
 				if (debug_rect_data_[i].left_time <= 0.0f)
@@ -220,10 +220,10 @@ namespace engine
 
 			//Mesh Draw
 			debug_circle_mesh_->Bind(ctx.dc);
-			debug_circle_mesh_->Draw(ctx.dc, {.instance_start = 0, .instance_count = (uint32)debug_circle_data_.size(), .submesh_index = 0});
+			debug_circle_mesh_->Draw(ctx.dc, {.instance_start = 0, .instance_count = (uint32_t)debug_circle_data_.size(), .submesh_index = 0});
 
 			// 순회 돌면서 dt 감소 및 음수가 된 값들은 제거
-			for (int32 i = (int32)debug_circle_data_.size() - 1; i >= 0; --i)
+			for (int32_t i = (int32_t)debug_circle_data_.size() - 1; i >= 0; --i)
 			{
 				debug_circle_data_[i].left_time -= dt;
 				if (debug_circle_data_[i].left_time <= 0.0f)

@@ -35,7 +35,7 @@ namespace engine
 
         return true;
     }
-	bool DepthStencilTarget::Resize(uint32 width, uint32 height)
+	bool DepthStencilTarget::Resize(uint32_t width, uint32_t height)
 	{
 		bool result = Super::Resize(width, height);
 		if (!result)

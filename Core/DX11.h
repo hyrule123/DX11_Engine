@@ -17,7 +17,7 @@
 
 namespace engine
 {
-	static_assert(sizeof(UINT) == sizeof(uint32), "UINT과 uint32_t의 크기가 다릅니다. 사이즈를 일치시키세요.");
+	static_assert(sizeof(UINT) == sizeof(uint32_t), "UINT과 uint32_t의 크기가 다릅니다. 사이즈를 일치시키세요.");
 
 	constexpr UINT GetDXGIFormatByteStride(DXGI_FORMAT f)
 	{
@@ -37,13 +37,13 @@ namespace engine
 	struct ConstantBufferBindingInfo
 	{
 		ShaderStageFlags stage_flag = {};
-		uint32 slot = 0u;
+		uint32_t slot = 0u;
 		std::shared_ptr<ConstantBuffer> constant_buffer = {};
 	};
 	struct ShaderResourceBindingInfo
 	{
 		ShaderStageFlags stage_flag = {};
-		uint32 slot = 0u;
+		uint32_t slot = 0u;
 		std::shared_ptr<ShaderResource> shader_resource = {};
 	};
 }

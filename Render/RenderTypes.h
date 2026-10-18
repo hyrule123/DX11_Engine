@@ -41,7 +41,7 @@ namespace engine
 
 	namespace render_pass
 	{
-		enum class ID : uint32
+		enum class ID : uint32_t
 		{
 			// 내장 패스
 			ForwardOpaque = 0, ForwardBlend, Present, DebugDraw,
@@ -55,10 +55,10 @@ namespace engine
 
 		static_assert((size_t)ID::kCount < 32, "render_pass::ID can't exceed 32");
 
-		ENABLE_ENUM_FLAGS(Flags, ID, uint32);
+		ENABLE_ENUM_FLAGS(Flags, ID, uint32_t);
 	}
 
-	enum class ShaderStage : uint8
+	enum class ShaderStage : uint8_t
 	{
 		Vertex = 0,
 		Geometry,
@@ -66,7 +66,7 @@ namespace engine
 		Compute,
 		kCount
 	};
-	ENABLE_ENUM_FLAGS(ShaderStageFlags, ShaderStage, uint8);
+	ENABLE_ENUM_FLAGS(ShaderStageFlags, ShaderStage, uint8_t);
 	constexpr ShaderStageFlags kShaderStageAllFlags = ShaderStageFlags::Full();
 	constexpr ShaderStageFlags kShaderStageAllGraphicsFlags = ShaderStage::Vertex | ShaderStage::Geometry | ShaderStage::Pixel;
 
@@ -80,11 +80,11 @@ namespace engine
 	class Material;
 	class Mesh;
 
-	constexpr uint32 kMaterialIDBits = 20;
-	constexpr uint32 kMeshIDBits = 20;
-	constexpr uint32 kSubMeshIndexBits = 8;
+	constexpr uint32_t kMaterialIDBits = 20;
+	constexpr uint32_t kMeshIDBits = 20;
+	constexpr uint32_t kSubMeshIndexBits = 8;
 	static_assert(kSubMeshIndexBits <= 8);
-	constexpr uint32 kMaxSubMeshCount = 1u << kSubMeshIndexBits;
+	constexpr uint32_t kMaxSubMeshCount = 1u << kSubMeshIndexBits;
 
 	using MaterialID = ScopedID<Material, kMaterialIDBits>;
 	using MeshID = ScopedID<Mesh, kMeshIDBits>;
@@ -92,43 +92,43 @@ namespace engine
 	struct RenderKey
 	{
 		static_assert(kMaterialIDBits + kMeshIDBits + kSubMeshIndexBits <= 64,
-			"RenderKey layout overflows uint64.");
+			"RenderKey layout overflows uint64_t.");
 
 		RenderKey() = default;
-		RenderKey(uint32 material_id, uint32 mesh_id, uint8 submesh_slot)
+		RenderKey(uint32_t material_id, uint32_t mesh_id, uint8_t submesh_slot)
 			: key(
-				(uint64)material_id << kMaterialIDShift
+				(uint64_t)material_id << kMaterialIDShift
 				| 
-				(uint64)mesh_id << kMeshIDShift
+				(uint64_t)mesh_id << kMeshIDShift
 				| 
-				(uint64)submesh_slot << kSubMeshIndexShift)
+				(uint64_t)submesh_slot << kSubMeshIndexShift)
 		{}
 
-		uint32 GetMaterialID() const { return (uint32)((key >> kMaterialIDShift) & kMaterialIDMask); }
-		uint32 GetMeshID() const { return (uint32)((key >> kMeshIDShift) & kMeshIDMask); }
-		uint8 GetSubMeshIndex() const { return (uint8)((key >> kSubMeshIndexShift) & kSubMeshIndexMask); }
+		uint32_t GetMaterialID() const { return (uint32_t)((key >> kMaterialIDShift) & kMaterialIDMask); }
+		uint32_t GetMeshID() const { return (uint32_t)((key >> kMeshIDShift) & kMeshIDMask); }
+		uint8_t GetSubMeshIndex() const { return (uint8_t)((key >> kSubMeshIndexShift) & kSubMeshIndexMask); }
 		void Invalidate() { key = kInvalidID; }
 
-		uint64 key = kInvalidID;
+		uint64_t key = kInvalidID;
 
 		auto operator<=>(const RenderKey& other) const = default;
 		bool operator==(const RenderKey& other) const = default;
 
-		static constexpr uint64 kInvalidID = (uint64)0;
-		static constexpr uint32 kSubMeshIndexShift = 0;
-		static constexpr uint32 kMeshIDShift = kSubMeshIndexShift + kSubMeshIndexBits;
-		static constexpr uint32 kMaterialIDShift = kMeshIDShift + kMeshIDBits;
+		static constexpr uint64_t kInvalidID = (uint64_t)0;
+		static constexpr uint32_t kSubMeshIndexShift = 0;
+		static constexpr uint32_t kMeshIDShift = kSubMeshIndexShift + kSubMeshIndexBits;
+		static constexpr uint32_t kMaterialIDShift = kMeshIDShift + kMeshIDBits;
 
-		static constexpr uint64 kMeshIDMask = ((uint64)1 << kMeshIDBits) - 1;
-		static constexpr uint64 kMaterialIDMask = ((uint64)1 << kMaterialIDBits) - 1;
-		static constexpr uint64 kSubMeshIndexMask = ((uint64)1 << kSubMeshIndexBits) - 1;
+		static constexpr uint64_t kMeshIDMask = ((uint64_t)1 << kMeshIDBits) - 1;
+		static constexpr uint64_t kMaterialIDMask = ((uint64_t)1 << kMaterialIDBits) - 1;
+		static constexpr uint64_t kSubMeshIndexMask = ((uint64_t)1 << kSubMeshIndexBits) - 1;
 	};
 
 	struct RenderKeyHasher
 	{
 		size_t operator()(const RenderKey& key) const
 		{
-			return std::hash<uint64>()(key.key);
+			return std::hash<uint64_t>()(key.key);
 		}
 	};
 
@@ -139,14 +139,14 @@ namespace engine
 	};
 
 
-	enum class RegisterType : uint8 { T, B, S, U };
+	enum class RegisterType : uint8_t { T, B, S, U };
 
 	template <RegisterType Type>
 	struct RegisterSlot
 	{
-		uint32 slot_num;
-		constexpr explicit RegisterSlot(uint32 slot_num) : slot_num(slot_num) {}
-		constexpr uint32 Get() const { return slot_num; }
+		uint32_t slot_num;
+		constexpr explicit RegisterSlot(uint32_t slot_num) : slot_num(slot_num) {}
+		constexpr uint32_t Get() const { return slot_num; }
 
 		friend constexpr bool operator==(RegisterSlot a, RegisterSlot b)
 		{
@@ -161,27 +161,27 @@ namespace engine
 
 
 	// RenderTargetGroup의 Clear API가 Depth/Stencil을 함께 지우므로 둘을 하나로 묶는다.
-	enum class ClearTarget : uint8
+	enum class ClearTarget : uint8_t
 	{
 		Color = 0,
 		DepthStencil,
 		kCount
 	};
-	ENABLE_ENUM_FLAGS(ClearTargetFlags, ClearTarget, uint8);
+	ENABLE_ENUM_FLAGS(ClearTargetFlags, ClearTarget, uint8_t);
 
 	struct ClearSettings
 	{
 		ClearTargetFlags flags = ClearTarget::Color | ClearTarget::DepthStencil;
 		std::array<float, 4> color = { 0.0f, 0.0f, 0.0f, 0.0f };
 		float depth = 1.0f;
-		uint8 stencil = 0;
+		uint8_t stencil = 0;
 	};
 
 	struct InstanceDataAllocation
 	{
 		struct InstanceBufferEntry* entry = nullptr;	// nullptr = 할당 없음 (stride 0)
-		uint32 start = 0;					// Draw의 instance_start
-		uint32 count = 0;					// Draw의 instance_count, 범위 검사용
+		uint32_t start = 0;					// Draw의 instance_start
+		uint32_t count = 0;					// Draw의 instance_count, 범위 검사용
 
 		bool IsValid() const { return entry != nullptr; }
 	};

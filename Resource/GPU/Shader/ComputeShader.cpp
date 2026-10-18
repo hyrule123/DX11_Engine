@@ -17,7 +17,7 @@ namespace engine
 	{}
 	ComputeShader::~ComputeShader()
 	{}
-	bool ComputeShader::Create(const std::vector<uint8>& bytecode)
+	bool ComputeShader::Create(const std::vector<uint8_t>& bytecode)
 	{
 		auto* device = GraphicsDevice::GetInst().GetDevice();
 

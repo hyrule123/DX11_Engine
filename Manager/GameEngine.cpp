@@ -21,7 +21,7 @@ namespace engine
 	{
 	}
 
-	void GameEngine::OnScreenSizeChange(uint32 width, uint32 height)
+	void GameEngine::OnScreenSizeChange(uint32_t width, uint32_t height)
 	{
 		GraphicsDevice::GetInst().OnScreenSizeChange(width, height);
 	}
@@ -61,7 +61,7 @@ namespace engine
 		acc_delta_time_ += TimeManager::GetInst().GetDeltaTime();
 		TimeManager::GetInst().SetFixedUpdateMode(true);
 		const float fixed_delta_time_ = TimeManager::GetInst().GetFixedDeltaTime();
-		uint32 step_count = 0u;
+		uint32_t step_count = 0u;
 		while (acc_delta_time_ >= fixed_delta_time_)
 		{
 			SceneManager::GetInst().FixedUpdate();

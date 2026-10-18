@@ -19,7 +19,7 @@ namespace engine::geometry_2d
 
 		// world 좌표로 변환하고, 2D AABB로 변환
 		AABB2D world_bounds = {};
-		for (uint32 i = 0; i < 4; ++i)
+		for (uint32_t i = 0; i < 4; ++i)
 		{
 			corners[i] = float3::Transform(corners[i], world_mat);
 			world_bounds.min = float2::Min(world_bounds.min, float2(corners[i]));

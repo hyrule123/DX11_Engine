@@ -19,7 +19,7 @@ namespace engine
 	{
 		ENTITY_INFO(MeshRenderPass, RenderPass);
 	public:
-		enum class SortPolicy : uint8
+		enum class SortPolicy : uint8_t
 		{
 			State,			// sort_key = RenderKey. 배칭 최대화 (불투명, 알파 테스트)
 			FrontToBack,	// 깊이 오름차순 (early-Z)
@@ -33,7 +33,7 @@ namespace engine
 		void Reserve(size_t count) { queue_.reserve(count); }
 
 		// depth: RenderView::ComputeViewDepth 결과. State 정책에서는 사용하지 않는다.
-		void Push(RenderKey key, uint32 renderer_id, float depth, uint32 obj_data_stride);
+		void Push(RenderKey key, uint32_t renderer_id, float depth, uint32_t obj_data_stride);
 
 		virtual void Execute(const RenderContext& ctx) final;
 
@@ -64,16 +64,16 @@ namespace engine
 	private:
 		struct QueueItem
 		{
-			uint64 sort_key;
+			uint64_t sort_key;
 			RenderKey key;
-			uint32 renderer_id;
-			uint32 obj_data_stride;
+			uint32_t renderer_id;
+			uint32_t obj_data_stride;
 		};
 
 		struct DrawGroup
 		{
-			uint32 queue_begin = 0;							// queue_ 내 시작 인덱스
-			uint32 instance_count = 0;						// 그룹 인스턴스 수 (stride 0이어도 유효)
+			uint32_t queue_begin = 0;							// queue_ 내 시작 인덱스
+			uint32_t instance_count = 0;						// 그룹 인스턴스 수 (stride 0이어도 유효)
 			InstanceDataAllocation alloc = {};		// stride 0이면 무효
 			Renderer* renderer = nullptr;					// 그룹 첫 Renderer (상태 해석용)
 		};

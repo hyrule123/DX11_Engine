@@ -16,7 +16,7 @@ namespace engine
 	Texture2DArray::~Texture2DArray()
 	{}
 
-    bool Texture2DArray::CreateImmutableFromMemory(uint32_2 tex_size, uint32 tex_count, DXGI_FORMAT format, std::span<const uint8> data, uint32 row_pitch, uint32 slice_pitch)
+    bool Texture2DArray::CreateImmutableFromMemory(uint32_2 tex_size, uint32_t tex_count, DXGI_FORMAT format, std::span<const uint8_t> data, uint32_t row_pitch, uint32_t slice_pitch)
     {
         ASSERT(tex_count > 0);
         ASSERT(tex_size.x > 0 && tex_size.y > 0);
@@ -44,7 +44,7 @@ namespace engine
 
         std::vector<D3D11_SUBRESOURCE_DATA> initial_data;
         initial_data.resize(tex_count);
-        for (uint32 i = 0; i < tex_count; ++i)
+        for (uint32_t i = 0; i < tex_count; ++i)
         {
             initial_data[i].pSysMem = data.data() + (size_t)i * (size_t)slice_pitch;
             initial_data[i].SysMemPitch = row_pitch;
@@ -89,7 +89,7 @@ namespace engine
         return true;
     }
 
-	bool Texture2DArray::Slice(uint32 row_count, uint32 col_count)
+	bool Texture2DArray::Slice(uint32_t row_count, uint32_t col_count)
 	{
         auto device = GraphicsDevice::GetInst().GetDevice();
         auto context = GraphicsDevice::GetInst().GetContext();
@@ -108,7 +108,7 @@ namespace engine
         // 가로/세로 프레임 개수 및 총 배열 크기 계산
         UINT frame_width = atlas_desc.Width / (UINT)col_count;
         UINT frame_height = atlas_desc.Height / (UINT)row_count;
-        uint32 frame_count = (uint32)((size_t)row_count * (size_t)col_count);
+        uint32_t frame_count = (uint32_t)((size_t)row_count * (size_t)col_count);
 
         // 2. 비어있는 Texture2DArray를 생성합니다. (초기 데이터 없이 빈 공간만 할당)
         D3D11_TEXTURE2D_DESC sprite_desc = {};

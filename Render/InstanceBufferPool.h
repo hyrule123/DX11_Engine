@@ -15,7 +15,7 @@ namespace engine
 	struct InstanceBufferEntry
 	{
 		std::unique_ptr<StructuredBuffer> buffer = {};	// stride는 buffer->GetElementStride()
-		uint32 allocated = 0;							// 이번 패스 누적 할당 수
+		uint32_t allocated = 0;							// 이번 패스 누적 할당 수
 		MapScopeWriteDiscard map_scope = {};
 	};
 
@@ -39,7 +39,7 @@ namespace engine
 
 		void BeginAllocation();
 		// elem_count개 이상을 담을 수 있는 stride용 버퍼를 반환한다.
-		[[nodiscard]] InstanceDataAllocation Allocate(uint32 byte_stride, uint32 elem_count);
+		[[nodiscard]] InstanceDataAllocation Allocate(uint32_t byte_stride, uint32_t elem_count);
 		[[nodiscard]] DataBlock NextSlot(const InstanceDataAllocation& alloc);
 		
 		void MapAll(ID3D11DeviceContext* dc);
@@ -61,12 +61,12 @@ namespace engine
 		bool TransitionPhase(Phase from, Phase to);
 
 		// 처음 만들 때 너무 작게 잡아 확장이 반복되는 것을 방지
-		static constexpr uint32 kMinInitialCapacity = 64;
+		static constexpr uint32_t kMinInitialCapacity = 64;
 
 
 	private:
 		Phase phase_;
-		std::unordered_map<uint32, InstanceBufferEntry> buffers_per_stride_;
+		std::unordered_map<uint32_t, InstanceBufferEntry> buffers_per_stride_;
 		std::unique_ptr<InstanceIDBuffer> instance_iota_buffer;
 	};
 }

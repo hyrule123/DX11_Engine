@@ -5,7 +5,7 @@
 
 namespace engine
 {
-    MapScopeWriteDiscard::MapScopeWriteDiscard(ID3D11DeviceContext* ctx, ID3D11Buffer* buf, uint32 stride, uint32 capacity)
+    MapScopeWriteDiscard::MapScopeWriteDiscard(ID3D11DeviceContext* ctx, ID3D11Buffer* buf, uint32_t stride, uint32_t capacity)
         : context_(ctx), buffer_(buf), stride_(stride), capacity_(capacity)
     {
         D3D11_MAPPED_SUBRESOURCE mapped = {};
@@ -17,7 +17,7 @@ namespace engine
         }
         else
         {
-            p_data_ = static_cast<uint8*>(mapped.pData);
+            p_data_ = static_cast<uint8_t*>(mapped.pData);
             mapped_ok_ = true;
         }
     }

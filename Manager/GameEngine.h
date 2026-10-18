@@ -13,10 +13,10 @@ namespace engine
 		friend class EngineMain;
 
 	public:
-		void OnScreenSizeChange(uint32 width, uint32 height);
+		void OnScreenSizeChange(uint32_t width, uint32_t height);
 		bool IsInitialized() const { return is_initialized_; }
 
-		uint64 GetFrameCount() const { return frame_count_; }
+		uint64_t GetFrameCount() const { return frame_count_; }
 
 	private:
 		bool Init();
@@ -26,8 +26,8 @@ namespace engine
 		bool is_initialized_ = {};
 		
 		float acc_delta_time_ = kDefaultFixedDeltaTime;
-		uint32 max_step_count_ = kDefaultMaxStepCount;
+		uint32_t max_step_count_ = kDefaultMaxStepCount;
 
-		uint64 frame_count_ = {};
+		uint64_t frame_count_ = {};
 	};
 }

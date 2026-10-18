@@ -126,7 +126,7 @@ namespace engine
 		}
 	}
 
-	void RenderTargetPool::OnScreenSizeChange(uint32 width, uint32 height)
+	void RenderTargetPool::OnScreenSizeChange(uint32_t width, uint32_t height)
 	{
 		for (auto& [name, entry] : entries_.cont)
 		{
@@ -136,8 +136,8 @@ namespace engine
 				continue;
 			}
 
-			uint32 new_width = 0;
-			uint32 new_height = 0;
+			uint32_t new_width = 0;
+			uint32_t new_height = 0;
 			if (false == ResolveSize(size, new_width, new_height))
 			{
 				continue;
@@ -176,8 +176,8 @@ namespace engine
 
 	std::shared_ptr<RenderTarget> RenderTargetPool::CreateColor(const ColorTargetDesc& desc)
 	{
-		uint32 width = 0;
-		uint32 height = 0;
+		uint32_t width = 0;
+		uint32_t height = 0;
 		if (false == ResolveSize(desc.size, width, height))
 		{
 			return nullptr;
@@ -218,8 +218,8 @@ namespace engine
 
 	std::shared_ptr<DepthStencilTarget> RenderTargetPool::CreateDepth(const DepthTargetDesc& desc)
 	{
-		uint32 width = 0;
-		uint32 height = 0;
+		uint32_t width = 0;
+		uint32_t height = 0;
 		if (false == ResolveSize(desc.size, width, height))
 		{
 			return nullptr;
@@ -248,7 +248,7 @@ namespace engine
 		return dsv;
 	}
 
-	bool RenderTargetPool::ResolveSize(const RenderTargetSize& size, uint32& out_width, uint32& out_height)
+	bool RenderTargetPool::ResolveSize(const RenderTargetSize& size, uint32_t& out_width, uint32_t& out_height)
 	{
 		switch (size.base)
 		{
@@ -261,8 +261,8 @@ namespace engine
 		case RenderTargetSizeBase::SwapChain:
 		{
 			const GraphicsDevice& device = GraphicsDevice::GetInst();
-			out_width = std::max(1u, (uint32)std::lround(device.GetResolutionWidth() * size.scale));
-			out_height = std::max(1u, (uint32)std::lround(device.GetResolutionHeight() * size.scale));
+			out_width = std::max(1u, (uint32_t)std::lround(device.GetResolutionWidth() * size.scale));
+			out_height = std::max(1u, (uint32_t)std::lround(device.GetResolutionHeight() * size.scale));
 			break;
 		}
 		default:

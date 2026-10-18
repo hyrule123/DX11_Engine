@@ -87,7 +87,7 @@ namespace engine
 		Transform* GetParent() const { return parent_; }
 		const std::vector<Transform*>& GetChildren() const { return children_; }
 
-		uint32 GetVersion() { 
+		uint32_t GetVersion() { 
 			if (is_dirty_) { UpdateWorldTransform(); }
 			return version_;
 		}
@@ -127,7 +127,7 @@ namespace engine
 		Transform* parent_ = {};
 		std::vector<Transform*> children_ = {};
 
-		uint32 version_ = 0; //변경될 때마다 증가.
+		uint32_t version_ = 0; //변경될 때마다 증가.
 		bool is_dirty_ = true;
 	};
 }

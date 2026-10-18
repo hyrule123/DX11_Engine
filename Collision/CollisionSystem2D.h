@@ -22,7 +22,7 @@ namespace engine
 		{
 			Collider2D* collider;
 			AABB2D world_bounds;
-			uint32 layer;
+			uint32_t layer;
 			bool is_world_bound_dirty = true;
 			bool is_layer_dirty = true;
 		};
@@ -37,13 +37,13 @@ namespace engine
 
 		struct GridEntry {
 			//For Broad Phase
-			int32 cell_x;
-			int32 cell_y;
-			uint32 bucket_index;
-			uint32 layer;
+			int32_t cell_x;
+			int32_t cell_y;
+			uint32_t bucket_index;
+			uint32_t layer;
 
 			// Colliders 배열에서의 index
-			uint32 colliders_index;
+			uint32_t colliders_index;
 		};
 
 		// Queuing용 구조체
@@ -71,7 +71,7 @@ namespace engine
 
 		void Init();
 
-		void SetBucketCount(uint64 requested_count);
+		void SetBucketCount(uint64_t requested_count);
 
 		void RegisterCollider(Collider2D* collider);
 		void UnregisterCollider(Collider2D* collider);
@@ -94,14 +94,14 @@ namespace engine
 		std::vector<GridEntry> staged_entries_;
 
 		// 버킷 별 Start Index
-		std::vector<uint32> bucket_start_idx_;
+		std::vector<uint32_t> bucket_start_idx_;
 		// 버킷에 데이터 작성을 위한 cursor
-		std::vector<uint32> bucket_cursor_;
+		std::vector<uint32_t> bucket_cursor_;
 		// 버킷에 실제로 들어가는 데이터(flat hash table)
 		std::vector<GridEntry> bucket_;
 
 		size_t bucket_count_ = {};
-		uint64 bucket_size_bit_shifts_ = {};
+		uint64_t bucket_size_bit_shifts_ = {};
 
 		float2 cell_size_ = { 1.0f, 1.0f };
 		float2 cell_size_inv_ = { 1.0f, 1.0f };

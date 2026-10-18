@@ -12,7 +12,7 @@ namespace engine
 	{}
 	RenderTarget::~RenderTarget()
 	{}
-	bool RenderTarget::CreateDefaultBuffer(uint32 width, uint32 height, DXGI_FORMAT format)
+	bool RenderTarget::CreateDefaultBuffer(uint32_t width, uint32_t height, DXGI_FORMAT format)
 	{
 		// 내부에서 표준 DESC를 조립
 		D3D11_TEXTURE2D_DESC desc = {};
@@ -75,7 +75,7 @@ namespace engine
 			
 		return true;
 	}
-	bool RenderTarget::Resize( uint32 width, uint32 height)
+	bool RenderTarget::Resize( uint32_t width, uint32_t height)
 	{
 		bool result = Super::Resize(width, height);
 		if (!result)

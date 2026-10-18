@@ -12,7 +12,7 @@
 #include <span>
 
 // DXGI_FORMAT에 있는 타입들을 사용 가능(단일 타입만 가능)
-// uint8, uint16, uint32, float4, ...
+// uint8_t, uint16_t, uint32_t, float4, ...
 
 
 //
@@ -37,50 +37,50 @@ namespace engine
 		// 로드 후 변하지 않는 데이터용.
 		// IMMUTABLE은 초기 데이터가 필수 — data가 null이면 생성이 실패
 		// elem_stride: 검증용
-		bool CreateImmutableBuffer(DXGI_FORMAT format, uint32 elem_stride, const void* data, uint32 count);
+		bool CreateImmutableBuffer(DXGI_FORMAT format, uint32_t elem_stride, const void* data, uint32_t count);
 		template <typename T>
 		bool CreateImmutableBuffer(DXGI_FORMAT format, std::span<const T> data) {
-			return CreateImmutableBuffer(format, (uint32)sizeof(T), data.data(), (uint32)data.size());
+			return CreateImmutableBuffer(format, (uint32_t)sizeof(T), data.data(), (uint32_t)data.size());
 		}
 
 		// CPU가 매 프레임 갱신하는 데이터용.
 		// WRITE_DISCARD가 어차피 전체를 버리므로
-		bool CreateDynamicBuffer(DXGI_FORMAT format, uint32 capacity);
+		bool CreateDynamicBuffer(DXGI_FORMAT format, uint32_t capacity);
 
 		// 컴퓨트 셰이더 입출력용. UAV를 가질 수 있는 유일한 usage.
 		// need_uav는 필요할 때만 true — 포맷에 따라 UAV 미지원이면 생성 실패.
-		bool CreateDefaultBuffer(DXGI_FORMAT format, uint32 capacity, bool need_uav);
+		bool CreateDefaultBuffer(DXGI_FORMAT format, uint32_t capacity, bool need_uav);
 
 		// CPU -> 버퍼 데이터 업로드.
 		// elem_stride는 stride_와 일치해야 하고, elem_count는 capacity_ 이하여야 한다.
 		// kImmutable / kNone은 거부.
 		// kDefault : 전체 갱신만 지원.
 		// kDynamic : WRITE_DISCARD이므로 elem_count 뒤쪽은 정의되지 않은 값이 된다.
-		bool Upload(ID3D11DeviceContext* context, const void* data, uint32 elem_stride, uint32 elem_count);
+		bool Upload(ID3D11DeviceContext* context, const void* data, uint32_t elem_stride, uint32_t elem_count);
 		template <typename T>
 		bool Upload(ID3D11DeviceContext* context, std::span<T> data) {
-			return Upload(context, data.data(), (uint32)sizeof(T), (uint32)(data.size()));
+			return Upload(context, data.data(), (uint32_t)sizeof(T), (uint32_t)(data.size()));
 		}
 
 		// 버퍼를 만든 이후에 쓰세요
-		bool Reserve(uint32 new_capacity);
+		bool Reserve(uint32_t new_capacity);
 
 		// 미구현
-		bool ReservePreserving(uint32 new_capacity) { return false; };
+		bool ReservePreserving(uint32_t new_capacity) { return false; };
 
-		uint32 GetCapacity() const { return capacity_; }
+		uint32_t GetCapacity() const { return capacity_; }
 
 		void BindSRV(ID3D11DeviceContext* context, ShaderStageFlags stage_flag, RegisterT slot);
 		void BindUAV(ID3D11DeviceContext* context, RegisterT slot);
 
     private:
-		bool ValidateParameters(DXGI_FORMAT format, uint32 capacity);
+		bool ValidateParameters(DXGI_FORMAT format, uint32_t capacity);
 
-		bool CreateBufferImpl(DXGI_FORMAT format, uint32 capacity, D3D11_USAGE buffer_usage, UINT bind_flags, UINT cpu_access_flags, const void* initial_data);
+		bool CreateBufferImpl(DXGI_FORMAT format, uint32_t capacity, D3D11_USAGE buffer_usage, UINT bind_flags, UINT cpu_access_flags, const void* initial_data);
 
 		// count == 0이면 전체 범위. start + count <= capacity
-		ComPtr<ID3D11ShaderResourceView> CreateSRV(ID3D11Buffer* buffer, DXGI_FORMAT format, uint32 capacity , uint32 start = 0, uint32 count = 0);
-		ComPtr<ID3D11UnorderedAccessView> CreateUAV(ID3D11Buffer* buffer, DXGI_FORMAT format, uint32 capacity, uint32 start = 0, uint32 count = 0);
+		ComPtr<ID3D11ShaderResourceView> CreateSRV(ID3D11Buffer* buffer, DXGI_FORMAT format, uint32_t capacity , uint32_t start = 0, uint32_t count = 0);
+		ComPtr<ID3D11UnorderedAccessView> CreateUAV(ID3D11Buffer* buffer, DXGI_FORMAT format, uint32_t capacity, uint32_t start = 0, uint32_t count = 0);
 
 		// SRV: ShaderResource 상속
 		ComPtr<ID3D11UnorderedAccessView> UAV_ = {};
@@ -89,9 +89,9 @@ namespace engine
 
 		D3D11_USAGE buffer_usage_ = {};
 		DXGI_FORMAT format_ = {};
-		uint32 stride_ = {};
-		uint32 count_ = {};
-		uint32 capacity_ = {};
+		uint32_t stride_ = {};
+		uint32_t count_ = {};
+		uint32_t capacity_ = {};
     };
 
 

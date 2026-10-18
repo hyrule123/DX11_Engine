@@ -12,13 +12,13 @@ namespace engine
     {
         if (!object) { return Handle(); }
 
-        uint32 slot_idx;
+        uint32_t slot_idx;
 
         // 여유 슬롯이 없으면 새 슬롯을 추가
         if (next_free_index_ == kUint32Max)
         {
             ASSERT(slots_.size() < kUint32Max);
-            slot_idx = (uint32)(slots_.size());
+            slot_idx = (uint32_t)(slots_.size());
             slots_.push_back({ object , });
         }
         // 여유 슬롯이 있으면 해당 슬롯을 사용

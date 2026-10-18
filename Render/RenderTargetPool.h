@@ -16,7 +16,7 @@ namespace engine
     // - Fixed: desc의 width/height 그대로. 해상도 변경에 반응하지 않는다.
     // - SwapChain: 스왑체인 해상도 × scale. OnScreenSizeChange에서 재조정된다.
     // (MainTarget 기준은 Scene이 메인 RT를 소유하게 될 때 추가)
-    enum class RenderTargetSizeBase : uint8
+    enum class RenderTargetSizeBase : uint8_t
     {
         Fixed,
         SwapChain,
@@ -26,8 +26,8 @@ namespace engine
     struct RenderTargetSize
     {
         RenderTargetSizeBase base = RenderTargetSizeBase::Fixed;
-        uint32 width = 0;       // Fixed 전용
-        uint32 height = 0;      // Fixed 전용
+        uint32_t width = 0;       // Fixed 전용
+        uint32_t height = 0;      // Fixed 전용
         float scale = 1.0f;     // SwapChain 전용
 
         bool operator==(const RenderTargetSize&) const = default;
@@ -62,7 +62,7 @@ namespace engine
     class RenderTargetPool
     {
     public:
-        static constexpr uint32 kReleaseAfterUnusedFrames = 120;
+        static constexpr uint32_t kReleaseAfterUnusedFrames = 120;
 
         RenderTargetPool();
         ~RenderTargetPool();
@@ -78,10 +78,10 @@ namespace engine
         void FrameEnd();
 
         // SwapChain 기준 항목을 재조정
-        void OnScreenSizeChange(uint32 width, uint32 height);
+        void OnScreenSizeChange(uint32_t width, uint32_t height);
 
     private:
-        enum class Kind : uint8
+        enum class Kind : uint8_t
         {
             Color,
             Depth,
@@ -94,7 +94,7 @@ namespace engine
             Kind kind;
             ColorTargetDesc color_desc;     // kind == Color일 때만 유효
             DepthTargetDesc depth_desc;     // kind == Depth일 때만 유효
-            uint32 unused_frames;           // 풀만 들고 있던 연속 프레임 수
+            uint32_t unused_frames;           // 풀만 들고 있던 연속 프레임 수
             std::shared_ptr<Texture2D> texture;
         };
 
@@ -105,7 +105,7 @@ namespace engine
         static std::shared_ptr<RenderTarget> CreateColor(const ColorTargetDesc& desc);
         static std::shared_ptr<DepthStencilTarget> CreateDepth(const DepthTargetDesc& desc);
 
-        static bool ResolveSize(const RenderTargetSize& size, uint32& out_width, uint32& out_height);
+        static bool ResolveSize(const RenderTargetSize& size, uint32_t& out_width, uint32_t& out_height);
         static const RenderTargetSize& GetSize(const Entry& entry);
 
     private:

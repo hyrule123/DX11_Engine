@@ -170,7 +170,7 @@ namespace engine
 
 		if (mesh_ && submesh.material)
 		{
-			submesh.key = RenderKey(submesh.material->GetMaterialID(), mesh_->GetMeshID(), (uint8)submesh_idx);
+			submesh.key = RenderKey(submesh.material->GetMaterialID(), mesh_->GetMeshID(), (uint8_t)submesh_idx);
 		}
 		else
 		{

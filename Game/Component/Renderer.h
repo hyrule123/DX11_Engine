@@ -29,8 +29,8 @@ namespace engine
 
         virtual void OnTransformDirty(Transform* transform) override;
 
-		uint32 GetRendererId() const { return renderer_id_; }
-		void SetRendererId(uint32 id) { renderer_id_ = id; }
+		uint32_t GetRendererId() const { return renderer_id_; }
+		void SetRendererId(uint32_t id) { renderer_id_ = id; }
         bool IsRegistered() const { return renderer_id_ != kInvalidIdx32; }
 
         Transform* GetTransform() const { return my_transform_; }
@@ -64,7 +64,7 @@ namespace engine
         std::shared_ptr<Mesh> mesh_ = {};
         std::vector<SubMesh> submeshes_ = {};
 
-        uint32 renderer_id_; // RenderManager에서 발급
+        uint32_t renderer_id_; // RenderManager에서 발급
 
         Transform* my_transform_ = {};
 

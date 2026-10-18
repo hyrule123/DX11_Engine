@@ -16,8 +16,8 @@ namespace engine
 
         //기본적인(가장 많이 사용하는) 렌더타겟을 생성
         bool CreateDefaultBuffer(
-            uint32 width, 
-            uint32 height,
+            uint32_t width, 
+            uint32_t height,
             DXGI_FORMAT format
         );
 
@@ -29,7 +29,7 @@ namespace engine
         ComPtr<ID3D11RenderTargetView> GetRTV() const { return render_target_view_; }
         ID3D11RenderTargetView* GetRawRTV() const { return render_target_view_.Get(); }
 
-		virtual bool Resize( uint32 width, uint32 height) override;
+		virtual bool Resize( uint32_t width, uint32_t height) override;
 
     private:
         ComPtr<ID3D11RenderTargetView> render_target_view_ = {};

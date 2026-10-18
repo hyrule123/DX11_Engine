@@ -30,7 +30,7 @@ namespace engine
         void Bind(
             ID3D11DeviceContext* context, 
             const float* blend_factor = kDefaultBlendFactor, 
-            uint32 sample_mask = kDefaultSampleMask
+            uint32_t sample_mask = kDefaultSampleMask
         ) const;
 
     private:

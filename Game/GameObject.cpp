@@ -139,7 +139,7 @@ namespace engine
 
 	void GameObject::FrameEnd(std::vector<std::unique_ptr<SceneEntity>>& graveyard)
 	{
-		uint32 pass_count = 0;
+		uint32_t pass_count = 0;
 		for (; pass_count < kMaxDrainLoopCount; ++pass_count)
 		{
 			bool any_destroyed = false;
@@ -179,7 +179,7 @@ namespace engine
 			[](const std::unique_ptr<Component>& com) { return com == nullptr; }
 		);
 
-		for(uint32 i = 0; i < (uint32)SubscribeType::kEND; ++i)
+		for(uint32_t i = 0; i < (uint32_t)SubscribeType::kEND; ++i)
 		{
 			if (is_listeners_dirty_.test(i))
 			{
@@ -283,7 +283,7 @@ namespace engine
 		}
 	}
 
-	void GameObject::SetLayer(uint32 layer)
+	void GameObject::SetLayer(uint32_t layer)
 	{
 		if (layer_ == layer) { return; }
 
@@ -301,7 +301,7 @@ namespace engine
 			return;
 		}
 
-		uint32 prev_layer = layer_;
+		uint32_t prev_layer = layer_;
 		layer_ = layer;
 
 		for(Component* listener : listeners_[(size_t)SubscribeType::kLayerChanged])
@@ -347,7 +347,7 @@ namespace engine
 		}
 	}
 
-	void GameObject::BroadcastLayerChanged(uint32 prev_layer, uint32 new_layer)
+	void GameObject::BroadcastLayerChanged(uint32_t prev_layer, uint32_t new_layer)
 	{
 		const auto& listeners = listeners_[(size_t)SubscribeType::kLayerChanged];
 		for (size_t i = 0; i < listeners.size(); ++i)

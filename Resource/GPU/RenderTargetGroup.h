@@ -42,12 +42,12 @@ namespace engine
 
 		void Clear(ID3D11DeviceContext* context, const ClearSettings& settings);
         void ClearRenderTargetView(ID3D11DeviceContext* context, std::array<float, 4> clear_color);
-        void ClearDepthStencilView(ID3D11DeviceContext* context, float depth, uint8 stencil);
+        void ClearDepthStencilView(ID3D11DeviceContext* context, float depth, uint8_t stencil);
 
         void Reset();
 
 		void SetRequiresResize(bool requires_resize) { requires_resize_ = requires_resize; }
-		void Resize(uint32 width, uint32 height);
+		void Resize(uint32_t width, uint32_t height);
 
         //기본 Texture Size로 설정됨. override용
 		const D3D11_VIEWPORT& GetViewport() const { return viewport_; }

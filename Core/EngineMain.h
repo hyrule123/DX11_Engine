@@ -22,20 +22,20 @@ namespace engine
 
 		HWND GetHWND() const { return h_wnd_; }
 
-		void SetScreenSize(uint32 width, uint32 height);
-		uint32 GetScreenWidth() const { return screen_width_; }
-		uint32 GetScreenHeight() const { return screen_height_; }
+		void SetScreenSize(uint32_t width, uint32_t height);
+		uint32_t GetScreenWidth() const { return screen_width_; }
+		uint32_t GetScreenHeight() const { return screen_height_; }
 
 	private:
 		// WndProc 호출 용도
-		void OnScreenSizeChange(uint32 width, uint32 height);
+		void OnScreenSizeChange(uint32_t width, uint32_t height);
 
 		HINSTANCE h_instance_ = {};
 		HWND h_wnd_ = {};
 		BOOL is_running_ = TRUE;
 
-		uint32 screen_width_ = {};
-		uint32 screen_height_ = {};
+		uint32_t screen_width_ = {};
+		uint32_t screen_height_ = {};
 	};
 }
 

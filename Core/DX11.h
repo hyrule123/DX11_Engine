@@ -28,6 +28,7 @@ namespace engine
 		case DXGI_FORMAT_R8G8_UINT:          return 2;
 		case DXGI_FORMAT_R32_UINT:           return 4;
 		case DXGI_FORMAT_R8G8B8A8_UNORM:     return 4;
+		case DXGI_FORMAT_R32G32_UINT:		 return 8;
 		default: assert(false); return 0;
 		}
 	}

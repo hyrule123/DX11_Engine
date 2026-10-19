@@ -9,7 +9,8 @@
 #include <Engine/Core/Debug.h>
 #include <Engine/Core/DX11.h>
 
-#include <span>
+#include <type_traits>
+#include <ranges>
 
 // DXGI_FORMAT에 있는 타입들을 사용 가능(단일 타입만 가능)
 // uint8_t, uint16_t, uint32_t, float4, ...
@@ -38,9 +39,13 @@ namespace engine
 		// IMMUTABLE은 초기 데이터가 필수 — data가 null이면 생성이 실패
 		// elem_stride: 검증용
 		bool CreateImmutableBuffer(DXGI_FORMAT format, uint32_t elem_stride, const void* data, uint32_t count);
-		template <typename T>
-		bool CreateImmutableBuffer(DXGI_FORMAT format, std::span<const T> data) {
-			return CreateImmutableBuffer(format, (uint32_t)sizeof(T), data.data(), (uint32_t)data.size());
+
+		template <std::ranges::contiguous_range R>
+			requires std::is_trivially_copyable_v<std::ranges::range_value_t<R>>
+		bool CreateImmutableBuffer(DXGI_FORMAT format, const R& data)
+		{
+			using T = std::ranges::range_value_t<R>;
+			return CreateImmutableBuffer(format, (uint32_t)sizeof(T), std::ranges::data(data), (uint32_t)std::ranges::size(data));
 		}
 
 		// CPU가 매 프레임 갱신하는 데이터용.

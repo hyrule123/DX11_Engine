@@ -300,6 +300,34 @@ namespace engine
 		height_ = height;
 		return true;
 	}
+
+	void Texture2D::CopyFrom(ID3D11DeviceContext* context, const Texture2D& src)
+	{
+		ASSERT(context);
+		ASSERT_F(this != &src, "Texture2D::CopyFrom: 자기 자신으로는 복사할 수 없음");
+		ASSERT_F(tex2D_buffer_ && src.tex2D_buffer_, "Texture2D::CopyFrom: 텍스처가 생성되지 않음");
+
+#if defined(_DEBUG)
+		// CopyResource 요구 조건: 리소스 타입·크기·포맷 호환, 밉/배열/샘플 일치
+		D3D11_TEXTURE2D_DESC dst_desc = {};
+		D3D11_TEXTURE2D_DESC src_desc = {};
+		tex2D_buffer_->GetDesc(&dst_desc);
+		src.tex2D_buffer_->GetDesc(&src_desc);
+
+		ASSERT_F(dst_desc.Width == src_desc.Width && dst_desc.Height == src_desc.Height,
+			"Texture2D::CopyFrom: 크기 불일치 ({}x{} <- {}x{})", dst_desc.Width, dst_desc.Height, src_desc.Width, src_desc.Height);
+		ASSERT_F(dst_desc.Format == src_desc.Format,
+			"Texture2D::CopyFrom: 포맷 불일치 ({} <- {})", (uint32_t)dst_desc.Format, (uint32_t)src_desc.Format);
+		ASSERT_F(dst_desc.MipLevels == src_desc.MipLevels && dst_desc.ArraySize == src_desc.ArraySize,
+			"Texture2D::CopyFrom: 밉 레벨 또는 배열 크기 불일치");
+		ASSERT_F(dst_desc.SampleDesc.Count == src_desc.SampleDesc.Count && dst_desc.SampleDesc.Quality == src_desc.SampleDesc.Quality,
+			"Texture2D::CopyFrom: 샘플 설정 불일치");
+		ASSERT_F(dst_desc.Usage != D3D11_USAGE_IMMUTABLE, "Texture2D::CopyFrom: IMMUTABLE 텍스처에는 복사할 수 없음");
+#endif
+
+		context->CopyResource(tex2D_buffer_.Get(), src.tex2D_buffer_.Get());
+	}
+
 	void Texture2D::SetTexture2D(ComPtr<ID3D11Texture2D> texture)
 	{
 		if (texture)

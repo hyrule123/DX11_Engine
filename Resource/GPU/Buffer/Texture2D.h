@@ -63,6 +63,9 @@ namespace engine
         uint32_t GetWidth() const { return width_; }
         uint32_t GetHeight() const { return height_; }
 
+		void CopyFrom(ID3D11DeviceContext* context, const Texture2D& src_tex);
+
+
     protected:
         void SetTexture2D(ComPtr<ID3D11Texture2D> texture);
         ComPtr<ID3D11Texture2D> GetTexture2D() const { return tex2D_buffer_; }

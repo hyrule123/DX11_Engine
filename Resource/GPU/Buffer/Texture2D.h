@@ -63,6 +63,8 @@ namespace engine
         uint32_t GetWidth() const { return width_; }
         uint32_t GetHeight() const { return height_; }
 
+        DXGI_FORMAT  GetFormat() const;
+
 		void CopyFrom(ID3D11DeviceContext* context, const Texture2D& src_tex);
 
 

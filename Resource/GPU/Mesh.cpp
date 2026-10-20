@@ -136,6 +136,11 @@ namespace engine
 			}
 			for (const SubMesh& sm : sub_meshes)
 			{
+				if (sm.index_count == 0)
+				{
+					ERR_MSG("SubMesh의 index_count가 0입니다.");
+					return false;
+				}
 				if (sm.index_start + sm.index_count > data_count)
 				{
 					ERR_MSG("SubMesh 범위가 인덱스 버퍼를 벗어납니다.");

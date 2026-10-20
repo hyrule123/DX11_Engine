@@ -301,6 +301,17 @@ namespace engine
 		return true;
 	}
 
+	DXGI_FORMAT Texture2D::GetFormat() const
+	{
+		if (tex2D_buffer_)
+		{
+			D3D11_TEXTURE2D_DESC desc = {};
+			tex2D_buffer_->GetDesc(&desc);
+			return desc.Format;
+		}
+		return DXGI_FORMAT_UNKNOWN;
+	}
+
 	void Texture2D::CopyFrom(ID3D11DeviceContext* context, const Texture2D& src)
 	{
 		ASSERT(context);

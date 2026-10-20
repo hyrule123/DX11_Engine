@@ -34,7 +34,7 @@ namespace engine
 		void Reserve(size_t count) { queue_.reserve(count); }
 
 		// depth: RenderView::ComputeViewDepth 결과. State 정책에서는 사용하지 않는다.
-		void Push(RenderKey key, uint32_t renderer_id, float depth, uint32_t obj_data_stride, uint32_t custom_sort_key);
+		void Push(RenderKey key, uint32_t renderer_id, float depth, uint16_t obj_data_stride, uint32_t custom_sort_key, DrawFlags flags);
 
 		virtual void Execute(const RenderContext& ctx) final;
 
@@ -68,8 +68,10 @@ namespace engine
 			uint64_t sort_key;
 			RenderKey key;
 			uint32_t renderer_id;
-			uint32_t obj_data_stride;
+			uint16_t obj_data_stride;
+			DrawFlags flags; // uint16_t
 		};
+		static_assert(sizeof(QueueItem) == 24, "Keep size as small as possible");
 
 		struct DrawGroup
 		{

@@ -1,6 +1,8 @@
 #pragma once
 #include <Engine/Resource/Resource.h>
 
+#include <Engine/Render/RenderTypes.h>
+
 #include <Engine/Resource/GPU/Buffer/ShaderResource.h>
 
 #include <Engine/Util/GPUBufferBindingTable.h>
@@ -36,9 +38,12 @@ namespace engine
 
 		bool IsReady() const { return (bool)input_layout_ && (bool)vertex_shader_; }
 
-		void SetInstanceDataStride(size_t stride) { per_instance_data_stride_ = stride; }
+		void SetInstanceDataStride(size_t stride) {
+            CHECK_F(stride <= std::numeric_limits<uint16_t>::max(), "Instance data stride exceeds the maximum allowed value of 65535.");
+            per_instance_data_stride_ = stride;
+        }
 		template <typename T>
-		void SetInstanceDataStride() { per_instance_data_stride_ = sizeof(T); }
+		void SetInstanceDataStride() { SetInstanceDataStride(sizeof(T)); }
 
 		size_t GetInstanceDataStride() const { return per_instance_data_stride_; }
 
@@ -90,6 +95,9 @@ namespace engine
 			per_pipeline_buffer_binding_table_.RemoveShaderResource(slot);
 		}
 
+		void SetDrawFlags(DrawFlags flags) { flags_ = flags; }
+		DrawFlags GetDrawFlags() const { return flags_; }
+
     private:
         std::shared_ptr<InputLayout> input_layout_ = {};
 
@@ -102,10 +110,12 @@ namespace engine
         std::shared_ptr<DepthStencilState> depth_stencil_state_ = {};
 
         // Per Pipeline State
-        GPUBufferBindingTable per_pipeline_buffer_binding_table_;
+        GPUBufferBindingTable per_pipeline_buffer_binding_table_; // ctor init
 
-        // Per Instance
+        // Per Instance, 최대값: 65535(uint16_t max)
 		size_t per_instance_data_stride_ = {};
+
+		DrawFlags flags_ = {};
     };
 }
 

@@ -180,7 +180,10 @@ namespace engine
 				const render_pass::Flags passes = submesh.material->GetSupportedPasses() & active_mesh_passes_;
 				for (render_pass::ID id : passes)
 				{
-					GetMeshRenderPass(id)->Push(submesh.key, renderer_id, depth, (uint32_t)submesh.material->GetInstanceDataStride(id), custom_key);
+					PipelineState* ps = submesh.material->GetPipelineState(id);
+					ASSERT(ps); // supported pass와 일치해야 함
+
+					GetMeshRenderPass(id)->Push(submesh.key, renderer_id, depth, static_cast<uint16_t>(ps->GetInstanceDataStride()), custom_key, ps->GetDrawFlags());
 				}
 			}
 		}

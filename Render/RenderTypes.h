@@ -185,4 +185,11 @@ namespace engine
 
 		bool IsValid() const { return entry != nullptr; }
 	};
+
+	enum class DrawFlag : uint16_t
+	{
+		NoBatching,
+		kCount
+	};
+	ENABLE_ENUM_FLAGS(DrawFlags, DrawFlag, uint16_t);
 }

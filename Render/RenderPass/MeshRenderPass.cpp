@@ -54,7 +54,7 @@ namespace engine
 
 	MeshRenderPass::~MeshRenderPass() = default;
 
-	void MeshRenderPass::Push(RenderKey key, uint32_t renderer_id, float depth, uint32_t obj_data_stride, uint32_t custom_sort_key)
+	void MeshRenderPass::Push(RenderKey key, uint32_t renderer_id, float depth, uint16_t obj_data_stride, uint32_t custom_sort_key, DrawFlags flags)
 	{
 		uint64_t sort_key = 0;
 
@@ -91,7 +91,7 @@ namespace engine
 		}
 		}
 
-		queue_.push_back({ .sort_key = sort_key, .key = key, .renderer_id = renderer_id, .obj_data_stride = obj_data_stride });
+		queue_.push_back({ .sort_key = sort_key, .key = key, .renderer_id = renderer_id, .obj_data_stride = obj_data_stride, .flags = flags });
 	}
 
 	void MeshRenderPass::Execute(const RenderContext& ctx)
@@ -158,10 +158,14 @@ namespace engine
 
 			// 런 렝스: 같은 RenderKey가 연속된 구간 [i, span_end)
 			size_t span_end = i + 1;
-			while (span_end < queue_count && queue_[span_end].key == item.key)
+			if (false == item.flags.Test(DrawFlag::NoBatching))
 			{
-				ASSERT(queue_[span_end].obj_data_stride == item.obj_data_stride);
-				++span_end;
+				while (span_end < queue_count && queue_[span_end].key == item.key)
+				{
+					ASSERT(queue_[span_end].obj_data_stride == item.obj_data_stride);
+					ASSERT(queue_[span_end].flags == item.flags);
+					++span_end;
+				}
 			}
 			const uint32_t instance_count = (uint32_t)(span_end - i);
 

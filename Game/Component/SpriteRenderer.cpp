@@ -7,6 +7,7 @@
 #include <Engine/Resource/GPU/Material.h>
 #include <Engine/Resource/GPU/Mesh.h>
 #include <Engine/Resource/GPU/Shader/VertexShader.h>
+#include <Engine/Resource/GPU/PipelineState.h>
 
 #include <Engine/Game/Component/Transform.h>
 
@@ -38,7 +39,9 @@ namespace engine
 
 		Material* mtrl = GetMaterial(0);
 		ASSERT(mtrl);
-		ASSERT(sizeof(per_obj_data_) == mtrl->GetInstanceDataStride(render_pass_mode_));
+		PipelineState* ps = mtrl->GetPipelineState(render_pass_mode_);
+		ASSERT(ps);
+		ASSERT(sizeof(per_obj_data_) == ps->GetInstanceDataStride());
 	}
 
 	/*

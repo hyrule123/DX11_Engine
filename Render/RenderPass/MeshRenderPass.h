@@ -19,6 +19,13 @@ namespace engine
 	{
 		ENTITY_INFO(MeshRenderPass, RenderPass);
 	public:
+
+		// 정렬 계약 (깊이 계열 정책: FrontToBack / BackToFront / Custom)
+		// - 같은 Renderer에서 나온 항목(이 패스에 참여하는 서브메시들)은 정렬 후 항상 연속하며,
+		//   서브메시 인덱스 오름차순으로 그려진다.
+		// - 따라서 한 Renderer의 서브메시를 '같은 위치에서 연달아 실행되는 단계'로 쓸 수 있다
+		//   (예: SC Distortion의 Read(0) → Sync(1)).
+		// - State 정책은 RenderKey(Material 상위) 순이므로 이 계약이 성립하지 않는다.
 		enum class SortPolicy : uint8_t
 		{
 			State,			// sort_key = RenderKey. 배칭 최대화 (불투명, 알파 테스트)

@@ -23,6 +23,11 @@ namespace engine
 	namespace
 	{
 		// sort_key 레이아웃 (깊이 정책): [63..32] 깊이 OR 커스텀 키 | [31..8] renderer_id | [7..0] submesh
+		// 
+		// - 깊이·커스텀 키는 Renderer 단위 값이라 같은 Renderer의 서브메시끼리는 상위 비트가 같고,
+		//   그 아래를 renderer_id → submesh 순으로 두었기 때문에 '같은 Renderer는 연속, 서브메시 오름차순'이 보장된다.
+		// - BackToFront는 깊이 비트만 반전하고 하위 비트는 그대로 두어 이 순서를 유지한다.
+		// - 이 비트 배치를 바꾸면 헤더의 정렬 계약(SortPolicy 주석)이 깨지므로 함께 검토할 것. -> 현재 이에 의존하는 코드가 있으므로 주의.
 
 		constexpr uint32_t kRendererIdBits = 24;
 		constexpr uint32_t kDepthShift = 32;

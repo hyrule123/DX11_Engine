@@ -28,6 +28,12 @@ namespace engine
 		GPUBufferBindingTable(GPUBufferBindingTable&&) = delete;
 		GPUBufferBindingTable& operator=(GPUBufferBindingTable&&) = delete;
 
+		uint32_t GetCBSlotStart() const { return cb_slot_start_; }
+		uint32_t GetCBSlotCount() const { return cb_slot_count_; }
+
+		uint32_t GetSRVSlotStart() const { return srv_slot_start_; }
+		uint32_t GetSRVSlotCount() const { return srv_slot_count_; }
+
 		void AddConstantBuffer(ShaderStageFlags stage_flag, RegisterB slot, std::shared_ptr<ConstantBuffer> buffer);
 		void RemoveConstantBuffer(RegisterB slot);
 

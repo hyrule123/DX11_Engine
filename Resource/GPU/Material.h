@@ -63,6 +63,9 @@ namespace engine
         void SetTexture(ShaderStageFlags stage_flag, RegisterT slot, std::shared_ptr<Texture2D> tex);
         bool SetTexture(ShaderStageFlags stage_flag, RegisterT slot, const HashedStringView& texture_name);
 
+		GPUBufferBindingTable& GetPerMaterialBindingTable() { return per_material_binding_table_; }
+		const GPUBufferBindingTable& GetPerMaterialBindingTable() const { return per_material_binding_table_; }
+
 		uint32_t GetMaterialID() const { return material_ID_.Get(); }
 
     private:

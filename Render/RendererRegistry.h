@@ -23,7 +23,7 @@ namespace engine
             Renderer* renderer;          // nullptr = 빈 슬롯
             uint32_t    dense_idx;        // dense 배열 내 현재 위치
             uint32_t    next_free_slot;
-            bool      is_bounds_dirty;
+            bool      is_in_dirty_list;
         };
 
         // sort_key 하위 비트(bounds_id 24비트) 제약
@@ -37,7 +37,7 @@ namespace engine
         // 새 슬롯 발급. 첫 bounds 계산을 위해 dirty로 표시된다.
         [[nodiscard]] uint32_t Allocate(Renderer* renderer);
 
-        // 해제. generation은 Release에서 증가
+        // 해제.
         void Release(uint32_t idx);
 
         void MarkBoundsDirty(uint32_t idx);

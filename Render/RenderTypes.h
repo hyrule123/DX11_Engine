@@ -22,7 +22,6 @@ namespace engine
 	{
 		Renderer* renderer;
 		AABB2D world_bounds;
-		bool is_bounds_dirty;
 	};
 
 	class RenderView;

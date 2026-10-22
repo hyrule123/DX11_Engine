@@ -36,7 +36,7 @@ namespace engine
 		slot.renderer = renderer;
 		slot.next_free_slot = kInvalid32;
         slot.dense_idx = (uint32_t)dense_bounds_.size();
-        slot.is_bounds_dirty = false;
+        //slot.is_in_dirty_list; // 이미 Release된 항목이 Dirty 상태로 변경했을 수 있음. 플래그 그대로 유지 -> nullptr 여부로 Release 되었는지 확인
 
         dense_to_sparse_.push_back(id);
         dense_bounds_.push_back(AABB3D::Invalid());
@@ -70,7 +70,7 @@ namespace engine
 
         // 슬롯 비우고 free list에 반환
         slot.renderer = nullptr;
-        slot.is_bounds_dirty = false;
+		//slot.is_in_dirty_list; // 이 플래그는 그대로 유지, Dirty Queue에 들어 있으면 true
         slot.dense_idx = kInvalid32;
         slot.next_free_slot = free_slot_head_;
         free_slot_head_ = id;
@@ -91,12 +91,12 @@ namespace engine
         SparseSlot& slot = sparse_slots_[id];
         ASSERT_F(slot.renderer, "해제된 슬롯에 dirty 통지가 들어왔습니다. Transform 구독 해제를 확인하세요.");
 
-        if (slot.is_bounds_dirty)
+        if (slot.is_in_dirty_list)
         {
             return;
         }
 
-        slot.is_bounds_dirty = true;
+        slot.is_in_dirty_list = true;
         dirty_slot_ids_.push_back(id);
     }
 
@@ -106,14 +106,15 @@ namespace engine
         {
             SparseSlot& slot = sparse_slots_[slot_id];
 
-            // 해제됨(Release에서 false로 변경) 또는 이미 처리된 중복 항목
-            if (slot.is_bounds_dirty == false)
+            // 해제됨(Release에서 nullptr로 변경됨)
+            if (slot.renderer == nullptr)
             {
-                ASSERT(slot.renderer == nullptr); // 불변식 검사
-                continue;   
+                slot.is_in_dirty_list = false;
+                continue;
             }
 
-            slot.is_bounds_dirty = false;
+            ASSERT(slot.is_in_dirty_list); // 불변식: dirty_slots이므로 -> 항상 true여야 함
+            slot.is_in_dirty_list = false;
             dense_bounds_[slot.dense_idx] = slot.renderer->ComputeWorldBounds();
         }
         dirty_slot_ids_.clear();

@@ -33,16 +33,6 @@ namespace engine
 		result = SetMaterial(0, "Material_Sprite");
 		ASSERT(result);
 	}
-	void SpriteRenderer::Awake()
-	{
-		Super::Awake();
-
-		Material* mtrl = GetMaterial(0);
-		ASSERT(mtrl);
-		PipelineState* ps = mtrl->GetPipelineState(render_pass_mode_);
-		ASSERT(ps);
-		ASSERT(sizeof(per_obj_data_) == ps->GetInstanceDataStride());
-	}
 
 	/*
 	void SpriteRenderer::LateUpdate()
@@ -71,12 +61,23 @@ namespace engine
 	}
 	*/
 
-	void SpriteRenderer::WriteInstanceData(DataBlock data_block)
+	void SpriteRenderer::WriteInstanceData(const InstanceWriteArgs& args)
 	{
-		per_obj_data_.world_mat = GetTransform()->GetWorldMatrix();
+		switch (args.pass)
+		{
+		case render_pass::ID::ForwardOpaque:
+		{
+			per_obj_data_.world_mat = GetTransform()->GetWorldMatrix();
 
-		ASSERT(data_block.IsValid());
-		data_block.Write(per_obj_data_);
+			ASSERT(args.block.IsValid());
+			args.block.Write(per_obj_data_);
+		}
+		break;
+
+		default:
+			ASSERT_F(false, "처리되지 않은 Pass ID: {}", static_cast<uint32_t>(args.pass));
+			break;
+		}
 
 //#ifndef NDEBUG
 //		DebugInstanceData debug_data = {};

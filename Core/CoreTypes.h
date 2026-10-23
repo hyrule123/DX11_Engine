@@ -4,6 +4,9 @@
 #include <stdint.h>
 #include <unordered_map>
 #include <string>
+#include <typeinfo>
+
+#include <Engine/Core/Debug.h>
 
 namespace engine
 {
@@ -19,6 +22,7 @@ namespace engine
 		template <typename T>
 		void Write(const T& value) const
 		{
+			ASSERT_F(size == sizeof(T), "DataBlock size mismatch. type {}. DataBlock size: {}, Value size: {}", typeid(T).name(), size, sizeof(T));
 			static_assert(std::is_trivially_copyable_v<T>);
 			if (ptr && sizeof(T) <= size) { memcpy(ptr, &value, sizeof(T)); }
 		}

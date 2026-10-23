@@ -23,6 +23,14 @@ namespace engine
         ENTITY_INFO(Renderer, Component)
         COMPONENT_CATEGORY(ComponentCategory::kRenderer)
     public:
+        struct InstanceWriteArgs
+        {
+            DataBlock block;
+            render_pass::ID pass;
+            uint8_t submesh_index;	// RenderKey 서브메시 폭(8비트)과 일치
+        };
+
+    public:
         Renderer(const HashedStringView& concrete_class_name);
         virtual ~Renderer() override;
 
@@ -56,7 +64,7 @@ namespace engine
 
         Mesh* GetMesh() const { return mesh_.get(); }
 
-        virtual void WriteInstanceData(DataBlock data_block) = 0;
+        virtual void WriteInstanceData(const InstanceWriteArgs& args) = 0;
 
         AABB3D ComputeWorldBounds() const;
 

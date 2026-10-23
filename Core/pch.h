@@ -34,4 +34,8 @@
 // GPU 관련 헤더
 #include <wrl.h>
 
+// 자주 사용되는 Engine 헤더
+#include <Engine/Core/CoreMinimal.h>
+#include <Engine/Core/Debug.h>
+
 #endif //PCH_ENGINE

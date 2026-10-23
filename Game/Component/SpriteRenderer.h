@@ -16,17 +16,16 @@ namespace engine
         virtual ~SpriteRenderer() override;
 
         virtual void Init() override;
-        virtual void Awake() override;
+        //virtual void Awake() override;
 		//virtual void LateUpdate() override;
 
-        virtual void WriteInstanceData(DataBlock data_block) final;
+        virtual void WriteInstanceData(const InstanceWriteArgs& args) final;
 
 		void SetFrameIndex(uint32_t frame_index) { per_obj_data_.sprite_frame_idx = frame_index; }
 		void SetFlipLeftRight(bool flip) { per_obj_data_.flip_left_right = (BOOL)flip; }
 
     private:
         SpriteInstanceData per_obj_data_ = {};
-		render_pass::ID render_pass_mode_ = render_pass::ID::ForwardOpaque;
     };
 }
 

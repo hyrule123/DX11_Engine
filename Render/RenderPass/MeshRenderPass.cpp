@@ -208,9 +208,17 @@ namespace engine
 			const uint32_t queue_end = group.queue_begin + group.instance_count;
 			for (uint32_t q = group.queue_begin; q < queue_end; ++q)
 			{
-				Renderer* renderer = renderer_registry[queue_[q].renderer_id].renderer;
+				const QueueItem& q_item = queue_[q];
+				Renderer* renderer = renderer_registry[q_item.renderer_id].renderer;
 				ASSERT(renderer);
-				renderer->WriteInstanceData(pool.NextSlot(group.alloc));
+
+				renderer->WriteInstanceData(
+					{
+						.block = pool.NextSlot(group.alloc),
+						.pass = GetID(),
+						.submesh_index = q_item.key.GetSubMeshIndex()
+					}
+				);
 			}
 		}
 	}

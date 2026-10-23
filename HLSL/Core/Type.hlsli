@@ -11,11 +11,13 @@
 #ifdef __HLSL
 #define alignas(_num) 
 #define SEMANTIC(_semantic) : _semantic
+#define HLSL_CONSTEXPR static const
 #endif//__HLSL
 
 #ifdef __cplusplus
 #include <Engine/Core/Math.h>
 #define SEMANTIC(_semantic)
+#define HLSL_CONSTEXPR inline constexpr
 #endif//__cplusplus
 
 #endif//HLSL_TYPE

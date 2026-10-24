@@ -21,7 +21,7 @@ namespace engine
 	}
 	Transform::~Transform()
 	{
-		DEBUG_LOG("Transform Destructor called, FrameCount: {}, InstanceID: {}", GameEngine::GetInst().GetFrameCount(), GetInstanceID());
+		//DEBUG_LOG("Transform Destructor called, FrameCount: {}, InstanceID: {}", GameEngine::GetInst().GetFrameCount(), GetInstanceID());
 	}
 
 	void Transform::LateUpdate()
@@ -33,13 +33,13 @@ namespace engine
 	void Transform::OnEnable()
 	{
 		Super::OnEnable();
-		DEBUG_LOG("Transform OnEnable called, FrameCount: {}, InstanceID: {}", GameEngine::GetInst().GetFrameCount(), GetInstanceID());
+		//DEBUG_LOG("Transform OnEnable called, FrameCount: {}, InstanceID: {}", GameEngine::GetInst().GetFrameCount(), GetInstanceID());
 	}
 	void Transform::OnDisable()
 	{
 		Super::OnDisable();
 
-		DEBUG_LOG("Transform OnDisable called, FrameCount: {}, InstanceID: {}", GameEngine::GetInst().GetFrameCount(), GetInstanceID());
+		//DEBUG_LOG("Transform OnDisable called, FrameCount: {}, InstanceID: {}", GameEngine::GetInst().GetFrameCount(), GetInstanceID());
 	}
 	void Transform::OnDestroy()
 	{

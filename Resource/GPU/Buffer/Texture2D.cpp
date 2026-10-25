@@ -353,6 +353,7 @@ namespace engine
 			width_ = 0u;
 			height_ = 0u;
 		}
+		tex2D_buffer_ = texture;
 	}
 	std::shared_ptr<DirectX::ScratchImage> Texture2D::LoadScratchImageFromFile(const std::filesystem::path& res_path)
 	{

@@ -165,7 +165,7 @@ namespace engine
 		}
 		else
 		{
-			input_rtg->BindShaderResourceViews(ctx.dc, ShaderStage::Pixel, REG_T_SRC_RENDERTARGET);
+			input_rtg->BindSRVs(ctx.dc, ShaderStage::Pixel, REG_T_SRC_RENDERTARGET);
 		}
 
 		output->Clear(ctx.dc, output_clear_);
@@ -183,7 +183,7 @@ namespace engine
 		}
 		else
 		{
-			input_rtg->UnBindShaderResourceViews(ctx.dc, ShaderStage::Pixel, REG_T_SRC_RENDERTARGET);
+			input_rtg->UnbindSRVs(ctx.dc, ShaderStage::Pixel, REG_T_SRC_RENDERTARGET);
 		}
 	}
 

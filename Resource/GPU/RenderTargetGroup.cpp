@@ -65,7 +65,7 @@ namespace engine
 #endif NDEBUG
 	}
 
-	void RenderTargetGroup::BindShaderResourceViews(ID3D11DeviceContext* context, ShaderStageFlags stage_flags, RegisterT start_slot)
+	void RenderTargetGroup::BindSRVs(ID3D11DeviceContext* context, ShaderStageFlags stage_flags, RegisterT start_slot)
 	{
 		srv_bound_ = true;
 
@@ -98,7 +98,7 @@ namespace engine
 		}
 	}
 
-	void RenderTargetGroup::UnBindShaderResourceViews(ID3D11DeviceContext* context, ShaderStageFlags stage_flags, RegisterT start_slot)
+	void RenderTargetGroup::UnbindSRVs(ID3D11DeviceContext* context, ShaderStageFlags stage_flags, RegisterT start_slot)
 	{
 		constexpr size_t tex_count = std::tuple_size_v<RenderTargetArray>;
 
@@ -128,7 +128,7 @@ namespace engine
 	{
 		// SRV 바인딩을 해제하지 않았을 경우 에러
 		/* 자동 언바인드 하지 않는 이유 
-		중간에 다른 SRV에서 바인딩이 일어날 수 있기 때문에, 에러를 발생시키고 처리 코드를 추가하도록 하는 게 더 안전함. SRV 바인딩 후 OM 바인딩 전에 반드시 UnBindShaderResourceViews를 호출하도록 강제.
+		중간에 다른 SRV에서 바인딩이 일어날 수 있기 때문에, 에러를 발생시키고 처리 코드를 추가하도록 하는 게 더 안전함. SRV 바인딩 후 OM 바인딩 전에 반드시 UnbindSRV를 호출하도록 강제.
 		*/
 		CHECK(srv_bound_ == false);
 
@@ -149,7 +149,7 @@ namespace engine
 		context->OMSetRenderTargets((UINT)tex_count, rtvs.data(), dsv);
 		context->RSSetViewports(1, &viewport_);
 	}
-	void RenderTargetGroup::UnBindOutputMerger(ID3D11DeviceContext* context)
+	void RenderTargetGroup::UnbindOutputMerger(ID3D11DeviceContext* context)
 	{
 		context->OMSetRenderTargets(0, nullptr, nullptr);
 	}

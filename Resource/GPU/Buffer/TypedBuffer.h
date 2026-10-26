@@ -78,6 +78,8 @@ namespace engine
 		void BindSRV(ID3D11DeviceContext* context, ShaderStageFlags stage_flag, RegisterT slot);
 		void BindUAV(ID3D11DeviceContext* context, RegisterT slot);
 
+		static void UnbindSRV(ID3D11DeviceContext* context, ShaderStageFlags stage_flag, RegisterT slot);
+
     private:
 		bool ValidateParameters(DXGI_FORMAT format, uint32_t capacity);
 

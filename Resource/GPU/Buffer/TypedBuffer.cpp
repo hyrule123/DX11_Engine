@@ -191,6 +191,28 @@ namespace engine
 		context->CSSetUnorderedAccessViews(slot.Get(), 1, UAV_.GetAddressOf(), nullptr);
 	}
 
+	void TypedBuffer::UnbindSRV(ID3D11DeviceContext* context, ShaderStageFlags stage_flag, RegisterT slot)
+	{
+		ASSERT(context);
+		ID3D11ShaderResourceView* null_srv = nullptr;
+		if (stage_flag.Test(ShaderStage::Vertex))
+		{
+			context->VSSetShaderResources(slot.Get(), 1, &null_srv);
+		}
+		if (stage_flag.Test(ShaderStage::Geometry))
+		{
+			context->GSSetShaderResources(slot.Get(), 1, &null_srv);
+		}
+		if (stage_flag.Test(ShaderStage::Pixel))
+		{
+			context->PSSetShaderResources(slot.Get(), 1, &null_srv);
+		}
+		if (stage_flag.Test(ShaderStage::Compute))
+		{
+			context->CSSetShaderResources(slot.Get(), 1, &null_srv);
+		}
+	}
+
 	bool TypedBuffer::ValidateParameters(DXGI_FORMAT format, uint32_t capacity)
 	{
 		const uint32_t elem_stride = GetDXGIFormatByteStride(format);

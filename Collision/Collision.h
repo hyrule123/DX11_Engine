@@ -71,6 +71,7 @@ namespace engine
         float2 GetHalfExtents() const noexcept { return (max - min) * 0.5f; }
         float2 GetSize()        const noexcept { return (max - min); }
 		
+		bool IsValid()          const noexcept { return min.x <= max.x && min.y <= max.y; }
 
         // Size > 0
 		void SetSize(float2 size)  noexcept {

@@ -1,7 +1,6 @@
 #pragma once
-
 #include <Engine/Core/CoreMinimal.h>
-#include <Engine/Core/Math.h>
+#include <Engine/Core/Geometry.h>
 
 #include <Engine/Game/Component/Component.h>
 

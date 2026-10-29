@@ -19,4 +19,5 @@
 #include <Engine/Core/SmartPointer.h>
 #include <Engine/Core/CoreTypes.h>
 #include <Engine/Core/UtilMacro.h>
+#include <Engine/Core/Debug.h>
 #include <Engine/Util/StringHashTable.h>

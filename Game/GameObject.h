@@ -7,8 +7,6 @@
 #include <Engine/Core/UtilMacro.h>
 #include <Engine/Core/Enum.h>
 
-#include <Engine/Collision/Collision.h>
-
 #include <array>
 #include <vector>
 #include <string>
@@ -20,6 +18,9 @@ namespace engine
 	class Component;
 	class Scene;
 	class Transform;
+	class Collider2D;
+
+	struct Collision2D;
 
 	class GameObject :
 		public SceneEntity

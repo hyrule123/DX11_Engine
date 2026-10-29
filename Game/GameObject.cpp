@@ -3,6 +3,8 @@
 
 #include <Engine/Game/Component/Transform.h>
 #include <Engine/Game/Component/ComponentCategory.h>
+#include <Engine/Game/Component/Collider2D.h>
+#include <Engine/Collision/Collision.h>
 
 #include <Engine/Core/Debug.h>
 #include <Engine/Core/Constants.h>

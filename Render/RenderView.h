@@ -1,15 +1,11 @@
 #pragma once
 #include <Engine/Core/CoreMinimal.h>
-#include <Engine/Core/Math.h>
-#include <Engine/Core/Enum.h>
-
-#include <Engine/Collision/Collision.h>	// AABB2D
+#include <Engine/Core/Geometry.h>
 
 #include <Engine/Render/RenderTypes.h>
 
 #include <Engine/HLSL/Camera.hlsli>
 
-#include <array>
 
 struct ID3D11DeviceContext;
 

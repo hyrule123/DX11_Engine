@@ -1,11 +1,9 @@
 #pragma once
 #include <Engine/Resource/Resource.h>
 
-#include <Engine/Core/DX11.h>
-
 #include <Engine/Render/RenderTypes.h>
 
-#include <Engine/Collision/Collision.h>
+#include <Engine/Core/Geometry.h>
 
 namespace engine
 {

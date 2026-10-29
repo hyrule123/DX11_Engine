@@ -1,9 +1,7 @@
 #pragma once
-
-#include <Engine/Collision/Collision.h>	//AABB2D
-
 #include <Engine/Core/Enum.h>
 #include <Engine/Core/Debug.h>
+#include <Engine/Core/Geometry.h>
 
 #include <Engine/Util/IDAllocator.h>
 

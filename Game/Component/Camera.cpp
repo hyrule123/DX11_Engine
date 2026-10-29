@@ -11,7 +11,7 @@
 
 #include <Engine/Core/Debug.h>
 
-#include <Engine/Collision/Geometry2D.h>
+#include <Engine/Core/Geometry.h>
 
 #include <Engine/HLSL/Core/Register.hlsli>
 
@@ -90,7 +90,7 @@ namespace engine
 
 		const matrix world_mat = my_transform_->GetWorldMatrix();
 		
-		return geometry_2d::TransformBoundsTo2D(local_bounds, world_mat);
+		return TransformBoundsTo2D(local_bounds, world_mat);
 	}
 
 	void Camera::CreateViewMatrix()

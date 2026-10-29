@@ -2,6 +2,8 @@
 #include "Component.h"
 
 #include <Engine/Collision/Collision.h>
+
+#include <Engine/Core/Geometry.h>
 #include <Engine/Core/Math.h>
 
 namespace engine

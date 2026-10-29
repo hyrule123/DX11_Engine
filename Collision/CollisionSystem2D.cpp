@@ -8,7 +8,7 @@
 #include <Engine/Game/GameObject.h>
 #include <Engine/Game/Scene.h>
 
-#include <Engine/Collision/Geometry2D.h>
+#include <Engine/Core/Geometry.h>
 
 // Intersect 함수 선언부
 namespace
@@ -312,7 +312,7 @@ namespace engine
 					if (false == collision_mask[e_i.layer][e_j.layer]) { continue; }
 
 					// 3. AABB 겹침 확인, 안 겹칠 시 early-out
-					if(false == geometry_2d::Overlap(
+					if(false == Overlap2D(
 						e_i_world_bound,
 						e_j_world_bound
 					)) 
@@ -522,7 +522,7 @@ namespace
 		const AABB2D& bound_1 = in_aabb1->GetWorldBounds();
 		const AABB2D& bound_2 = in_aabb2->GetWorldBounds();
 
-		if (!geometry_2d::Overlap(bound_1, bound_2)) 
+		if (!Overlap2D(bound_1, bound_2)) 
 		{ 
 			return false;
 		}

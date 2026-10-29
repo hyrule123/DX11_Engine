@@ -6,11 +6,10 @@
 #include <Engine/Core/UtilMacro.h>
 #include <Engine/Core/Enum.h>
 
-#include <Engine/Collision/Collision.h>
-
-
 namespace engine
 {
+    struct Collision2D;
+
     class Component :
         public SceneEntity
     {

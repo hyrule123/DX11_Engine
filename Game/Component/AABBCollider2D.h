@@ -1,6 +1,8 @@
 #pragma once
 #include <Engine/Game/Component/Collider2D.h>
 
+#include <Engine/Core/Geometry.h>
+
 namespace engine
 {
     class AABBCollider2D :

@@ -4,6 +4,7 @@
 
 #include <Engine/Core/CoreMinimal.h>
 #include <Engine/Core/Constants.h>
+#include <Engine/Core/Geometry.h>
 
 #include <Engine/Render/RenderTypes.h>
 

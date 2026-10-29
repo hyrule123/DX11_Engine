@@ -1,9 +1,9 @@
 #include "Engine/Core/pch.h"
-#include "Geometry2D.h"
+#include "Geometry.h"
 
 #include <Engine/Core/Debug.h>
 
-namespace engine::geometry_2d
+namespace engine
 {
 	AABB2D TransformBoundsTo2D(const AABB3D& local_bounds, const matrix& world_mat)
 	{

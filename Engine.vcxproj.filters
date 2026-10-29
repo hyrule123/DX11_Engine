@@ -255,7 +255,7 @@
     <ClInclude Include="Render\RenderTypes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Collision\Geometry2D.h">
+    <ClInclude Include="Core\Geometry.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Core\Detail\Assert.h">
@@ -470,7 +470,7 @@
     <ClCompile Include="Render\Culling.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Collision\Geometry2D.cpp">
+    <ClCompile Include="Core\Geometry.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Core\Detail\Assert.cpp">

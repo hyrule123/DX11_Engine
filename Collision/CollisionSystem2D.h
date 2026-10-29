@@ -1,14 +1,11 @@
 #pragma once
-
 #include <Engine/Core/CoreMinimal.h>
+#include <Engine/Core/Geometry.h>
 #include <Engine/Core/Math.h>
 
 #include <Engine/ThirdParty/ankerl/unordered_dense.h>
 
 #include <Engine/Collision/Collision.h>
-
-#include <functional>
-#include <array>
 
 namespace engine
 {

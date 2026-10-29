@@ -1,10 +1,6 @@
 #pragma once
-
 #include <Engine/Core/CoreMinimal.h>
 #include <Engine/Core/Math.h>
-#include <Engine/Core/Constants.h>
-
-#include <Engine/ThirdParty/ankerl/unordered_dense.h>
 
 namespace engine
 {
@@ -60,69 +56,6 @@ namespace engine
 		Circle,
 		END
 	};
-
-    // TODO: min/max로 전환
-    struct AABB2D
-    {
-        float2 min = kFloat2Max;
-        float2 max = kFloat2Lowest;
-
-        float2 GetCenter()      const noexcept { return (min + max) * 0.5f; }
-        float2 GetHalfExtents() const noexcept { return (max - min) * 0.5f; }
-        float2 GetSize()        const noexcept { return (max - min); }
-		
-		bool IsValid()          const noexcept { return min.x <= max.x && min.y <= max.y; }
-
-        // Size > 0
-		void SetSize(float2 size)  noexcept {
-            min = -(size * 0.5f);
-            max = size * 0.5f; 
-        }
-
-		bool Overlaps(const AABB2D& other) const noexcept
-		{
-            const bool x_overlap = (min.x <= other.max.x) && (max.x >= other.min.x);
-            const bool y_overlap = (min.y <= other.max.y) && (max.y >= other.min.y);
-            return x_overlap && y_overlap;
-		}
-
-		void Encapsulate(const float2& point) noexcept
-		{
-			min = float2::Min(min, point);
-			max = float2::Max(max, point);
-		}
-    };
-
-    struct AABB3D
-    {
-        float3 min = kFloat3Max;
-        float3 max = kFloat3Lowest;
-
-		float3 GetCenter()      const noexcept { return (min + max) * 0.5f; }
-		float3 GetHalfExtents() const noexcept { return (max - min) * 0.5f; }
-		float3 GetSize()        const noexcept { return (max - min); }
-		bool IsValid()          const noexcept { return min.x <= max.x && min.y <= max.y && min.z <= max.z; }
-
-        // 점 하나를 포함(Bounds 계산 용)
-		void Encapsulate(const float3& point) noexcept
-		{
-			min = float3::Min(min, point);
-			max = float3::Max(max, point);
-		}
-
-		constexpr static AABB3D Invalid() noexcept
-		{
-			AABB3D bounds;
-			bounds.min = kFloat3Max;
-			bounds.max = kFloat3Lowest;
-			return bounds;
-		}
-
-		bool operator==(const AABB3D& other) const noexcept
-		{
-			return min == other.min && max == other.max;
-		}
-    };
 
     struct Collision2D
     {

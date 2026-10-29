@@ -221,7 +221,7 @@
   <ItemGroup>
     <ClInclude Include="Render\RenderPass\BlitPass.h" />
     <ClInclude Include="Core\Detail\Assert.h" />
-    <ClInclude Include="Collision\Geometry2D.h" />
+    <ClInclude Include="Core\Geometry.h" />
     <ClInclude Include="Core\Detail\EngineLog.h" />
     <ClInclude Include="Render\RenderTargetPool.h" />
     <ClInclude Include="Resource\GPU\Buffer\MapScopeWriteDiscard.h" />
@@ -317,7 +317,7 @@
   <ItemGroup>
     <ClCompile Include="Render\RenderPass\BlitPass.cpp" />
     <ClCompile Include="Core\Detail\Assert.cpp" />
-    <ClCompile Include="Collision\Geometry2D.cpp" />
+    <ClCompile Include="Core\Geometry.cpp" />
     <ClCompile Include="Core\Detail\EngineLog.cpp" />
     <ClCompile Include="Render\RenderTargetPool.cpp" />
     <ClCompile Include="Resource\GPU\Buffer\MapScopeWriteDiscard.cpp" />

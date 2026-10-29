@@ -13,7 +13,7 @@
 #include <Engine/Core/Debug.h>
 #include <Engine/Core/Constants.h>
 
-#include <Engine/Collision/Geometry2D.h>
+#include <Engine/Core/Geometry.h>
 
 namespace engine
 {

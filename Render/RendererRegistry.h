@@ -1,8 +1,7 @@
 #pragma once
 #include <Engine/Core/CoreMinimal.h>
-#include <Engine/Core/Debug.h>
 
-#include <Engine/Collision/Collision.h>
+#include <Engine/Core/Geometry.h>
 
 #include <span>
 #include <vector>

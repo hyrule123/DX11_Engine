@@ -13,6 +13,31 @@
 #include <ShellScalingAPI.h>
 #pragma comment(lib, "Shcore.lib")
 
+namespace
+{
+    constexpr WPARAM kMouseButtonMask = MK_LBUTTON | MK_RBUTTON | MK_MBUTTON;
+
+    // 버튼이 하나라도 눌리면 캡처 — 창 밖에서 떼도 업 메시지를 받기 위함
+    void OnMouseButtonDown(HWND hWnd, WPARAM vk)
+    {
+        engine::InputManager::GetInst().SetKey(vk, true);
+        if (GetCapture() != hWnd)
+        {
+            SetCapture(hWnd);
+        }
+    }
+
+    // 업 메시지의 wParam = 업 이후의 버튼 상태. 남은 버튼이 없을 때만 캡처 해제
+    void OnMouseButtonUp(HWND hWnd, WPARAM vk, WPARAM wParam)
+    {
+        engine::InputManager::GetInst().SetKey(vk, false);
+        if ((wParam & kMouseButtonMask) == 0 && GetCapture() == hWnd)
+        {
+            ReleaseCapture();
+        }
+    }
+}
+
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     switch (message)
@@ -40,10 +65,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     break;
     case WM_DESTROY:
     {
+        engine::EngineMain::GetInst().SetCursorClip(false);
         PostQuitMessage(0);
     }
     break;
-
     case WM_SIZE:
     {
 		// 최소화 상태일 때는 리사이즈 처리하지 않음
@@ -59,6 +84,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         if (width > 0 && height > 0)
         {
             engine::EngineMain::GetInst().OnScreenSizeChange((uint32_t)width, (uint32_t)height);
+            engine::EngineMain::GetInst().ApplyCursorClip();
         }
     }
     break;
@@ -98,26 +124,40 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
     // 마우스 버튼은 가상 키 코드(VK_*)를 그대로 활용하여 키보드 배열에 합치는 것이 관리하기 편함
     case WM_LBUTTONDOWN:
-        engine::InputManager::GetInst().SetKey(VK_LBUTTON, true);
+        OnMouseButtonDown(hWnd, VK_LBUTTON);
         break;
     case WM_LBUTTONUP:
-        engine::InputManager::GetInst().SetKey(VK_LBUTTON, false);
+        OnMouseButtonUp(hWnd, VK_LBUTTON, wParam);
         break;
 
     case WM_RBUTTONDOWN:
-        engine::InputManager::GetInst().SetKey(VK_RBUTTON, true);
+        OnMouseButtonDown(hWnd, VK_RBUTTON);
         break;
     case WM_RBUTTONUP:
-        engine::InputManager::GetInst().SetKey(VK_RBUTTON, false);
+        OnMouseButtonUp(hWnd, VK_RBUTTON, wParam);
         break;
 
     case WM_MBUTTONDOWN:
-        engine::InputManager::GetInst().SetKey(VK_MBUTTON, true);
+        OnMouseButtonDown(hWnd, VK_MBUTTON);
         break;
     case WM_MBUTTONUP:
-        engine::InputManager::GetInst().SetKey(VK_MBUTTON, false);
+        OnMouseButtonUp(hWnd, VK_MBUTTON, wParam);
         break;
 
+    // 캡처를 잃음 (다른 창이 가져감, 제목 표시줄 드래그 등) — 이후 업 메시지가 오지 않으므로 마우스 버튼 정리
+    // 직접 ReleaseCapture한 경우에도 오지만, 그때는 이미 모든 버튼이 떼어진 상태라 무해함
+    case WM_CAPTURECHANGED:
+        engine::InputManager::GetInst().ClearMouseButtons();
+        break;
+
+    case WM_ACTIVATE:
+        // LOWORD: WA_INACTIVE / WA_ACTIVE / WA_CLICKACTIVE, HIWORD: 최소화 여부
+        engine::EngineMain::GetInst().OnActivate(LOWORD(wParam) != WA_INACTIVE && HIWORD(wParam) == 0);
+        return DefWindowProc(hWnd, message, wParam, lParam);
+
+    case WM_MOVE:
+        engine::EngineMain::GetInst().ApplyCursorClip();
+        break;
     default:
         return DefWindowProc(hWnd, message, wParam, lParam);
     }
@@ -235,6 +275,42 @@ namespace engine
         // 4. SetWindowPos 호출
         SetWindowPos(h_wnd_, nullptr, 0, 0, new_window_width, new_window_height, SWP_NOMOVE | SWP_NOZORDER);
     }
+    void EngineMain::SetCursorClip(bool enable)
+    {
+        cursor_clip_enabled_ = enable;
+        ApplyCursorClip();
+    }
+    void EngineMain::ApplyCursorClip()
+    {
+        // 비활성 창·최소화 상태에서는 가두지 않음
+        const bool should_clip = cursor_clip_enabled_
+            && (h_wnd_ != nullptr)
+            && is_wnd_active_
+            && (IsIconic(h_wnd_) == FALSE);
+
+        if (!should_clip)
+        {
+            // 우리가 건 클립만 해제 (ClipCursor는 시스템 전역 — 다른 프로그램의 클립을 건드리지 않음)
+            if (is_cursor_clipped_)
+            {
+                ClipCursor(nullptr);
+                is_cursor_clipped_ = false;
+            }
+            return;
+        }
+
+        // ClipCursor는 화면 좌표 — 클라이언트 영역을 변환
+        RECT rect = {};
+        GetClientRect(h_wnd_, &rect);
+        POINT top_left = { rect.left, rect.top };
+        POINT bottom_right = { rect.right, rect.bottom };
+        ClientToScreen(h_wnd_, &top_left);
+        ClientToScreen(h_wnd_, &bottom_right);
+
+        const RECT screen_rect = { top_left.x, top_left.y, bottom_right.x, bottom_right.y };
+        ClipCursor(&screen_rect);
+        is_cursor_clipped_ = true;
+    }
     void EngineMain::OnScreenSizeChange(uint32_t width, uint32_t height)
     {
         //동일 사이즈는 무시
@@ -247,6 +323,11 @@ namespace engine
         {
 			GameEngine::GetInst().OnScreenSizeChange(width, height);
         }
+    }
+    void EngineMain::OnActivate(bool active)
+    {
+        is_wnd_active_ = active;
+        ApplyCursorClip();
     }
 }
 

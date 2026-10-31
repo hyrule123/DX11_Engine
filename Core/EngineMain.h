@@ -26,9 +26,14 @@ namespace engine
 		uint32_t GetScreenWidth() const { return screen_width_; }
 		uint32_t GetScreenHeight() const { return screen_height_; }
 
+		void SetCursorClip(bool enable);
+
 	private:
+		void ApplyCursorClip();
+
 		// WndProc 호출 용도
 		void OnScreenSizeChange(uint32_t width, uint32_t height);
+		void OnActivate(bool active);
 
 		HINSTANCE h_instance_ = {};
 		HWND h_wnd_ = {};
@@ -36,6 +41,10 @@ namespace engine
 
 		uint32_t screen_width_ = {};
 		uint32_t screen_height_ = {};
+
+		bool cursor_clip_enabled_ = {};
+		bool is_cursor_clipped_ = {};	// 이 창이 ClipCursor를 건 상태
+		bool is_wnd_active_ = {};
 	};
 }
 

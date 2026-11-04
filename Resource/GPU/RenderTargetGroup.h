@@ -7,7 +7,9 @@
 #include <Engine/Core/DX11.h>
 #include <Engine/Core/Enum.h>
 
+#include <Engine/Render/RenderPass/RenderPassTypes.h>
 #include <Engine/Render/RenderTypes.h>
+
 
 #include <array>
 

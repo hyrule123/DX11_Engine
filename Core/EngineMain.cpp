@@ -256,7 +256,7 @@ namespace engine
                 is_running_ = GameEngine::GetInst().Run();
             }
         }
-
+        GameEngine::GetInst().Shutdown();
         return is_running_;
     }
     void EngineMain::SetScreenSize(uint32_t width, uint32_t height)

@@ -1,8 +1,6 @@
 #include "Engine/Core/pch.h"
 #include "BlitPass.h"
 
-#include <Engine/Manager/GraphicsDevice.h>
-
 #include <Engine/Resource/GPU/Shader/PixelShader.h>
 #include <Engine/Resource/GPU/State/DepthStencilState.h>
 #include <Engine/Resource/GPU/Buffer/Texture2D.h>
@@ -192,7 +190,7 @@ namespace engine
 		input_texture_ = std::move(texture);
 	}
 
-	void BlitPass::SetOutputTarget(std::shared_ptr<RenderTargetGroup> rtg, const ClearSettings& clear)
+	void BlitPass::SetOutputTargetOverride(std::shared_ptr<RenderTargetGroup> rtg, const ClearSettings& clear)
 	{
 		output_mode_ = rtg ? OutputMode::RenderTargetGroup : OutputMode::ViewTarget;
 		output_target_ = std::move(rtg);
@@ -222,7 +220,7 @@ namespace engine
 		}
 		case OutputMode::SwapChain:
 		{
-			return GraphicsDevice::GetInst().GetSwapChainRenderTargetGroup();
+			return &(ctx.swap_chain_rtg);
 		}
 		case OutputMode::RenderTargetGroup:
 		{

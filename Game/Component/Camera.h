@@ -26,7 +26,7 @@ namespace engine
         Camera();
         virtual ~Camera() override;
 
-        virtual void Init() override;
+        //virtual void Init() override;
         virtual void Awake() override;
 
         virtual void LateUpdate() override;

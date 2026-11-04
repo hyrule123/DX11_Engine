@@ -1,7 +1,9 @@
 #pragma once
-#include <Engine/Render/RenderPass/RenderPass.h>
-
 #include <Engine/HLSL/DebugDraw/DebugDraw.hlsli>
+
+#include <Engine/Render/RenderTypes.h>
+
+#include <Engine/Core/Entity.h>
 
 namespace engine
 {
@@ -9,10 +11,10 @@ namespace engine
     class StructuredBuffer;
     class PipelineState;
 
-    class DebugDrawPass :
-        public RenderPass
+    class DebugDrawPass
+        : public Entity
     {
-        ENTITY_INFO(DebugDrawPass, RenderPass);
+        ENTITY_INFO(DebugDrawPass, Entity);
 
     public:
         DebugDrawPass();
@@ -20,7 +22,7 @@ namespace engine
 
         virtual void Init() override;
 
-		virtual void Execute(const RenderContext& ctx) final;
+		void Execute(const RenderContext& ctx);
 
 		void PushDebugRect(const DebugDrawPerInstanceData& debug_data) {
 			debug_rect_data_.push_back(debug_data);

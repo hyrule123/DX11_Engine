@@ -3,6 +3,8 @@
 
 #include <Engine/Game/Scene.h>
 
+#include <Engine/Manager/RenderManager.h>
+
 #include <Engine/Core/Debug.h>
 
 namespace engine
@@ -79,10 +81,30 @@ namespace engine
 
 	void SceneManager::ChangeSceneNow()
 	{
-		if (next_scene_)
+		if (next_scene_ == nullptr)
 		{
-			cur_scene_ = std::move(next_scene_);
-			next_scene_ = nullptr;
+			return;
 		}
+
+		ShutdownCurrentScene();
+
+		cur_scene_ = std::move(next_scene_);
+		cur_scene_->OnActivate();
+	}
+
+	void SceneManager::ShutdownCurrentScene()
+	{
+		if (cur_scene_ == nullptr)
+		{
+			return;
+		}
+
+		cur_scene_->Shutdown();
+
+		RenderManager& render_manager = RenderManager::GetInst();
+		render_manager.CheckRendererRegistryConsistency();
+		render_manager.ReleaseCustomPasses();
+
+		cur_scene_ = nullptr;
 	}
 }

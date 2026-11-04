@@ -23,6 +23,9 @@ namespace engine
 
 		bool Run();
 
+		void Shutdown();
+
+	private:
 		bool is_initialized_ = {};
 		
 		float acc_delta_time_ = kDefaultFixedDeltaTime;

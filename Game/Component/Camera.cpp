@@ -30,17 +30,6 @@ namespace engine
 	Camera::~Camera()
 	{}
 
-	void Camera::Init()
-	{
-		Super::Init();
-
-		Camera* cam = RenderManager::GetInst().GetMainCamera().get();
-		if (nullptr == cam)
-		{
-			weak_handle_ptr<Camera> whptr = static_handle_cast<Camera>(weak_handle_from_this());
-			RenderManager::GetInst().SetMainCamera(whptr);
-		}
-	}
 	void Camera::Awake()
 	{
 		Super::Awake();

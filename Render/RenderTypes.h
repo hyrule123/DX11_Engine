@@ -1,10 +1,11 @@
 #pragma once
-#include <Engine/Core/Enum.h>
-#include <Engine/Core/Debug.h>
 #include <Engine/Core/Geometry.h>
+
+#include <Engine/Util/EnumFlags.h>
 
 #include <Engine/Util/IDAllocator.h>
 
+// 데이터 생성이 무거운 작업이라면, 이 매크로 블록 안에 넣어서 Release에서 코드를 제거할 것.
 #ifdef NDEBUG
 #define ENABLE_DEBUG_DRAW 0
 #else
@@ -16,15 +17,16 @@ struct ID3D11DeviceContext;
 namespace engine
 {
 	class Renderer;
+	class RenderView;
+	class RendererRegistry;
+	class InstanceBufferPool;
+	class RenderTargetGroup;
+
 	struct RendererInfo2D
 	{
 		Renderer* renderer;
 		AABB2D world_bounds;
 	};
-
-	class RenderView;
-	class RendererRegistry;
-	class InstanceBufferPool;
 
 	// 패스 실행에 필요한 프레임 단위 입력. RenderManager가 매 프레임 구성해 넘긴다.
 	// 패스는 RenderManager(싱글턴)에 직접 접근하지 않고 이것만 사용한다.
@@ -34,26 +36,8 @@ namespace engine
 		const RenderView& view;					// 메인 카메라: 행렬, 출력 대상, 뷰포트
 		const RendererRegistry& registry;       // renderer_id → Renderer* 조회
 		InstanceBufferPool& instance_buffers;   // stride별 인스턴스 버퍼
+		RenderTargetGroup& swap_chain_rtg;		// 우선순위 1. RenderPass의 override rtg, 2. RenderViewDesc의 rtg, 3. swapchain rtg
 	};
-
-	namespace render_pass
-	{
-		enum class ID : uint32_t
-		{
-			// 내장 패스
-			ForwardOpaque = 0, ForwardBlend, Present, DebugDraw,
-
-			// 커스텀 예약 슬롯 (콘텐츠에서 이름을 붙여 사용)
-			Custom0, Custom1, Custom2, Custom3, Custom4, Custom5, Custom6, Custom7,
-			Custom8,
-
-			kCount
-		};
-
-		static_assert((size_t)ID::kCount < 32, "render_pass::ID can't exceed 32");
-
-		ENABLE_ENUM_FLAGS(Flags, ID, uint32_t);
-	}
 
 	enum class ShaderStage : uint8_t
 	{
@@ -66,7 +50,6 @@ namespace engine
 	ENABLE_ENUM_FLAGS(ShaderStageFlags, ShaderStage, uint8_t);
 	constexpr ShaderStageFlags kShaderStageAllFlags = ShaderStageFlags::Full();
 	constexpr ShaderStageFlags kShaderStageAllGraphicsFlags = ShaderStage::Vertex | ShaderStage::Geometry | ShaderStage::Pixel;
-
 
 	// ---------------------------------------------------------------------------
 	// RenderKey 대응 별칭 — Tag는 전방 선언만으로 충분하다.
@@ -135,7 +118,6 @@ namespace engine
 		RenderKey key = {};
 	};
 
-
 	enum class RegisterType : uint8_t { T, B, S, U };
 
 	template <RegisterType Type>
@@ -155,24 +137,6 @@ namespace engine
 	using RegisterB = RegisterSlot<RegisterType::B>;
 	using RegisterS = RegisterSlot<RegisterType::S>;
 	using RegisterU = RegisterSlot<RegisterType::U>;
-
-
-	// RenderTargetGroup의 Clear API가 Depth/Stencil을 함께 지우므로 둘을 하나로 묶는다.
-	enum class ClearTarget : uint8_t
-	{
-		Color = 0,
-		DepthStencil,
-		kCount
-	};
-	ENABLE_ENUM_FLAGS(ClearTargetFlags, ClearTarget, uint8_t);
-
-	struct ClearSettings
-	{
-		ClearTargetFlags flags = ClearTarget::Color | ClearTarget::DepthStencil;
-		std::array<float, 4> color = { 0.0f, 0.0f, 0.0f, 0.0f };
-		float depth = 1.0f;
-		uint8_t stencil = 0;
-	};
 
 	struct InstanceDataAllocation
 	{

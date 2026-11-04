@@ -224,6 +224,7 @@
     <ClInclude Include="Core\Geometry.h" />
     <ClInclude Include="Core\Detail\EngineLog.h" />
     <ClInclude Include="Render\RenderTargetPool.h" />
+    <ClInclude Include="Render\RenderPass\RenderPassTypes.h" />
     <ClInclude Include="Resource\GPU\Buffer\MapScopeWriteDiscard.h" />
     <ClInclude Include="Render\InstanceIDBuffer.h" />
     <ClInclude Include="Render\RenderPass\DebugDrawPass.h" />

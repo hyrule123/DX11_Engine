@@ -50,6 +50,8 @@ namespace engine
         }
 		std::span<const uint32_t> GetDenseToSparseTable() const { return dense_to_sparse_; }
 
+		bool IsEmpty() const { return dense_bounds_.empty(); }
+
     private:
         bool IsValidSlot(uint32_t id) const { return id < sparse_slots_.size() && sparse_slots_[id].dense_idx != kInvalid32; }
 

@@ -6,7 +6,7 @@
 
 namespace engine
 {
-	void RenderView::Setup(const Camera& camera, RenderTargetGroup* target, const ClearSettings& clear_settings)
+	void RenderView::SetCamera(const Camera& camera)
 	{
 		view_mat_ = camera.GetViewMatrix();
 		proj_mat_ = camera.GetProjMatrix();
@@ -17,7 +17,10 @@ namespace engine
 
 		is_orthographic_ = (camera.GetProjectionMatrixDesc().proj_mode == Camera::ProjectionMode::Orthographic);
 		view_bounds_2d_ = is_orthographic_ ? camera.ComputeViewBounds2D() : AABB2D{};
+	}
 
+	void RenderView::SetOutput(RenderTargetGroup* target, const ClearSettings& clear_settings)
+	{
 		target_ = target;
 		clear_settings_ = clear_settings;
 	}

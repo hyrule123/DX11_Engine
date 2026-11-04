@@ -47,7 +47,8 @@ namespace engine
 
 		SortPolicy GetSortPolicy() const { return sort_policy_; }
 
-		void SetOutputTarget(std::shared_ptr<RenderTargetGroup> rtg, const ClearSettings& clear_settings)
+		// ctx에 들어온 Render Target들을 무시하고, 지정한 Rendertarget을 사용하도록 설정
+		void SetOutputTargetOverride(std::shared_ptr<RenderTargetGroup> rtg, const ClearSettings& clear_settings)
 		{
 			rtg_override_ = rtg;
 			rtg_override_clear_setting_ = clear_settings;

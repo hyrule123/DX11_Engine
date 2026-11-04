@@ -2,6 +2,7 @@
 #include <Engine/Core/CoreMinimal.h>
 #include <Engine/Core/Geometry.h>
 
+#include <Engine/Render/RenderPass/RenderPassTypes.h>
 #include <Engine/Render/RenderTypes.h>
 
 #include <Engine/HLSL/Camera.hlsli>
@@ -24,7 +25,8 @@ namespace engine
 	public:
 		RenderView() = default;
 
-		void Setup(const Camera& camera, RenderTargetGroup* target, const ClearSettings& clear_settings);
+		void SetCamera(const Camera& camera);
+		void SetOutput(RenderTargetGroup* target, const ClearSettings& clear_settings);
 
 		// 패스가 기본 출력 대상을 바인딩할 때 사용 (MeshRenderPass::BindTargets 기본 구현)
 		void BindTargets(ID3D11DeviceContext* context) const;

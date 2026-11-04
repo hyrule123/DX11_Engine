@@ -1,6 +1,10 @@
 #include "Engine/Core/pch.h"
 #include "GameEngine.h"
 
+#include <Engine/Core/HandlePointer.h>
+
+#include <Engine/Core/Debug.h>
+
 #include <Engine/Manager/GraphicsDevice.h>
 #include <Engine/Manager/ResourceManager.h>
 #include <Engine/Manager/SceneManager.h>
@@ -8,9 +12,7 @@
 #include <Engine/Manager/InputManager.h>
 #include <Engine/Manager/RenderManager.h>
 
-#include <Engine/Core/HandlePointer.h>
-
-#include <Engine/Core/Debug.h>
+#include <Engine/Game/Scene.h>
 
 namespace engine
 {
@@ -85,7 +87,12 @@ namespace engine
 
 		GraphicsDevice::GetInst().BindSwapChainRTV();
 		
-		RenderManager::GetInst().Render();
+		Scene* cur_scene = SceneManager::GetInst().GetCurrentScene();
+
+		if (cur_scene)
+		{
+			RenderManager::GetInst().Render(cur_scene->GetRenderViewDesc());
+		}
 
 		GraphicsDevice::GetInst().Present();
 
@@ -98,6 +105,10 @@ namespace engine
 
 		++frame_count_;
 		return true;
+	}
+	void GameEngine::Shutdown()
+	{
+		SceneManager::GetInst().ShutdownCurrentScene();
 	}
 }
 

@@ -5,7 +5,7 @@
 #include <Engine/Core/Constants.h>
 #include <Engine/Core/Enum.h>
 
-#include <Engine/Render/RenderTypes.h>
+#include <Engine/Render/RenderPass/RenderPassTypes.h>
 
 #include <Engine/Util/IDAllocator.h>
 #include <Engine/Util/GPUBufferBindingTable.h>

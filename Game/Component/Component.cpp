@@ -19,6 +19,13 @@ namespace engine
 		has_initialized_ = true;
 	}
 
+	Scene* Component::GetOwnerScene() const
+	{
+		GameObject* owner = GetOwnerGameObject();
+		ASSERT(owner != nullptr);
+		return owner->GetOwnerScene();
+	}
+
 	void Component::Destroy()
 	{
 		if (IsDestroyed()) { return; }

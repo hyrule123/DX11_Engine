@@ -11,6 +11,7 @@
 #include <Engine/Resource/GPU/Mesh.h>
 #include <Engine/Resource/GPU/Vertex.h>
 
+#include <Engine/Resource/GPU/RenderTargetGroup.h>
 
 namespace engine
 {
@@ -47,7 +48,7 @@ namespace engine
 	}
 
 	DebugDrawPass::DebugDrawPass()
-		: Super(DebugDrawPass::kClassConcreteName, render_pass::ID::DebugDraw)
+		: Super(DebugDrawPass::kClassConcreteName)
 		, debug_rect_mesh_(nullptr)
 		, debug_circle_mesh_(nullptr)
 		, debug_rect_data_()
@@ -172,6 +173,8 @@ namespace engine
 		{
 			return;
 		}
+
+		ctx.swap_chain_rtg.BindOutputMerger(ctx.dc);
 
 		//Shader Set Bind
 		debug_shader_set_->Bind(ctx.dc);

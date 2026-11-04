@@ -38,7 +38,7 @@ namespace engine
 		void SetInputTexture(std::shared_ptr<Texture2D> texture);
 
 		// nullptr이면 View 타깃에 출력. clear의 flags가 비어 있으면 클리어하지 않음
-		void SetOutputTarget(std::shared_ptr<RenderTargetGroup> rtg, const ClearSettings& clear);
+		void SetOutputTargetOverride(std::shared_ptr<RenderTargetGroup> rtg, const ClearSettings& clear);
 
 		// 스왑체인에 출력 (스왑체인 RTG는 GraphicsDevice가 소유하므로 별도 함수)
 		void SetOutputSwapChain(const ClearSettings& clear);

@@ -10,6 +10,8 @@ namespace engine
 {
     struct Collision2D;
 
+    class Scene;
+
     class Component :
         public SceneEntity
     {
@@ -47,7 +49,12 @@ namespace engine
         ComponentCategory GetComponentCategory() const { return category_; }
 
         void SetOwnerGameObject(GameObject* owner) { owner_game_object_ = owner; }
+
+        // 사용 가능 시점: Awake 이후
         GameObject* GetOwnerGameObject() const { return owner_game_object_; }
+
+        // 사용 가능 시점: Awake 이후
+        Scene* GetOwnerScene() const;
 
         template <typename T>
         T* GetComponent() {

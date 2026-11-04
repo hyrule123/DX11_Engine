@@ -6,19 +6,52 @@
 #include <Engine/Core/Debug.h>
 #include <Engine/Core/Constants.h>
 
+#include <Engine/Collision/CollisionSystem2D.h>
+
 namespace engine
 {
 	Scene::Scene(const HashedStringView& concrete_class_name)
 		: Super(concrete_class_name)
-		, collision_system_2D_(this)
+		, collision_system_2D_(std::make_unique<CollisionSystem2D>(this))
 	{}
 	Scene::~Scene()
 	{}
+
+	GameObject* Scene::AddGameObject(const HashedStringView& concrete_class_name)
+	{
+		return AddGameObject(EntityManager::GetInst().CreateEntityAs<GameObject>(concrete_class_name));
+	}
+	GameObject* Scene::FindGameObject(const std::string_view name) const
+	{
+		for (const auto& obj : game_objects_)
+		{
+			if (obj->GetName() == name)
+			{
+				return obj.get();
+			}
+		}
+		return nullptr;
+	}
+	void Scene::SetCollisionMask(uint32_t layer_a, uint32_t layer_b, bool can_collide)
+	{
+		ASSERT_F(layer_a < kMaxLayers && layer_b < kMaxLayers, "Layer index out of bounds");
+
+		collision_mask_[layer_a][layer_b] = can_collide;
+		collision_mask_[layer_b][layer_a] = can_collide; // Ensure symmetry
+	}
+
 	void Scene::Init()
 	{
 		Super::Init();
 
-		collision_system_2D_.Init();
+		collision_system_2D_->Init();
+	}
+
+	void Scene::FrameStart()
+	{
+		OnFrameStart();
+
+
 	}
 
 	void Scene::FixedUpdate()
@@ -34,7 +67,7 @@ namespace engine
 			}
 		}
 
-		collision_system_2D_.FixedUpdate();
+		collision_system_2D_->FixedUpdate();
 	}
 
 	void Scene::Update()
@@ -44,8 +77,8 @@ namespace engine
 		size_t snapshot_size = game_objects_.size();	// Snapshot
 		for (size_t i = 0; i < snapshot_size; ++i)
 		{
-			if(game_objects_[i]->IsActive())
-			{ 
+			if (game_objects_[i]->IsActive())
+			{
 				game_objects_[i]->Update();
 			}
 		}
@@ -72,7 +105,7 @@ namespace engine
 		for (size_t i = 0; i < snapshot_size; ++i)
 		{
 			ASSERT(game_objects_[i] != nullptr);
-			if(false == game_objects_[i]->IsDestroyed())
+			if (false == game_objects_[i]->IsDestroyed())
 			{
 				game_objects_[i]->FrameEnd(graveyard_[graveyard_toggle_]);
 			}
@@ -80,6 +113,53 @@ namespace engine
 
 		// Phase 2: Destroy된 GameObject들의 OnDestroy 호출 및 Graveyard 이동
 		// 연쇄적으로 꼬리를 물고 Destroy되는 GameObject가 있을 수 있으므로, 최대 kMaxDestroyPassCount번 반복
+		DrainDestroyed();
+	}
+
+	void Scene::Shutdown()
+	{
+		OnShutdown();
+
+		// 모든 GameObject를 Destroy
+		for (size_t i = 0; i < game_objects_.size(); ++i)
+		{
+			if (game_objects_[i])
+			{
+				game_objects_[i]->Destroy();
+			}
+		}
+		// Destroy된 GameObject들을 모두 Drain
+		// 두 번 호출: graveyard[0], graveyard[1]을 모두 지우기 위함
+		DrainDestroyed();
+		DrainDestroyed();
+
+		ASSERT(game_objects_.empty() && graveyard_[graveyard_toggle_].empty() && graveyard_[!graveyard_toggle_].empty());
+	}
+
+	GameObject* Scene::AddGameObject(std::unique_ptr<GameObject> obj)
+	{
+		GameObject* raw_ptr = obj.get();
+		if (obj)
+		{
+			obj->SetOwnerScene(this);
+			game_objects_.push_back(std::move(obj));
+		}
+		return raw_ptr;
+	}
+
+	void Scene::FlushPendingAdd()
+	{
+		size_t snapshot_size = game_objects_.size();	// Snapshot
+		for (size_t i = 0; i < snapshot_size; ++i)
+		{
+			if (game_objects_[i]->HasPendingComponents())
+			{
+				game_objects_[i]->FlushPendingComponents();
+			}
+		}
+	}
+	void Scene::DrainDestroyed()
+	{
 		uint32_t pass_count = 0;
 		for (; pass_count <= kMaxDrainLoopCount; ++pass_count)
 		{
@@ -88,9 +168,9 @@ namespace engine
 			size_t snapshot_size = game_objects_.size();	// Snapshot
 			for (size_t i = 0; i < snapshot_size; ++i)
 			{
-				if (game_objects_[i] == nullptr || false == game_objects_[i]->IsDestroyed()) 
+				if (game_objects_[i] == nullptr || false == game_objects_[i]->IsDestroyed())
 				{
-					continue; 
+					continue;
 				}
 
 				//GameObject 자체가 Destroy되었으면 OnDestroy 호출 후, graveyard로 GameObject를 이동
@@ -119,51 +199,5 @@ namespace engine
 
 		// 토글 변경
 		graveyard_toggle_ = !graveyard_toggle_;
-	}
-
-	GameObject* Scene::AddGameObject(const HashedStringView& concrete_class_name)
-	{
-		return AddGameObject(EntityManager::GetInst().CreateEntityAs<GameObject>(concrete_class_name));
-	}
-	GameObject* Scene::FindGameObject(const std::string_view name) const
-	{
-		for (const auto& obj : game_objects_)
-		{
-			if (obj->GetName() == name)
-			{
-				return obj.get();
-			}
-		}
-		return nullptr;
-	}
-	void Scene::SetCollisionMask(uint32_t layer_a, uint32_t layer_b, bool can_collide)
-	{
-		ASSERT_F(layer_a < kMaxLayers && layer_b < kMaxLayers, "Layer index out of bounds");
-
-		collision_mask_[layer_a][layer_b] = can_collide;
-		collision_mask_[layer_b][layer_a] = can_collide; // Ensure symmetry
-	}
-
-	GameObject* Scene::AddGameObject(std::unique_ptr<GameObject> obj)
-	{
-		GameObject* raw_ptr = obj.get();
-		if (obj)
-		{
-			obj->SetOwnerScene(this);
-			game_objects_.push_back(std::move(obj));
-		}
-		return raw_ptr;
-	}
-
-	void Scene::FlushPendingAdd()
-	{
-		size_t snapshot_size = game_objects_.size();	// Snapshot
-		for (size_t i = 0; i < snapshot_size; ++i)
-		{
-			if (game_objects_[i]->HasPendingComponents())
-			{
-				game_objects_[i]->FlushPendingComponents();
-			}
-		}
 	}
 }

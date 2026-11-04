@@ -6,8 +6,8 @@
 #include <Engine/Core/Constants.h>
 #include <Engine/Core/Geometry.h>
 
+#include <Engine/Render/RenderPass/RenderPassTypes.h>
 #include <Engine/Render/RenderTypes.h>
-
 
 namespace engine
 {

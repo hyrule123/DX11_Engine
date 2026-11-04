@@ -23,7 +23,11 @@ namespace engine
 		void LateUpdate();
 		void FrameEnd();
 
+		Scene* GetCurrentScene() const { return cur_scene_.get(); }
+
+	private:
 		void ChangeSceneNow();
+		void ShutdownCurrentScene();
 
 	private:
 		std::unique_ptr<Scene> cur_scene_;

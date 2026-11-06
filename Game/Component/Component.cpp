@@ -61,8 +61,9 @@ namespace engine
 
 	void Component::Unsubscribe(SubscribeType type)
 	{
-		if (IsDestroyed() || is_subscribing_.test((size_t)type) == false) { return; }
+		if (is_subscribing_.test((size_t)type) == false) { return; }
 		is_subscribing_.set((size_t)type, false);
+
 		if (has_awaken_)
 		{
 			GameObject* owner = GetOwnerGameObject();

@@ -34,7 +34,7 @@ namespace engine
 	{
 		tl_is_main_thread = true; // 메인 Thread에서만 true로 설정
 
-		HRESULT hr = CoInitializeEx(NULL, COINIT_MULTITHREADED);
+		// COM 객체 멀티스레드 지원 on
 		const HRESULT com_result = CoInitializeEx(nullptr, COINIT_MULTITHREADED);
 		CHECK_F(SUCCEEDED(com_result), "CoInitializeEx failed: 0x{:08X}", static_cast<uint32_t>(com_result));
 

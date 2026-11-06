@@ -21,6 +21,15 @@ namespace engine
 
 	GraphicsDevice::~GraphicsDevice()
 	{
+#ifndef NDEBUG
+		ComPtr<ID3D11Debug> debug = {};
+		if (SUCCEEDED(device_.As(&debug)))
+		{
+			context_->ClearState();
+			context_->Flush();
+			debug->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL | D3D11_RLDO_IGNORE_INTERNAL);
+		}
+#endif
 	}
 
 	bool GraphicsDevice::Init()

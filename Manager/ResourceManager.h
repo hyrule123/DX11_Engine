@@ -6,6 +6,9 @@
 
 #include <unordered_set>
 
+// 쓰기: unique_lock, 읽기: shared_lock
+#include <shared_mutex>
+
 namespace engine
 {
 	class Resource;
@@ -30,24 +33,24 @@ namespace engine
 		}
 
 		template <typename T>
-		std::shared_ptr<T> LoadFromFile(const HashedStringView& res_key)
+		std::shared_ptr<T> Load(const HashedStringView& res_key)
 		{
 			std::shared_ptr<T> resource = Find<T>(res_key);
 			if (resource) { return resource; }
-			resource = LoadFromFileWithoutAdd<T>(res_key);
-			if (resource) 
-			{ 
-				resources_.insert(res_key.GetStringView(), resource);
-			}
-			return resource;
+
+			// 잠금 밖에서 로드: 로드 중 다른 리소스를 재귀적으로 로드할 수 있음
+			resource = LoadUncached<T>(res_key);
+			if (resource == nullptr) { return nullptr; }
+
+			return std::dynamic_pointer_cast<T>(AddOrGetResource(res_key, resource));
 		}
 
 		template <typename T>
-		std::shared_ptr<T> LoadFromFileWithoutAdd(const HashedStringView& res_key)
+		std::shared_ptr<T> LoadUncached(const HashedStringView& res_key)
 		{
 			static_assert(std::is_base_of_v<Resource, T>, "T must be derived from Resource");
 			std::shared_ptr<T> resource = EntityManager::CreateEntity<T>();
-			if (false == resource->LoadFromFile(resource_dir_ / res_key.GetStringView()))
+			if (false == resource->Load(resource_dir_ / res_key.GetStringView()))
 			{
 				return nullptr;
 			}
@@ -58,6 +61,7 @@ namespace engine
 
 		void SetDefaultResource(std::shared_ptr<Resource> resource)
 		{
+			ASSERT_MAIN_THREAD();
 			default_resources_.insert(resource);
 		}
 
@@ -68,12 +72,17 @@ namespace engine
 		bool Init();
 		void LoadDefaultResources();
 
+		// 이미 같은 키가 있으면 기존 리소스를 반환 (동시 로드 경쟁 시 먼저 삽입한 쪽이 유지됨)
+		std::shared_ptr<Resource> AddOrGetResource(const HashedStringView& res_key, std::shared_ptr<Resource> resource);
+
 	private:
 		StringHashTable<std::shared_ptr<Resource>> resources_;
 		std::unordered_set<std::shared_ptr<Resource>> default_resources_;
 
 		std::filesystem::path program_path_ = {};
 		std::filesystem::path resource_dir_ = {};
+
+		std::shared_mutex resources_mutex_ = {};  // resources_ 보호. 잠근 채로 리소스를 로드하지 말 것
 	};
 }
 

@@ -96,4 +96,10 @@
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
+namespace engine
+{
+    // 엔진 초기화 시 메인 스레드에서만 true로 설정
+    inline thread_local bool tl_is_main_thread = false;
+}
 
+#define ASSERT_MAIN_THREAD() ASSERT_F(engine::tl_is_main_thread, "메인 스레드 전용 함수입니다.")

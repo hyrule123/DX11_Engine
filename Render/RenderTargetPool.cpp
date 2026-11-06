@@ -30,6 +30,8 @@ namespace engine
 
 	std::shared_ptr<RenderTarget> RenderTargetPool::AcquireColor(const HashedStringView& name, const ColorTargetDesc& desc)
 	{
+		ASSERT_MAIN_THREAD();
+
 		bool failed = false;
 		if (Entry* entry = FindExisting(name, Kind::Color, failed))
 		{
@@ -65,6 +67,8 @@ namespace engine
 
 	std::shared_ptr<DepthStencilTarget> RenderTargetPool::AcquireDepth(const HashedStringView& name, const DepthTargetDesc& desc)
 	{
+		ASSERT_MAIN_THREAD();
+
 		bool failed = false;
 		if (Entry* entry = FindExisting(name, Kind::Depth, failed))
 		{

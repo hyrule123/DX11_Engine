@@ -66,7 +66,6 @@ namespace engine
 		// - 전역에 등록한 항목은 OnShutdown()에서 해제한다. 커스텀 패스는 엔진이 자동으로 해제한다.
 		virtual void OnActivate() {};
 		virtual void OnFrameStart() {};
-		virtual void OnActivate() {};
 		virtual void OnShutdown() {};
 
 		void SetRenderViewDesc(const RenderViewDesc& desc) { render_view_desc_ = desc; }

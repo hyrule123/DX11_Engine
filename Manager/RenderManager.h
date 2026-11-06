@@ -77,9 +77,15 @@ namespace engine
         void PushDebugCircle(const DebugDrawPerInstanceData&) {};
 #endif // ENABLE_DEBUG_DRAW
 
-        GPUBufferBindingTable& GetPerFrameBindingTable() { return per_frame_binding_table_; }
+        GPUBufferBindingTable& GetPerFrameBindingTable() { 
+            ASSERT_MAIN_THREAD();
+            return per_frame_binding_table_; 
+        }
 
-		RenderTargetPool& GetRenderTargetPool() { return render_target_pool_; }
+		RenderTargetPool& GetRenderTargetPool() { 
+            ASSERT_MAIN_THREAD();
+            return render_target_pool_;
+        }
 
         void ReleaseCustomPasses();
 

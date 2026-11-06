@@ -23,7 +23,10 @@ namespace engine
 		void LateUpdate();
 		void FrameEnd();
 
-		Scene* GetCurrentScene() const { return cur_scene_.get(); }
+		Scene* GetCurrentScene() const { 
+			ASSERT_MAIN_THREAD();
+			return cur_scene_.get(); 
+		}
 
 	private:
 		void ChangeSceneNow();

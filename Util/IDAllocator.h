@@ -4,6 +4,7 @@
 #include <Engine/Core/Constants.h>
 
 #include <vector>
+#include <mutex>
 
 namespace engine {
 
@@ -16,7 +17,8 @@ namespace engine {
     // kBitWidth는 RenderKey에 패킹될 비트 폭. 발급 상한을 여기서 묶어
     // 키 생성 시점이 아니라 발급 시점에 오버플로를 잡는다.
     //
-    // 스레드 안전성 없음 — 단일 스레드 리소스 로딩 전제.
+    // 스레드 안전: Acquire/Release/GetAliveCount는 Tag별 mutex로 보호된다.
+    //
     // 직접 쓰지 않고 아래 ScopedID를 통해서만 사용한다.
     constexpr uint32_t kInvalidID = 0;
 
@@ -36,6 +38,8 @@ namespace engine {
         IDAllocator() = delete;
 
         static IDType Acquire() {
+			std::lock_guard<std::mutex> lock(Mutex());
+
             std::vector<IDType>& free_list = FreeList();
             if (!free_list.empty()) {
                 const IDType id = free_list.back();
@@ -51,6 +55,8 @@ namespace engine {
         }
 
         static void Release(IDType id) {
+			std::lock_guard<std::mutex> lock(Mutex());
+
             ASSERT_F(id != kInvalidID, "Releasing an invalid ID.");
             ASSERT_F(id < next_id_, "Releasing an ID that was never issued.");
             ASSERT_F(IsAlive(id), "Double release detected.");
@@ -61,6 +67,7 @@ namespace engine {
 
         // 디버그/통계용 — 현재 살아있는 ID 개수
         static IDType GetAliveCount() {
+			std::lock_guard<std::mutex> lock(Mutex());
             return next_id_ - 1 - static_cast<IDType>(FreeList().size());
         }
 
@@ -75,6 +82,14 @@ namespace engine {
 
         // 상수 초기화라 정적 초기화 순서 문제 없음.
         inline static IDType next_id_ = kInvalidID + 1;
+
+        // FreeList()와 같은 이유로 의도적 leak. (static 초기화 순서 문제)
+        // static 소멸 후 Release()가 호출되어도 유효한 mutex를 보장한다.
+        static std::mutex& Mutex()
+        {
+            static std::mutex* mutex = new std::mutex();
+            return *mutex;
+        }
 
 #if defined(_DEBUG)
         // index == ID. 0번 슬롯은 kInvalidID 자리라 사용하지 않는다.

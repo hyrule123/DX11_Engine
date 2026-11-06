@@ -78,7 +78,7 @@ namespace engine
 	bool Material::SetTexture(ShaderStageFlags stage_flag, RegisterT slot, const HashedStringView& texture_name)
 	{
 		std::shared_ptr<Texture2D> tex =
-			ResourceManager::GetInst().LoadFromFile<Texture2D>(texture_name);
+			ResourceManager::GetInst().Load<Texture2D>(texture_name);
 
 		if (tex == nullptr) { return false; }
 

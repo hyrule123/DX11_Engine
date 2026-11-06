@@ -90,6 +90,8 @@ namespace engine
 
 	void RenderManager::Render(const RenderViewDesc& desc)
 	{
+		ASSERT_MAIN_THREAD();
+
 		ScopedValue<bool> scoped_val(is_rendering, true);
 
 		const std::span<const render_pass::ID> pass_order = desc.pass_order.empty()
@@ -212,6 +214,8 @@ namespace engine
 
 	void RenderManager::RegisterRenderer(Renderer* renderer)
 	{
+		ASSERT_MAIN_THREAD();
+
 		ASSERT_F(is_rendering == false, "Rendering 중에는 Renderer를 등록할 수 없습니다.");
 		ASSERT(renderer);
 		ASSERT_F(renderer->IsRegistered() == false, "이미 등록된 Renderer입니다.");
@@ -222,6 +226,8 @@ namespace engine
 
 	void RenderManager::UnregisterRenderer(Renderer* renderer)
 	{
+		ASSERT_MAIN_THREAD();
+
 		ASSERT_F(is_rendering == false, "Rendering 중에는 Renderer 등록을 해제할 수 없습니다.");
 		ASSERT(renderer);
 		if (renderer->IsRegistered() == false)
@@ -300,6 +306,8 @@ namespace engine
 
 	void RenderManager::RegisterRenderPassImpl(std::unique_ptr<RenderPass> render_pass, bool is_mesh_renderpass)
 	{
+		ASSERT_MAIN_THREAD();
+
 		ASSERT(render_pass != nullptr);
 
 		const size_t idx = (size_t)render_pass->GetID();

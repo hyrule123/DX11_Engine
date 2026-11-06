@@ -32,7 +32,7 @@ namespace engine
 
 	bool PipelineState::SetVertexShader(const HashedStringView& vs_name)
 	{
-		std::shared_ptr<VertexShader> vs = ResourceManager::GetInst().LoadFromFile<VertexShader>(vs_name);
+		std::shared_ptr<VertexShader> vs = ResourceManager::GetInst().Load<VertexShader>(vs_name);
 		bool is_vs = (bool)vs;
 		if (is_vs) { SetVertexShader(std::move(vs)); }
 		return is_vs;
@@ -70,7 +70,7 @@ namespace engine
 
 	bool PipelineState::SetPixelShader(const HashedStringView& ps_name)
 	{
-		SetPixelShader(ResourceManager::GetInst().LoadFromFile<PixelShader>(ps_name));
+		SetPixelShader(ResourceManager::GetInst().Load<PixelShader>(ps_name));
 		return (bool)pixel_shader_;
 	}
 	bool PipelineState::SetRasterizerState(const HashedStringView& rss_name)

@@ -30,6 +30,8 @@ namespace engine
 
 	bool GameEngine::Init()
 	{
+		tl_is_main_thread = true; // 메인 Thread에서만 true로 설정
+
 		TimeManager::GetInst().Init();
 
 		HandlePointerPool::GetInst();	//싱글턴 소멸 시점 고정

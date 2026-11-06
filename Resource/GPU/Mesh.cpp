@@ -43,7 +43,7 @@ namespace engine
 		context->DrawIndexedInstanced((UINT)sub_mesh.index_count, (UINT)args.instance_count, (UINT)sub_mesh.index_start, 0, (UINT)args.instance_start);
 	}
 
-	bool Mesh::LoadFromFile(const std::filesystem::path& path)
+	bool Mesh::Load(const std::filesystem::path& path)
 	{
 		ASSERT(false && "아직은... 미구현(차후 fbx 임포트 시 구현 예정)");
 		return false;

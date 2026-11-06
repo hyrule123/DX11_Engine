@@ -21,6 +21,8 @@ namespace engine
 
 	void SceneManager::ChangeScene(std::unique_ptr<Scene> scene)
 	{
+		ASSERT_MAIN_THREAD();
+
 		next_scene_ = std::move(scene);
 
 		if (next_scene_)

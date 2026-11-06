@@ -36,21 +36,40 @@ namespace engine
 	}
 	void ResourceManager::LoadDefaultResources()
 	{
+		ASSERT_MAIN_THREAD();
+
 		// ============ 기본 리소스 로드 ===============
 		DefaultRes::LoadDefaultResources();
 	}
+	std::shared_ptr<Resource> ResourceManager::AddOrGetResource(const HashedStringView& res_key, std::shared_ptr<Resource> resource)
+	{
+		std::unique_lock lock(resources_mutex_);
+
+		auto [iter, inserted] = resources_.cont.try_emplace(std::string(res_key.GetStringView()), std::move(resource));
+		return iter->second;
+	}
 	std::shared_ptr<Resource> ResourceManager::Find(const HashedStringView& res_key)
 	{
-		std::shared_ptr<Resource> ret = nullptr;
+		std::shared_lock lock(resources_mutex_); // 공유 잠금(읽기)
+
 		auto iter = resources_.find(res_key);
-		if (iter != resources_.end()) { ret = iter->second; }
-		return ret;
+		if (iter != resources_.end())
+		{
+			return iter->second;
+		}
+		return nullptr;
 	}
 	bool ResourceManager::AddResource(const HashedStringView& res_key, std::shared_ptr<Resource> resource)
 	{
+		std::unique_lock lock(resources_mutex_); // 쓰기 잠금
+
+		// 읽기 시점에는 shared, 쓰기 시점에는 unique를 쓴다면?
+		// -> 위험합니다. 검사와 삽입이 하나의 동작이 아니게 되기 때문입니다. 잠금을 바꾸는 사이에 다른 스레드가 끼어들 수 있습니다. 
+		// 이런 오류를 TOCTOU(Time-of-check to time-of-use)라고 합니다.
+
 		auto iter = resources_.find(res_key);
-		if (iter != resources_.end()) 
-		{ 
+		if (iter != resources_.end())
+		{
 			ASSERT_F(false, "Resource already exists");
 			return false;
 		}

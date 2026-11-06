@@ -27,7 +27,7 @@ namespace engine
         Texture2D(const HashedStringView& concrete_class_name);
         virtual ~Texture2D() override;
 
-        virtual bool LoadFromFile(const std::filesystem::path& res_path) override;
+        virtual bool Load(const std::filesystem::path& res_path) override;
 		bool SaveToFile(const std::filesystem::path& res_path);
 
         void BindSRV(

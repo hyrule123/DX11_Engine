@@ -2,6 +2,8 @@
 #include <Engine/Core/CoreMinimal.h>
 #include <Engine/Core/Singleton.h>
 
+#include <atomic>
+
 //////////////////////////////////////////////
 // Entity + EntityManager + EntityRegistrar //
 //////////////////////////////////////////////
@@ -39,7 +41,7 @@ namespace engine
         HashedStringView concrete_class_name_ = {}; //컴파일 타임에 결정되는 클래스 이름
 
         uint32_t instance_ID_ = 0;	//런타임 ID(매 실행마다 달라질 수 있음)
-        inline static uint32_t next_instance_ID_ = 1;
+        inline static std::atomic<uint32_t> next_instance_ID_ = 1;
     };
 
     class EntityManager

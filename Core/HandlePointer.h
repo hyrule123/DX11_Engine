@@ -1,10 +1,12 @@
 #pragma once
 #include <Engine/Core/CoreTypes.h>
 
-#include <vector>
 #include <limits>
 #include <type_traits>
 #include <concepts>
+#include <atomic>
+#include <mutex>
+#include <array>
 
 namespace engine
 {
@@ -55,6 +57,19 @@ namespace engine
         uint64_t value_ = {};
     };
 
+    // 동시성 규칙
+    // - Create/Destroy: mutex로 보호된다. 여러 스레드에서 호출할 수 있다.
+    // 
+    // - Resolve/IsAlive: 잠금을 사용하지 않는다. 여러 스레드에서 호출할 수 있다.
+    //   청크는 할당 후 이동·해제되지 않으므로 슬롯 주소는 풀의 수명 동안 고정된다.
+    // 
+    // - 이 풀은 슬롯의 일관성만 보장하며, 객체의 수명은 보장하지 않는다.
+    //   Resolve가 반환한 포인터는 객체가 파괴되면 즉시 무효가 되므로,
+    //   다른 스레드가 파괴할 수 있는 객체의 handle을 Resolve해서는 안 된다.
+    //   (씬과 그 객체는 한 번에 한 스레드만 다룬다는 규칙으로 보장한다)
+    // 
+    // - 생성 중인 객체의 handle을 다른 스레드에 넘기면 안 된다.
+    //   enable_handle_from_this는 파생 클래스 생성 전에 슬롯을 등록하기 때문이다.
     class HandlePointerPool
     {
         template <typename T>
@@ -73,40 +88,86 @@ namespace engine
         }
 
     private:
+        struct Slot
+        {
+            std::atomic<void*> object = nullptr;		// Resolve가 잠금 없이 읽음
+            std::atomic<uint32_t> generation = 1u;		// Resolve가 잠금 없이 읽음
+            uint32_t next_free = kUint32Max;			// mutex_로 보호
+        };
+
+    private:
         // 싱글턴 패턴의 소멸 시점을 정하고 싶다면 GetInst()를 미리 해 둘것.
         HandlePointerPool();
         ~HandlePointerPool();
 
         void* Resolve(Handle handle) const
         {
-            if (!IsAlive(handle)) { return nullptr; }
-            return slots_[handle.GetSlotID()].object;
+            if (!handle.IsValid())
+            {
+                return nullptr;
+            }
+
+            const Slot* slot = FindSlot(handle.GetSlotID());
+            if (slot == nullptr)
+            {
+                return nullptr;
+            }
+
+            // object를 먼저 읽고 generation을 나중에 확인한다.
+            // generation이 그대로라면 읽은 object는 이 handle의 객체임이 보장된다.
+            void* object = slot->object.load(std::memory_order_acquire);
+            if (slot->generation.load(std::memory_order_acquire) != handle.GetGeneration())
+            {
+                return nullptr;
+            }
+            return object;
+        }
+
+        bool IsAlive(Handle handle) const
+        {
+            return Resolve(handle) != nullptr;
+        }
+
+        const Slot* FindSlot(uint32_t slot_id) const
+        {
+            const uint32_t chunk_index = GetChunkIndex(slot_id);
+            if (chunk_index >= kMaxChunkCount)
+            {
+                return nullptr;
+            }
+
+            const Slot* chunk = chunks_[chunk_index].load(std::memory_order_acquire);
+            if (chunk == nullptr)
+            {
+                return nullptr;
+            }
+            return &chunk[GetSlotIndexInChunk(slot_id)];
         }
 
         Handle Create(void* object);
         void Destroy(Handle handle);
 
-        bool IsAlive(Handle handle) const
+        static constexpr uint32_t GetSlotIndexInChunk(uint32_t slot_id)
         {
-            if (!handle.IsValid()) { return false; }
-
-            uint32_t slot_id = handle.GetSlotID();
-            if (slot_id >= slots_.size()) { return false; }
-
-            const Slot& slot = slots_[slot_id];
-            return slot.object != nullptr &&
-                slot.generation == handle.GetGeneration();
+            return slot_id & kSlotIndexMask;
         }
 
-        struct Slot
+        static constexpr uint32_t GetChunkIndex(uint32_t slot_id)
         {
-            void* object = nullptr;
-            uint32_t generation = 1u;
-            uint32_t next_free = kUint32Max;
-        };
+            return slot_id >> kSlotBitsPerChunk;
+        }
 
-        std::vector<Slot> slots_;
+    private:
+        static constexpr uint32_t kSlotBitsPerChunk = 12;
+        static constexpr uint32_t kSlotsPerChunk = 1u << kSlotBitsPerChunk;	// 4096
+        static constexpr uint32_t kSlotIndexMask = kSlotsPerChunk - 1;
+        static constexpr uint32_t kMaxChunkCount = 1024;
+
+		std::array<std::atomic<Slot*>, kMaxChunkCount> chunks_ = {};
+        uint32_t allocated_slot_count_ = {};    // mutex 안에서만 읽고 쓸 것.(Data race 위험)
         uint32_t next_free_index_ = kUint32Max;
+
+        std::mutex mutex_ = {};
     };
 
     //전방 선언

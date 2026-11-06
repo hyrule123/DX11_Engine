@@ -25,7 +25,10 @@ namespace engine
 
 	public:
 		ID3D11Device* GetDevice() const { return device_.Get(); }
-		ID3D11DeviceContext* GetContext() const { return context_.Get(); }
+		ID3D11DeviceContext* GetContext() const { 
+			ASSERT_MAIN_THREAD(); // Context는 메인 스레드에서만 접근 가능
+			return context_.Get(); 
+		}
 
 		void OnScreenSizeChange(uint32_t width, uint32_t height);
 		bool SetResolution(uint32_t resolution_width, uint32_t resolution_height);

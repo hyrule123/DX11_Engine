@@ -35,9 +35,9 @@ namespace engine
 
 	Texture2D::~Texture2D()
 	{}
-	bool Texture2D::LoadFromFile(const std::filesystem::path& res_path)
+	bool Texture2D::Load(const std::filesystem::path& res_path)
 	{
-		if (false == Super::LoadFromFile(res_path)) { return false; }
+		if (false == Super::Load(res_path)) { return false; }
 
 		if (false == res_path.has_extension())
 		{

@@ -24,6 +24,8 @@
 #include <unordered_map>
 #include <map>
 #include <filesystem>
+#include <atomic>
+#include <mutex>
 
 //DirectX
 #include <d3d11.h>

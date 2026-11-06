@@ -32,6 +32,13 @@ namespace engine
 		Scene(const HashedStringView& concrete_class_name);
 		virtual ~Scene() override;
 
+		// 씬 생성 시 호출 (CreateEntity 내부). 워커 스레드에서 실행될 수 있다.
+		// - 허용: 리소스 로드, GPU 리소스 생성(Device), GameObject/Component 생성, 씬 내부 설정
+		// - 금지: RenderManager·RenderTargetPool·DeviceContext 접근, SceneManager::GetCurrentScene(),
+		//         그 밖에 전역 상태 변경 (이 시점에는 이전 씬이 아직 실행 중일 수 있음)
+		// - 생성한 Component의 Awake/OnEnable은 이후 메인 스레드의 Flush에서 호출된다.
+		virtual void Init() = 0;
+
 		//추가 예약, 실제 추가는 FlushPendingGameObjects() 타이밍
 		template <typename T> requires std::is_base_of_v<GameObject, T>
 		T* AddGameObject() {
@@ -53,12 +60,6 @@ namespace engine
 		weak_handle_ptr<Camera> GetMainCamera() const { return render_view_desc_.camera; }
 
 	protected:
-		// 씬 생성 시 호출 (CreateEntity 내부). 워커 스레드에서 실행될 수 있다.
-		// - 허용: 리소스 로드, GPU 리소스 생성(Device), GameObject/Component 생성, 씬 내부 설정
-		// - 금지: RenderManager·RenderTargetPool·DeviceContext 접근, SceneManager::GetCurrentScene(),
-		//         그 밖에 전역 상태 변경 (이 시점에는 이전 씬이 아직 실행 중일 수 있음)
-		// - 생성한 Component의 Awake/OnEnable은 이후 메인 스레드의 Flush에서 호출된다.
-		virtual void Init() = 0;
 
 		// 이전 씬 정리 후, 이 씬이 현재 씬으로 교체된 직후 메인 스레드에서 1회 호출.
 		// - 호출 시점에는 GetCurrentScene()이 이 씬을 반환하며, 첫 업데이트보다 먼저 실행된다.

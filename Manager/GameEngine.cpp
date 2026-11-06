@@ -14,6 +14,8 @@
 
 #include <Engine/Game/Scene.h>
 
+#include <DirectXTex/Include/DirectXTex.h>
+
 namespace engine
 {
 	GameEngine::GameEngine()
@@ -31,6 +33,10 @@ namespace engine
 	bool GameEngine::Init()
 	{
 		tl_is_main_thread = true; // 메인 Thread에서만 true로 설정
+
+		HRESULT hr = CoInitializeEx(NULL, COINIT_MULTITHREADED);
+		const HRESULT com_result = CoInitializeEx(nullptr, COINIT_MULTITHREADED);
+		CHECK_F(SUCCEEDED(com_result), "CoInitializeEx failed: 0x{:08X}", static_cast<uint32_t>(com_result));
 
 		TimeManager::GetInst().Init();
 
@@ -111,6 +117,10 @@ namespace engine
 	void GameEngine::Shutdown()
 	{
 		SceneManager::GetInst().ShutdownCurrentScene();
+
+		// COM 해제 전에 DirectXTex 전역 WIC 팩토리 해제
+		DirectX::SetWICFactory(nullptr);
+		::CoUninitialize();
 	}
 }
 

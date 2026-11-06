@@ -73,6 +73,7 @@ namespace engine
 		void SetMainRenderTarget(std::shared_ptr<RenderTargetGroup> rtg) { render_view_desc_.rtg = rtg; }
 		void SetMainViewClearSettings(const ClearSettings& clear_settings) { render_view_desc_.clear_settings = clear_settings; }
 		void SetRenderPassOrder(std::vector<render_pass::ID> order) { render_view_desc_.pass_order = std::move(order); }
+		void SetMainViewViewport(const ViewportRect& viewport) { render_view_desc_.viewport = viewport; }
 
 	private:
 		void FrameStart();

@@ -14,49 +14,24 @@ namespace engine
 	RenderTargetGroup::RenderTargetGroup()
 		: Super(RenderTargetGroup::kClassConcreteName)
 	{
-#pragma region Viewport
-		//Viewport 생성
-		viewport_.TopLeftX = 0.0f;
-		viewport_.TopLeftY = 0.0f;
-
-		//Width와 Height는 렌더타겟의 크기에 맞게 설정되어야 함
-		viewport_.Width = 0.0f;
-		viewport_.Height = 0.0f;
-
-		viewport_.MinDepth = 0.0f;
-		viewport_.MaxDepth = 1.0f;
-#pragma endregion Viewport
 	}
 	RenderTargetGroup::~RenderTargetGroup()
 	{
 	}
-	void RenderTargetGroup::SetRenderTargets(const RenderTargetArray& RTVs)
+
+	void RenderTargetGroup::SetRenderTargets(const RenderTargetArray& rtv_arr)
 	{
-		render_target_buffers_ = RTVs;
-
-		bool size_found = false;
-
-		for (size_t i = 0; i < render_target_buffers_.size(); ++i)
-		{
-			if (render_target_buffers_[i])
-			{
-				if (!size_found)
-				{
-					viewport_.Width = (float)render_target_buffers_[i]->GetWidth();
-					viewport_.Height = (float)render_target_buffers_[i]->GetHeight();
-					size_found = true;
-				}
-			}
-		}
-
-//VERIFY
+		render_target_buffers_ = rtv_arr;
+		
+		//VERIFY
 #ifndef NDEBUG
+		const uint32_2 target_size = GetTargetSize();
 		for (size_t i = 0; i < render_target_buffers_.size(); ++i)
 		{
 			if (render_target_buffers_[i])
 			{
-				if (viewport_.Width != (float)render_target_buffers_[i]->GetWidth() ||
-					viewport_.Height != (float)render_target_buffers_[i]->GetHeight())
+				if (target_size.x != render_target_buffers_[i]->GetWidth() ||
+					target_size.y != render_target_buffers_[i]->GetHeight())
 				{
 					ASSERT_F(false, "Size mismatch in RenderTargetGroup");
 				}
@@ -147,7 +122,17 @@ namespace engine
 		}
 
 		context->OMSetRenderTargets((UINT)tex_count, rtvs.data(), dsv);
-		context->RSSetViewports(1, &viewport_);
+
+		D3D11_VIEWPORT viewport = {};
+		viewport.MinDepth = 0.0f;
+		viewport.MaxDepth = 1.0f;
+
+		uint32_2 target_size = GetTargetSize();
+
+		viewport.Width = static_cast<FLOAT>(target_size.x);
+		viewport.Height = static_cast<FLOAT>(target_size.y);
+
+		context->RSSetViewports(1, &viewport);
 	}
 	void RenderTargetGroup::UnbindOutputMerger(ID3D11DeviceContext* context)
 	{
@@ -186,24 +171,21 @@ namespace engine
 		render_target_buffers_.fill(nullptr);
 		dsv_ = nullptr;
 	}
-	void RenderTargetGroup::Resize(uint32_t width, uint32_t height)
-	{
-		if (!requires_resize_) 
-		{ 
-			DEBUG_LOG("No resize needed for RenderTargetGroup");
-			return;
-		}
 
-		for (auto& rtv : render_target_buffers_)
+	uint2 RenderTargetGroup::GetTargetSize() const
+	{
+		for (const auto& render_target : render_target_buffers_)
 		{
-			if (rtv)
+			if (render_target)
 			{
-				rtv->Resize(width, height);
+				return { render_target->GetWidth(), render_target->GetHeight() };
 			}
 		}
+
 		if (dsv_)
 		{
-			dsv_->Resize(width, height);
+			return { dsv_->GetWidth(), dsv_->GetHeight() };
 		}
+		return {};
 	}
 }

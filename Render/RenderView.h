@@ -26,7 +26,7 @@ namespace engine
 		RenderView() = default;
 
 		void SetCamera(const Camera& camera);
-		void SetOutput(RenderTargetGroup* target, const ClearSettings& clear_settings);
+		void SetOutput(RenderTargetGroup* target, const ClearSettings& clear_settings, const ViewportRect& viewport);
 
 		// 패스가 기본 출력 대상을 바인딩할 때 사용 (MeshRenderPass::BindTargets 기본 구현)
 		void BindTargets(ID3D11DeviceContext* context) const;
@@ -75,5 +75,6 @@ namespace engine
 
 		RenderTargetGroup* target_ = nullptr;
 		ClearSettings clear_settings_ = {};
+		ViewportRect viewport_ = {};
 	};
 }

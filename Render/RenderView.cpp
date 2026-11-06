@@ -19,10 +19,11 @@ namespace engine
 		view_bounds_2d_ = is_orthographic_ ? camera.ComputeViewBounds2D() : AABB2D{};
 	}
 
-	void RenderView::SetOutput(RenderTargetGroup* target, const ClearSettings& clear_settings)
+	void RenderView::SetOutput(RenderTargetGroup* target, const ClearSettings& clear_settings, const ViewportRect& viewport)
 	{
 		target_ = target;
 		clear_settings_ = clear_settings;
+		viewport_ = viewport;
 	}
 
 	void RenderView::BindTargets(ID3D11DeviceContext* context) const
@@ -35,6 +36,20 @@ namespace engine
 
 		// RTV/DSV + 뷰포트 함께 설정
 		target_->BindOutputMerger(context);
+
+		if (viewport_.IsFullTarget() == false)
+		{
+			const uint2 target_size = target_->GetTargetSize();
+
+			D3D11_VIEWPORT vp = {};
+			vp.TopLeftX = viewport_.x * static_cast<float>(target_size.x);
+			vp.TopLeftY = viewport_.y * static_cast<float>(target_size.y);
+			vp.Width = viewport_.width * static_cast<float>(target_size.x);
+			vp.Height = viewport_.height * static_cast<float>(target_size.y);
+			vp.MinDepth = 0.0f;
+			vp.MaxDepth = 1.0f;
+			context->RSSetViewports(1, &vp);
+		}
 	}
 
 	void RenderView::ClearTargets(ID3D11DeviceContext* context) const

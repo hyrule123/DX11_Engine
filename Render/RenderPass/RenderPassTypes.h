@@ -44,6 +44,17 @@ namespace engine
 		ENABLE_ENUM_FLAGS(Flags, ID, uint32_t);
 	}
 
+	// Target 크기 기준 비율, 0.0 ~ 1.0
+	struct ViewportRect
+	{
+		float x = 0.0f;
+		float y = 0.0f;
+		float width = 0.0f;		// 0이면 타깃 전체
+		float height = 0.0f;
+
+		bool IsFullTarget() const { return width <= 0.0f || height <= 0.0f; }
+	};
+
 	// 함수에 넘길 때는 const &로 전달할 것(vector 복사 방지)
 	struct RenderViewDesc
 	{
@@ -51,5 +62,6 @@ namespace engine
 		std::shared_ptr<RenderTargetGroup> rtg = {};	// nullptr을 전달 시 SwapChain RTG를 사용
 		ClearSettings clear_settings = {};				// 기본값 있음, 선언 확인
 		std::vector<render_pass::ID> pass_order = {};	// 비어 있으면 RenderManager의 기본 패스 순서를 사용
+		ViewportRect viewport = {};						// 비어 있으면 타깃 전체
 	};
 }

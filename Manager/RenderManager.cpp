@@ -124,7 +124,7 @@ namespace engine
 		Camera* cam = desc.camera.get();
 		RenderTargetGroup* swap_chain_rtg = GraphicsDevice::GetInst().GetSwapChainRenderTargetGroup();
 		RenderTargetGroup* output_rtg = desc.rtg ? desc.rtg.get() : swap_chain_rtg;
-		main_view_.view.SetOutput(output_rtg, desc.clear_settings);
+		main_view_.view.SetOutput(output_rtg, desc.clear_settings, desc.viewport);
 		if (cam)	//카메라가 있을 때만 컬링
 		{
 			main_view_.view.SetCamera(*cam);

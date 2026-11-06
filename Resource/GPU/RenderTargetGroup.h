@@ -48,20 +48,11 @@ namespace engine
 
         void Reset();
 
-		void SetRequiresResize(bool requires_resize) { requires_resize_ = requires_resize; }
-		void Resize(uint32_t width, uint32_t height);
-
-        //기본 Texture Size로 설정됨. override용
-		const D3D11_VIEWPORT& GetViewport() const { return viewport_; }
-		void SetViewport(const D3D11_VIEWPORT& viewport) { viewport_ = viewport; }
+        uint32_2 GetTargetSize() const;
 
     private:
         RenderTargetArray render_target_buffers_ = {};
         std::shared_ptr<DepthStencilTarget> dsv_ = {};
-
-        D3D11_VIEWPORT viewport_ = {};
-
-        bool requires_resize_ = {};
 
 		bool srv_bound_ = false;
     };

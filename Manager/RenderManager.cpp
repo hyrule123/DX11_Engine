@@ -166,6 +166,8 @@ namespace engine
 		{
 			debug_draw_pass_->Execute(pass_context);
 		}
+
+		LogRenderStats();
 	}
 
 	void RenderManager::CullView(ViewEntry& view_entry)
@@ -366,5 +368,56 @@ namespace engine
 		}
 
 		context->PSSetSamplers(0u, (UINT)raw_ptrs.size(), raw_ptrs.data());
+	}
+
+	void RenderManager::LogRenderStats()
+	{
+#if ENGINE_LOG_ENABLED
+		constexpr std::chrono::seconds kLogInterval(1);
+
+		const auto now = std::chrono::steady_clock::now();
+		if (now - last_stats_log_time_ < kLogInterval)
+		{
+			return;
+		}
+		last_stats_log_time_ = now;
+
+		std::string out;
+
+		std::format_to(std::back_inserter(out), "[RenderStats] Renderer 등록 {} / 컬링 통과 {}\n",
+			renderer_registry_.GetDenseBounds().size(), main_view_.visible_ids.size());
+
+		const auto append_line = [&out](std::string_view label, const MeshRenderPass::Stats& stats)
+			{
+				std::format_to(std::back_inserter(out), "  {:<10} 항목 {:>6}      | Batch(Group) {:>5}      | 인스턴스(stride별)",
+					label, stats.item_count, stats.group_count);
+
+				for (const auto& [stride, count] : stats.instances_per_stride)
+				{
+					std::format_to(std::back_inserter(out), " {}B:{}", stride, count);
+				}
+				out.push_back('\n');
+			};
+
+		MeshRenderPass::Stats total = {};
+
+		// 이번 프레임에 Clear/Execute된 패스만 (비활성 패스의 큐는 이전 값이 남아 있을 수 있음)
+		for (render_pass::ID id : active_mesh_passes_)
+		{
+			const MeshRenderPass* pass = GetMeshRenderPass(id);
+			ASSERT(pass);
+
+			MeshRenderPass::Stats pass_stats = {};
+			pass->AccumulateStats(pass_stats);
+			pass->AccumulateStats(total);
+
+			append_line(std::format("pass {}", (uint32_t)id), pass_stats);
+		}
+
+		append_line("Total", total);
+
+		out.pop_back();
+		DEBUG_LOG("{}", out);
+#endif // ENGINE_LOG_ENABLED
 	}
 }

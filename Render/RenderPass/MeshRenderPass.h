@@ -4,6 +4,7 @@
 #include <Engine/Render/RenderTypes.h>	// RenderKey
 
 #include <vector>
+#include <map>
 
 namespace engine
 {
@@ -45,6 +46,17 @@ namespace engine
 
 		virtual void Execute(const RenderContext& ctx) final;
 
+		// 디버그 통계. 이번 프레임에 Execute된 패스에서만 의미가 있다 (다음 Clear 전까지 유효).
+		struct Stats
+		{
+			uint32_t item_count = 0;	// 큐 항목 수 (Renderer × 참여 서브메시)
+			uint32_t group_count = 0;	// DrawGroup 수 = Draw 호출 수
+			std::map<uint16_t, uint32_t> instances_per_stride = {};	// stride(Byte) → 인스턴스 수
+		};
+
+		// inout에 누적한다 (패스별 집계와 합계 집계에 같은 함수를 사용).
+		void AccumulateStats(Stats& inout) const;
+
 		SortPolicy GetSortPolicy() const { return sort_policy_; }
 
 		// ctx에 들어온 Render Target들을 무시하고, 지정한 Rendertarget을 사용하도록 설정
@@ -53,6 +65,8 @@ namespace engine
 			rtg_override_ = rtg;
 			rtg_override_clear_setting_ = clear_settings;
 		}
+
+
 
 	protected:
 		MeshRenderPass(const HashedStringView& concrete_class_name, render_pass::ID id, SortPolicy sort_policy);

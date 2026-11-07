@@ -119,6 +119,24 @@ namespace engine
 		UnbindTargets(ctx);
 	}
 
+	void MeshRenderPass::AccumulateStats(Stats& inout) const
+	{
+		// 큐가 비어 Execute가 조기 반환했다면 draw_groups_는 이전 프레임 값이므로 집계하지 않는다
+		if (queue_.empty())
+		{
+			return;
+		}
+
+		inout.item_count += (uint32_t)queue_.size();
+		inout.group_count += (uint32_t)draw_groups_.size();
+
+		for (const DrawGroup& group : draw_groups_)
+		{
+			const uint16_t stride = queue_[group.queue_begin].obj_data_stride;
+			inout.instances_per_stride[stride] += group.instance_count;
+		}
+	}
+
 	MeshRenderPass::MeshRenderPass(const HashedStringView& concrete_class_name, render_pass::ID id, SortPolicy sort_policy)
 		: Super(concrete_class_name, id)
 		, sort_policy_(sort_policy)

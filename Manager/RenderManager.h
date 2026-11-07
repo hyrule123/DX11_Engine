@@ -102,6 +102,8 @@ namespace engine
         void CreateSamplerStates(ID3D11DeviceContext* context);
         void BindPSSamplerStates(ID3D11DeviceContext* context);
 
+        void LogRenderStats();
+
     private:
         RenderTargetPool render_target_pool_ = {};
 
@@ -127,5 +129,7 @@ namespace engine
 		std::unique_ptr<DebugDrawPass> debug_draw_pass_ = {};
 
         bool is_rendering = {};
+
+        std::chrono::steady_clock::time_point last_stats_log_time_ = {};
     };
 }
